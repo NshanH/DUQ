@@ -1387,6 +1387,29 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ask .bar i{background:rgba(245,62,62,.22)}.bid .bar i{background:rgba(28,183,133,.22)}
 .ask .p{color:var(--no-text)}.bid .p{color:var(--yes-text)}
 .lvl .t,.lvl .tt{text-align:right;color:var(--ink-2)}
+/* your limit orders inside the book (variant B «подложка», 25 Sep 2026): the row lies on a soft band of its side,
+   your part of the level is the dense piece of the bar, Shares turns bold, and × at the end cancels it right here.
+   The row keeps its 18 and its grid; the × column joins every row while you have an order standing on the market */
+.lvl{position:relative;isolation:isolate}
+.lvl .bar i{display:flex;overflow:hidden}
+.lvl .own{display:block;flex:none;height:100%}
+.bid .own{background:var(--yes)}.ask .own{background:var(--no)}
+.lvl.mine{cursor:pointer}
+.lvl.mine::before{content:"";position:absolute;inset:0 -6px;z-index:-1;border-radius:var(--r-6);background:var(--yes-bg)}
+.lvl.mine.ask::before{background:var(--no-bg)}
+.lvl.mine .t{font-weight:var(--typeface-weight-primary-bold);color:var(--ink)}
+.lvl.mine:focus-visible{outline:2px solid var(--focus);outline-offset:2px;box-shadow:none}
+.vbook.withx .lvl{grid-template-columns:52px 1fr 76px 60px 24px}
+.vbook.withx .bh{grid-template-columns:auto 1fr 84px 64px 24px}
+.lvl .xc{display:grid;place-items:center;height:18px}
+.lvl .bx{position:relative;width:18px;height:18px;border-radius:var(--r2);display:grid;place-items:center;color:var(--ink-3);transition:background 150ms var(--ease),color 150ms var(--ease)}
+.lvl .bx::before{content:"";position:absolute;inset:-3px -4px}   /* a 26 × 24 tap zone around the 18 circle */
+.lvl .bx:hover{background:var(--neutral_inverse_white-alpha_8);color:var(--ink)}
+.lvl .bx svg.i{width:12px;height:12px}
+.lvl.pending{opacity:.5;pointer-events:none}
+.bspin{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--hairline-2);border-top-color:var(--ink);animation:spin 1s linear infinite}
+.lvl.bflash::after{content:"";position:absolute;inset:0 -6px;z-index:-1;border-radius:var(--r-6);pointer-events:none;animation:flash 1.8s var(--ease) var(--fl,0ms) both}   /* a redraw mid-flash picks it up where it was */
+.orow.oflash,.ordcard.oflash{animation:flash 1.8s var(--ease) both}
 .otabs{border:0;margin-bottom:16px}   /* Figma Outcome Body: the content column puts 16 between the tab bar and the pane */
 /* Orders tab: Open | History switch, then the list. The list is a window — header plus seven rows,
    the rest scrolls inside it while the page stays put (order-history, 17 Sep 2026). */
@@ -1488,7 +1511,7 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .xo .bar i{position:absolute;inset:0 auto 0 0;border-radius:2px;background:var(--ink)}
 .actfeed{padding-top:6px}
 .actfeed .ai{padding:10px 0}
-.bk-scroll{max-height:126px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none;border-radius:8px}
+.bk-scroll{max-height:126px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none;border-radius:8px;padding:0 6px;margin:0 -6px}   /* room inside the scroller for a band's 6 either side */
 .bk-scroll::-webkit-scrollbar{width:0;height:0;display:none}
 .bk-scroll.asks{display:flex;flex-direction:column-reverse}  /* lowest ask sits by the spread and is what you see first */
 .bk-scroll:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -1938,6 +1961,8 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
   .ocbody{padding:14px 16px 16px;--ocpad:16px}   /* 12 + the 2 px divider band */
   .lvl{grid-template-columns:48px 1fr 72px 56px;gap:8px}
   .bh{grid-template-columns:auto 1fr 72px 56px;gap:8px}
+  .vbook.withx .lvl{grid-template-columns:48px 1fr 72px 56px 24px}
+  .vbook.withx .bh{grid-template-columns:auto 1fr 72px 56px 24px}
   .trade{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:65;border-radius:var(--r) var(--r) 0 0;transform:translateY(105%);transition:transform 420ms var(--spring);max-height:calc(100vh - 40px);overflow:auto;padding:12px 20px 24px;box-shadow:var(--shadow-3)}
   .trade.open{transform:none}
   .trade h2{position:static;width:auto;height:auto;overflow:visible;clip:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;font-size:15px;line-height:1.3}
@@ -3136,10 +3161,105 @@ function ograph(e,o){return `<div class="vhost v-labels ochost" id="ochart-${o.i
    here — the status line and the rows above already say where this outcome stands. */
 function orules(e,o){
  return `<div class="rules"><p><b>Resolves Yes</b> ${e.orule?e.orule(o).replace(/^Resolves Yes /,''):e.rules[0][1]}</p>${e.rules[1]?`<p><b>Source.</b> ${e.rules[1][1]}</p>`:''}</div>`}
-function book(e,o){if(e.thin)return `<div class="empty"><b>No orders in the book yet.</b>Your order would be the first.</div>`;const p=o.p;const N=12;let asks='',bids='';
- for(let i=1;i<=N;i++){const pr=Math.min(99,p+i);const sh=Math.round(Math.random()*900+80);asks+=`<div class="lvl ask"><span class="p">${pr}¢</span><div class="bar"><i style="width:${Math.min(100,sh/10)}%"></i></div><span class="t num">${sh.toLocaleString()}</span><span class="tt num">$${(sh*pr/100).toFixed(0)}</span></div>`}
- for(let i=1;i<=N;i++){const pr=Math.max(1,p-i);const sh=Math.round(Math.random()*900+80);bids+=`<div class="lvl bid"><span class="p">${pr}¢</span><div class="bar"><i style="width:${Math.min(100,sh/10)}%"></i></div><span class="t num">${sh.toLocaleString()}</span><span class="tt num">$${(sh*pr/100).toFixed(0)}</span></div>`}
- return `<div class="vbook"><div class="bh"><span>Yes price</span><span></span><span>Shares</span><span>Total</span></div><div class="side-l ask">Sellers</div><div class="bk-scroll asks" tabindex="0" aria-label="Sell orders, ${N} price levels">${asks}</div><div class="spread">Last <b id="last-${o.i}">${p}¢</b> · spread 1¢</div><div class="bk-scroll bids" tabindex="0" aria-label="Buy orders, ${N} price levels">${bids}</div><div class="side-l bid">Buyers</div></div>`}
+/* ---- the order book: the public levels, and your standing limit orders inside them (variant B, 25 Sep 2026) ----
+   One snapshot per market, kept between renders and rebuilt only when the price moves (the site takes one a second).
+   Everything is kept in Yes terms, cents → shares; the No view mirrors it: a Yes bid at 19¢ is a No ask at 81¢. */
+function seededRnd(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function bookSnap(e,o){const p=o.p;if(o.snap&&o.snap.p===p)return o.snap;
+ let h=0;for(const c of e.id+o.n)h=(h*31+c.charCodeAt(0))|0;const rnd=seededRnd(h+p*977);const ask=new Map(),bid=new Map();
+ for(let i=1;i<=12;i++){const pa=p+i,pb=p-i,na=Math.round(rnd()*900+80),nb=Math.round(rnd()*900+80);if(pa<=99)ask.set(pa,na);if(pb>=1)bid.set(pb,nb)}   /* levels only between 1¢ and 99¢, never at the price: a market settled at 100¢ has buyers and no sellers */
+ return o.snap={p,ask,bid}}
+/* your standing limit orders (the Orders → Open list: limit, remainder above zero) and where each sits in the Yes book */
+const ownOpen=o=>(o.orders||[]).filter(r=>/^Limit/.test(r.type)&&r.n-r.filled>1e-9);
+function yesAt(r){const buy=/buy$/i.test(r.type);return r.side==='yes'?{s:buy?'bid':'ask',p:r.price}:{s:buy?'ask':'bid',p:100-r.price}}
+const bkKey=(s,p)=>s+':'+p;
+const ownAt=(o,k)=>ownOpen(o).filter(r=>{const a=yesAt(r);return bkKey(a.s,a.p)===k});
+/* a new limit at this price would meet one of your own standing orders on the other side of the book */
+const selfCross=(o,s,lp)=>{const at=yesAt({side:s,type:'Limit buy',price:lp}),opp=at.s==='bid'?'ask':'bid';
+ return ownOpen(o).some(r=>{const a=yesAt(r);return a.s===opp&&(at.s==='bid'?a.p<=at.p:a.p>=at.p)})};
+/* shares a limit buys: the amount at the limit, rounded down to the hundredth so it never costs more than the amount */
+const limShares=(cost,lp)=>lp>0?Math.floor(cost*1e4/lp+1e-6)/100:0;
+/* a level's number is the whole level with everyone in it — yours is already inside, never added on top, only floored
+   at your remainder (a snapshot can lag behind an order the engine has confirmed). Marks only on a live market, signed in */
+function bookLevels(e,o){const snap=bookSnap(e,o),L={ask:new Map(),bid:new Map()};
+ for(const s of ['ask','bid'])for(const [p,n] of snap[s])L[s].set(p,{s,p,n,own:0,idx:[]});
+ if(user&&tradable(e,o))ownOpen(o).forEach(r=>{const a=yesAt(r),l=L[a.s].get(a.p)||{s:a.s,p:a.p,n:0,own:0,idx:[]};l.own+=r.n-r.filled;l.idx.push(o.orders.indexOf(r));L[a.s].set(a.p,l)});
+ for(const s of ['ask','bid'])for(const l of L[s].values())l.n=Math.max(l.n,Math.round(l.own));
+ return L}
+/* the book follows the side chosen in the trade panel for the selected market */
+const bookNo=o=>sel===o.i&&side==='no';
+function bookView(e,o){const L=bookLevels(e,o),no=bookNo(o);
+ const rows=(m,mir,shown)=>[...m.values()].map(l=>({...l,key:bkKey(l.s,l.p),sp:mir?100-l.p:l.p,shown}));
+ return {no,asks:(no?rows(L.bid,true,'ask'):rows(L.ask,false,'ask')).sort((a,b)=>a.sp-b.sp),bids:(no?rows(L.ask,true,'bid'):rows(L.bid,false,'bid')).sort((a,b)=>b.sp-a.sp)}}
+function lvlRow(o,l,withX,max){const mine=l.own>0,pend=mine&&!!(o.bkPend&&o.bkPend.has(l.key)),flash=!!(o.bkFlash&&o.bkFlash.key===l.key&&Date.now()<o.bkFlash.until);
+ const fill=l.n/max*100,share=mine?Math.min(100,l.own/l.n*100):0;   /* the fill as ever: level / the largest level of its side; yours is its dense start, 3 px at least */
+ const x=withX?`<span class="xc">${mine?(pend?'<span class="bspin" role="status" aria-label="Cancelling"></span>':`<button type="button" class="bx" data-bkx="${o.i}|${l.key}" aria-label="Cancel your order at ${l.sp}¢">${ICON.close}</button>`):''}</span>`:'';
+ return `<div class="lvl ${l.shown}${mine?' mine':''}${pend?' pending':''}${flash?' bflash':''}" data-bkk="${l.key}"${flash?` style="--fl:${o.bkFlash.until-1800-Date.now()}ms"`:''}${mine?` data-bkrow="${o.i}|${l.key}" tabindex="0" aria-label="${l.sp}¢, ${nfmt(l.n)} shares, includes your order. Open it in Orders"`:''}><span class="p">${l.sp}¢</span><div class="bar"><i style="width:${fill.toFixed(1)}%">${mine?`<b class="own" style="width:max(3px,${share.toFixed(1)}%)"></b>`:''}</i></div><span class="t num">${nfmt(l.n)}</span><span class="tt num">$${(l.n*l.sp/100).toFixed(0)}</span>${x}</div>`}
+function book(e,o){if(e.thin)return `<div class="empty"><b>No orders in the book yet.</b>Your order would be the first.</div>`;
+ const v=bookView(e,o),withX=!!user&&tradable(e,o)&&ownOpen(o).length>0;
+ const mA=Math.max(1,...v.asks.map(l=>l.n)),mB=Math.max(1,...v.bids.map(l=>l.n));
+ const ba=v.asks.length?v.asks[0].sp:null,bb=v.bids.length?v.bids[0].sp:null,spr=ba!=null&&bb!=null?Math.max(0,ba-bb):null;
+ return `<div class="vbook${withX?' withx':''}" data-view="${v.no?'no':'yes'}"><div class="bh"><span>${v.no?'No':'Yes'} price</span><span></span><span>Shares</span><span>Total</span>${withX?'<span></span>':''}</div><div class="side-l ask">Sellers</div><div class="bk-scroll asks" tabindex="0" aria-label="Sell orders, ${v.asks.length} price levels">${v.asks.map(l=>lvlRow(o,l,withX,mA)).join('')}</div><div class="spread">Last <b id="last-${o.i}">${v.no?100-o.p:o.p}¢</b>${spr==null?'':' · spread '+spr+'¢'}</div><div class="bk-scroll bids" tabindex="0" aria-label="Buy orders, ${v.bids.length} price levels">${v.bids.map(l=>lvlRow(o,l,withX,mB)).join('')}</div><div class="side-l bid">Buyers</div></div>`}
+/* redraw one market's book in place, scroll and keyboard focus kept; a fresh order's row is scrolled into view */
+function bookRender(o){const pane=$('#op-'+o.i+'-book');if(!pane)return;const sc=[...pane.querySelectorAll('.bk-scroll')].map(x=>x.scrollTop),f=bookFocusOf(pane);
+ pane.innerHTML=book(E(),o);[...pane.querySelectorAll('.bk-scroll')].forEach((x,j)=>{if(sc[j]!=null)x.scrollTop=sc[j]});bookFocus(pane,f);bookToFlash(o,pane)}
+/* a redraw would drop the focus to the page: it goes back to the same × or row while it is there, else to its list */
+function bookFocusOf(pane){const a=document.activeElement;if(!a||!pane.contains(a))return null;const r=a.closest('.lvl'),s=a.closest('.bk-scroll');
+ return {k:r&&r.dataset.bkk,x:!!a.closest('.bx'),l:s&&s.classList.contains('asks')?'asks':'bids'}}
+function bookFocus(pane,f){if(!f)return;const row=f.k&&pane.querySelector(`.lvl[data-bkk="${f.k}"]`);
+ const el=(row&&f.x&&row.querySelector('.bx'))||(row&&row.hasAttribute('tabindex')&&row)||pane.querySelector('.bk-scroll.'+f.l);if(el)el.focus({preventScroll:true})}
+function bookToFlash(o,pane){if(!o.bkFlash||Date.now()>o.bkFlash.until||pane.hidden)return;const r=pane.querySelector(`.lvl[data-bkk="${o.bkFlash.key}"]`);if(!r)return;
+ const x=scrollX,y=scrollY;r.scrollIntoView({block:'nearest',inline:'nearest'});scrollTo(x,y)}   /* only the book scrolls, never the page */
+/* the side or the selected market changed: books that mirror (or stop mirroring) redraw */
+function bookSync(){const e=E();if(!e)return;e.outs.forEach(o=>{const vb=$('#op-'+o.i+'-book .vbook');if(vb&&vb.dataset.view!==(bookNo(o)?'no':'yes'))bookRender(o)})}
+/* what an order has bought so far — at a better price than its limit when it crossed the book on the way in */
+const oPaid=r=>r.paid!=null?r.paid:r.filled*r.price/100;
+const oAvg=r=>r.filled?+(oPaid(r)/r.filled*100).toFixed(1)+'¢':'—';
+/* an order that leaves Open lands in History, Filled or Cancelled, with the same filled / ordered pairs; its time runs
+   on the clock the rest of History is written on (NOW and on), so the new row never looks older than the one under it */
+function toHist(o,r,status){(o.hist=o.hist||[]).unshift({side:r.side,type:r.type,status,px:oAvg(r),pxWant:r.price+'¢',n:nfmt(r.filled),nWant:nfmt(r.n),v:r.filled?kfmt(oPaid(r)):money(0),vWant:kfmt(r.n*r.price/100),at:new Date(NOW.getTime()+performance.now())});
+ if(o.histState==='ready')o.histN=(o.histN||0)+1}
+/* shares bought go into the position — one per market and side, its average in whole cents */
+function addPos(e,i,s,got,paid){const p=posOf(e.id,i,s);if(p){const c=p.n*p.avg/100+paid;p.n=+(p.n+got).toFixed(2);p.avg=Math.round(c/p.n*100)}
+ else positions.push({ev:e.id,out:i,side:s,n:+got.toFixed(2),avg:Math.round(paid/got*100)})}
+/* cancel standing orders — the same request as Cancel in Orders: what was not filled comes back to the balance,
+   the order goes to History as Cancelled. The event is passed in: × answers 700 ms later, maybe on another page */
+function cancelOrders(e,i,idxs){const o=e.outs[i];let back=0;
+ [...idxs].sort((a,b)=>b-a).forEach(j=>{const r=o.orders[j];if(!r)return;back+=(r.n-r.filled)*r.price/100;toHist(o,r,'Cancelled');o.orders.splice(j,1)});
+ if(user&&back>0){user.balance+=back;ledger.unshift({k:'Order cancelled',dir:'in',m:`${e.q} · ${o.n}`,ev:e.id,v:back,d:new Date()})}
+ toast('Order cancelled');renderTop();if(view!=='event'||E()!==e)return;
+ const bp=$('#op-'+i+'-book'),f=bp&&bookFocusOf(bp);renderTrade();refreshOutcome(i);const np=$('#op-'+i+'-book');if(np)bookFocus(np,f)}
+/* × in the book: every one of your orders at that price, at once and without asking; the row waits at half opacity */
+function bookCancel(i,k){const e=E(),o=e.outs[i];o.bkPend=o.bkPend||new Set();if(o.bkPend.has(k))return;o.bkPend.add(k);bookRender(o);
+ setTimeout(()=>{o.bkPend.delete(k);cancelOrders(e,i,ownAt(o,k).map(r=>o.orders.indexOf(r)))},700)}
+/* a tap on your row (not on ×) opens Orders → Open with that price's orders lit */
+function bookOpenOrders(i,k){const o=E().outs[i];o.ordSeg='open';o.flashIdx=new Set(ownAt(o,k).map(r=>o.orders.indexOf(r)));o.flashUntil=Date.now()+1800;
+ opaneRender(o);const t=$(`#ot-${i}-orders`);if(t)t.click()}
+/* a limit that reaches the other side of the book trades at once, best price first; the rest stands */
+function crossFill(e,o,a,n){const snap=bookSnap(e,o),opp=a.s==='bid'?'ask':'bid';let left=n,paid=0;
+ const ps=[...snap[opp].keys()].filter(p=>a.s==='bid'?p<=a.p:p>=a.p).sort((x,y)=>a.s==='bid'?x-y:y-x);
+ for(const p of ps){if(left<=1e-9)break;const have=snap[opp].get(p),take=Math.min(have,left);left-=take;paid+=take*(a.s==='bid'?p:100-p)/100;if(have-take>0)snap[opp].set(p,have-take);else snap[opp].delete(p)}
+ return {filled:+(n-left).toFixed(2),paid}}
+/* the market moved: when the new book reaches one of your standing orders, the market fills it — at your price, you were
+   the one waiting — best price first; what the book cannot cover keeps standing. The live engine calls this for every
+   price it moves, so a book never shows your bid above a seller. It runs signed out too (the Guest switch only hides
+   your orders; the market does not wait), just without a word */
+function bookMarket(e,o){if(!tradable(e,o))return false;const own=ownOpen(o);if(!own.length)return false;
+ const snap=bookSnap(e,o),hits=[];
+ own.map(r=>({r,a:yesAt(r)})).sort((x,y)=>x.a.s!==y.a.s?(x.a.s==='bid'?-1:1):x.a.s==='bid'?y.a.p-x.a.p:x.a.p-y.a.p).forEach(({r,a})=>{
+  const opp=a.s==='bid'?'ask':'bid';let left=r.n-r.filled,got=0;
+  const ps=[...snap[opp].keys()].filter(p=>a.s==='bid'?p<=a.p:p>=a.p).sort((x,y)=>a.s==='bid'?x-y:y-x);
+  for(const p of ps){if(left<=1e-9)break;const have=snap[opp].get(p),take=Math.min(have,left);left-=take;got+=take;if(have-take>0)snap[opp].set(p,have-take);else snap[opp].delete(p)}
+  if(got>0)hits.push({r,got:+got.toFixed(2)})});
+ if(!hits.length)return false;
+ const here=!!user&&view==='event'&&E()===e;let open=false;
+ hits.forEach(({r,got})=>{const cost=got*r.price/100,before=oPaid(r);r.filled=+Math.min(r.n,r.filled+got).toFixed(2);r.paid=before+cost;
+  addPos(e,o.i,r.side,got,cost);if(here)addAct(true,o,r.side,cost,true);
+  if(r.n-r.filled>1e-9)open=true;else{toHist(o,r,'Filled');o.orders.splice(o.orders.indexOf(r),1)}});
+ if(!here)return false;
+ toast(open?'Partially filled':'Filled');refreshOutcome(o.i);
+ if(mode==='sell'&&o.i===sel&&document.activeElement!==$('#tamt'))renderTrade();   /* the position it sells from just grew */
+ return true}
 /* Orders tab: the Open | History switch and whichever list it points at */
 function ordersPane(e,o){const seg=o.ordSeg==='history'?'history':'open';
  /* a guest has no orders to count: the switch keeps both sides, drops the badge, and the pane invites them in */
@@ -3185,12 +3305,13 @@ function ohist(e,o){const rows=o.hist||[];
 function oorders(e,o){if(!o.orders.length)return `<div class="empty"><b>No open orders for this market.</b></div>`;
  /* phone form: Open Order Card (Figma 717:704) — chip, side and Cancel on one line, the filled / ordered pairs under it */
  const opair=(a,b)=>`<span class="pair"><b>${a}</b><i>/ ${b}</i></span>`;
- const ocard=(r,j)=>`<div class="ordcard"><div class="l1"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="ty">${r.type}</span><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></div><div class="l2">${opair(r.filled?r.price+'¢':'—',r.price+'¢')}${opair(r.filled,r.n)}${opair(money(r.filled*r.price/100),money(r.n*r.price/100))}</div></div>`;
+ const lit=j=>o.flashIdx&&o.flashIdx.has(j)&&Date.now()<o.flashUntil?' oflash':'';
+ const ocard=(r,j)=>`<div class="ordcard${lit(j)}"><div class="l1"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="ty">${r.type}</span><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></div><div class="l2">${opair(oAvg(r),r.price+'¢')}${opair(r.filled,r.n)}${opair(money(oPaid(r)),money(r.n*r.price/100))}</div></div>`;
  /* desktop: the same table History uses — outcome chip, side, and the filled / ordered pairs, with
     Cancel where History puts its time. Under eight orders there is no window (Figma "· open"). */
  const mkt=r=>/Market/.test(r.type);
  const head=`<div class="orow ohead" aria-hidden="true"><span>Outcome</span><span class="r">Side</span><span class="r">Price</span><span class="r">Shares</span><span class="r">Value</span><span></span></div>`;
- const rows=o.orders.map((r,j)=>`<div class="orow"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="r">${r.type}</span>${opair(r.filled?r.price+'¢':'—',mkt(r)?'Market':r.price+'¢')}${opair(nfmt(r.filled),nfmt(r.n))}${opair(money(r.filled*r.price/100),mkt(r)?'Market':money(r.n*r.price/100))}<span class="oact"><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></span></div>`).join(TLINE);
+ const rows=o.orders.map((r,j)=>`<div class="orow${lit(j)}"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="r">${r.type}</span>${opair(oAvg(r),mkt(r)?'Market':r.price+'¢')}${opair(nfmt(r.filled),nfmt(r.n))}${opair(money(oPaid(r)),mkt(r)?'Market':money(r.n*r.price/100))}<span class="oact"><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></span></div>`).join(TLINE);
  const tbl=o.orders.length>7?`<div class="owin"><div class="otw">${head}${rows}<div class="ofade"></div></div></div>`:`<div class="oxs"><div class="otw">${head}${rows}</div></div>`;
  return `<div class="ordcards">${o.orders.map(ocard).join('')}</div><div class="ordtbl">${tbl}</div>`}
 
@@ -3497,10 +3618,12 @@ function calc(){const e=E();if(!e||!$('#tbuy'))return;const o=e.outs[sel];const 
   const q=Math.min(n,p.n);const recv=q*price/100;const vs=recv-q*p.avg/100;setT('#tsh',`${q%1?q.toFixed(2):q} ${sideW}`);setT('#tpr',`${price}¢ per share`);setT('#twin',money(recv));const sub=$('#tsub');if(sub){sub.textContent=`${signed(vs)} vs what you paid`;sub.className='sub '+(vs>=0?'up':'down')}
   const sh=$('#thint');if(sh)sh.hidden=true;   /* the holding is already in the label row (Figma Trade Panel, Mode=Sell) */
   btn.textContent='Sell';btn.disabled=!!p.empty;$$('[data-frac]').forEach(b=>b.setAttribute('aria-pressed',!p.empty&&Math.abs(p.n*+b.dataset.frac-n)<.01));return}
- if(mode==='buy'&&otype==='limit'){const lp=Math.round(parseFloat($('#tlp').value))||0;const cost=parseFloat($('#tamt').value)||0;const n=lp>0?cost/(lp/100):0;const fee=Math.max(0,n-cost)*.015;const win=n-fee;
+ if(mode==='buy'&&otype==='limit'){const lp=Math.round(parseFloat($('#tlp').value))||0;const cost=parseFloat($('#tamt').value)||0;const n=limShares(cost,lp);const fee=Math.max(0,n-cost)*.015;const win=n-fee;
   setT('#tln',n?n.toLocaleString('en-US',{maximumFractionDigits:2}):'—');
   setT('#tpr','');setT('#twin',money(win));
-  let err='';if($('#tlp').value!==''&&!(lp>=1&&lp<=99))err='Price must be between 1¢ and 99¢';else if($('#tamt').value!==''&&!(cost>0))err='Enter an amount';else if(cost>0&&cost<1)err='Minimum is $1';setErr(err);const lh=$('#thint');if(lh)lh.hidden=true;
+  let err='';if($('#tlp').value!==''&&!(lp>=1&&lp<=99))err='Price must be between 1¢ and 99¢';else if($('#tamt').value!==''&&!(cost>0))err='Enter an amount';else if(cost>0&&cost<1)err='Minimum is $1';
+  else if(user&&lp>=1&&lp<=99&&selfCross(o,side,lp))err='That price would trade with your own order';   /* said as you type, not only on Place */
+  setErr(err);const lh=$('#thint');if(lh)lh.hidden=true;
   if(!user){btn.textContent='Sign in';btn.disabled=false;btn.dataset.auth='1';return}
   if(user.balance<cost){btn.textContent=`Add ${money(cost-user.balance)} to place`;btn.disabled=false;return}
   btn.textContent='Place limit order';btn.disabled=!!err||!(n>0&&lp>0);return}
@@ -3517,9 +3640,19 @@ function calc(){const e=E();if(!e||!$('#tbuy'))return;const o=e.outs[sel];const 
  setT('#tfee','')}
 function buyClick(){const e=E();const o=e.outs[sel];const price=priceOf(e,o,side);const sideW=side==='yes'?'Yes':'No';const btn=$('#tbuy');const inp=$('#tamt');
  if(mode==='sell'){const p=posOf(e.id,sel,side);const n=parseFloat(inp.value)||0;if(!(n>0)||n>p.n+1e-9){inp.focus();return}const q=Math.min(n,p.n);const recv=q*price/100;p.n=+(p.n-q).toFixed(2);if(p.n<=0.001)positions.splice(positions.indexOf(p),1);user.balance+=recv;ledger.unshift({k:'Sell',dir:'in',m:`${e.q} · ${o.n} · ${sideW} ${price}¢ · ${q} shares`,ev:e.id,v:recv,d:new Date()});addAct(true,o,side,recv,false);toast(`Sold ${q} ${sideW} · ${o.n}`);renderTop();sellStr='';mode='buy';renderTrade();refreshOutcome(sel);closeSheet();return}
- if(mode==='buy'&&otype==='limit'){if(!user){authReturn=location.hash;go('#signin');return}const lp=Math.round(parseFloat($('#tlp').value))||0;const cost=parseFloat($('#tamt').value)||0;const n=+(lp>0?cost/(lp/100):0).toFixed(2);if(!(lp>=1&&lp<=99)||!(n>=1))return;if(user.balance<cost){openDeposit();return}
-  user.balance-=cost;o.orders.push({side,type:'Limit buy',price:lp,n,filled:0});ledger.unshift({k:'Order placed',dir:'out',m:`${e.q} · ${o.n} · ${sideW} limit ${lp}¢ · ${n} shares`,ev:e.id,v:cost,d:new Date()});
-  toast('Limit order placed',{ms:6000});renderTop();amountStr='';limPrice='';otype='market';renderTrade();refreshOutcome(sel);closeSheet();return}
+ if(mode==='buy'&&otype==='limit'){if(!user){authReturn=location.hash;go('#signin');return}const lp=Math.round(parseFloat($('#tlp').value))||0;const cost=parseFloat($('#tamt').value)||0;const n=limShares(cost,lp);if(!(lp>=1&&lp<=99)||!(n>=1))return;if(user.balance<cost){openDeposit();return}
+  /* in the book the order is a Yes bid (Buy Yes) or a Yes ask (Buy No at 100 − price); a price that would meet
+     your own standing order on the other side is not taken */
+  if(selfCross(o,side,lp)){setErr('That price would trade with your own order');return}
+  if(protoFail){protoFail=false;protoMark('fail',false);toast('Couldn’t place the order',{type:'error'});return}   /* «Next order fails» covers a limit too */
+  const at=yesAt({side,type:'Limit buy',price:lp});
+  const f=crossFill(e,o,at,n),rest=+(n-f.filled).toFixed(2),spend=f.paid+rest*lp/100;   /* what fills at a better price costs less than the limit set aside */
+  user.balance-=spend;
+  if(f.filled>0){addPos(e,sel,side,f.filled,f.paid);addAct(true,o,side,f.paid,true)}
+  if(rest>0){o.orders.push({side,type:'Limit buy',price:lp,n,filled:f.filled,paid:f.paid});o.bkFlash={key:bkKey(at.s,at.p),until:Date.now()+1800};o.flashIdx=new Set([o.orders.length-1]);o.flashUntil=Date.now()+1800}
+  else toHist(o,{side,type:'Limit buy',price:lp,n,filled:n,paid:f.paid},'Filled');
+  ledger.unshift({k:'Order placed',dir:'out',m:`${e.q} · ${o.n} · ${sideW} limit ${lp}¢ · ${n} shares`,ev:e.id,v:spend,d:new Date()});
+  toast(f.filled<=0?'Limit order placed':rest>0?'Partially filled':'Filled',{ms:6000});renderTop();amountStr='';limPrice='';otype='market';renderTrade();refreshOutcome(sel);closeSheet();return}
  const amt=parseFloat(inp.value)||0;
  if(!user){pendingPick={ev:e.id,out:sel,side,mode};signIn();pendingPick=null;renderTrade();$('#tbuy').focus();return}
  if(!(amt>0)){setErr('Enter an amount');inp.focus();return}
@@ -3536,7 +3669,12 @@ function buyClick(){const e=E();const o=e.outs[sel];const price=priceOf(e,o,side
  toast(`Bought ${sideW} · ${o.n}`);
  refreshOutcome(sel);calc();closeSheet()}
 function refreshOutcome(i){const pc=$('#pc-'+i);if(pc)pc.innerHTML=posChips(E(),E().outs[i]);
- const oc=$('#oc-'+i);if(oc&&oc.classList.contains('open')){$('#ocbody-'+i).innerHTML=ocBody(E().outs[i]);const ot=params.get('otab');if(ot)setTimeout(()=>{const b=$(`#ot-${i}-${ot}`);if(b)b.click()},350)}}
+ const oc=$('#oc-'+i);if(oc&&oc.classList.contains('open')){const cur=oc.querySelector('.otabs [aria-selected=true]'),k=cur&&cur.dataset.ot;
+  $('#ocbody-'+i).innerHTML=ocBody(E().outs[i]);
+  /* the redraw keeps the tab you were on: a trade or a cancel no longer throws you back to Chart */
+  const t=k&&$(`#ot-${i}-${k}`);if(t&&t.getAttribute('aria-selected')!=='true')t.click();
+  const bp=$('#op-'+i+'-book');if(bp)bookToFlash(E().outs[i],bp);
+  const ot=params.get('otab');if(ot)setTimeout(()=>{const b=$(`#ot-${i}-${ot}`);if(b)b.click()},350)}}
 
 /* picker: select-only combobox */
 function ddClose(){const m=$('#tsel-menu'),b=$('#tsel-btn');if(!m)return;m.hidden=true;b.setAttribute('aria-expanded','false');m.querySelectorAll('.hl').forEach(x=>x.classList.remove('hl'))}
@@ -3544,7 +3682,7 @@ function ddOpen(){const m=$('#tsel-menu'),b=$('#tsel-btn');if(!m)return;m.hidden
 function ddActive(i){const b=$('#tsel-btn');b.setAttribute('aria-activedescendant','tsel-opt-'+i);$$('#tsel-menu [role=option]').forEach(o=>o.classList.remove('hl'))}
 function ddHl(i){ddActive(i);const el=$('#tsel-opt-'+i);if(el)el.classList.add('hl')}
 function ddPick(i){sel=i;priceAtInput=null;clearConfirm();renderTrade();markSel();drawEventChart(false);$('#tsel-btn').focus()}
-function markSel(){const e=E();$$('#outs .oc').forEach(el=>el.classList.toggle('sel',el.id==='oc-'+sel));e.outs.forEach(o=>{const y=$(`#oc-${o.i} [data-pick$="|yes"]`),n=$(`#oc-${o.i} [data-pick$="|no"]`);if(y)y.setAttribute('aria-pressed',o.i===sel&&side==='yes');if(n)n.setAttribute('aria-pressed',o.i===sel&&side==='no')})}
+function markSel(){const e=E();$$('#outs .oc').forEach(el=>el.classList.toggle('sel',el.id==='oc-'+sel));e.outs.forEach(o=>{const y=$(`#oc-${o.i} [data-pick$="|yes"]`),n=$(`#oc-${o.i} [data-pick$="|no"]`);if(y)y.setAttribute('aria-pressed',o.i===sel&&side==='yes');if(n)n.setAttribute('aria-pressed',o.i===sel&&side==='no')});bookSync()}
 const lq=$('#lq');if(lq){lq.addEventListener('input',()=>renderSugg(lq.closest('.lsearch'),lq.value.trim()));lq.addEventListener('keydown',e=>{suggKeys(e,lq.closest('.lsearch'));if(e.key==='Enter'&&!e.altKey){e.preventDefault();$$('.sugg').forEach(b=>b.remove());const v=lq.value.trim();query=v;$('#q').value=v;go(v?'#search/'+encodeURIComponent(v):'#home')}})}
 document.addEventListener('keydown',e=>{const b=$('#tsel-btn');if(!b||document.activeElement!==b)return;const n=E().outs.length;const open=!$('#tsel-menu').hidden;const cur=+b.getAttribute('aria-activedescendant').split('-').pop();
  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!open){ddOpen();ddHl(cur);return}ddHl((cur+(e.key==='ArrowDown'?1:n-1))%n);return}
@@ -3563,6 +3701,7 @@ function afterPick(isSell){if(isMobile()){openSheet();setTimeout(()=>{const b=$(
 /* tabs: generic tablist with arrow keys */
 function selectTab(tab){const list=tab.closest('[role=tablist]');list.querySelectorAll('[role=tab]').forEach(t=>{const on=t===tab;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;const p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=!on});
  const aw=$('#activity .awin');if(aw)actBelow(aw)}   /* лента меряется только когда вкладка показана */
+document.addEventListener('keydown',e=>{const r=e.target.closest&&e.target.closest('[data-bkrow]');if(r&&e.target===r&&(e.key==='Enter'||e.key===' ')){e.preventDefault();const [i,k]=r.dataset.bkrow.split('|');bookOpenOrders(+i,k)}});
 document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('[role=tab]');if(!t)return;const tabs=[...t.closest('[role=tablist]').querySelectorAll('[role=tab]')];const i=tabs.indexOf(t);let j=-1;if(e.key==='ArrowRight')j=(i+1)%tabs.length;if(e.key==='ArrowLeft')j=(i+tabs.length-1)%tabs.length;if(e.key==='Home')j=0;if(e.key==='End')j=tabs.length-1;if(j<0)return;e.preventDefault();tabs[j].focus();selectTab(tabs[j])});
 
 /* ---------- click delegation ---------- */
@@ -3578,7 +3717,9 @@ document.addEventListener('click',e=>{
  const hr=e.target.closest('[data-histretry]');if(hr){histFetch(E().outs[+hr.dataset.histretry]);return}
  const hm=e.target.closest('[data-histmore]');if(hm){const oo=E().outs[+hm.dataset.histmore];oo.histMore='idle';histNext(oo);return}
  if(e.target.closest('[data-signin]')){authReturn=location.hash;go('#signin');return}
- const cx=e.target.closest('[data-cancel]');if(cx){const [i,j]=cx.dataset.cancel.split('|').map(Number);E().outs[i].orders.splice(j,1);toast('Order cancelled');refreshOutcome(i);return}
+ const cx=e.target.closest('[data-cancel]');if(cx){const [i,j]=cx.dataset.cancel.split('|').map(Number);cancelOrders(E(),i,[j]);return}
+ const bx=e.target.closest('[data-bkx]');if(bx){const [i,k]=bx.dataset.bkx.split('|');bookCancel(+i,k);return}
+ const br=e.target.closest('[data-bkrow]');if(br){const [i,k]=br.dataset.bkrow.split('|');bookOpenOrders(+i,k);return}
  const otb=e.target.closest('#otbtn');if(otb){const m=$('#otmenu');m.hidden=!m.hidden;otb.setAttribute('aria-expanded',String(!m.hidden));return}
  if(!e.target.closest('.otsel')&&$('#otmenu'))$('#otmenu').hidden=true;
  if(e.target.closest('#tsel-btn')){if($('#tsel-menu').hidden)ddOpen();else ddClose();return}
@@ -3659,6 +3800,8 @@ let tickT=0,actT=0,lastAnnounce=0,announcedP=null;
 function tickTargets(){const t=[];const f=EVENTS[FEATURED.ev];t.push([f,f.outs[FEATURED.out]]);MOVERS.forEach(m=>t.push([EVENTS[m.ev],EVENTS[m.ev].outs[m.out]]));if(view==='event'){E().outs.forEach(o=>t.push([E(),o]))}return t.filter(([e,o])=>tradable(e,o))}
 function tick(){const t=tickTargets();const [e,o]=t[Math.floor(Math.random()*t.length)];const old=o.p;let nv=Math.min(96,Math.max(3,o.p+Math.round(Math.random()*3-1.5)));if(e.tpl==='exclusive'){const others=e.outs.filter(x=>x!==o);const delta=nv-old;const k=others[Math.floor(Math.random()*others.length)];if(k.p-delta<3||k.p-delta>96)return;k.p-=delta;k.d=+(k.d-delta).toFixed(1);k.h.push(k.p);k.h.shift();applyTick(e,k,k.p+delta)}if(nv===old)return;o.p=nv;o.d=+(o.d+(nv-old)).toFixed(1);o.h.push(nv);o.h.shift();applyTick(e,o,old)}
 function applyTick(e,o,old){
+ /* your standing orders the new price reaches fill first, so everything below already shows them */
+ const redrawn=bookMarket(e,o);
  /* feature card */
  if(e.id===FEATURED.ev&&e.tpl==='exclusive'&&$('#fx-'+o.i)){$('#fx-'+o.i).textContent=o.p+'%';const bb=$('#home-body .feat [data-pick="'+e.id+'|'+o.i+'|yes"] b');if(bb)bb.textContent=o.p+'¢'}
  if(e.id===FEATURED.ev&&e.tpl!=='exclusive'&&o.i===FEATURED.out&&$('#fp')){tween($('#fp'),old,o.p,v=>Math.round(v));const fd=$('#fd');fd.textContent=pts(o.d);fd.className='d '+(o.d>0?'up':o.d<0?'down':'flat');$('#fpy').textContent=o.p+'¢';$('#fpn').textContent=(100-o.p)+'¢';$$('#home-body .feat [data-pick]').forEach(b=>b.setAttribute('aria-label',outLabel(e,o,b.dataset.pick.endsWith('yes')?'yes':'no')));chartRetarget($('#hchart'),{W:640,H:320,pr:44,pt:10,pb:24,min:0,max:100,idp:'h',series:[{h:o.h,hex:'#1cb785'}]});$('#hchart').setAttribute('aria-label',`${o.n}: chance over time since ${fmtDate(e.open)}, now ${o.p} percent`)}
@@ -3669,7 +3812,9 @@ function applyTick(e,o,old){
  $$(`[data-pick^="${e.id}|${o.i}|"]`).forEach(b=>{const s=b.dataset.pick.endsWith('yes')?'yes':'no';b.setAttribute('aria-label',outLabel(e,o,s));const sm=b.querySelector('small');if(sm)sm.textContent=priceOf(e,o,s)+'¢'});
  /* event page */
  if(view==='event'&&e.id===curEv){const el=$('#ocp-'+o.i);if(el){tween(el,old,o.p,v=>Math.round(v));const h=el.closest('.ochead');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
-  const last=$('#last-'+o.i);if(last)last.textContent=o.p+'¢';const hl=$('#holds-'+o.i);if(hl)hl.innerHTML=holdHTML(e,o);const pc=$('#pc-'+o.i);if(pc)pc.innerHTML=posChips(e,o);
+  /* the book follows the price: a new snapshot for the new price, your rows in it (skipped when a fill just redrew it) */
+  if(!redrawn)bookRender(o);
+  const last=$('#last-'+o.i);if(last)last.textContent=(bookNo(o)?100-o.p:o.p)+'¢';const hl=$('#holds-'+o.i);if(hl)hl.innerHTML=holdHTML(e,o);const pc=$('#pc-'+o.i);if(pc)pc.innerHTML=posChips(e,o);
   const opt=$('#tsel-opt-'+o.i+' b');if(opt)opt.textContent=o.p+'%';if(o.i===sel&&$('#tsel-p'))$('#tsel-p').textContent=o.p+'%';
   retargetEventChart();
   if(o.i===sel){calc();const h2=$('#trade-h span');if(h2)h2.firstChild.textContent=`${e.outs.length>1?o.n+' · ':''}${side==='yes'?'Yes':'No'} ${priceOf(e,o,side)}¢`}
