@@ -1722,17 +1722,27 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-list{--acpad:var(--spacing-5xl);display:flex;flex-direction:column;align-items:stretch;gap:var(--spacing-lg);padding:var(--spacing-xxl) var(--acpad) var(--spacing-5xl);container-type:inline-size}
 /* a table never squeezes its numbers: when the card is narrower than its columns it scrolls sideways, the rows
    sliding under the card's edge — the event page's .oxs (the user, 3 Oct 2026: «пусть будет horizontal scroll») */
-.ac-xs{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;margin-inline:calc(-1 * var(--acpad));padding-inline:var(--acpad)}
+.ac-xs{overflow-x:auto;overscroll-behavior-x:contain;margin-inline:calc(-1 * var(--acpad));padding-inline:var(--acpad)}
+/* the bar is drawn, not an overlay: a Mac hides overlay bars until a gesture, and a mouse has no sideways wheel
+   (the user, 3 Oct 2026: «не работает scroll») — a 6 px thumb in the hairline colour, inset by the card's padding.
+   Chrome ignores these pseudo-elements once scrollbar-width/-color are set, so those go to Firefox alone. */
+@supports not selector(::-webkit-scrollbar){.ac-xs{scrollbar-width:thin;scrollbar-color:var(--hairline-2) transparent}}
+.ac-xs::-webkit-scrollbar{height:6px}
+.ac-xs::-webkit-scrollbar-track{background:transparent;margin-inline:var(--acpad)}
+.ac-xs::-webkit-scrollbar-thumb{background:var(--hairline-2);border-radius:var(--radius-border_radius_round)}
+.ac-xs::-webkit-scrollbar-thumb:hover{background:var(--ink-4)}
 .ac-list .seg.mini{margin:0;align-self:flex-start}
 
 /* the table is the event page's «Your position» skin (.postbl): 11 px caps header, 14/500 ink-2 cells with 10 px of
-   air above and below, the key figure bold in ink, rows parted by the dashed rule, a 32 px column gap, flush ends.
+   air above and below, the key figure bold in ink, rows parted by the dashed rule, a 16 px column gap, flush ends.
    Market takes what the number columns leave; no column gets narrower than its longest cell. */
-.ac-tbl{--mk:2.8fr;--gap:var(--spacing-7xl);display:grid;   /* 32: the event table's 16 + 16 (the user, 3 Oct 2026: «увеличивай gap колонок 16px») */grid-template-columns:minmax(220px,var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:0}
+.ac-tbl{--mk:2.8fr;--gap:16px;display:grid;   /* the event table's 16 (the user, 3 Oct 2026: «да, сделай 16 px») */grid-template-columns:minmax(var(--mkmin,280px),var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:min-content}
+/* min-content: the grid is never narrower than its columns, so it overflows as a whole — the scroller then keeps its
+   end padding after the last column, and Market keeps 280 for a readable title before the table starts to scroll */
 .ac-tbl.ac-pos-hist{--mk:3.1fr}
 .ac-tbl.ac-ord-open{--mk:5.2fr}
 .ac-tbl.ac-ord-hist{--mk:2.6fr}
-.ac-tbl.ac-tx{--mk:3fr}
+.ac-tbl.ac-tx{--mk:3fr;--mkmin:160px}   /* «USDT · Tron» needs no 280 */
 .ac-tbl>.ac-hd,.ac-tbl>.ac-row{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;min-width:0}
 .ac-tbl>.pline{grid-column:1/-1;height:1px;background:var(--dash);margin:4px 0}
 .ac-tbl .ph{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding-bottom:10px;white-space:nowrap}
@@ -1798,7 +1808,7 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 /* the phone form, measured on the card at the event table's own threshold: every row a stack — the market line,
    then label · value pairs. Above it the table keeps its columns and scrolls sideways when they do not fit. */
 @container (max-width:600px){
-  .ac-tbl{display:block}
+  .ac-tbl{display:block;min-width:0}
   .ac-tbl>.ac-hd{display:none}
   .ac-tbl>.ac-row{display:grid;grid-template-columns:minmax(0,1fr);row-gap:4px;padding:0}
   .ac-tbl>.pline{display:block;margin:16px 0}
