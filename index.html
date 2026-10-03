@@ -1687,7 +1687,12 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 /* Sell Button (State=Default): Sell · Close · Cancel · Try again on the event page, Log out here */
 .sell{height:34px;padding:0 16px;border-radius:var(--r2);border:1px solid var(--hairline-2);font-weight:600;font-size:13px;color:var(--ink-2);transition:all 200ms;text-decoration:none;display:inline-flex;align-items:center}
 .sell:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
-.ac-page{display:flex;flex-direction:column;gap:var(--spacing-4xl)}
+.ac-page{display:flex;flex-direction:column}
+/* the rhythm the user marked up (3 Oct 2026): top bar → title 32 (the bar's 12 + 20 already make it), title → card 16,
+   Money card → pills 32, pills → List card 24; Settings follows the same title → card 16 */
+.ac-page>.ac-money,.ac-page>.ac-sec{margin-top:var(--spacing-2xl)}
+.ac-page>.ac-tabs{margin-top:var(--spacing-7xl)}
+.ac-page>.ac-list{margin-top:var(--spacing-5xl)}
 .ac-head{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-2xl);flex-wrap:wrap}
 .ac-head h1{margin:0;color:var(--ink)}
 .ac-links{display:flex;align-items:center;gap:var(--spacing-4xl)}
@@ -1719,7 +1724,7 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-tabs button[aria-selected=true]{background:var(--pill);color:var(--pill-ink);font-weight:var(--typeface-weight-primary-semibold);letter-spacing:var(--typeface-letter_spacing-xs)}
 
 /* List card: the switch, then the table; the card is the container the phone form measures */
-.ac-list{--acpad:var(--spacing-5xl);display:flex;flex-direction:column;align-items:stretch;gap:var(--spacing-lg);padding:var(--spacing-xxl) var(--acpad) var(--spacing-5xl);container-type:inline-size}
+.ac-list{--acpad:var(--spacing-2xl);display:flex;flex-direction:column;align-items:stretch;gap:var(--spacing-2xl);padding:var(--acpad);container-type:inline-size}   /* 16 all round, switch → table 16 */
 /* a table never squeezes its numbers: when the card is narrower than its columns it scrolls sideways, the rows
    sliding under the card's edge — the event page's .oxs (the user, 3 Oct 2026: «пусть будет horizontal scroll») */
 .ac-xs{overflow-x:auto;overscroll-behavior-x:contain;margin-inline:calc(-1 * var(--acpad));padding-inline:var(--acpad)}
@@ -1793,7 +1798,7 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-back{width:var(--sizing-control-xl);height:var(--sizing-control-xl);flex:none;border-radius:var(--radius-border_radius_round);display:inline-grid;place-items:center;color:var(--ink);background:var(--glass-field);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background 200ms,transform 300ms var(--spring)}
 .ac-back:hover{background:var(--card-2);transform:translateX(-2px)}
 .ac-back svg{width:var(--sizing-icon-lg);height:var(--sizing-icon-lg)}
-.ac-sec{padding:var(--spacing-5xl);container-type:inline-size}
+.ac-sec{padding:var(--spacing-2xl);container-type:inline-size}   /* the List card's 16 */
 .ac-sec .ac-tbl{grid-template-columns:180px minmax(0,1fr) auto}
 .ac-sec .ac-tbl .pn{white-space:normal}
 /* Log out everywhere: the scrim and a 420 dialog (Figma «NOT IN DS») */
@@ -1828,8 +1833,6 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
   .ac-vdiv{display:none}
   .ac-acts{margin-left:0;width:100%}
   .ac-acts .btn{flex:1;min-width:0}
-  .ac-list{--acpad:var(--spacing-2xl);padding:var(--spacing-xxl) var(--acpad) var(--spacing-2xl)}
-  .ac-sec{padding:var(--spacing-2xl)}
   .ac-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
 }
 
