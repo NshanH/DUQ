@@ -2512,12 +2512,28 @@ svg.i.h-ic-xs{width:var(--sizing-icon-xs);height:var(--sizing-icon-xs)}
 .h-cc { --aw: 762px; --ah: 513px; --cc-t: 650ms cubic-bezier(.2, .8, .2, 1); position: relative; display: flex; width: 100%; min-width: 0; flex-direction: column; align-items: center; overflow: hidden; padding: var(--spacing-2xl) 0; user-select: none; outline: none; }
 .h-cc:focus-visible { box-shadow: inset 0 0 0 var(--sizing-border-ring) var(--focus); border-radius: var(--radius-border_radius_26); }
 .h-cc-view { position: relative; width: 100%; height: var(--ah); }
-.h-cc-card { position: absolute; left: 50%; top: 50%; width: var(--w); height: var(--h); translate: var(--x) var(--y); border-radius: var(--radius-border_radius_6xl); background: var(--surface-surface_1); color: var(--text-high_em); box-shadow: 0 10px 30px rgba(95, 109, 119, .08), 0 4px 12px rgba(95, 109, 119, .06); will-change: translate, width, height; transition: translate var(--cc-t), width var(--cc-t), height var(--cc-t), opacity var(--cc-t); }
-html[data-theme=dark] .h-cc-card { box-shadow: 0 10px 30px rgba(0, 0, 0, .6), 0 4px 12px rgba(0, 0, 0, .4); }
+/* Liquid Glass (Apple, 2025) in the system's glass tokens (the user, 3 Oct 2026: «background to liquid glass how in
+   apple»): a thin translucent pane — the backdrop blurred and saturated through it — with a bright specular rim lit
+   from above-left (::before), a soft sheen across the top (::after), and the market photo's colour glowing behind the
+   cards (.h-cc-amb) so the glass has something to bend. Dark: a darker pane, the rim and sheen turned down. */
+.h-cc-card { position: absolute; left: 50%; top: 50%; width: var(--w); height: var(--h); translate: var(--x) var(--y); border-radius: var(--radius-border_radius_6xl); color: var(--text-high_em); background: var(--surface-glass_inset); -webkit-backdrop-filter: blur(var(--blur-base)) saturate(1.8); backdrop-filter: blur(var(--blur-base)) saturate(1.8); box-shadow: inset 0 1px 0 var(--outline-rim), inset 0 -1px 0 var(--color-white-24), inset 1px 0 0 var(--color-white-32), inset -1px 0 0 var(--color-white-24), 0 10px 30px rgba(95, 109, 119, .10), 0 4px 12px rgba(95, 109, 119, .06); will-change: translate, width, height; transition: translate var(--cc-t), width var(--cc-t), height var(--cc-t), opacity var(--cc-t); }
+.h-cc-card::before { content: ""; position: absolute; inset: 0; z-index: 101; padding: 1px; border-radius: inherit; background: linear-gradient(135deg, var(--color-white-88), var(--color-white-24) 35%, var(--color-white-8) 60%, var(--color-white-56)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; pointer-events: none; }
+.h-cc-card::after { content: ""; position: absolute; inset: 0; z-index: 101; border-radius: inherit; background: linear-gradient(180deg, var(--color-white-32), transparent 42%); pointer-events: none; }
+.h-cc-card.h-cc-hid { -webkit-backdrop-filter: none; backdrop-filter: none; }
+html[data-theme=dark] .h-cc-card { background: var(--color-white-5); box-shadow: inset 0 1px 0 var(--outline-rim), inset 0 -1px 0 var(--color-white-5), 0 10px 30px rgba(0, 0, 0, .6), 0 4px 12px rgba(0, 0, 0, .4); }
+html[data-theme=dark] .h-cc-card::before { background: linear-gradient(135deg, var(--color-white-24), var(--color-white-8) 35%, var(--color-white-3) 60%, var(--color-white-12)); }
+html[data-theme=dark] .h-cc-card::after { background: linear-gradient(180deg, var(--color-white-6), transparent 42%); }
+.h-cc-view { z-index: 1; }
+.h-cc-amb { position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: 0; pointer-events: none; opacity: .42; filter: blur(60px) saturate(1.6); -webkit-mask: radial-gradient(closest-side, #000 35%, transparent 100%); mask: radial-gradient(closest-side, #000 35%, transparent 100%); }
+.h-cc-amb img { position: absolute; left: 50%; top: 50%; width: min(72%, calc(var(--aw) + 120px)); height: calc(var(--ah) * .8); translate: -50% -50%; object-fit: cover; opacity: 0; transition: opacity 900ms var(--ease); }
+.h-cc-amb img.on { opacity: 1; }
+html[data-theme=dark] .h-cc-amb { opacity: .34; }
+@media (prefers-reduced-motion: reduce) { .h-cc-amb img { transition: none; } }
 .h-cc-card.h-cc-still, .h-cc-card.h-cc-still * { transition: none !important; }
 .h-cc-card:not([data-offset="0"]) { cursor: pointer; }
 /* the bridges: the card's own colour, 1 px into the neighbour so the join is seamless */
-.h-cc-bridge { position: absolute; top: 0; bottom: 0; z-index: 100; display: none; align-items: center; margin: auto 0; color: var(--surface-surface_1); pointer-events: none; }
+.h-cc-bridge { position: absolute; top: 0; bottom: 0; z-index: 100; display: none; align-items: center; margin: auto 0; color: var(--color-white-35); pointer-events: none; }   /* the pane's own white, no blur under a 22 px piece */
+html[data-theme=dark] .h-cc-bridge { color: var(--color-white-5); }
 .h-cc-b1 { width: 22px; height: 42px; }
 .h-cc-b2 { width: 18px; height: 28px; }
 .h-cc-bL { right: calc(100% - 1px); }
@@ -4382,9 +4398,10 @@ function hccCard(v,off){const e=EVENTS[FEATURED_LIST[hccIdx(v)].ev];
  return `<div class="h-cc-card" data-v="${v}" data-offset="${off}"><span class="h-cc-bridge h-cc-b1 h-cc-bL" aria-hidden="true">${CC_B1}</span><span class="h-cc-bridge h-cc-b1 h-cc-bR" aria-hidden="true">${CC_B1}</span><span class="h-cc-bridge h-cc-b2 h-cc-bL" aria-hidden="true">${CC_B2}</span><span class="h-cc-bridge h-cc-b2 h-cc-bR" aria-hidden="true">${CC_B2}</span><div class="h-cc-in"><div class="h-cc-pic" aria-hidden="true"><span><img data-pic="${e.pic}" alt=""></span></div><div class="h-cc-main"><div class="h-cc-slide"></div></div></div></div>`}
 function hCarousel(){const n=FEATURED_LIST.length;CC.page=hccIdx(featIdx);featIdx=CC.page;
  const tabs=FEATURED_LIST.map((f,k)=>`<button type="button" class="h-cc-tab" data-hslide="${k}" aria-label="Slide ${k+1}: ${esc(EVENTS[f.ev].q)}"${k===CC.page?' aria-current="true"':''}><i></i></button>`).join('');
- return `<section class="h-cc" role="region" aria-roledescription="carousel" aria-label="Featured markets" tabindex="0" data-n="${n}"><div class="h-cc-view" aria-live="polite">${CC_OFF.map(off=>hccCard(CC.page+off,off)).join('')}</div><div class="h-cc-tabs">${tabs}</div><p class="h-fb-live" aria-live="polite"></p></section>`}
+ const amb=`<div class="h-cc-amb" aria-hidden="true"><img class="on" data-pic="${EVENTS[FEATURED_LIST[CC.page].ev].pic}" alt=""><img alt=""></div>`;
+ return `<section class="h-cc" role="region" aria-roledescription="carousel" aria-label="Featured markets" tabindex="0" data-n="${n}">${amb}<div class="h-cc-view" aria-live="polite">${CC_OFF.map(off=>hccCard(CC.page+off,off)).join('')}</div><div class="h-cc-tabs">${tabs}</div><p class="h-fb-live" aria-live="polite"></p></section>`}
 function hccPlace(c,off){const [x,y,w,h,op,z]=hccVariant(off,CC.tier,CC.w);c.dataset.offset=off;
- c.style.setProperty('--x',x+'px');c.style.setProperty('--y',y+'px');c.style.setProperty('--w',w+'px');c.style.setProperty('--h',h+'px');c.style.opacity=op;c.style.zIndex=z;c.style.pointerEvents=op?'auto':'none';
+ c.style.setProperty('--x',x+'px');c.style.setProperty('--y',y+'px');c.style.setProperty('--w',w+'px');c.style.setProperty('--h',h+'px');c.style.opacity=op;c.style.zIndex=z;c.style.pointerEvents=op?'auto':'none';c.classList.toggle('h-cc-hid',!op);
  const m=hq('.h-cc-main',c);if(m)m.inert=off!==0;c.setAttribute('aria-hidden',off===0?'false':'true')}
 /* the slide is built once a card comes within one step of the middle, and then wired like the banner's */
 function hccFill(c,off){if(Math.abs(off)>1)return;const sl=hq('.h-cc-slide',c);if(!sl||sl.firstElementChild)return;
@@ -4393,7 +4410,9 @@ function hccLayout(cc){const W=cc.clientWidth||CC.w;CC.w=W;CC.tier=W>=1012?'desk
  const aw=CC.tier==='desktop'?762:CC.tier==='tablet'?560:Math.min(340,W-56),ah=CC.tier==='desktop'?513:CC.tier==='tablet'?440:490;
  cc.style.setProperty('--aw',aw+'px');cc.style.setProperty('--ah',ah+'px');
  hqa('.h-cc-card',cc).forEach(c=>hccPlace(c,+c.dataset.v-CC.page))}
-function hccMount(cc){cc.classList.add('h-cc-still');hccLayout(cc);hqa('.h-cc-card',cc).forEach(c=>hccFill(c,+c.dataset.v-CC.page));void cc.offsetWidth;cc.classList.remove('h-cc-still');
+/* the glow behind the glass is the middle market's photo, blurred; the two layers cross-fade on a turn */
+function hccAmb(cc){const amb=hq('.h-cc-amb',cc);if(!amb)return;const pic=EVENTS[FEATURED_LIST[featIdx].ev].pic;const on=hq('img.on',amb),off=hq('img:not(.on)',amb)||on;if(on&&on.dataset.pic===pic)return;off.dataset.pic=pic;off.src=PIC[pic]||'';off.classList.add('on');if(on&&on!==off)on.classList.remove('on')}
+function hccMount(cc){cc.classList.add('h-cc-still');hccLayout(cc);hccAmb(cc);hqa('.h-cc-card',cc).forEach(c=>hccFill(c,+c.dataset.v-CC.page));void cc.offsetWidth;cc.classList.remove('h-cc-still');
  if(!cc._ro){cc._ro=new ResizeObserver(()=>{if(cc.isConnected)hccLayout(cc)});cc._ro.observe(cc)}
  cc.addEventListener('keydown',e=>{if(e.target!==cc||e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowLeft'){e.preventDefault();hccGo(-1,'hand')}else if(e.key==='ArrowRight'){e.preventDefault();hccGo(1,'hand')}})}
 const ccHeld=cc=>{if(FBX.touch||FBX.pin!==null||document.hidden)return true;try{return cc.matches(':has(:focus-visible)')}catch(e){return false}};
@@ -4404,7 +4423,7 @@ function hccGo(d,how){const cc=hq('.h-cc');if(!cc||!d)return;const n=+cc.dataset
  CC_OFF.forEach(off=>{const v=CC.page+off;let c=have.get(v);
   if(!c){const t=document.createElement('div');t.innerHTML=hccCard(v,off);c=t.firstElementChild;hydratePics(c);c.classList.add('h-cc-still');viewEl.appendChild(c);hccPlace(c,off);void c.offsetWidth;c.classList.remove('h-cc-still')}
   hccFill(c,off);hccPlace(c,off)});
- hccTabs(cc);const lv=hq('.h-fb-live',cc);if(lv&&how==='hand')lv.textContent=`${featIdx+1} of ${n}: ${EVENTS[FEATURED_LIST[featIdx].ev].q}`}
+ hccTabs(cc);hccAmb(cc);const lv=hq('.h-fb-live',cc);if(lv&&how==='hand')lv.textContent=`${featIdx+1} of ${n}: ${EVENTS[FEATURED_LIST[featIdx].ev].q}`}
 function hccTo(k,how){const n=FEATURED_LIST.length;let diff=k-featIdx;if(diff>n/2)diff-=n;else if(diff<-n/2)diff+=n;if(diff)hccGo(diff,how);else fbStart=performance.now()}
 /* the prototype's own drivers step the banner with this */
 function featGo(i,userAction){const fb=hq('#hfb');if(!fb){if(hq('.h-cc'))hccTo(((i%FEATURED_LIST.length)+FEATURED_LIST.length)%FEATURED_LIST.length,userAction?'hand':'still');else featIdx=i;return}fbGo(0,((i%FEATURED_LIST.length)+FEATURED_LIST.length)%FEATURED_LIST.length,userAction?'hand':'still')}
