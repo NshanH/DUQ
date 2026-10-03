@@ -2505,6 +2505,49 @@ svg.i.h-ic-xs{width:var(--sizing-icon-xs);height:var(--sizing-icon-xs)}
 /* autoplay: the current dot fills over its 8 s and stops while the pointer is on the banner (25 Sep proposal) */
 .h-fdot[aria-current="true"] i::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--surface-ink); transform-origin: left center; transform: scaleX(var(--prog, 1)); }
 @media (max-width:900px) { .h-fb { height: 440px; padding: var(--spacing-3xl) var(--spacing-3xl) var(--spacing-8xl); } }
+/* ---------- Signed-out hero = 21st.dev «Connected Carousel» (arunachalam/connected-carousel, the user, 3 Oct 2026): the
+   banner slide in the middle card, the next and previous markets as linked squircle pills either side, curved bridges
+   between them, the aperture animation when the page turns, progress tabs below. Geometry and timings are the
+   component's; the card ground, bridges, tab track and bar are tokens. ---------- */
+.h-cc { --aw: 762px; --ah: 513px; --cc-t: 650ms cubic-bezier(.2, .8, .2, 1); position: relative; display: flex; width: 100%; min-width: 0; flex-direction: column; align-items: center; overflow: hidden; padding: var(--spacing-2xl) 0; user-select: none; outline: none; }
+.h-cc:focus-visible { box-shadow: inset 0 0 0 var(--sizing-border-ring) var(--focus); border-radius: var(--radius-border_radius_26); }
+.h-cc-view { position: relative; width: 100%; height: var(--ah); }
+.h-cc-card { position: absolute; left: 50%; top: 50%; width: var(--w); height: var(--h); translate: var(--x) var(--y); border-radius: var(--radius-border_radius_6xl); background: var(--surface-surface_1); color: var(--text-high_em); box-shadow: 0 10px 30px rgba(95, 109, 119, .08), 0 4px 12px rgba(95, 109, 119, .06); will-change: translate, width, height; transition: translate var(--cc-t), width var(--cc-t), height var(--cc-t), opacity var(--cc-t); }
+html[data-theme=dark] .h-cc-card { box-shadow: 0 10px 30px rgba(0, 0, 0, .6), 0 4px 12px rgba(0, 0, 0, .4); }
+.h-cc-card.h-cc-still, .h-cc-card.h-cc-still * { transition: none !important; }
+.h-cc-card:not([data-offset="0"]) { cursor: pointer; }
+/* the bridges: the card's own colour, 1 px into the neighbour so the join is seamless */
+.h-cc-bridge { position: absolute; top: 0; bottom: 0; z-index: 100; display: none; align-items: center; margin: auto 0; color: var(--surface-surface_1); pointer-events: none; }
+.h-cc-b1 { width: 22px; height: 42px; }
+.h-cc-b2 { width: 18px; height: 28px; }
+.h-cc-bL { right: calc(100% - 1px); }
+.h-cc-bR { left: calc(100% - 1px); }
+.h-cc-bridge svg { display: block; width: 100%; height: 100%; overflow: visible; fill: currentColor; }
+.h-cc-card[data-offset="-1"] .h-cc-b1.h-cc-bR, .h-cc-card[data-offset="1"] .h-cc-b1.h-cc-bL, .h-cc[data-tier="desktop"] .h-cc-card[data-offset="-2"] .h-cc-b2.h-cc-bR, .h-cc[data-tier="desktop"] .h-cc-card[data-offset="2"] .h-cc-b2.h-cc-bL { display: flex; }
+.h-cc-in { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: inherit; }
+/* the pill: the market's photo in an 8 px frame; it fades out when the card is the one in the middle */
+.h-cc-pic { position: absolute; inset: 0; padding: var(--spacing-md); transition: opacity 220ms ease-out; }
+.h-cc-pic > span { display: block; width: 100%; height: 100%; overflow: hidden; border-radius: var(--radius-border_radius_4xl); background: var(--card-2); }
+.h-cc-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.h-cc-card[data-offset="0"] .h-cc-pic { opacity: 0; pointer-events: none; }
+/* the slide sits in a box of the middle card's size at the centre of every card, so the aperture clips it while the
+   card grows or shrinks; off-centre it is faded and pushed out to its side */
+.h-cc-main { position: absolute; left: 50%; top: 50%; width: var(--aw); height: var(--ah); translate: -50% -50%; }
+.h-cc-slide { width: 100%; height: 100%; opacity: 0; translate: 822px 0; pointer-events: none; transition: opacity var(--cc-t), translate var(--cc-t); }
+.h-cc-card[data-offset^="-"] .h-cc-slide { translate: -822px 0; }
+.h-cc-card[data-offset="0"] .h-cc-slide { opacity: 1; translate: 0 0; pointer-events: auto; }
+.h-cc .h-fb { height: 100%; padding: var(--spacing-5xl) var(--spacing-6xl) var(--spacing-6xl); border-radius: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* progress tabs: 8 px tracks, the current one 80 wide with the bar filling over the interval */
+.h-cc-tabs { display: flex; align-items: center; gap: var(--spacing-sm); margin-top: var(--spacing-4xl); }
+.h-cc .h-fb-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }   /* read out, never drawn */
+.h-cc-tab { display: block; width: 8px; height: 8px; padding: 0; overflow: hidden; border: 0; border-radius: 3px; background: var(--neutral_inverse_white-alpha_12); cursor: pointer; transition: width 300ms ease-out, background-color var(--h-d-fast); }
+.h-cc-tab:hover { background: var(--neutral_inverse_white-alpha_24); }
+.h-cc-tab[aria-current="true"] { width: 80px; background: var(--neutral_inverse_white-alpha_12); }
+.h-cc-tab:focus-visible { outline: var(--sizing-border-ring) solid var(--focus); outline-offset: 2px; }
+.h-cc-tab i { display: block; height: 100%; border-radius: 3px; background: var(--surface-info_med_em); transform-origin: 0 50%; transform: scaleX(0); }
+@media (prefers-reduced-motion: reduce) { .h-cc-card, .h-cc-slide, .h-cc-pic, .h-cc-tab { transition: none; } }
+@media (max-width:640px) { .h-cc-card { border-radius: var(--radius-border_radius_5xl); } .h-cc-pic > span { border-radius: var(--radius-border_radius_3xl); } }
+@media (max-width:900px) { .h-cc { margin-inline: calc(-1 * var(--sizing-layout-gutter_mobile)); width: auto; } .h-cc .h-fb { padding: var(--spacing-3xl); } }
 @media (max-width:900px) { .h-fs { gap: var(--spacing-2xl); } }
 @media (max-width:900px) { .h-fs-head { gap: var(--spacing-xl); } }
 @media (max-width:900px) { .h-fs-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: var(--spacing-xl); } }
@@ -4286,8 +4329,11 @@ function fsWatch(fb){if(!fb)return;hFsFit(fb);fsRO.observe(fb)}
 /* ---------- autoplay 8 s: waits under the mouse, with keyboard focus inside, while a finger is down or a line is pinned,
    in a background tab; never under reduced motion (the dot stays full) ---------- */
 function fbHeld(fb){if(FBX.hover||FBX.touch||FBX.pin!==null||document.hidden)return true;try{return fb.matches(':has(:focus-visible)')}catch(e){return false}}
-function fbLoop(now){const fb=hq('#hfb');
- if(fb&&view==='home'&&!query&&!curCat){const still=reduceMotion()||!featOn;if(still||fbHeld(fb))fbStart+=now-fbLast;
+function fbLoop(now){const fb=hq('#hfb'),cc=fb?null:hq('.h-cc');
+ if(cc&&view==='home'&&!query&&!curCat){const still=reduceMotion()||!featOn;if(still||ccHeld(cc))fbStart+=now-fbLast;
+  const bar=hq('.h-cc-tab[aria-current] i',cc);if(bar)bar.style.transform=still?'scaleX(1)':`scaleX(${Math.min(1,Math.max(0,(now-fbStart)/CC_MS)).toFixed(3)})`;
+  if(!still&&now-fbStart>=CC_MS)hccGo(1,'auto')}
+ else if(fb&&view==='home'&&!query&&!curCat){const still=reduceMotion()||!featOn;if(still||fbHeld(fb))fbStart+=now-fbLast;
   const dot=hq('.h-fdot[aria-current] i',fb);if(dot){if(still)dot.style.removeProperty('--prog');else dot.style.setProperty('--prog',Math.min(1,Math.max(0,(now-fbStart)/SLIDE_MS)).toFixed(3))}
   if(!still&&now-fbStart>=SLIDE_MS)fbGo(1,null,'auto')}
  fbLast=now;requestAnimationFrame(fbLoop)}
@@ -4295,7 +4341,7 @@ requestAnimationFrame(fbLoop);
 function featAuto(){featOn=live&&!reduceMotion();fbStart=performance.now()}
 /* by hand (arrows, dots, keys, swipe) or by the clock: the nav stays, only the slide is swapped — the old one fades out
    as a layer while the next comes in from the side it was asked from; focus stays where it was */
-function fbGo(d,to,how){const fb=hq('#hfb');if(!fb)return;const n=+fb.dataset.n,cur=((featIdx%n)+n)%n;const next=to!==null&&to!==undefined?to:(cur+d+n)%n;
+function fbGo(d,to,how){const fb=hq('#hfb');if(!fb){if(hq('.h-cc')){if(to!==null&&to!==undefined)hccTo(to,how);else hccGo(d,how)}return}const n=+fb.dataset.n,cur=((featIdx%n)+n)%n;const next=to!==null&&to!==undefined?to:(cur+d+n)%n;
  fbStart=performance.now();if(next===cur)return;const dir=to!==null&&to!==undefined?(next>cur?1:-1):d>=0?1:-1;featIdx=next;
  const t=document.createElement('div');t.innerHTML=hSlide(FEATURED_LIST[next].ev);const nfs=t.firstElementChild;hydratePics(nfs);
  hqa('.h-fs.h-fs-out',fb).forEach(o=>o.remove());const old=hq('.h-fs',fb);const hadFocus=old&&old.contains(document.activeElement);
@@ -4308,8 +4354,60 @@ function fbGo(d,to,how){const fb=hq('#hfb');if(!fb)return;const n=+fb.dataset.n,
  hFsFit(fb);
  if(hadFocus){const q=hq('.h-fs-q',nfs);if(q)q.focus({preventScroll:true})}
  const lv=hq('.h-fb-live',fb);if(lv&&how==='hand')lv.textContent=`${next+1} of ${n}: ${EVENTS[nfs.dataset.ev].q}`}
+/* ---------- signed-out hero: 21st.dev «Connected Carousel» (arunachalam/connected-carousel), in vanilla JS ----------
+   Nine cards at offsets −4…4 from the page, each keyed by its virtual index so a turn of the page moves the same
+   element to its next slot and CSS transitions do the aperture: the middle card shrinks into a pill, the next pill
+   grows into the middle. The slide (our banner slide, data untouched) lives in every card in a box of the middle
+   card's size, so the card's clip reveals it; the pill shows the market's photo. Tiers from the carousel's own width:
+   desktop 762×513 (pills 105×344 and 74×205), tablet 560×440 (pills 100×340), mobile min(340, w−56)×490 (peeks 60×410).
+   Autoplay 6 s with the bar in the current tab; no pause under the mouse (the component's demo); clicks on a pill
+   turn the page by its offset, the tabs by the shortest way, ← → from the region or the slide. */
+const CC={page:0,tier:'desktop',w:1204},CC_OFF=[-4,-3,-2,-1,0,1,2,3,4],CC_MS=6000;
+const CC_B1='<svg viewBox="0 0 20 37.3338" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0C0 0 1.2422 13.5759 10 13.5759C18.7578 13.5759 20 0 20 0V37.3338C20 37.3338 18.7578 23.7578 10 23.7578C1.2422 23.7578 0 37.3338 0 37.3338V0Z"/></svg>';
+const CC_B2='<svg viewBox="0 0 16 28" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0C0 0 0.993759 10.1818 8 10.1818C15.0062 10.1818 16 0 16 0V28C16 28 15.0062 17.8182 8 17.8182C0.993759 17.8182 0 28 0 28V0Z"/></svg>';
+const hfbEl=()=>hq('#hfb')||hq('.h-cc-card[data-offset="0"] .h-fb');   /* the banner, or the carousel's middle slide */
+const hccIdx=v=>{const n=FEATURED_LIST.length;return ((v%n)+n)%n};
+function hccVariant(off,tier,W){
+ if(tier==='mobile'){const aw=Math.min(340,W-56),ah=490,gap=16,pw=60,ph=410;
+  if(off===0)return[-aw/2,-ah/2,aw,ah,1,0];if(off===-1)return[-aw/2-gap-pw,-ph/2,pw,ph,1,100];if(off===1)return[aw/2+gap,-ph/2,pw,ph,1,100];
+  return[off<0?-aw/2-220:aw/2+220,-ph/2,pw,ph,0,0]}
+ if(tier==='tablet'){const gap=18,sw=100,sh=340;
+  if(off===0)return[-280,-220,560,440,1,0];if(off===-1)return[-280-gap-sw,-sh/2,sw,sh,1,100];if(off===1)return[280+gap,-sh/2,sw,sh,1,100];
+  return[off<0?-280-240:280+240,-sh/2,74,205,0,0]}
+ switch(off){case 0:return[-381,-256.5,762,513,1,0];case -1:return[-506,-172,105,344,1,100];case 1:return[401,-172,105,344,1,100];
+  case -2:return[-596,-102.5,74,205,1,100];case 2:return[522,-102.5,74,205,1,100];case -3:return[-720,-102.5,74,205,0,0];case 3:return[646,-102.5,74,205,0,0];
+  default:return[off<0?-860:860,-102.5,74,205,0,0]}}
+const hccSlide=ev=>`<div class="h-fb h-cc-fb" data-ev="${ev}">${hSlide(ev)}</div>`;
+function hccCard(v,off){const e=EVENTS[FEATURED_LIST[hccIdx(v)].ev];
+ return `<div class="h-cc-card" data-v="${v}" data-offset="${off}"><span class="h-cc-bridge h-cc-b1 h-cc-bL" aria-hidden="true">${CC_B1}</span><span class="h-cc-bridge h-cc-b1 h-cc-bR" aria-hidden="true">${CC_B1}</span><span class="h-cc-bridge h-cc-b2 h-cc-bL" aria-hidden="true">${CC_B2}</span><span class="h-cc-bridge h-cc-b2 h-cc-bR" aria-hidden="true">${CC_B2}</span><div class="h-cc-in"><div class="h-cc-pic" aria-hidden="true"><span><img data-pic="${e.pic}" alt=""></span></div><div class="h-cc-main"><div class="h-cc-slide"></div></div></div></div>`}
+function hCarousel(){const n=FEATURED_LIST.length;CC.page=hccIdx(featIdx);featIdx=CC.page;
+ const tabs=FEATURED_LIST.map((f,k)=>`<button type="button" class="h-cc-tab" data-hslide="${k}" aria-label="Slide ${k+1}: ${esc(EVENTS[f.ev].q)}"${k===CC.page?' aria-current="true"':''}><i></i></button>`).join('');
+ return `<section class="h-cc" role="region" aria-roledescription="carousel" aria-label="Featured markets" tabindex="0" data-n="${n}"><div class="h-cc-view" aria-live="polite">${CC_OFF.map(off=>hccCard(CC.page+off,off)).join('')}</div><div class="h-cc-tabs">${tabs}</div><p class="h-fb-live" aria-live="polite"></p></section>`}
+function hccPlace(c,off){const [x,y,w,h,op,z]=hccVariant(off,CC.tier,CC.w);c.dataset.offset=off;
+ c.style.setProperty('--x',x+'px');c.style.setProperty('--y',y+'px');c.style.setProperty('--w',w+'px');c.style.setProperty('--h',h+'px');c.style.opacity=op;c.style.zIndex=z;c.style.pointerEvents=op?'auto':'none';
+ const m=hq('.h-cc-main',c);if(m)m.inert=off!==0;c.setAttribute('aria-hidden',off===0?'false':'true')}
+/* the slide is built once a card comes within one step of the middle, and then wired like the banner's */
+function hccFill(c,off){if(Math.abs(off)>1)return;const sl=hq('.h-cc-slide',c);if(!sl||sl.firstElementChild)return;
+ sl.innerHTML=hccSlide(FEATURED_LIST[hccIdx(+c.dataset.v)].ev);hydratePics(sl);const fb=sl.firstElementChild;hFsFit(fb);fsRO.observe(fb);bindFeatured(fb)}
+function hccLayout(cc){const W=cc.clientWidth||CC.w;CC.w=W;CC.tier=W>=1012?'desktop':W>=796?'tablet':'mobile';cc.dataset.tier=CC.tier;
+ const aw=CC.tier==='desktop'?762:CC.tier==='tablet'?560:Math.min(340,W-56),ah=CC.tier==='desktop'?513:CC.tier==='tablet'?440:490;
+ cc.style.setProperty('--aw',aw+'px');cc.style.setProperty('--ah',ah+'px');
+ hqa('.h-cc-card',cc).forEach(c=>hccPlace(c,+c.dataset.v-CC.page))}
+function hccMount(cc){cc.classList.add('h-cc-still');hccLayout(cc);hqa('.h-cc-card',cc).forEach(c=>hccFill(c,+c.dataset.v-CC.page));void cc.offsetWidth;cc.classList.remove('h-cc-still');
+ if(!cc._ro){cc._ro=new ResizeObserver(()=>{if(cc.isConnected)hccLayout(cc)});cc._ro.observe(cc)}
+ cc.addEventListener('keydown',e=>{if(e.target!==cc||e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowLeft'){e.preventDefault();hccGo(-1,'hand')}else if(e.key==='ArrowRight'){e.preventDefault();hccGo(1,'hand')}})}
+const ccHeld=cc=>{if(FBX.touch||FBX.pin!==null||document.hidden)return true;try{return cc.matches(':has(:focus-visible)')}catch(e){return false}};
+function hccTabs(cc){hqa('.h-cc-tab',cc).forEach((t,k)=>{const on=k===featIdx;if(on)t.setAttribute('aria-current','true');else t.removeAttribute('aria-current');const i=hq('i',t);if(i)i.style.transform=on?'scaleX(0)':''})}
+function hccGo(d,how){const cc=hq('.h-cc');if(!cc||!d)return;const n=+cc.dataset.n;CC.page+=d;featIdx=hccIdx(CC.page);fbStart=performance.now();FBX.hoverKey=FBX.keyKey=FBX.pin=null;
+ const viewEl=hq('.h-cc-view',cc),have=new Map(hqa('.h-cc-card',viewEl).map(c=>[+c.dataset.v,c]));
+ have.forEach((c,v)=>{if(Math.abs(v-CC.page)>4){c.remove();have.delete(v)}});
+ CC_OFF.forEach(off=>{const v=CC.page+off;let c=have.get(v);
+  if(!c){const t=document.createElement('div');t.innerHTML=hccCard(v,off);c=t.firstElementChild;hydratePics(c);c.classList.add('h-cc-still');viewEl.appendChild(c);hccPlace(c,off);void c.offsetWidth;c.classList.remove('h-cc-still')}
+  hccFill(c,off);hccPlace(c,off)});
+ hccTabs(cc);const lv=hq('.h-fb-live',cc);if(lv&&how==='hand')lv.textContent=`${featIdx+1} of ${n}: ${EVENTS[FEATURED_LIST[featIdx].ev].q}`}
+function hccTo(k,how){const n=FEATURED_LIST.length;let diff=k-featIdx;if(diff>n/2)diff-=n;else if(diff<-n/2)diff+=n;if(diff)hccGo(diff,how);else fbStart=performance.now()}
 /* the prototype's own drivers step the banner with this */
-function featGo(i,userAction){const fb=hq('#hfb');if(!fb){featIdx=i;return}fbGo(0,((i%FEATURED_LIST.length)+FEATURED_LIST.length)%FEATURED_LIST.length,userAction?'hand':'still')}
+function featGo(i,userAction){const fb=hq('#hfb');if(!fb){if(hq('.h-cc'))hccTo(((i%FEATURED_LIST.length)+FEATURED_LIST.length)%FEATURED_LIST.length,userAction?'hand':'still');else featIdx=i;return}fbGo(0,((i%FEATURED_LIST.length)+FEATURED_LIST.length)%FEATURED_LIST.length,userAction?'hand':'still')}
 
 /* ---------- rows <-> chart (event-chart State=Focus): a row, the leader's number or a chart label brings its line
    forward, the other rows fade; a click (a tap on the phone) pins it until clicked again ---------- */
@@ -4323,7 +4421,7 @@ function fbWire(fs){const big=hq('.h-fs-big',fs);const e=EVENTS[fs.dataset.ev];
 function fbMarkChart(el){const ls=hqa('.h-ec-label',el);const on=ls.length>1&&!isMobile();
  ls.forEach(l=>{if(on&&l.getAttribute('role')!=='button'){l.tabIndex=0;l.setAttribute('role','button')}});
  fbPaint()}
-function fbPaint(){const fb=hq('#hfb');if(!fb)return;const fs=hq('.h-fs:not(.h-fs-out)',fb);if(!fs)return;
+function fbPaint(){const fb=hfbEl();if(!fb)return;const fs=hq('.h-fs:not(.h-fs-out)',fb);if(!fs)return;
  const k=FBX.hoverKey??FBX.keyKey??FBX.pin;const has=k!==null&&hqa('.h-ec-line',fs).length>1&&hqa(`.h-ec-line[data-k="${k}"]`,fs).length>0;
  hqa('.h-ec-line, .h-ec-label, .h-fs-row[data-k]',fs).forEach(n=>{n.classList.toggle('h-is-focus',has&&n.dataset.k===k);n.classList.toggle('h-is-dim',has&&n.dataset.k!==k)});
  hqa('.h-ec-label[role=button]',fs).forEach(l=>{const v=String(FBX.pin===l.dataset.k);if(l.getAttribute('aria-pressed')!==v)l.setAttribute('aria-pressed',v)})}
@@ -4489,14 +4587,15 @@ function renderHome(){const body=hq('#home-body');let html='';
  if(query){const list=searchList(query).map(r=>r.e);   /* the same list, in the same order and the same number, as the suggestions */
   html=`<div class="h-root"><div class="cathead"><a class="s-back h-t-body-sm-semibold" href="#home">← Home</a><h1 id="home-h1" tabindex="-1">Search</h1><p>${list.length} ${list.length===1?'result':'results'} for “${esc(query)}”</p></div>`+(list.length?`<div class="h-grid">${list.map(e=>sStat(e)?sDone(e):hCard(e)).join('')}</div>`:`<div class="card empty"><b>No markets for “${esc(query)}”.</b>Try a shorter word.</div>`)+'</div>'}
  else if(curCat){const list=evList(curCat);html=`<div class="h-root"><div class="cathead"><h1 id="home-h1" tabindex="-1">${catTitle(curCat)}</h1><p>${list.length?list.length+' market'+(list.length===1?'':'s'):''}</p></div>`+(list.length?`<div class="h-grid">${list.map(e=>hCard(e)).join('')}</div>`:`<div class="card empty"><b>Nothing here yet.</b>New markets land every week.<div><a class="btn ink" href="#home">See all markets</a></div></div>`)+'</div>'}
- else html=`<div class="h-root h-home"><h1 id="home-h1" tabindex="-1" class="sr-only">Markets</h1><div class="h-zone">${hFeatured()}<div class="h-rail">${hRail()}</div></div>${hSections()}</div>`;
+ /* signed out: the Connected Carousel alone (the user, 3 Oct 2026: the right block goes); signed in: the banner and its card */
+ else html=`<div class="h-root h-home"><h1 id="home-h1" tabindex="-1" class="sr-only">Markets</h1><div class="h-zone${user?'':' h-solo'}">${user?hFeatured()+`<div class="h-rail">${hRail()}</div>`:hCarousel()}</div>${hSections()}</div>`;
  body.innerHTML=html;hydratePics(body);
  hLayoutZone(body);hLayoutGrids(body);hDraw(body);
- const fb=hq('#hfb',body);if(fb){bindFeatured(fb);fsWatch(fb);hRailAfter(body);featAuto()}else featOn=false}
+ const fb=hq('#hfb',body);if(fb){bindFeatured(fb);fsWatch(fb);hRailAfter(body);featAuto()}else{const cc=hq('.h-cc',body);if(cc){hccMount(cc);featAuto()}else featOn=false}}
 function hydratePics(root){root.querySelectorAll('img[data-pic]').forEach(im=>{im.src=PIC[im.dataset.pic]||'';im.loading='lazy';im.decoding='async'})}
 /* the grids follow the column's width */
 new ResizeObserver(()=>{if(view==='home')hLayoutGrids(hq('#home-body'))}).observe(hq('#home-body'));
-addEventListener('resize',()=>{if(view!=='home')return;const fb=hq('#hfb');if(fb){const want=isMobile()?'':'h-p60',ph=hq('.h-fs-head .h-photo',fb);if(ph&&ph.classList.contains('h-p60')!==!!want)renderHome()}},{passive:true});
+addEventListener('resize',()=>{if(view!=='home')return;const fb=hfbEl();if(fb){const want=isMobile()?'':'h-p60',ph=hq('.h-fs-head .h-photo',fb);if(ph&&ph.classList.contains('h-p60')!==!!want)renderHome()}},{passive:true});
 
 /* ---------- clicks: the cards open their event, the rail cards their page ---------- */
 document.addEventListener('click',e=>{if(view!=='home')return;
@@ -4510,6 +4609,7 @@ document.addEventListener('click',e=>{if(view!=='home')return;
  if(e.target.closest('button, a'))return;
  const g=e.target.closest('[data-hgo]');
  if(g){const k=g.dataset.hgo;if(k==='positions')go('#account');else if(k==='signup'){authReturn='#home';go('#signup')}else if(k==='deposit'){if(user)openDeposit();else{authReturn='#home';go('#signin')}}else if(k==='referral')go('#account/invite');return}
+ const pc=e.target.closest('.h-cc-card');if(pc&&pc.dataset.offset!=='0'){hccGo(+pc.dataset.offset,'hand');return}
  const ev=e.target.closest('[data-hev]');if(ev){go('#event/'+ev.dataset.hev);return}
  const card=e.target.closest('.h-mc[data-ev]');if(card)go('#event/'+card.dataset.ev)});
 document.addEventListener('keydown',e=>{if(view!=='home'||(e.key!=='Enter'&&e.key!==' '))return;const c=e.target.closest&&e.target.closest('.h-wc[tabindex]');if(c&&e.target===c){e.preventDefault();c.click()}});
@@ -5403,7 +5503,7 @@ function applyTick(e,o,old){
  $$(`[data-obar="${e.id}-${o.i}"]`).forEach(el=>el.style.width=o.p+'%');
  $$(`[data-pick^="${e.id}|${o.i}|"]`).forEach(b=>{const s=b.dataset.pick.endsWith('yes')?'yes':'no';b.setAttribute('aria-label',outLabel(e,o,s));const sm=b.querySelector('small');if(sm)sm.textContent=priceOf(e,o,s)+'¢'});
  if(view==='home'){hqa(`#home-body .h-mline[data-ev="${e.id}"]`).forEach(hLine);hqa(`#home-body .h-ec[data-ev="${e.id}"]`).forEach(el=>hEC(el,true));
-  const fb=hq('#hfb');if(fb&&e.id===FEATURED.ev&&hIsEx(e)){const big=hq('.h-fs:not(.h-fs-out) .h-fs-big [data-op]',fb);if(big&&big.dataset.op!==e.id+'-'+hLeaders(e,1)[0].i)hFsFit(fb)}
+  const fb=hfbEl();if(fb&&e.id===FEATURED.ev&&hIsEx(e)){const big=hq('.h-fs:not(.h-fs-out) .h-fs-big [data-op]',fb);if(big&&big.dataset.op!==e.id+'-'+hLeaders(e,1)[0].i)hFsFit(fb)}
   if(positions.some(p=>p.ev===e.id)){const c=hq('#home-body .h-rail > :first-child');if(c&&c.classList.contains('h-mx-card')){const t=document.createElement('div');t.innerHTML=hCardPositions();const n=t.firstElementChild;c.replaceWith(n);if(n.classList.contains('h-mx-card')){hFitPill(n);hSizeRO.observe(n)}}}}
  /* event page */
  if(view==='event'&&e.id===curEv){const el=$('#ocp-'+o.i);if(el){tween(el,old,o.p,v=>Math.round(v));const h=el.closest('.ochead');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
