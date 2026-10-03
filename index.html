@@ -5435,10 +5435,15 @@ function acPositions(){const open=[],done=[];
 function acPosOpen(open){if(!user)return acGuest('positions');
  if(!open.length)return acEmpty('No positions yet.','Your first call shows up here.',`<a class="btn ink" href="#home">Browse markets</a>`);
  const head=acHd(['Market','Avg price','Cost','To win','Value now','Realized PnL']);
- const rows=open.map(r=>acRow(acMk(r.e,r.o,acChip(r.yes,nfmt(r.n)+' '+(r.yes?'Yes':'No')))
+ /* TEMPORARY amounts demo (the user, 4 Oct 2026: «half big, half small — e.g. 44,000 to 4,000,000»): the top half of the
+    rows hold large positions (the share counts below), so long figures stand next to the usual small ones; cost, value
+    and PnL follow from the same prices. The table only: the Portfolio block above keeps the real positions */
+ const AC_BIG_N=[4000000,44000,400000,1250000],half=Math.ceil(open.length/2);
+ const rows=open.map((r0,k)=>{const f=k<half&&AC_BIG_N[k]?AC_BIG_N[k]/r0.n:1,r=f===1?r0:{...r0,n:r0.n*f,c:r0.c*f,v:r0.v*f,d:r0.d*f,rz:r0.rz*f};
+  return acRow(acMk(r.e,r.o,acChip(r.yes,nfmt(r.n)+' '+(r.yes?'Yes':'No')))
   +acCell('Avg price',r.avg+'¢','r')+acCell('Cost',money(r.c),'r')+acCell('To win',money(r.n),'r')
   +acCell('Value now',`<span class="ac-stack"><span>${money(r.v)}</span><span class="d ${acTone(r.d)}">${acSigned(r.d)} ${acPct(r.d,r.c)}</span></span>`,'r b')
-  +acCell('Realized PnL',acSigned(r.rz),'r '+(Math.abs(r.rz)<.005?'dim':acTone(r.rz)))));
+  +acCell('Realized PnL',acSigned(r.rz),'r '+(Math.abs(r.rz)<.005?'dim':acTone(r.rz))))});
  return acTbl('',5,head,rows)}
 /* Net = (trading PnL + resolution payout) − the cost of the shares held until resolution; the header says so */
 function acPosHist(done){if(!user)return acGuest('closed positions');
