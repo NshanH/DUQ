@@ -2568,8 +2568,8 @@ svg.i.h-ic-xs{width:var(--sizing-icon-xs);height:var(--sizing-icon-xs)}
 .h-mc.h-wide .h-mc-r { display: flex; min-width: 0; flex: 1; flex-direction: column; }
 @media (max-width:900px) { .h-mc { min-height: 0; } }
 /* ---------- Cards beside the banner (NEW, not in Figma): glass, a small picture, no full-card photos (28 Sep) ---------- */
-.h-rail { display: grid; min-width: 0; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: var(--spacing-2xl); }
-.h-zone.h-stack .h-rail { grid-template-rows: none; grid-template-columns: repeat(3, minmax(0, 1fr)); height: 112px; }
+.h-rail { display: grid; min-width: 0; grid-template-rows: minmax(0, 1fr); gap: var(--spacing-2xl); }   /* one card (3 Oct 2026) */
+.h-zone.h-stack .h-rail { grid-template-rows: none; grid-template-columns: minmax(0, 1fr); height: 160px; }
 @media (max-width:900px) { .h-rail { display: flex; height: auto; gap: var(--spacing-xl); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: calc(-1 * var(--spacing-xs)) calc(-1 * var(--sizing-layout-gutter_mobile)) calc(-1 * var(--spacing-4xl)); padding: var(--spacing-xs) var(--sizing-layout-gutter_mobile) var(--spacing-4xl); scroll-padding: 0 var(--sizing-layout-gutter_mobile); } }
 @media (max-width:900px) { .h-rail::-webkit-scrollbar { display: none; } }
 @media (max-width:900px) { .h-rail > * { flex: 0 0 272px; height: 112px; scroll-snap-align: start; } }
@@ -2845,6 +2845,19 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
    from below - the banner's slide change turned upright (fbx-out / fbx-in). The leaving and the arriving name share
    one grid cell two lines tall, so the card never changes size. */
 .h-mx-soon { justify-content: center; }
+/* the event card: photo full-bleed, a dark wash rising from the foot, the name in white over it */
+.h-wc.h-ev1 { padding: 0; isolation: isolate; }
+.h-ev1-roll { position: absolute; inset: 0; display: grid; }
+.h-ev1-i { position: relative; grid-area: 1 / 1; display: flex; min-width: 0; align-items: flex-end; padding: var(--spacing-4xl); isolation: isolate; overflow: hidden; }
+.h-ev1-bg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: scale var(--h-d-slow) var(--ease); }
+.h-ev1-i::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, var(--color-black-72), var(--color-black-24) 50%, transparent 80%); }
+.h-ev1-n { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; color: var(--text-white); text-wrap: balance; }
+@media (hover: hover) { .h-wc.h-ev1:hover .h-ev1-bg { scale: 1.04; } }
+.h-ev1-i.h-in { animation: h-ev1-in 700ms var(--ease) both; }
+.h-ev1-i.h-in .h-ev1-n { animation: h-mx-roll-in var(--h-d-enter) var(--ease) 120ms both; }
+@keyframes h-ev1-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .h-ev1-i.h-in, .h-ev1-i.h-in .h-ev1-n { animation: none; } .h-wc.h-ev1:hover .h-ev1-bg { scale: none; } }
+@media (max-width:900px) { .h-rail > .h-ev1 { flex: 1 1 auto; height: 160px; } .h-ev1-i { padding: var(--spacing-2xl); } }
 .h-mx-roll { display: grid; min-width: 0; min-height: calc(2 * var(--typeface-line_height-heading_1)); }
 .h-mx-roll-i { grid-area: 1 / 1; display: flex; min-width: 0; align-items: center; }
 .h-mx-soon-n { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--text-high_em); }
@@ -3004,29 +3017,6 @@ html[data-theme=dark] .money .qr{background:#fff}
         <button type="button" role="menuitemcheckbox" data-proto="low" aria-checked="false">Balance below bond</button>
         <button type="button" role="menuitemcheckbox" data-proto="aplfail" aria-checked="false">Next appeal doesn’t go through</button>
         <button type="button" role="menuitemcheckbox" data-proto="aplexpire" aria-checked="false">Window closes while you appeal</button>
-      </div>
-      <div class="proto-group" data-g="hpos" role="group" aria-label="Home · Positions">
-        <div class="glbl" aria-hidden="true">Home · Positions</div>
-        <button type="button" role="menuitemradio" data-hproto="pos:profit" aria-checked="true">In profit</button>
-        <button type="button" role="menuitemradio" data-hproto="pos:loss" aria-checked="false">At a loss</button>
-        <button type="button" role="menuitemradio" data-hproto="pos:none" aria-checked="false">No positions yet</button>
-      </div>
-      <div class="proto-group" data-g="hsum" role="group" aria-label="Home · Positions sum">
-        <div class="glbl" aria-hidden="true">Home · Positions sum</div>
-        <button type="button" role="menuitemradio" data-hproto="sum:usual" aria-checked="true">Usual</button>
-        <button type="button" role="menuitemradio" data-hproto="sum:100k" aria-checked="false">Over 100,000</button>
-        <button type="button" role="menuitemradio" data-hproto="sum:1m" aria-checked="false">Over 1,000,000</button>
-      </div>
-      <div class="proto-group" data-g="href" role="group" aria-label="Home · Invite friends">
-        <div class="glbl" aria-hidden="true">Home · Invite friends</div>
-        <button type="button" role="menuitemradio" data-hproto="ref:claim" aria-checked="true">Reward to claim</button>
-        <button type="button" role="menuitemradio" data-hproto="ref:none" aria-checked="false">Nothing to claim</button>
-      </div>
-      <div class="proto-group" data-g="hthird" role="group" aria-label="Home · Third card">
-        <div class="glbl" aria-hidden="true">Home · Third card</div>
-        <button type="button" role="menuitemradio" data-hproto="third:soon" aria-checked="true">Closing soon</button>
-        <button type="button" role="menuitemradio" data-hproto="third:move" aria-checked="false">Top move today</button>
-        <button type="button" role="menuitemradio" data-hproto="third:deposit" aria-checked="false">Add money</button>
       </div>
       <div class="proto-group" data-g="hslide" role="group" aria-label="Home · Banner">
         <div class="glbl" aria-hidden="true">Home · Banner</div>
@@ -4443,26 +4433,31 @@ function hCardReferral(){const rate=`<span class="h-wc-l"><b class="h-wc-fig ${T
  if(!user)return `<article class="h-gc h-wc h-au" data-hgo="signup" tabindex="0" role="link">${AU_SKY}${hCap('Invite friends')}<span class="h-wc-row">${rate}</span></article>`;
  if(HS.ref==='claim'&&!user.zero)return `<article class="h-gc h-wc h-au" data-hgo="referral" tabindex="0" role="link">${AU_SKY}${hCap('Invite friends')}<span class="h-wc-row h-wc-mid"><b class="h-wc-fig ${T('heading-chance')} num">${money(REFERRAL.claim)}</b><button type="button" class="h-btn h-ink h-xs ${T('label-sm-bold')} h-spring" data-hact="claim">Claim</button></span></article>`;
  return `<article class="h-gc h-wc h-wc-ref h-au" data-hgo="referral" tabindex="0" role="link">${AU_SKY}<span class="h-wc-stack">${hCap('Invite friends')}${rate}</span><span class="h-wc-share"><b class="${T('label-md-bold')} num">${REFERRAL.code}</b><button type="button" class="h-btn h-ink h-xs ${T('label-sm-bold')} h-spring" data-hact="copy">Copy</button></span></article>`}
-/* 3. What closes next, by name alone — the events take turns by themselves (two pulses each); the click opens the one shown */
+/* The one card beside the banner (the user, 3 Oct 2026: «удалить Create an account, Invite friends — оставить один
+   бокс: событие с картинкой фоном и названием»). The event's photo fills the card, its name sits on a dark wash at the
+   foot. The events that close next take turns by themselves (two pulses each): the new photo and name fade in over the
+   old ones; the click opens the one shown. Cards 1 and 2 (Positions, Invite friends) stay in the code, unused. */
 const hSoonIds=()=>hLive().filter(e=>e.league).map(e=>e.id);
+const hEvIds=()=>{const ids=hSoonIds();return ids.length?ids:hLive().slice(0,3).map(e=>e.id)};
 let hSoon=0;
-const hSoonName=id=>`<b class="h-mx-soon-n ${T('heading-h3')}">${esc(EVENTS[id].q)}</b>`;
-function hCardSoon(){const ids=hSoonIds();if(!ids.length)return hCardMove();const id=ids[hSoon%ids.length];
- return `<article class="h-gc h-wc h-mx-soon" data-hev="${id}" tabindex="0" role="link" aria-label="Closing soon: ${esc(EVENTS[id].q)}"><span class="h-mx-roll"><span class="h-mx-roll-i">${hSoonName(id)}</span></span></article>`}
-function hSoonTick(){const card=hq('.h-rail .h-mx-soon');const ids=hSoonIds();
- if(!card||view!=='home'||document.hidden||ids.length<2||reduceMotion()||!live)return;if(card.matches(':hover')||card.querySelector(':focus-visible')||card.matches(':focus-visible'))return;
- hSoon=(hSoon+1)%ids.length;const id=ids[hSoon];card.dataset.hev=id;card.setAttribute('aria-label','Closing soon: '+EVENTS[id].q);
- const box=hq('.h-mx-roll',card),old=[...box.children];const n=document.createElement('span');n.className='h-mx-roll-i h-in';n.innerHTML=hSoonName(id);box.appendChild(n);
- old.forEach(o=>{o.classList.add('h-out');o.setAttribute('aria-hidden','true');setTimeout(()=>o.remove(),1000)});
- n.addEventListener('animationend',()=>n.classList.remove('h-in'),{once:true})}
+const hEvItem=id=>{const e=EVENTS[id];return `<img class="h-ev1-bg" data-pic="${e.pic}" alt=""><b class="h-ev1-n ${T('heading-h2')}">${esc(e.q)}</b>`};
+function hCardEvent(){const ids=hEvIds();if(!ids.length)return '';const id=ids[hSoon%ids.length];
+ return `<article class="h-gc h-wc h-ev1" data-hev="${id}" tabindex="0" role="link"><span class="h-ev1-roll"><span class="h-ev1-i">${hEvItem(id)}</span></span></article>`}
+function hSoonTick(){const card=hq('.h-rail .h-ev1');const ids=hEvIds();
+ if(!card||view!=='home'||document.hidden||ids.length<2||reduceMotion()||!live)return;if(card.matches(':hover')||card.matches(':focus-visible'))return;
+ hSoon=(hSoon+1)%ids.length;const id=ids[hSoon];card.dataset.hev=id;
+ const box=hq('.h-ev1-roll',card),old=[...box.children];old.forEach(o=>o.setAttribute('aria-hidden','true'));
+ const n=document.createElement('span');n.className='h-ev1-i h-in';n.innerHTML=hEvItem(id);hydratePics(n);box.appendChild(n);
+ const done=()=>{n.classList.remove('h-in');old.forEach(o=>o.remove())};
+ n.addEventListener('animationend',function f(ev){if(ev.target!==n)return;n.removeEventListener('animationend',f);done()});
+ setTimeout(()=>{if(n.isConnected&&old.some(o=>o.isConnected))done()},1600)}
 setInterval(hSoonTick,4800);
 /* the market that moved most today, one per event */
 function hTopMove(){let best=null;hLive().forEach(e=>e.outs.forEach(o=>{if(tradable(e,o)&&(!best||Math.abs(o.d)>Math.abs(best.o.d)))best={e,o}}));return best}
 function hCardMove(){const b=hTopMove();if(!b)return hCov('Add money','USDT · USDC','deposit');const {e,o}=b,one=e.outs.length===1;
  return `<article class="h-gc h-wc" data-hev="${e.id}" tabindex="0" role="link"><span class="h-wc-stack">${hCap('Top move today')}<span class="h-wc-ev">${hPhoto(e,'h-p20')}<span class="${T('label-md')}">${esc(one?e.q:o.n+' · '+e.q)}</span></span></span>
   <span class="h-wc-row h-wc-mid"><b class="h-wc-fig ${T('heading-chance')} num" data-op="${e.id}-${o.i}">${o.p}%</b><span class="h-chip h-chip-sm h-${o.d>=0?'yes':'no'} ${T('label-sm-bold')} num">${hDelta(o.d)} pts</span></span></article>`}
-function hCardThird(){if(HS.third==='move')return hCardMove();if(HS.third==='deposit')return hCov('Add money','USDT · USDC','deposit');return hCardSoon()}
-const hRail=()=>hCardPositions()+hCardReferral()+hCardThird();
+const hRail=()=>hCardEvent();
 function hRailAfter(root){const rail=hq('.h-rail',root);if(!rail)return;hydratePics(rail);const c1=hq('.h-mx-card',rail);if(c1){hFitPill(c1);hSizeRO.observe(c1);hCountUp(c1)}const au=hq('.h-au',rail);if(au)hAuroraMount(au)}
 function hRenderRail(){const rail=hq('#home-body .h-rail');if(!rail)return;rail.innerHTML=hRail();hRailAfter(rail.parentNode)}
 /* a narrow window (the cards still beside the banner below 900 px of zone): the cards go under it, in a row */
