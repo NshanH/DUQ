@@ -1719,13 +1719,16 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-tabs button[aria-selected=true]{background:var(--pill);color:var(--pill-ink);font-weight:var(--typeface-weight-primary-semibold);letter-spacing:var(--typeface-letter_spacing-xs)}
 
 /* List card: the switch, then the table; the card is the container the phone form measures */
-.ac-list{display:flex;flex-direction:column;align-items:stretch;gap:var(--spacing-lg);padding:var(--spacing-xxl) var(--spacing-5xl) var(--spacing-5xl);container-type:inline-size}
+.ac-list{--acpad:var(--spacing-5xl);display:flex;flex-direction:column;align-items:stretch;gap:var(--spacing-lg);padding:var(--spacing-xxl) var(--acpad) var(--spacing-5xl);container-type:inline-size}
+/* a table never squeezes its numbers: when the card is narrower than its columns it scrolls sideways, the rows
+   sliding under the card's edge — the event page's .oxs (the user, 3 Oct 2026: «пусть будет horizontal scroll») */
+.ac-xs{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;margin-inline:calc(-1 * var(--acpad));padding-inline:var(--acpad)}
 .ac-list .seg.mini{margin:0;align-self:flex-start}
 
 /* the table is the event page's «Your position» skin (.postbl): 11 px caps header, 14/500 ink-2 cells with 10 px of
    air above and below, the key figure bold in ink, rows parted by the dashed rule, a 16 px column gap, flush ends.
    Market takes what the number columns leave; no column gets narrower than its longest cell. */
-.ac-tbl{--mk:2.8fr;--gap:16px;display:grid;grid-template-columns:minmax(0,var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:0}
+.ac-tbl{--mk:2.8fr;--gap:16px;display:grid;grid-template-columns:minmax(220px,var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:0}
 .ac-tbl.ac-pos-hist{--mk:3.1fr}
 .ac-tbl.ac-ord-open{--mk:5.2fr}
 .ac-tbl.ac-ord-hist{--mk:2.6fr}
@@ -1768,8 +1771,8 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 /* the Net header carries the system Tooltip (Rows=1) under it */
 .ac-hint{position:relative;display:inline-block;border-bottom:1px dotted var(--ink-3);cursor:help;outline:none}
 .ac-hint:focus-visible{box-shadow:0 0 0 2px var(--focus);border-radius:var(--radius-border_radius_xxs)}
-.ac-tip{position:absolute;top:calc(100% + var(--spacing-md));right:0;width:240px;padding:var(--spacing-lg) var(--spacing-xl);border-radius:var(--radius-border_radius_14);background:var(--surface-tooltip);color:var(--text-inverse_black_neutral);backdrop-filter:blur(var(--blur-tooltip));-webkit-backdrop-filter:blur(var(--blur-tooltip));display:flex;flex-direction:column;gap:var(--spacing-xs);text-align:left;text-transform:none;letter-spacing:0;white-space:normal;z-index:5;opacity:0;visibility:hidden;transition:opacity 160ms,visibility 160ms;pointer-events:none}
-.ac-hint:hover .ac-tip,.ac-hint:focus-visible .ac-tip{opacity:1;visibility:visible}
+.ac-tip{position:fixed;top:0;left:0;width:240px;padding:var(--spacing-lg) var(--spacing-xl);border-radius:var(--radius-border_radius_14);background:var(--surface-tooltip);color:var(--text-inverse_black_neutral);backdrop-filter:blur(var(--blur-tooltip));-webkit-backdrop-filter:blur(var(--blur-tooltip));display:flex;flex-direction:column;gap:var(--spacing-xs);text-align:left;text-transform:none;letter-spacing:0;white-space:normal;z-index:80;display:none;pointer-events:none}
+.ac-tip.on{display:flex}
 .ac-tip .t{color:var(--neutral_inverse_black-alpha_72)}
 /* an appeal's detail opens as a row of its own */
 .ac-aplx>.pn{grid-column:1/-1;white-space:normal;padding-right:0}
@@ -1792,8 +1795,9 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-dlg .acts{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-md);padding-top:var(--spacing-md)}
 .ac-dlg .acts .btn{height:var(--sizing-control-48);width:100%;min-width:0;font-size:var(--typeface-size-title_1);line-height:var(--typeface-line_height-title_1)}
 
-/* the phone form, measured on the card: every row a stack — the market line, then label · value pairs */
-@container (max-width:720px){
+/* the phone form, measured on the card at the event table's own threshold: every row a stack — the market line,
+   then label · value pairs. Above it the table keeps its columns and scrolls sideways when they do not fit. */
+@container (max-width:600px){
   .ac-tbl{display:block}
   .ac-tbl>.ac-hd{display:none}
   .ac-tbl>.ac-row{display:grid;grid-template-columns:minmax(0,1fr);row-gap:4px;padding:0}
@@ -1814,7 +1818,7 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
   .ac-vdiv{display:none}
   .ac-acts{margin-left:0;width:100%}
   .ac-acts .btn{flex:1;min-width:0}
-  .ac-list{padding:var(--spacing-xxl) var(--spacing-2xl) var(--spacing-2xl)}
+  .ac-list{--acpad:var(--spacing-2xl);padding:var(--spacing-xxl) var(--acpad) var(--spacing-2xl)}
   .ac-sec{padding:var(--spacing-2xl)}
   .ac-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
 }
@@ -3329,6 +3333,7 @@ function makeHistory(e,o){const rows=[];if(e.thin)return rows;
    px:got?fill+'¢':'—',pxWant:mkt?'Market':px+'¢',
    n:nfmt(got),nWant:mkt&&!cancelled?'Market':nfmt(want),
    v:got?kfmt(got*fill/100):money(0),vWant:mkt&&!cancelled?'Market':kfmt(want*px/100),
+   vRaw:got?got*fill/100:0,vWantRaw:mkt&&!cancelled?undefined:want*px/100,   /* the account prints these in full (the user, 3 Oct 2026: «не сокращай») */
    at:new Date(t)});
   t-=(1+Math.random()*9)*36e5}
  return rows}
@@ -4670,7 +4675,7 @@ const oPaid=r=>r.paid!=null?r.paid:r.filled*r.price/100;
 const oAvg=r=>r.filled?+(oPaid(r)/r.filled*100).toFixed(1)+'¢':'—';
 /* an order that leaves Open lands in History, Filled or Cancelled, with the same filled / ordered pairs; its time runs
    on the clock the rest of History is written on (NOW and on), so the new row never looks older than the one under it */
-function toHist(o,r,status){(o.hist=o.hist||[]).unshift({side:r.side,type:r.type,status,px:oAvg(r),pxWant:r.price+'¢',n:nfmt(r.filled),nWant:nfmt(r.n),v:r.filled?kfmt(oPaid(r)):money(0),vWant:kfmt(r.n*r.price/100),at:new Date(NOW.getTime()+performance.now())});
+function toHist(o,r,status){(o.hist=o.hist||[]).unshift({side:r.side,type:r.type,status,px:oAvg(r),pxWant:r.price+'¢',n:nfmt(r.filled),nWant:nfmt(r.n),v:r.filled?kfmt(oPaid(r)):money(0),vWant:kfmt(r.n*r.price/100),vRaw:r.filled?oPaid(r):0,vWantRaw:r.n*r.price/100,at:new Date(NOW.getTime()+performance.now())});
  if(o.histState==='ready')o.histN=(o.histN||0)+1}
 /* shares bought go into the position — one per market and side, its average in whole cents */
 function addPos(e,i,s,got,paid){const p=posOf(e.id,i,s);if(p){const c=p.n*p.avg/100+paid;p.n=+(p.n+got).toFixed(2);p.avg=Math.round(c/p.n*100)}
@@ -5224,12 +5229,13 @@ const acHd=cols=>'<div class="ac-hd" role="row">'+cols.map((c,i)=>{const [h,a]=A
 const acChip=(yes,txt)=>`<span class="chip pc ${yes?'y':'n'}">${txt}</span>`;
 const acMk=(e,o,chip)=>`<span class="ac-mk" role="cell"><img class="pic sm" data-pic="${e.pic}" alt="" width="36" height="36"><span class="ac-tt"><a class="ac-ev ${T('body-sm-semibold')}" href="#event/${e.id}">${esc(e.q)}</a><span class="ac-qty">${chip}<span class="ac-mn ${T('label-sm-medium')}">${esc(o.n)}</span></span></span></span>`;
 const PLINE='<span class="pline" role="presentation" aria-hidden="true"></span>';
-const acTbl=(cls,n,head,rows)=>`<div class="ac-tbl${cls?' '+cls:''}" role="table" style="--n:${n}">${head}${(Array.isArray(rows)?rows:[rows]).join(PLINE)}</div>`;
+const acTbl=(cls,n,head,rows)=>`<div class="ac-xs"><div class="ac-tbl${cls?' '+cls:''}" role="table" style="--n:${n}">${head}${(Array.isArray(rows)?rows:[rows]).join(PLINE)}</div></div>`;
 const acRow=(cells,attrs='')=>`<div class="ac-row" role="row"${attrs}>${cells}</div>`;
 const acEmpty=(t,b,act)=>`<div class="empty"><b>${t}</b>${b||''}${act?`<div>${act}</div>`:''}</div>`;
 const acGuest=what=>acEmpty(`Sign in to see your ${what}.`,`Your ${what} show here once you’re in.`,`<button type="button" class="lnk" data-signin>Sign in</button>`);
 const acSeg=(key,opts,cur,label)=>`<div class="seg mini" role="group" aria-label="${label}">${opts.map(([k,l])=>`<button type="button" data-acseg="${key}|${k}" aria-pressed="${cur===k}">${l}</button>`).join('')}</div>`;
 const acPair=(a,b)=>`<span class="pair"><b>${a}</b><i>/ ${b}</i></span>`;
+const acFull=(raw,txt)=>typeof raw==='number'?money(raw):txt;   /* sums in full here — never the event page's $17k */
 /* open positions stay open until their market settles or is voided — then they move to History on their own */
 function acPositions(){const open=[],done=[];
  positions.forEach(p=>{const e=EVENTS[p.ev],o=e.outs[p.out],st=stageOf(e,o),v=posValue(p),c=posCost(p);
@@ -5278,7 +5284,7 @@ function acOrdHist(){if(!user)return acGuest('order history');
  const head=acHd(['Market','Side','Status','Price','Shares','Value','Time']);
  const body=rows.slice(0,30).map(({e,o,r})=>acRow(acMk(e,o,acChip(r.side==='yes',r.side==='yes'?'Yes':'No'))
   +acCell('Side',r.type,'r g')+acCell('Status',`<span class="ac-st${r.status==='Cancelled'?' cx':''}"><i aria-hidden="true"></i>${r.status}</span>`,'r g')
-  +acCell('Price',acPair(r.px,r.pxWant),'r g')+acCell('Shares',acPair(r.n,r.nWant),'r g')+acCell('Value',acPair(r.v,r.vWant),'r g')
+  +acCell('Price',acPair(r.px,r.pxWant),'r g')+acCell('Shares',acPair(r.n,r.nWant),'r g')+acCell('Value',acPair(acFull(r.vRaw,r.v),acFull(r.vWantRaw,r.vWant)),'r g')
   +acCell('Time',fmtDay(r.at)+', '+String(r.at.getHours()).padStart(2,'0')+':'+String(r.at.getMinutes()).padStart(2,'0'),'r g')));
  return acTbl('ac-tight ac-ord-hist',6,head,body)}
 /* transfers: the ledger's deposits or withdrawals — asset · network, the address, a Status Tag, the sum, the moment */
@@ -5335,6 +5341,15 @@ function acSet(k){
  else if(k==='confirm')acLogout('Logged out everywhere');
  else if(k==='signin'){authReturn='#account/settings';go('#signin')}}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#acdlg')&&!$('#acdlg').hidden)acDialog(false)});
+/* the Net tooltip: fixed to the viewport under its header, so the table's sideways scroller cannot clip it */
+function acTip(h,on){const t=h.querySelector('.ac-tip');if(!t)return;if(!on){t.classList.remove('on');return}
+ /* the card (its backdrop blur and container query) is the fixed box's containing block: place it in the card's own coordinates */
+ const r=h.getBoundingClientRect(),cb=(h.closest('.ac-list')||document.documentElement).getBoundingClientRect();t.classList.add('on');const x=Math.max(8,Math.min(r.right,innerWidth-8)-t.offsetWidth);t.style.left=(x-cb.left)+'px';t.style.top=(r.bottom+8-cb.top)+'px'}
+document.addEventListener('mouseover',e=>{const h=e.target.closest&&e.target.closest('.ac-hint');if(h)acTip(h,true)});
+document.addEventListener('mouseout',e=>{const h=e.target.closest&&e.target.closest('.ac-hint');if(h&&!h.contains(e.relatedTarget))acTip(h,false)});
+document.addEventListener('focusin',e=>{const h=e.target.closest&&e.target.closest('.ac-hint');if(h)acTip(h,true)});
+document.addEventListener('focusout',e=>{const h=e.target.closest&&e.target.closest('.ac-hint');if(h)acTip(h,false)});
+window.addEventListener('scroll',()=>{$$('.ac-tip.on').forEach(t=>t.classList.remove('on'))},{passive:true,capture:true});
 document.addEventListener('click',e=>{if(e.target.id==='acdlg')acDialog(false)});
 
 /* ============================================================
