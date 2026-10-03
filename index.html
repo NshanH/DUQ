@@ -1722,37 +1722,33 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-list{display:flex;flex-direction:column;align-items:stretch;gap:var(--spacing-lg);padding:var(--spacing-xxl) var(--spacing-5xl) var(--spacing-5xl);container-type:inline-size}
 .ac-list .seg.mini{margin:0;align-self:flex-start}
 
-/* the table: Market takes what the number columns leave, no column narrower than its longest cell */
-.ac-tbl{--mk:2.8fr;--gap:var(--spacing-5xl);display:grid;grid-template-columns:minmax(0,var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:0}
-.ac-tbl.ac-tight{--gap:var(--spacing-2xl)}
+/* the table is the event page's «Your position» skin (.postbl): 11 px caps header, 14/500 ink-2 cells with 10 px of
+   air above and below, the key figure bold in ink, rows parted by the dashed rule, a 16 px column gap, flush ends.
+   Market takes what the number columns leave; no column gets narrower than its longest cell. */
+.ac-tbl{--mk:2.8fr;--gap:16px;display:grid;grid-template-columns:minmax(0,var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:0}
 .ac-tbl.ac-pos-hist{--mk:3.1fr}
 .ac-tbl.ac-ord-open{--mk:5.2fr}
 .ac-tbl.ac-ord-hist{--mk:2.6fr}
 .ac-tbl.ac-tx{--mk:3fr}
 .ac-tbl>.ac-hd,.ac-tbl>.ac-row{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;min-width:0}
-.ac-tbl>.ac-hd{padding-bottom:var(--spacing-lg)}
-.ac-tbl>.ac-row{padding:var(--spacing-xxl) 0;border-bottom:1px solid var(--hairline)}
-.ac-tbl>*>:last-child{padding-right:var(--spacing-7xl)}
-.ac-tbl .ph{font-size:11px;line-height:16.5px;font-weight:var(--typeface-weight-primary-bold);letter-spacing:var(--typeface-letter_spacing-wide_md);text-transform:uppercase;color:var(--ink-3);white-space:nowrap}   /* Overline/Micro */
+.ac-tbl>.pline{grid-column:1/-1;height:1px;background:var(--dash);margin:4px 0}
+.ac-tbl .ph{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding-bottom:10px;white-space:nowrap}
 .ac-tbl .ph.r,.ac-tbl .pn.r{text-align:right;justify-self:end}
-.ac-tbl .pn{min-width:0;color:var(--ink);white-space:nowrap;font-size:var(--typeface-size-body_1);line-height:var(--typeface-line_height-body_1);font-weight:var(--typeface-weight-primary-normal)}   /* Body/Sm */
-.ac-tbl .pn.b{font-weight:var(--typeface-weight-primary-bold)}
-.ac-tbl .pn.sb{font-weight:var(--typeface-weight-primary-semibold)}
-.ac-tbl .pn.m{font-weight:var(--typeface-weight-primary-medium);color:var(--ink-2)}
-.ac-tbl .pn.g{color:var(--ink-2)}
+.ac-tbl .pn{min-width:0;font-size:14px;font-weight:500;color:var(--ink-2);white-space:nowrap;padding:10px 0}
+.ac-tbl .pn.b{font-weight:700;color:var(--ink);line-height:1.3}   /* = .pnow */
+.ac-tbl .pn.sb{font-weight:600;color:var(--ink)}
 .ac-tbl .pn.dim{color:var(--ink-3)}
-.ac-tbl .pn.up{color:var(--yes-text)}
-.ac-tbl .pn.down{color:var(--no-text)}
+.ac-tbl .pn.up{color:var(--yes-text);font-weight:700}   /* = the PnL cell */
+.ac-tbl .pn.down{color:var(--no-text);font-weight:700}
 .ac-tbl .pn.flat{color:var(--ink-3)}
 .ac-tbl .pl{display:none}
-.ac-tbl .d{font-size:var(--typeface-size-caption_1);line-height:var(--typeface-line_height-caption_1)}   /* Delta, Size=Sm = Label/Sm Bold */
-.ac-stack{display:flex;flex-direction:column;align-items:flex-end;line-height:1.3}
-.ac-when{color:var(--ink-3)}
-.ac-tbl .pair{column-gap:var(--spacing-xs)}
-.ac-tbl .pair b{font-weight:var(--typeface-weight-primary-medium)}
-.ac-tbl.ac-ord-open .pair i{font-weight:var(--typeface-weight-primary-medium)}
-.ac-act{display:flex;justify-content:flex-end}
-.ac-mk{display:flex;align-items:center;gap:var(--spacing-lg);min-width:0;padding-right:var(--spacing-lg)}
+.ac-tbl .d{font-size:12px}
+.ac-stack{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25}   /* = .pstack */
+.ac-when{color:var(--ink-3);font-weight:500}
+.ac-tbl .pair{column-gap:4px}
+.ac-tbl .pair b,.ac-tbl .pair i{font-weight:500}
+.ac-act{display:flex;justify-content:flex-end;padding:10px 0}   /* = .pa */
+.ac-mk{display:flex;align-items:center;gap:var(--spacing-lg);min-width:0;padding:10px var(--spacing-lg) 10px 0}
 .ac-mk .pic{width:var(--sizing-avatar-xs);height:var(--sizing-avatar-xs);border-radius:var(--radius-border_radius_lg)}
 .ac-tt{display:flex;flex-direction:column;gap:var(--spacing-xs);min-width:0;flex:1}
 .ac-ev{display:block;color:var(--ink);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1786,7 +1782,6 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-back svg{width:var(--sizing-icon-lg);height:var(--sizing-icon-lg)}
 .ac-sec{padding:var(--spacing-5xl);container-type:inline-size}
 .ac-sec .ac-tbl{grid-template-columns:180px minmax(0,1fr) auto}
-.ac-sec .ac-row:last-child{border-bottom:0}
 .ac-sec .ac-tbl .pn{white-space:normal}
 /* Log out everywhere: the scrim and a 420 dialog (Figma «NOT IN DS») */
 .ac-scrim{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:var(--spacing-2xl);background:var(--overlay-low_em)}
@@ -1801,13 +1796,13 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 @container (max-width:720px){
   .ac-tbl{display:block}
   .ac-tbl>.ac-hd{display:none}
-  .ac-tbl>.ac-row{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--spacing-xs);padding:var(--spacing-xxl) 0}
+  .ac-tbl>.ac-row{display:grid;grid-template-columns:minmax(0,1fr);row-gap:4px;padding:0}
+  .ac-tbl>.pline{display:block;margin:16px 0}
   .ac-ev{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-  .ac-tbl>.ac-row>.ac-mk,.ac-tbl>.ac-row>.ac-wide{grid-column:1/-1;padding-right:0;margin-bottom:var(--spacing-xs)}
-  .ac-tbl>*>:last-child{padding-right:0}
-  .ac-tbl .pn,.ac-tbl .pn.r{display:flex;justify-content:space-between;align-items:baseline;gap:var(--spacing-xl);text-align:right;justify-self:stretch}
-  .ac-tbl .pl{display:inline;color:var(--ink-3);font-weight:var(--typeface-weight-primary-medium);text-align:left}
-  .ac-tbl .pn.ac-act{justify-content:flex-end;padding-top:var(--spacing-xs)}
+  .ac-tbl>.ac-row>.ac-mk,.ac-tbl>.ac-row>.ac-wide{grid-column:1/-1;padding:0 0 6px}
+  .ac-tbl .pn,.ac-tbl .pn.r{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:4px 0;font-weight:700;color:var(--ink);text-align:right;justify-self:stretch}
+  .ac-tbl .pl{display:inline;font-size:13px;font-weight:600;color:var(--ink-3);text-align:left}
+  .ac-tbl .pn.ac-act{justify-content:flex-end;padding:6px 0 0}
   .ac-tbl .pn.ac-act .pl{display:none}
   .ac-aplx>.pn{display:block;text-align:left}
   .ac-sec .ac-tbl>.ac-row{grid-template-columns:1fr}
@@ -5228,7 +5223,8 @@ const acCell=(lab,val,cls='')=>`<span class="pn num${cls?' '+cls:''}" role="cell
 const acHd=cols=>'<div class="ac-hd" role="row">'+cols.map((c,i)=>{const [h,a]=Array.isArray(c)?c:[c,i?'r':'l'];return `<span class="ph${a==='r'?' r':''}" role="columnheader">${h}</span>`}).join('')+'</div>';
 const acChip=(yes,txt)=>`<span class="chip pc ${yes?'y':'n'}">${txt}</span>`;
 const acMk=(e,o,chip)=>`<span class="ac-mk" role="cell"><img class="pic sm" data-pic="${e.pic}" alt="" width="36" height="36"><span class="ac-tt"><a class="ac-ev ${T('body-sm-semibold')}" href="#event/${e.id}">${esc(e.q)}</a><span class="ac-qty">${chip}<span class="ac-mn ${T('label-sm-medium')}">${esc(o.n)}</span></span></span></span>`;
-const acTbl=(cls,n,head,rows)=>`<div class="ac-tbl${cls?' '+cls:''}" role="table" style="--n:${n}">${head}${rows}</div>`;
+const PLINE='<span class="pline" role="presentation" aria-hidden="true"></span>';
+const acTbl=(cls,n,head,rows)=>`<div class="ac-tbl${cls?' '+cls:''}" role="table" style="--n:${n}">${head}${(Array.isArray(rows)?rows:[rows]).join(PLINE)}</div>`;
 const acRow=(cells,attrs='')=>`<div class="ac-row" role="row"${attrs}>${cells}</div>`;
 const acEmpty=(t,b,act)=>`<div class="empty"><b>${t}</b>${b||''}${act?`<div>${act}</div>`:''}</div>`;
 const acGuest=what=>acEmpty(`Sign in to see your ${what}.`,`Your ${what} show here once you’re in.`,`<button type="button" class="lnk" data-signin>Sign in</button>`);
@@ -5246,9 +5242,9 @@ function acPosOpen(open){if(!user)return acGuest('positions');
  if(!open.length)return acEmpty('No positions yet.','Your first call shows up here.',`<a class="btn ink" href="#home">Browse markets</a>`);
  const head=acHd(['Market','Avg price','Cost','To win','Value now','Realized PnL']);
  const rows=open.map(r=>acRow(acMk(r.e,r.o,acChip(r.yes,nfmt(r.n)+' '+(r.yes?'Yes':'No')))
-  +acCell('Avg price',r.avg+'¢','r')+acCell('Cost',money(r.c),'r')+acCell('To win',money(r.n),'r b')
+  +acCell('Avg price',r.avg+'¢','r')+acCell('Cost',money(r.c),'r')+acCell('To win',money(r.n),'r')
   +acCell('Value now',`<span class="ac-stack"><span>${money(r.v)}</span><span class="d ${acTone(r.d)}">${acSigned(r.d)} ${acPct(r.d,r.c)}</span></span>`,'r b')
-  +acCell('Realized PnL',acSigned(r.rz),'r '+(Math.abs(r.rz)<.005?'dim':acTone(r.rz))))).join('');
+  +acCell('Realized PnL',acSigned(r.rz),'r '+(Math.abs(r.rz)<.005?'dim':acTone(r.rz)))));
  return acTbl('',5,head,rows)}
 /* Net = (trading PnL + resolution payout) − the cost of the shares held until resolution; the header says so */
 function acPosHist(done){if(!user)return acGuest('closed positions');
@@ -5261,7 +5257,7 @@ function acPosHist(done){if(!user)return acGuest('closed positions');
    +acCell('Net',`<span class="ac-stack"><span>${acSigned(net)}</span><span class="d ${t}">${acPct(net,r.c)}</span></span>`,'r b '+t)
    +acCell('PnL',acSigned(r.pnl),'r '+(Math.abs(r.pnl)<.005?'dim':acTone(r.pnl)))
    +acCell('Resolution',r.res==null?'—':r.res>.004?'+'+money(r.res):money(0),'r'+(r.res==null||r.res<.005?' dim':''))
-   +acCell('Closed',`<span class="ac-stack"><span>${r.how}</span><span class="ac-when ${T('label-sm-medium')}">${fmtDate(r.d)}</span></span>`,'r'))}).join('');
+   +acCell('Closed',`<span class="ac-stack"><span>${r.how}</span><span class="ac-when ${T('label-sm-medium')}">${fmtDate(r.d)}</span></span>`,'r'))});
  return acTbl('ac-pos-hist',6,head,rows)}
 /* every open order the visitor has, market by market; Cancel is the event page's, so the book and the balance follow */
 function acOrdOpen(){if(!user)return acGuest('orders');
@@ -5271,7 +5267,7 @@ function acOrdOpen(){if(!user)return acGuest('orders');
  const head=acHd(['Market','Side','Price','Shares','Value',['','r']]);
  const body=rows.map(({e,o,r,j})=>acRow(acMk(e,o,acChip(r.side==='yes',r.side==='yes'?'Yes':'No'))
   +acCell('Side',r.type,'r m')+acCell('Price',acPair(oAvg(r),mkt(r)?'Market':r.price+'¢'),'r m')+acCell('Shares',acPair(nfmt(r.filled),nfmt(r.n)),'r m')+acCell('Value',acPair(money(oPaid(r)),mkt(r)?'Market':money(r.n*r.price/100)),'r m')
-  +`<span class="pn ac-act" role="cell"><button type="button" class="sell" data-accancel="${e.id}|${o.i}|${j}">Cancel</button></span>`)).join('');
+  +`<span class="pn ac-act" role="cell"><button type="button" class="sell" data-accancel="${e.id}|${o.i}|${j}">Cancel</button></span>`));
  return acTbl('ac-tight ac-ord-open',5,head,body)}
 /* the filled and cancelled orders of the markets the visitor trades, newest first, thirty at most */
 function acOrdHist(){if(!user)return acGuest('order history');
@@ -5283,7 +5279,7 @@ function acOrdHist(){if(!user)return acGuest('order history');
  const body=rows.slice(0,30).map(({e,o,r})=>acRow(acMk(e,o,acChip(r.side==='yes',r.side==='yes'?'Yes':'No'))
   +acCell('Side',r.type,'r g')+acCell('Status',`<span class="ac-st${r.status==='Cancelled'?' cx':''}"><i aria-hidden="true"></i>${r.status}</span>`,'r g')
   +acCell('Price',acPair(r.px,r.pxWant),'r g')+acCell('Shares',acPair(r.n,r.nWant),'r g')+acCell('Value',acPair(r.v,r.vWant),'r g')
-  +acCell('Time',fmtDay(r.at)+', '+String(r.at.getHours()).padStart(2,'0')+':'+String(r.at.getMinutes()).padStart(2,'0'),'r g'))).join('');
+  +acCell('Time',fmtDay(r.at)+', '+String(r.at.getHours()).padStart(2,'0')+':'+String(r.at.getMinutes()).padStart(2,'0'),'r g')));
  return acTbl('ac-tight ac-ord-hist',6,head,body)}
 /* transfers: the ledger's deposits or withdrawals — asset · network, the address, a Status Tag, the sum, the moment */
 function acTx(kind){if(!user)return acGuest('transfers');
@@ -5291,14 +5287,14 @@ function acTx(kind){if(!user)return acGuest('transfers');
  if(!rows.length)return acEmpty(dep?'No deposits yet.':'No withdrawals yet.','Your transfers will show here.');
  const tag=st=>`<span class="ac-tag ${st==='Completed'?'ok':/^Cancel/.test(st)?'no':''} ${T('body-sm-bold')}"><i aria-hidden="true"></i>${st}</span>`;
  const head=acHd(dep?[['Deposit','l'],['From','l'],['Status','l'],'Amount','Date']:[['Withdrawal','l'],['To','l'],['Status','l'],'Amount','Fee','Date']);
- const body=rows.map(h=>acRow(`<span class="pn ac-wide sb" role="cell">${esc(h.m)}</span>`+acCell(dep?'From':'To',acShort(h.addr))+acCell('Status',tag(h.st||'Completed'))+acCell('Amount',money(h.v),'r b')+(dep?'':acCell('Fee',money(h.fee||0),'r'))+acCell('Date',acDT(h.d),'r'))).join('');
+ const body=rows.map(h=>acRow(`<span class="pn ac-wide sb" role="cell">${esc(h.m)}</span>`+acCell(dep?'From':'To',acShort(h.addr))+acCell('Status',tag(h.st||'Completed'))+acCell('Amount',money(h.v),'r b')+(dep?'':acCell('Fee',money(h.fee||0),'r'))+acCell('Date',acDT(h.d),'r')));
  return acTbl('ac-tx',dep?4:5,head,body)}
 /* appeals keep their tab only while there is one to show: the file's page has three tabs */
 function acAppeals(rows){const head=acHd(['Market',['Submitted','l'],['Status','l'],'Bond',['','r']]);
  const body=rows.map(({x,k,s,r})=>acRow(acMk(x.e,x.o,acChip(!!r.side,'Proposed '+ynW(r.side)))
   +acCell('Submitted',fmtDT(x.a.at),'g')+acCell('Status',`<span class="chip pc ${s.c}">${s.t}</span>`)+acCell('Bond',s.b,'r')
   +`<span class="pn ac-act" role="cell"><button type="button" class="sell" data-aplx="d${k}" aria-expanded="false" aria-controls="aplx-d${k}">Details</button></span>`,` class="ac-row aplrow" data-aplrow="${x.e.id}|${x.o.i}"`)
-  +`<div class="ac-row ac-aplx" id="aplx-d${k}" role="row" hidden><span class="pn" role="cell">${aplDetail(x.a,s)}</span></div>`).join('');
+  +`<div class="ac-row ac-aplx" id="aplx-d${k}" role="row" hidden><span class="pn" role="cell">${aplDetail(x.a,s)}</span></div>`);
  return acTbl('',4,head,body)}
 /* Money card: the balance, the hairline, what sits in positions with its gain pill, Deposit and Withdraw */
 function acMoneyCard(){
@@ -5323,7 +5319,7 @@ function renderAccount(){const body=$('#account-body');
 /* ---- Settings (#account/settings): the Security card and the Log out everywhere dialog ---- */
 function renderSettings(){const body=$('#settings-body');
  const row=(l,v,act)=>`<div class="ac-row" role="row"><span class="pn" role="cell">${l}</span><span class="pn sb" role="cell">${v}</span><span class="pn ac-act" role="cell">${act}</span></div>`;
- const rows=user?row('Signed in as',esc(user.email||'alex.k@example.com'),`<button type="button" class="sell" data-acset="logout">Log out</button>`)+row('Sessions','Every device and browser',`<button type="button" class="sell" data-acset="everywhere">Log out everywhere</button>`)
+ const rows=user?[row('Signed in as',esc(user.email||'alex.k@example.com'),`<button type="button" class="sell" data-acset="logout">Log out</button>`),row('Sessions','Every device and browser',`<button type="button" class="sell" data-acset="everywhere">Log out everywhere</button>`)].join(PLINE)
   :row('Signed in as','Nobody yet',`<button type="button" class="sell" data-acset="signin">Sign in</button>`);
  body.innerHTML=`<div class="ac-page"><div class="ac-sethead"><a class="ac-back" href="#account" aria-label="Back to My account">${ic('arrow-left')}</a><h1 tabindex="-1" id="set-h1" class="${T('heading-h1')}">Settings</h1></div><article class="card ac-sec"><div class="ac-tbl" role="table"><div class="ac-hd" role="row"><span class="ph" role="columnheader">Security</span><span class="ph" role="columnheader"></span><span class="ph" role="columnheader"></span></div>${rows}</div></article></div>
  <div class="ac-scrim" id="acdlg" hidden><div class="ac-dlg" role="dialog" aria-modal="true" aria-labelledby="acdlg-h" aria-describedby="acdlg-p"><h2 id="acdlg-h" class="${T('heading-h3')}">Log out everywhere?</h2><p id="acdlg-p" class="${T('body-sm')}">Log out everywhere ends every active session on all devices, including this one. You will need to sign in again.</p><div class="acts"><button type="button" class="btn ghost" data-acset="cancel">Cancel</button><button type="button" class="btn ink" data-acset="confirm">Log out everywhere</button></div></div></div>`}
