@@ -2569,7 +2569,7 @@ svg.i.h-ic-xs{width:var(--sizing-icon-xs);height:var(--sizing-icon-xs)}
 @media (max-width:900px) { .h-mc { min-height: 0; } }
 /* ---------- Cards beside the banner (NEW, not in Figma): glass, a small picture, no full-card photos (28 Sep) ---------- */
 .h-rail { display: grid; min-width: 0; grid-template-rows: minmax(0, 1fr); gap: var(--spacing-2xl); }   /* one card (3 Oct 2026) */
-.h-zone.h-stack .h-rail { grid-template-rows: none; grid-template-columns: minmax(0, 1fr); height: 160px; }
+.h-zone.h-stack .h-rail { grid-template-rows: none; grid-template-columns: minmax(0, 1fr); height: 240px; }
 @media (max-width:900px) { .h-rail { display: flex; height: auto; gap: var(--spacing-xl); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: calc(-1 * var(--spacing-xs)) calc(-1 * var(--sizing-layout-gutter_mobile)) calc(-1 * var(--spacing-4xl)); padding: var(--spacing-xs) var(--sizing-layout-gutter_mobile) var(--spacing-4xl); scroll-padding: 0 var(--sizing-layout-gutter_mobile); } }
 @media (max-width:900px) { .h-rail::-webkit-scrollbar { display: none; } }
 @media (max-width:900px) { .h-rail > * { flex: 0 0 272px; height: 112px; scroll-snap-align: start; } }
@@ -2845,19 +2845,35 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
    from below - the banner's slide change turned upright (fbx-out / fbx-in). The leaving and the arriving name share
    one grid cell two lines tall, so the card never changes size. */
 .h-mx-soon { justify-content: center; }
-/* the event card: photo full-bleed, a dark wash rising from the foot, the name in white over it */
-.h-wc.h-ev1 { padding: 0; isolation: isolate; }
-.h-ev1-roll { position: absolute; inset: 0; display: grid; }
-.h-ev1-i { position: relative; grid-area: 1 / 1; display: flex; min-width: 0; align-items: flex-end; padding: var(--spacing-4xl); isolation: isolate; overflow: hidden; }
-.h-ev1-bg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: scale var(--h-d-slow) var(--ease); }
-.h-ev1-i::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, var(--color-black-72), var(--color-black-24) 50%, transparent 80%); }
-.h-ev1-n { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; color: var(--text-white); text-wrap: balance; }
-@media (hover: hover) { .h-wc.h-ev1:hover .h-ev1-bg { scale: 1.04; } }
-.h-ev1-i.h-in { animation: h-ev1-in 700ms var(--ease) both; }
-.h-ev1-i.h-in .h-ev1-n { animation: h-mx-roll-in var(--h-d-enter) var(--ease) 120ms both; }
-@keyframes h-ev1-in { from { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .h-ev1-i.h-in, .h-ev1-i.h-in .h-ev1-n { animation: none; } .h-wc.h-ev1:hover .h-ev1-bg { scale: none; } }
-@media (max-width:900px) { .h-rail > .h-ev1 { flex: 1 1 auto; height: 160px; } .h-ev1-i { padding: var(--spacing-2xl); } }
+/* the event card = 21st.dev «Squishy Card» (uniquesonu/squishy-card-component): the shape of the original — p-8, rounded-xl,
+   the indigo ground with two dark shapes, pill · big title · line, a white button 16 from the foot and the sides; the
+   card swells 1.05 and the shapes morph on hover (1 s, back-in-out, the shapes .2 s later) — in our tokens */
+.h-wc.h-sq { --sq-ease: cubic-bezier(.68,-.55,.27,1.55);   /* framer-motion backInOut */
+  display: block; padding: var(--spacing-7xl); border-radius: var(--radius-border_radius_xl); background: var(--color-secondary-500); color: var(--text-white); isolation: isolate; box-shadow: none; transition: scale 1s var(--sq-ease); }
+@media (hover: hover) { .h-wc.h-sq:not(.h-wc-empty):hover { translate: none; scale: 1.05; box-shadow: none; } }
+.h-sq-bg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; transition: scale 1s var(--sq-ease); }
+.h-sq-bg circle, .h-sq-bg ellipse { fill: var(--color-dark-700); transform-box: fill-box; transform-origin: center; transition: scale 1s var(--sq-ease) .2s, translate 1s var(--sq-ease) .2s; }
+.h-wc.h-sq:hover .h-sq-bg { scale: 1.5; }
+.h-wc.h-sq:hover .h-sq-c { scale: 1 .5; translate: 0 -25px; }
+.h-wc.h-sq:hover .h-sq-e { scale: 1 2.25; translate: 0 -25px; }
+.h-sq-roll { position: relative; z-index: 1; display: grid; }
+.h-sq-i { grid-area: 1 / 1; display: flex; min-width: 0; flex-direction: column; align-items: flex-start; }
+.h-sq-pill { max-width: 100%; margin-bottom: var(--spacing-xl); padding: var(--spacing-xxs) var(--spacing-xl); overflow: hidden; border-radius: var(--radius-border_radius_round); background: var(--color-white-32); color: var(--text-white); text-overflow: ellipsis; white-space: nowrap; }
+.h-sq-n { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 4; margin: var(--spacing-md) 0; font-family: var(--font); font-size: var(--typeface-size-heading_6); line-height: 1.1; font-weight: var(--typeface-weight-primary-extrabold); letter-spacing: var(--typeface-letter_spacing-xl); color: var(--text-white); transform-origin: top left; scale: .85; transition: scale 1s var(--sq-ease); }
+.h-wc.h-sq:hover .h-sq-n { scale: 1; }
+.h-sq-p { color: var(--text-white); }
+.h-sq-btn { position: absolute; z-index: 2; right: var(--spacing-2xl); bottom: var(--spacing-2xl); left: var(--spacing-2xl); padding: var(--spacing-md) 0; border: var(--sizing-border-ring) solid var(--surface-white); border-radius: var(--radius-border_radius_xs); background: var(--surface-white); color: var(--color-dark-700); text-align: center; text-transform: uppercase; letter-spacing: var(--typeface-letter_spacing-wide_xs); -webkit-backdrop-filter: blur(var(--blur-tooltip)); backdrop-filter: blur(var(--blur-tooltip)); transition: background-color 150ms, color 150ms; }
+.h-sq-btn:hover { background: var(--color-white-32); color: var(--text-white); }
+@container (min-width: 480px) { .h-sq-btn { right: auto; width: 288px; } }   /* a wide strip keeps the original's 288 button */
+.h-sq-i.h-out { animation: h-mx-roll-out var(--h-d-dismiss) var(--ease) both; pointer-events: none; }
+.h-sq-i.h-in { animation: h-mx-roll-in var(--h-d-enter) var(--ease) var(--h-d-dismiss) both; }
+@media (prefers-reduced-motion: reduce) {
+  .h-wc.h-sq, .h-sq-bg, .h-sq-bg circle, .h-sq-bg ellipse, .h-sq-n { transition: none; }
+  .h-wc.h-sq:hover, .h-wc.h-sq:hover .h-sq-bg, .h-sq-n, .h-wc.h-sq:hover .h-sq-n { scale: none; }
+  .h-wc.h-sq:hover .h-sq-c, .h-wc.h-sq:hover .h-sq-e { scale: none; translate: none; }
+  .h-sq-i.h-in, .h-sq-i.h-out { animation: none; }
+}
+@media (max-width:900px) { .h-rail > .h-sq { flex: 1 1 auto; height: 320px; } }
 .h-mx-roll { display: grid; min-width: 0; min-height: calc(2 * var(--typeface-line_height-heading_1)); }
 .h-mx-roll-i { grid-area: 1 / 1; display: flex; min-width: 0; align-items: center; }
 .h-mx-soon-n { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--text-high_em); }
@@ -4433,24 +4449,26 @@ function hCardReferral(){const rate=`<span class="h-wc-l"><b class="h-wc-fig ${T
  if(!user)return `<article class="h-gc h-wc h-au" data-hgo="signup" tabindex="0" role="link">${AU_SKY}${hCap('Invite friends')}<span class="h-wc-row">${rate}</span></article>`;
  if(HS.ref==='claim'&&!user.zero)return `<article class="h-gc h-wc h-au" data-hgo="referral" tabindex="0" role="link">${AU_SKY}${hCap('Invite friends')}<span class="h-wc-row h-wc-mid"><b class="h-wc-fig ${T('heading-chance')} num">${money(REFERRAL.claim)}</b><button type="button" class="h-btn h-ink h-xs ${T('label-sm-bold')} h-spring" data-hact="claim">Claim</button></span></article>`;
  return `<article class="h-gc h-wc h-wc-ref h-au" data-hgo="referral" tabindex="0" role="link">${AU_SKY}<span class="h-wc-stack">${hCap('Invite friends')}${rate}</span><span class="h-wc-share"><b class="${T('label-md-bold')} num">${REFERRAL.code}</b><button type="button" class="h-btn h-ink h-xs ${T('label-sm-bold')} h-spring" data-hact="copy">Copy</button></span></article>`}
-/* The one card beside the banner (the user, 3 Oct 2026: «удалить Create an account, Invite friends — оставить один
-   бокс: событие с картинкой фоном и названием»). The event's photo fills the card, its name sits on a dark wash at the
-   foot. The events that close next take turns by themselves (two pulses each): the new photo and name fade in over the
-   old ones; the click opens the one shown. Cards 1 and 2 (Positions, Invite friends) stay in the code, unused. */
+/* The one card beside the banner, in the shape of 21st.dev «Squishy Card» (uniquesonu/squishy-card-component, after
+   hover.dev; the user, 3 Oct 2026: «change this card to: copy past»): a coloured card whose two dark shapes morph on
+   hover while the card swells, a pill on top, a big title, a line under it and a white button pinned to the foot.
+   Our data in its slots: the pill = the league, the title = the event, the line = when it starts · how much traded,
+   the button opens the event (the whole card does — the button is drawn, not a second control). The events that
+   close next still take turns (two pulses each), paused while the card is hovered or focused. */
 const hSoonIds=()=>hLive().filter(e=>e.league).map(e=>e.id);
 const hEvIds=()=>{const ids=hSoonIds();return ids.length?ids:hLive().slice(0,3).map(e=>e.id)};
 let hSoon=0;
-const hEvItem=id=>{const e=EVENTS[id];return `<img class="h-ev1-bg" data-pic="${e.pic}" alt=""><b class="h-ev1-n ${T('heading-h2')}">${esc(e.q)}</b>`};
+const hSqItem=id=>{const e=EVENTS[id];const meta=[e.when,volFmt(e.vol)+' traded'].filter(Boolean).join(' · ');
+ return `<span class="h-sq-pill ${T('body-sm')}">${esc(e.league||catTitle(e.cat))}</span><b class="h-sq-n">${esc(e.q)}</b><span class="h-sq-p ${T('body-md')}">${esc(meta)}</span>`};
+const H_SQ_BG='<svg class="h-sq-bg" viewBox="0 0 320 384" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><circle class="h-sq-c" cx="160.5" cy="114.5" r="101.5"/><ellipse class="h-sq-e" cx="160.5" cy="265.5" rx="101.5" ry="43.5"/></svg>';
 function hCardEvent(){const ids=hEvIds();if(!ids.length)return '';const id=ids[hSoon%ids.length];
- return `<article class="h-gc h-wc h-ev1" data-hev="${id}" tabindex="0" role="link"><span class="h-ev1-roll"><span class="h-ev1-i">${hEvItem(id)}</span></span></article>`}
-function hSoonTick(){const card=hq('.h-rail .h-ev1');const ids=hEvIds();
+ return `<article class="h-wc h-sq" data-hev="${id}" tabindex="0" role="link">${H_SQ_BG}<span class="h-sq-roll"><span class="h-sq-i">${hSqItem(id)}</span></span><span class="h-sq-btn ${T('body-md-bold')}" aria-hidden="true">Trade now</span></article>`}
+function hSoonTick(){const card=hq('.h-rail .h-sq');const ids=hEvIds();
  if(!card||view!=='home'||document.hidden||ids.length<2||reduceMotion()||!live)return;if(card.matches(':hover')||card.matches(':focus-visible'))return;
  hSoon=(hSoon+1)%ids.length;const id=ids[hSoon];card.dataset.hev=id;
- const box=hq('.h-ev1-roll',card),old=[...box.children];old.forEach(o=>o.setAttribute('aria-hidden','true'));
- const n=document.createElement('span');n.className='h-ev1-i h-in';n.innerHTML=hEvItem(id);hydratePics(n);box.appendChild(n);
- const done=()=>{n.classList.remove('h-in');old.forEach(o=>o.remove())};
- n.addEventListener('animationend',function f(ev){if(ev.target!==n)return;n.removeEventListener('animationend',f);done()});
- setTimeout(()=>{if(n.isConnected&&old.some(o=>o.isConnected))done()},1600)}
+ const box=hq('.h-sq-roll',card),old=[...box.children];const n=document.createElement('span');n.className='h-sq-i h-in';n.innerHTML=hSqItem(id);box.appendChild(n);
+ old.forEach(o=>{o.classList.add('h-out');o.setAttribute('aria-hidden','true');setTimeout(()=>o.remove(),1000)});
+ n.addEventListener('animationend',ev=>{if(ev.target===n)n.classList.remove('h-in')})}
 setInterval(hSoonTick,4800);
 /* the market that moved most today, one per event */
 function hTopMove(){let best=null;hLive().forEach(e=>e.outs.forEach(o=>{if(tradable(e,o)&&(!best||Math.abs(o.d)>Math.abs(best.o.d)))best={e,o}}));return best}
