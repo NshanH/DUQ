@@ -1719,8 +1719,9 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-acts .btn.ghost:hover,.ac-dlg .btn.ghost:hover{background:var(--card-2)}
 
 /* Portfolio block (the user, 4 Oct 2026, reference: a «Portfolio assets Performance» dashboard, copied in architecture):
-   a title row with the In-profit meter and Deposit / Withdraw where its Filters sat, plus the two round buttons; left,
-   Total balance with its pill and four tiles; right, the orange panel with In positions, the range tabs and the chart of
+   the head row carries Total balance with its pill where the «Portfolio» title and the In-profit meter sat, and Deposit /
+   Withdraw on the same line (the title, the meter and the two round buttons went, 4 Oct 2026); left, the four tiles
+   filling the column; right, the orange panel with In positions, the range tabs and the chart of
    the value held in positions — hatched area, the chosen stretch in yellow between two markers, a dark tooltip. The
    card is the carousel's Liquid Glass; colours, type and spacing are tokens. */
 .ac-port{position:relative;padding:var(--spacing-7xl);border-radius:var(--radius-border_radius_6xl);color:var(--text-high_em);background:var(--surface-glass_inset);-webkit-backdrop-filter:blur(var(--blur-base)) saturate(1.8);backdrop-filter:blur(var(--blur-base)) saturate(1.8);box-shadow:inset 0 1px 0 var(--outline-rim),inset 0 -1px 0 var(--color-white-24),inset 1px 0 0 var(--color-white-32),inset -1px 0 0 var(--color-white-24),0 10px 30px rgba(95,109,119,.10),0 4px 12px rgba(95,109,119,.06);isolation:isolate}
@@ -1729,26 +1730,18 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 html[data-theme=dark] .ac-port{background:var(--color-white-5);box-shadow:inset 0 1px 0 var(--outline-rim),inset 0 -1px 0 var(--color-white-5),0 10px 30px rgba(0,0,0,.6),0 4px 12px rgba(0,0,0,.4)}
 html[data-theme=dark] .ac-port::before{background:linear-gradient(135deg,var(--color-white-24),var(--color-white-8) 35%,var(--color-white-3) 60%,var(--color-white-12))}
 html[data-theme=dark] .ac-port::after{background:linear-gradient(180deg,var(--color-white-6),transparent 30%)}
-.ac-ph{display:flex;align-items:center;gap:var(--spacing-2xl);flex-wrap:wrap;margin-bottom:var(--spacing-5xl)}
-.ac-ph h2{margin:0;color:var(--ink);font-weight:var(--typeface-weight-primary-medium)}
-.ac-meter{display:inline-flex;align-items:center;gap:var(--spacing-lg);height:var(--sizing-control-xl);padding:0 var(--spacing-2xl);border-radius:var(--radius-border_radius_round);background:var(--card-2);color:var(--ink)}
-.ac-meter i{display:flex;align-items:center;gap:2px}
-.ac-meter i b{display:block;width:2px;height:12px;border-radius:1px;background:var(--neutral_inverse_white-alpha_24)}
-.ac-meter i b:nth-child(4n+1){height:16px}
-.ac-meter i b.on{background:var(--surface-warning_med_em)}
-.ac-meter-l{color:var(--ink-3);margin-left:calc(-1 * var(--spacing-sm))}
+.ac-ph{display:flex;align-items:flex-end;gap:var(--spacing-2xl);flex-wrap:wrap;margin-bottom:var(--spacing-5xl)}
+.ac-tot{display:flex;flex-direction:column;min-width:0}
+.ac-tot>.k{color:var(--ink-3)}
+.ac-tot>.v{display:flex;align-items:center;gap:var(--spacing-xl);flex-wrap:wrap;margin-top:var(--spacing-md);color:var(--ink)}
 .ac-ph .ac-acts{margin-left:auto;align-items:center}
-.ac-ib{width:var(--sizing-control-xl);height:var(--sizing-control-xl);display:inline-grid;place-items:center;border-radius:var(--radius-border_radius_round);background:var(--card-2);color:var(--ink);transition:background 200ms,transform 300ms var(--spring)}
-.ac-ib:hover{background:var(--neutral_inverse_white-alpha_12);transform:translateY(-1px)}
-.ac-ib svg{width:var(--sizing-icon-sm);height:var(--sizing-icon-sm)}
 .ac-pb{position:relative;display:grid;grid-template-columns:minmax(300px,36%) minmax(0,1fr);gap:var(--spacing-8xl)}
 /* the warm glow the glass panel bends: the brand orange, blurred, behind the right column */
 .ac-pr-glow{position:absolute;z-index:0;right:-4%;top:-12%;width:62%;height:124%;background:radial-gradient(ellipse at 50% 45%,var(--surface-primary_low_em_alpha),transparent 70%);filter:blur(36px);pointer-events:none}
-.ac-pl{display:flex;flex-direction:column;min-width:0}
-.ac-pl>.k{color:var(--ink-3)}
-.ac-pl>.v{display:flex;align-items:center;gap:var(--spacing-xl);flex-wrap:wrap;margin:var(--spacing-md) 0 var(--spacing-4xl);color:var(--ink)}
-.ac-tiles{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-2xl);margin-top:auto}
-.ac-tile{display:flex;flex-direction:column;gap:var(--spacing-md);min-width:0;padding:var(--spacing-xxl) var(--spacing-4xl);border-radius:var(--radius-border_radius_3xl);background:var(--card-2)}
+.ac-pl{display:flex;flex-direction:column;gap:var(--spacing-xs);min-width:0}
+.ac-pl .ac-note+.ac-tiles{margin-top:var(--spacing-md)}
+.ac-tiles{display:grid;flex:1;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:var(--spacing-2xl)}
+.ac-tile{display:flex;flex-direction:column;justify-content:space-between;gap:var(--spacing-md);min-width:0;padding:var(--spacing-xxl) var(--spacing-4xl);border-radius:var(--radius-border_radius_3xl);background:var(--card-2)}
 .ac-tile .k{display:flex;align-items:center;gap:var(--spacing-md);color:var(--ink-3)}
 .ac-tile .k i{width:3px;height:14px;border-radius:2px;background:var(--tk)}
 .ac-tile .v{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1788,7 +1781,7 @@ html[data-theme=dark] .ac-pr::after{background:linear-gradient(180deg,var(--colo
 .ac-ctip .r span:first-child{opacity:.7}
 .ac-ctip .pc{text-align:center;padding:var(--spacing-xs) 0;border-radius:var(--radius-border_radius_md);background:var(--neutral_inverse_black-alpha_12,var(--color-white-12))}
 @media (min-width:1101px){.ac-port{height:420px;display:flex;flex-direction:column}.ac-pb{flex:1;min-height:0}.ac-pr{min-height:0}.ac-chart{flex:1;min-height:0}}   /* 540 → 420 (the user, 4 Oct 2026) */
-@media (max-width:1100px){.ac-pb{grid-template-columns:1fr}.ac-tiles{margin-top:0}.ac-pl>.v{margin-bottom:var(--spacing-5xl)}.ac-pr-glow{right:0;top:auto;bottom:-6%;width:100%;height:60%}}
+@media (max-width:1100px){.ac-pb{grid-template-columns:1fr}.ac-pr-glow{right:0;top:auto;bottom:-6%;width:100%;height:60%}}
 @media (max-width:900px){.ac-port{padding:var(--spacing-4xl)}.ac-pr{padding:var(--spacing-4xl)}.ac-chart{min-height:200px}.ac-ph .ac-acts{margin-left:0;width:100%}.ac-ph .ac-acts .btn{flex:1;min-width:0}.ac-ph{margin-bottom:var(--spacing-5xl)}.ac-tile .v{font-size:var(--typeface-size-heading_1);line-height:var(--typeface-line_height-heading_1)}.ac-prh{flex-direction:column;align-items:flex-start;gap:var(--spacing-md)}.ac-pr>.v{margin-top:var(--spacing-2xl)}}
 /* the three pills: Nav Item, Current = the ink pill, Default = medium ink-2 */
 .ac-tabs{display:flex;gap:var(--spacing-xxs);flex-wrap:wrap}
@@ -5513,8 +5506,6 @@ function acAppeals(rows){const head=acHd(['Market',['Submitted','l'],['Status','
  return acTbl('',4,head,body)}
 /* ---- Portfolio block (4 Oct 2026): the signed-in Money card as the reference dashboard ---- */
 const AC_RNG=[['1D',1],['1W',7],['1M',30],['3M',91],['1Y',365],['All',0]];
-const IC_REFRESH='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 9a6 6 0 0 0-10.9-2.5M4 11a6 6 0 0 0 10.9 2.5"/><path d="M16 4v5h-5M4 16v-5h5"/></svg>';
-const IC_OUT='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 14 14 6M8 6h6v6"/></svg>';
 /* the day a position has been held since: its Buy in the ledger, else the day its market opened */
 const acHeldSince=p=>{const b=ledger.find(h=>h.k==='Buy'&&h.ev===p.ev);return b?b.d:EVENTS[p.ev].open};
 /* a market's price on a day, read off its 40-point history (open … now) and interpolated; now = the live price */
@@ -5558,19 +5549,18 @@ function acChartDraw(root){const box=hq('.ac-chart',root||document);if(!box)retu
  const pc=a.v>0?(b.v-a.v)/a.v*100:null;
  const bought=(buys.get(sel)||[]).slice(0,2).map(p=>`<div class="r ${T('label-md')}"><span>Bought</span><b>${nfmt(p.n)} ${p.side==='yes'?'Yes':'No'} · ${esc(EVENTS[p.ev].outs[p.out].n)}</b></div>`).join('');
  tip.innerHTML=`<div class="r ${T('label-md')}"><span>${day(a.t)}</span><b class="num">${money(a.v)}</b></div>${bought}<div class="pc ${T('label-md-bold')} num">${pc===null?'—':(pc>=0?'+':'−')+Math.abs(pc).toFixed(2)+'%'}</div><div class="r ${T('label-md')}"><span>Now</span><b class="num">${money(b.v)}</b></div>`;
- tip.classList.add('on');const tw=tip.offsetWidth,sx=X(sel);tip.style.left=(sx+16+tw<=W?sx+16:Math.max(0,sx-16-tw))+'px'}
+ tip.classList.add('on');const tw=tip.offsetWidth,sx=X(sel);tip.style.left=(sx+16+tw<=W?sx+16:Math.max(0,sx-16-tw))+'px';tip.style.top=Math.min(8,H+16-tip.offsetHeight)+'px'}
 function acChartMount(root){const box=hq('.ac-chart',root);if(!box)return;acChartDraw(root);
  if(!box._ro){box._ro=new ResizeObserver(()=>{if(box.isConnected)acChartDraw()});box._ro.observe(box)}
  box.addEventListener('pointermove',e=>{const pts=box._pts;if(!pts)return;const r=box.getBoundingClientRect();const f=(e.clientX-r.left-44)/(r.width-58);const i=Math.max(0,Math.min(pts.length-2,Math.round(f*(pts.length-1))));if(i!==box._sel){box._sel=i;acChartDraw()}});
  box.addEventListener('pointerleave',()=>{if(box._sel!=null){box._sel=null;acChartDraw()}})}
 function acPortfolio(){const inp=inPositions(),cost=positions.reduce((s,p)=>s+posCost(p),0),dd=inp-cost,ord=acInOrders(),held=user.held||0,total=user.balance+inp+ord+held;
- const prof=positions.filter(p=>posValue(p)-posCost(p)>.004).length,share=positions.length?Math.round(prof/positions.length*100):null;
- const meter=`<span class="ac-meter" title="Share of your positions in profit"><i aria-hidden="true">${Array.from({length:16},(_,k)=>`<b${share!==null&&k<Math.round(share/100*16)?' class="on"':''}></b>`).join('')}</i><span class="n num ${T('body-md-semibold')}">${share===null?'—':share}</span></span><span class="ac-meter-l ${T('body-md')}">In profit</span>`;
  const tiles=[['Available',roll('wbal',money(user.balance)),'var(--s1)'],['In positions',money(inp),'var(--s2)'],['In orders',money(ord),'var(--s4)'],['Unrealized P&L',acSigned(dd),dd>=0?'var(--yes)':'var(--no)']].map(([k,v,c])=>`<div class="ac-tile" style="--tk:${c}"><span class="k ${T('body-md')}"><i aria-hidden="true"></i>${k}</span><b class="v num ${T('heading-h2')}">${v}</b></div>`).join('');
  const rng=AC_RNG.map(([k])=>`<button type="button" data-acrng="${k}" aria-pressed="${AC.rng===k}">${k}</button>`).join('');
  const notes=(arriving?`<span class="ac-note ${T('label-sm-medium')}" id="warr">${money(arriving)} arriving · usually 2–5 min</span>`:'')+(held>0?`<span class="ac-note ${T('label-sm-medium')}" id="whold">${money(held)} on hold${aplHeld()?' · '+nAp(aplHeld()):''}</span>`:'');
- return `<article class="ac-port"><div class="ac-ph"><h2 class="${T('heading-h3')}">Portfolio</h2>${meter}<div class="ac-acts"><button type="button" class="btn ink" id="wdep">Deposit</button><button type="button" class="btn ghost" id="wwd">Withdraw</button><button type="button" class="ac-ib" data-acset="refresh" aria-label="Refresh">${IC_REFRESH}</button><button type="button" class="ac-ib" data-acset="topos" aria-label="Go to positions">${IC_OUT}</button></div></div>
- <div class="ac-pb"><div class="ac-pl"><span class="k ${T('body-md')}">Total balance</span><span class="v"><b class="num ${T('display-stat-md')}" id="wtot">${money(total)}</b>${acPill(dd,total-dd,'wtotd')}</span>${notes}<div class="ac-tiles">${tiles}</div></div>
+ /* the head row: Total balance where the «Portfolio» title sat, Deposit / Withdraw on the same line (the user, 4 Oct 2026) */
+ return `<article class="ac-port"><div class="ac-ph"><div class="ac-tot"><span class="k ${T('body-md')}">Total balance</span><span class="v"><b class="num ${T('display-stat-md')}" id="wtot">${money(total)}</b>${acPill(dd,total-dd,'wtotd')}</span></div><div class="ac-acts"><button type="button" class="btn ink" id="wdep">Deposit</button><button type="button" class="btn ghost" id="wwd">Withdraw</button></div></div>
+ <div class="ac-pb"><div class="ac-pl">${notes}<div class="ac-tiles">${tiles}</div></div>
  <div class="ac-pr-glow" aria-hidden="true"></div><div class="ac-pr"><div class="ac-prh"><span class="k ${T('body-md')}">In positions</span><div class="ac-rng" role="group" aria-label="Range">${rng}</div></div><span class="v"><b class="num ${T('display-stat-md')}">${roll('wpos',money(inp))}</b>${acPill(dd,cost,'wposd')}</span><div class="ac-chart"><div class="ac-csvg"></div><div class="ac-ctip" aria-hidden="true"></div></div></div></div></article>`}
 /* Money card: a guest sees the Sign in card; a user, the Portfolio block above */
 function acMoneyCard(){
@@ -5610,9 +5600,7 @@ function acSet(k){
  else if(k==='everywhere')acDialog(true);
  else if(k==='cancel')acDialog(false);
  else if(k==='confirm')acLogout('Logged out everywhere');
- else if(k==='signin'){authReturn='#account/settings';go('#signin')}
- else if(k==='refresh'){renderAccount();toast('Up to date',{ms:2500})}
- else if(k==='topos'){AC.tab='pos';renderAccount();const el=$('#atab-pos');if(el)el.scrollIntoView({behavior:reduceMotion()?'auto':'smooth',block:'start'})}}
+ else if(k==='signin'){authReturn='#account/settings';go('#signin')}}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#acdlg')&&!$('#acdlg').hidden)acDialog(false)});
 /* the Net tooltip: fixed to the viewport under its header, so the table's sideways scroller cannot clip it */
 function acTip(h,on){const t=h.querySelector('.ac-tip');if(!t)return;if(!on){t.classList.remove('on');return}
