@@ -2627,8 +2627,8 @@ html[data-theme=dark] .h-cc-bridge { color: var(--color-white-5); }
 .h-mc.h-wide .h-mc-r { display: flex; min-width: 0; flex: 1; flex-direction: column; }
 @media (max-width:900px) { .h-mc { min-height: 0; } }
 /* ---------- Cards beside the banner (NEW, not in Figma): glass, a small picture, no full-card photos (28 Sep) ---------- */
-.h-rail { display: grid; min-width: 0; grid-template-rows: minmax(0, 1fr); gap: var(--spacing-2xl); }   /* one card (3 Oct 2026) */
-.h-zone.h-stack .h-rail { grid-template-rows: none; grid-template-columns: minmax(0, 1fr); height: 240px; }
+.h-rail { display: grid; min-width: 0; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: var(--spacing-2xl); }
+.h-zone.h-stack .h-rail { grid-template-rows: none; grid-template-columns: repeat(3, minmax(0, 1fr)); height: 112px; }
 @media (max-width:900px) { .h-rail { display: flex; height: auto; gap: var(--spacing-xl); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: calc(-1 * var(--spacing-xs)) calc(-1 * var(--sizing-layout-gutter_mobile)) calc(-1 * var(--spacing-4xl)); padding: var(--spacing-xs) var(--sizing-layout-gutter_mobile) var(--spacing-4xl); scroll-padding: 0 var(--sizing-layout-gutter_mobile); } }
 @media (max-width:900px) { .h-rail::-webkit-scrollbar { display: none; } }
 @media (max-width:900px) { .h-rail > * { flex: 0 0 272px; height: 112px; scroll-snap-align: start; } }
@@ -2904,35 +2904,6 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
    from below - the banner's slide change turned upright (fbx-out / fbx-in). The leaving and the arriving name share
    one grid cell two lines tall, so the card never changes size. */
 .h-mx-soon { justify-content: center; }
-/* the event card = 21st.dev «Squishy Card» (uniquesonu/squishy-card-component): the shape of the original — p-8, rounded-xl,
-   the indigo ground with two dark shapes, pill · big title · line, a white button 16 from the foot and the sides; the
-   card swells 1.05 and the shapes morph on hover (1 s, back-in-out, the shapes .2 s later) — in our tokens */
-.h-wc.h-sq { --sq-ease: cubic-bezier(.68,-.55,.27,1.55);   /* framer-motion backInOut */
-  display: block; padding: var(--spacing-7xl); border-radius: var(--radius-border_radius_xl); background: var(--color-secondary-500); color: var(--text-white); isolation: isolate; box-shadow: none; transition: scale 1s var(--sq-ease); }
-@media (hover: hover) { .h-wc.h-sq:not(.h-wc-empty):hover { translate: none; scale: 1.05; box-shadow: none; } }
-.h-sq-bg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; transition: scale 1s var(--sq-ease); }
-.h-sq-bg circle, .h-sq-bg ellipse { fill: var(--color-dark-700); transform-box: fill-box; transform-origin: center; transition: scale 1s var(--sq-ease) .2s, translate 1s var(--sq-ease) .2s; }
-.h-wc.h-sq:hover .h-sq-bg { scale: 1.5; }
-.h-wc.h-sq:hover .h-sq-c { scale: 1 .5; translate: 0 -25px; }
-.h-wc.h-sq:hover .h-sq-e { scale: 1 2.25; translate: 0 -25px; }
-.h-sq-roll { position: relative; z-index: 1; display: grid; }
-.h-sq-i { grid-area: 1 / 1; display: flex; min-width: 0; flex-direction: column; align-items: flex-start; }
-.h-sq-pill { max-width: 100%; margin-bottom: var(--spacing-xl); padding: var(--spacing-xxs) var(--spacing-xl); overflow: hidden; border-radius: var(--radius-border_radius_round); background: var(--color-white-32); color: var(--text-white); text-overflow: ellipsis; white-space: nowrap; }
-.h-sq-n { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 4; margin: var(--spacing-md) 0; font-family: var(--font); font-size: var(--typeface-size-heading_6); line-height: 1.1; font-weight: var(--typeface-weight-primary-extrabold); letter-spacing: var(--typeface-letter_spacing-xl); color: var(--text-white); transform-origin: top left; scale: .85; transition: scale 1s var(--sq-ease); }
-.h-wc.h-sq:hover .h-sq-n { scale: 1; }
-.h-sq-p { color: var(--text-white); }
-.h-sq-btn { position: absolute; z-index: 2; right: var(--spacing-2xl); bottom: var(--spacing-2xl); left: var(--spacing-2xl); padding: var(--spacing-md) 0; border: var(--sizing-border-ring) solid var(--surface-white); border-radius: var(--radius-border_radius_xs); background: var(--surface-white); color: var(--color-dark-700); text-align: center; text-transform: uppercase; letter-spacing: var(--typeface-letter_spacing-wide_xs); -webkit-backdrop-filter: blur(var(--blur-tooltip)); backdrop-filter: blur(var(--blur-tooltip)); transition: background-color 150ms, color 150ms; }
-.h-sq-btn:hover { background: var(--color-white-32); color: var(--text-white); }
-@container (min-width: 480px) { .h-sq-btn { right: auto; width: 288px; } }   /* a wide strip keeps the original's 288 button */
-.h-sq-i.h-out { animation: h-mx-roll-out var(--h-d-dismiss) var(--ease) both; pointer-events: none; }
-.h-sq-i.h-in { animation: h-mx-roll-in var(--h-d-enter) var(--ease) var(--h-d-dismiss) both; }
-@media (prefers-reduced-motion: reduce) {
-  .h-wc.h-sq, .h-sq-bg, .h-sq-bg circle, .h-sq-bg ellipse, .h-sq-n { transition: none; }
-  .h-wc.h-sq:hover, .h-wc.h-sq:hover .h-sq-bg, .h-sq-n, .h-wc.h-sq:hover .h-sq-n { scale: none; }
-  .h-wc.h-sq:hover .h-sq-c, .h-wc.h-sq:hover .h-sq-e { scale: none; translate: none; }
-  .h-sq-i.h-in, .h-sq-i.h-out { animation: none; }
-}
-@media (max-width:900px) { .h-rail > .h-sq { flex: 1 1 auto; height: 320px; } }
 .h-mx-roll { display: grid; min-width: 0; min-height: calc(2 * var(--typeface-line_height-heading_1)); }
 .h-mx-roll-i { grid-area: 1 / 1; display: flex; min-width: 0; align-items: center; }
 .h-mx-soon-n { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--text-high_em); }
@@ -3092,6 +3063,29 @@ html[data-theme=dark] .money .qr{background:#fff}
         <button type="button" role="menuitemcheckbox" data-proto="low" aria-checked="false">Balance below bond</button>
         <button type="button" role="menuitemcheckbox" data-proto="aplfail" aria-checked="false">Next appeal doesn’t go through</button>
         <button type="button" role="menuitemcheckbox" data-proto="aplexpire" aria-checked="false">Window closes while you appeal</button>
+      </div>
+      <div class="proto-group" data-g="hpos" role="group" aria-label="Home · Positions">
+        <div class="glbl" aria-hidden="true">Home · Positions</div>
+        <button type="button" role="menuitemradio" data-hproto="pos:profit" aria-checked="true">In profit</button>
+        <button type="button" role="menuitemradio" data-hproto="pos:loss" aria-checked="false">At a loss</button>
+        <button type="button" role="menuitemradio" data-hproto="pos:none" aria-checked="false">No positions yet</button>
+      </div>
+      <div class="proto-group" data-g="hsum" role="group" aria-label="Home · Positions sum">
+        <div class="glbl" aria-hidden="true">Home · Positions sum</div>
+        <button type="button" role="menuitemradio" data-hproto="sum:usual" aria-checked="true">Usual</button>
+        <button type="button" role="menuitemradio" data-hproto="sum:100k" aria-checked="false">Over 100,000</button>
+        <button type="button" role="menuitemradio" data-hproto="sum:1m" aria-checked="false">Over 1,000,000</button>
+      </div>
+      <div class="proto-group" data-g="href" role="group" aria-label="Home · Invite friends">
+        <div class="glbl" aria-hidden="true">Home · Invite friends</div>
+        <button type="button" role="menuitemradio" data-hproto="ref:claim" aria-checked="true">Reward to claim</button>
+        <button type="button" role="menuitemradio" data-hproto="ref:none" aria-checked="false">Nothing to claim</button>
+      </div>
+      <div class="proto-group" data-g="hthird" role="group" aria-label="Home · Third card">
+        <div class="glbl" aria-hidden="true">Home · Third card</div>
+        <button type="button" role="menuitemradio" data-hproto="third:soon" aria-checked="true">Closing soon</button>
+        <button type="button" role="menuitemradio" data-hproto="third:move" aria-checked="false">Top move today</button>
+        <button type="button" role="menuitemradio" data-hproto="third:deposit" aria-checked="false">Add money</button>
       </div>
       <div class="proto-group" data-g="hslide" role="group" aria-label="Home · Banner">
         <div class="glbl" aria-hidden="true">Home · Banner</div>
@@ -4566,33 +4560,28 @@ function hCardReferral(){const rate=`<span class="h-wc-l"><b class="h-wc-fig ${T
  if(!user)return `<article class="h-gc h-wc h-au" data-hgo="signup" tabindex="0" role="link">${AU_SKY}${hCap('Invite friends')}<span class="h-wc-row">${rate}</span></article>`;
  if(HS.ref==='claim'&&!user.zero)return `<article class="h-gc h-wc h-au" data-hgo="referral" tabindex="0" role="link">${AU_SKY}${hCap('Invite friends')}<span class="h-wc-row h-wc-mid"><b class="h-wc-fig ${T('heading-chance')} num">${money(REFERRAL.claim)}</b><button type="button" class="h-btn h-ink h-xs ${T('label-sm-bold')} h-spring" data-hact="claim">Claim</button></span></article>`;
  return `<article class="h-gc h-wc h-wc-ref h-au" data-hgo="referral" tabindex="0" role="link">${AU_SKY}<span class="h-wc-stack">${hCap('Invite friends')}${rate}</span><span class="h-wc-share"><b class="${T('label-md-bold')} num">${REFERRAL.code}</b><button type="button" class="h-btn h-ink h-xs ${T('label-sm-bold')} h-spring" data-hact="copy">Copy</button></span></article>`}
-/* The one card beside the banner, in the shape of 21st.dev «Squishy Card» (uniquesonu/squishy-card-component, after
-   hover.dev; the user, 3 Oct 2026: «change this card to: copy past»): a coloured card whose two dark shapes morph on
-   hover while the card swells, a pill on top, a big title, a line under it and a white button pinned to the foot.
-   Our data in its slots: the pill = the league, the title = the event, the line = when it starts · how much traded,
-   the button opens the event (the whole card does — the button is drawn, not a second control). The events that
-   close next still take turns (two pulses each), paused while the card is hovered or focused. */
+/* signed in (the user, 3 Oct 2026: «верни то, что было в sign in mode»): the three cards as before v117 —
+   Positions, Invite friends, and what closes next. Signed out, the hero is the carousel and the rail is not drawn. */
+/* 3. What closes next, by name alone — the events take turns by themselves (two pulses each); the click opens the one shown */
 const hSoonIds=()=>hLive().filter(e=>e.league).map(e=>e.id);
-const hEvIds=()=>{const ids=hSoonIds();return ids.length?ids:hLive().slice(0,3).map(e=>e.id)};
 let hSoon=0;
-const hSqItem=id=>{const e=EVENTS[id];const meta=[e.when,volFmt(e.vol)+' traded'].filter(Boolean).join(' · ');
- return `<span class="h-sq-pill ${T('body-sm')}">${esc(e.league||catTitle(e.cat))}</span><b class="h-sq-n">${esc(e.q)}</b><span class="h-sq-p ${T('body-md')}">${esc(meta)}</span>`};
-const H_SQ_BG='<svg class="h-sq-bg" viewBox="0 0 320 384" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><circle class="h-sq-c" cx="160.5" cy="114.5" r="101.5"/><ellipse class="h-sq-e" cx="160.5" cy="265.5" rx="101.5" ry="43.5"/></svg>';
-function hCardEvent(){const ids=hEvIds();if(!ids.length)return '';const id=ids[hSoon%ids.length];
- return `<article class="h-wc h-sq" data-hev="${id}" tabindex="0" role="link">${H_SQ_BG}<span class="h-sq-roll"><span class="h-sq-i">${hSqItem(id)}</span></span><span class="h-sq-btn ${T('body-md-bold')}" aria-hidden="true">Trade now</span></article>`}
-function hSoonTick(){const card=hq('.h-rail .h-sq');const ids=hEvIds();
- if(!card||view!=='home'||document.hidden||ids.length<2||reduceMotion()||!live)return;if(card.matches(':hover')||card.matches(':focus-visible'))return;
- hSoon=(hSoon+1)%ids.length;const id=ids[hSoon];card.dataset.hev=id;
- const box=hq('.h-sq-roll',card),old=[...box.children];const n=document.createElement('span');n.className='h-sq-i h-in';n.innerHTML=hSqItem(id);box.appendChild(n);
+const hSoonName=id=>`<b class="h-mx-soon-n ${T('heading-h3')}">${esc(EVENTS[id].q)}</b>`;
+function hCardSoon(){const ids=hSoonIds();if(!ids.length)return hCardMove();const id=ids[hSoon%ids.length];
+ return `<article class="h-gc h-wc h-mx-soon" data-hev="${id}" tabindex="0" role="link" aria-label="Closing soon: ${esc(EVENTS[id].q)}"><span class="h-mx-roll"><span class="h-mx-roll-i">${hSoonName(id)}</span></span></article>`}
+function hSoonTick(){const card=hq('.h-rail .h-mx-soon');const ids=hSoonIds();
+ if(!card||view!=='home'||document.hidden||ids.length<2||reduceMotion()||!live)return;if(card.matches(':hover')||card.querySelector(':focus-visible')||card.matches(':focus-visible'))return;
+ hSoon=(hSoon+1)%ids.length;const id=ids[hSoon];card.dataset.hev=id;card.setAttribute('aria-label','Closing soon: '+EVENTS[id].q);
+ const box=hq('.h-mx-roll',card),old=[...box.children];const n=document.createElement('span');n.className='h-mx-roll-i h-in';n.innerHTML=hSoonName(id);box.appendChild(n);
  old.forEach(o=>{o.classList.add('h-out');o.setAttribute('aria-hidden','true');setTimeout(()=>o.remove(),1000)});
- n.addEventListener('animationend',ev=>{if(ev.target===n)n.classList.remove('h-in')})}
+ n.addEventListener('animationend',()=>n.classList.remove('h-in'),{once:true})}
 setInterval(hSoonTick,4800);
 /* the market that moved most today, one per event */
 function hTopMove(){let best=null;hLive().forEach(e=>e.outs.forEach(o=>{if(tradable(e,o)&&(!best||Math.abs(o.d)>Math.abs(best.o.d)))best={e,o}}));return best}
 function hCardMove(){const b=hTopMove();if(!b)return hCov('Add money','USDT · USDC','deposit');const {e,o}=b,one=e.outs.length===1;
  return `<article class="h-gc h-wc" data-hev="${e.id}" tabindex="0" role="link"><span class="h-wc-stack">${hCap('Top move today')}<span class="h-wc-ev">${hPhoto(e,'h-p20')}<span class="${T('label-md')}">${esc(one?e.q:o.n+' · '+e.q)}</span></span></span>
   <span class="h-wc-row h-wc-mid"><b class="h-wc-fig ${T('heading-chance')} num" data-op="${e.id}-${o.i}">${o.p}%</b><span class="h-chip h-chip-sm h-${o.d>=0?'yes':'no'} ${T('label-sm-bold')} num">${hDelta(o.d)} pts</span></span></article>`}
-const hRail=()=>hCardEvent();
+function hCardThird(){if(HS.third==='move')return hCardMove();if(HS.third==='deposit')return hCov('Add money','USDT · USDC','deposit');return hCardSoon()}
+const hRail=()=>hCardPositions()+hCardReferral()+hCardThird();
 function hRailAfter(root){const rail=hq('.h-rail',root);if(!rail)return;hydratePics(rail);const c1=hq('.h-mx-card',rail);if(c1){hFitPill(c1);hSizeRO.observe(c1);hCountUp(c1)}const au=hq('.h-au',rail);if(au)hAuroraMount(au)}
 function hRenderRail(){const rail=hq('#home-body .h-rail');if(!rail)return;rail.innerHTML=hRail();hRailAfter(rail.parentNode)}
 /* a narrow window (the cards still beside the banner below 900 px of zone): the cards go under it, in a row */
