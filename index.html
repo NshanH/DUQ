@@ -1726,9 +1726,9 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-list .seg.mini{margin:0;align-self:flex-start}
 
 /* the table is the event page's «Your position» skin (.postbl): 11 px caps header, 14/500 ink-2 cells with 10 px of
-   air above and below, the key figure bold in ink, rows parted by the dashed rule, a 16 px column gap, flush ends.
+   air above and below, the key figure bold in ink, rows parted by the dashed rule, a 32 px column gap, flush ends.
    Market takes what the number columns leave; no column gets narrower than its longest cell. */
-.ac-tbl{--mk:2.8fr;--gap:16px;display:grid;grid-template-columns:minmax(220px,var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:0}
+.ac-tbl{--mk:2.8fr;--gap:var(--spacing-7xl);display:grid;   /* 32: the event table's 16 + 16 (the user, 3 Oct 2026: «увеличивай gap колонок 16px») */grid-template-columns:minmax(220px,var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:0}
 .ac-tbl.ac-pos-hist{--mk:3.1fr}
 .ac-tbl.ac-ord-open{--mk:5.2fr}
 .ac-tbl.ac-ord-hist{--mk:2.6fr}
