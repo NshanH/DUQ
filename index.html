@@ -1717,8 +1717,10 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-gain.flat{background:var(--card-2);color:var(--ink-2)}
 .ac-vdiv{width:var(--sizing-border-hairline);height:var(--spacing-10xl);background:var(--hairline);flex:none}
 .ac-acts{display:flex;gap:var(--spacing-md);margin-left:auto;flex:none}
-.ac-acts .btn{height:var(--sizing-control-48);padding:0 var(--spacing-2xl);min-width:140px;font-size:var(--typeface-size-title_1);line-height:var(--typeface-line_height-title_1);letter-spacing:var(--typeface-letter_spacing-xs)}   /* Button · Ink · Lg */
-.ac-acts .btn.ghost,.ac-dlg .btn.ghost{background:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0 var(--spacing-5xl);font-size:var(--typeface-size-title_2);line-height:1.5;letter-spacing:0}   /* Button · Ghost flat · Lg */
+/* the account's actions are the system button the header uses (.btn: 44, 15/600, padding 20) with no size of their own;
+   the ghost is flat like the header's Deposit (artifact comment, 4 Oct 2026: «the button doesn't match the header's») */
+.ac-acts .btn.ghost{background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.ac-dlg .btn.ghost{background:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0 var(--spacing-5xl);font-size:var(--typeface-size-title_2);line-height:1.5;letter-spacing:0}   /* Button · Ghost flat · Lg */
 .ac-acts .btn.ghost:hover,.ac-dlg .btn.ghost:hover{background:var(--card-2)}
 
 /* Portfolio block (the user, 4 Oct 2026, reference: a «Portfolio assets Performance» dashboard, copied in architecture):
@@ -1733,14 +1735,12 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 html[data-theme=dark] .ac-port{background:var(--color-white-5);box-shadow:inset 0 1px 0 var(--outline-rim),inset 0 -1px 0 var(--color-white-5),0 10px 30px rgba(0,0,0,.6),0 4px 12px rgba(0,0,0,.4)}
 html[data-theme=dark] .ac-port::before{background:linear-gradient(135deg,var(--color-white-24),var(--color-white-8) 35%,var(--color-white-3) 60%,var(--color-white-12))}
 html[data-theme=dark] .ac-port::after{background:linear-gradient(180deg,var(--color-white-6),transparent 30%)}
-.ac-ph{display:flex;align-items:flex-end;gap:var(--spacing-2xl);flex-wrap:wrap;margin-bottom:var(--spacing-5xl)}
+.ac-ph{position:relative;z-index:3;display:flex;align-items:flex-end;gap:var(--spacing-2xl);flex-wrap:wrap;margin-bottom:var(--spacing-5xl)}   /* above the card's sheen (::after, z 2), so Deposit renders the header's own ink, not a washed grey */
 .ac-tot{display:flex;flex-direction:column;min-width:0}
 .ac-tot>.k{color:var(--ink-3)}
 .ac-tot>.v{display:flex;align-items:center;gap:var(--spacing-xl);flex-wrap:wrap;margin-top:var(--spacing-md);color:var(--ink)}
 .ac-ph .ac-acts{margin-left:auto;align-items:center}
 .ac-pb{position:relative;display:grid;grid-template-columns:minmax(300px,36%) minmax(0,1fr);gap:var(--spacing-8xl)}
-/* the warm glow the glass panel bends: the brand orange, blurred, behind the right column */
-.ac-pr-glow{position:absolute;z-index:0;right:-4%;top:-12%;width:62%;height:124%;background:radial-gradient(ellipse at 50% 45%,var(--surface-primary_low_em_alpha),transparent 70%);filter:blur(36px);pointer-events:none}
 .ac-pl{display:flex;flex-direction:column;gap:var(--spacing-xs);min-width:0}
 .ac-pl .ac-note+.ac-tiles{margin-top:var(--spacing-md)}
 .ac-tiles{display:grid;flex:1;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:var(--spacing-2xl)}
@@ -1752,12 +1752,7 @@ html[data-theme=dark] .ac-port::after{background:linear-gradient(180deg,var(--co
 .ac-pp{display:inline-flex;align-items:center;gap:var(--spacing-xs);height:var(--sizing-control-xs);padding:0 var(--spacing-xl);border-radius:var(--radius-border_radius_round);background:var(--yes-bg);color:var(--yes-label);white-space:nowrap}
 .ac-pp.down{background:var(--no-bg);color:var(--no-label)}
 .ac-pp.flat{background:var(--card-2);color:var(--ink-2)}
-.ac-pr{position:relative;z-index:1;display:flex;flex-direction:column;min-width:0;padding:var(--spacing-5xl);border-radius:var(--radius-border_radius_26);color:var(--ink);overflow:hidden;isolation:isolate;background:var(--surface-glass_inset);-webkit-backdrop-filter:blur(var(--blur-base)) saturate(1.8);backdrop-filter:blur(var(--blur-base)) saturate(1.8);box-shadow:inset 0 1px 0 var(--outline-rim),inset 0 -1px 0 var(--color-white-24),inset 1px 0 0 var(--color-white-32),inset -1px 0 0 var(--color-white-24),0 10px 30px rgba(95,109,119,.10),0 4px 12px rgba(95,109,119,.06)}   /* Liquid Glass, as the carousel cards (the user, 4 Oct 2026) */
-.ac-pr::before{content:"";position:absolute;inset:0;z-index:2;padding:1px;border-radius:inherit;background:linear-gradient(135deg,var(--color-white-88),var(--color-white-24) 35%,var(--color-white-8) 60%,var(--color-white-56));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;pointer-events:none}
-.ac-pr::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;background:linear-gradient(180deg,var(--color-white-24),transparent 30%);pointer-events:none}
-html[data-theme=dark] .ac-pr{background:var(--color-white-5);box-shadow:inset 0 1px 0 var(--outline-rim),inset 0 -1px 0 var(--color-white-5),0 10px 30px rgba(0,0,0,.6),0 4px 12px rgba(0,0,0,.4)}
-html[data-theme=dark] .ac-pr::before{background:linear-gradient(135deg,var(--color-white-24),var(--color-white-8) 35%,var(--color-white-3) 60%,var(--color-white-12))}
-html[data-theme=dark] .ac-pr::after{background:linear-gradient(180deg,var(--color-white-6),transparent 30%)}
+.ac-pr{position:relative;z-index:1;display:flex;flex-direction:column;min-width:0;color:var(--ink)}   /* no ground, shadow or glow of its own (the user, 3 Oct 2026: «удали background и shadow, and orange light») */
 .ac-pr .k{color:var(--ink-3)}
 .ac-prh{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-2xl);flex-wrap:wrap}
 .ac-rng{display:flex;gap:var(--spacing-2xl)}
@@ -1771,8 +1766,8 @@ html[data-theme=dark] .ac-pr::after{background:linear-gradient(180deg,var(--colo
 .ac-buy-halo{fill:var(--surface-primary_low_em_alpha)}
 .ac-cempty{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-3)}
 @media (min-width:1101px){.ac-port{height:420px;display:flex;flex-direction:column}.ac-pb{flex:1;min-height:0}.ac-pr{min-height:0}.ac-chart{flex:1;min-height:0}}   /* 540 → 420 (the user, 4 Oct 2026) */
-@media (max-width:1100px){.ac-pb{grid-template-columns:1fr}.ac-pr-glow{right:0;top:auto;bottom:-6%;width:100%;height:60%}}
-@media (max-width:900px){.ac-port{padding:var(--spacing-4xl)}.ac-pr{padding:var(--spacing-4xl)}.ac-chart{min-height:200px}.ac-ph .ac-acts{margin-left:0;width:100%}.ac-ph .ac-acts .btn{flex:1;min-width:0}.ac-ph{margin-bottom:var(--spacing-5xl)}.ac-tile .v{font-size:var(--typeface-size-heading_1);line-height:var(--typeface-line_height-heading_1)}.ac-prh{flex-direction:column;align-items:flex-start;gap:var(--spacing-md)}.ac-pr>.v{margin-top:var(--spacing-2xl)}}
+@media (max-width:1100px){.ac-pb{grid-template-columns:1fr}}
+@media (max-width:900px){.ac-port{padding:var(--spacing-4xl)}.ac-chart{min-height:200px}.ac-ph .ac-acts{margin-left:0;width:100%}.ac-ph .ac-acts .btn{flex:1;min-width:0}.ac-ph{margin-bottom:var(--spacing-5xl)}.ac-tile .v{font-size:var(--typeface-size-heading_1);line-height:var(--typeface-line_height-heading_1)}.ac-prh{flex-direction:column;align-items:flex-start;gap:var(--spacing-md)}.ac-pr>.v{margin-top:var(--spacing-2xl)}}
 /* the three pills: Nav Item, Current = the ink pill, Default = medium ink-2 */
 .ac-tabs{display:flex;gap:var(--spacing-xxs);flex-wrap:wrap}
 .ac-tabs button{height:var(--sizing-control-lg);padding:0 var(--spacing-2xl);border-radius:var(--radius-border_radius_round);color:var(--ink-2);font-size:var(--typeface-size-body_2);line-height:var(--typeface-line_height-body_2);font-weight:var(--typeface-weight-primary-medium);white-space:nowrap;transition:background 200ms,color 200ms}
@@ -5587,7 +5582,7 @@ function acPortfolio(){const inp=inPositions(),cost=positions.reduce((s,p)=>s+po
  /* the head row: Total balance where the «Portfolio» title sat, Deposit / Withdraw on the same line (the user, 4 Oct 2026) */
  return `<article class="ac-port"><div class="ac-ph"><div class="ac-tot"><span class="k ${T('body-md')}">Total balance</span><span class="v"><b class="num ${T('display-stat-md')}" id="wtot">${money(total)}</b>${acPill(dd,total-dd,'wtotd')}</span></div><div class="ac-acts"><button type="button" class="btn ink" id="wdep">Deposit</button><button type="button" class="btn ghost" id="wwd">Withdraw</button></div></div>
  <div class="ac-pb"><div class="ac-pl">${notes}<div class="ac-tiles">${tiles}</div></div>
- <div class="ac-pr-glow" aria-hidden="true"></div><div class="ac-pr"><div class="ac-prh"><span class="k ${T('body-md')}">In positions</span><div class="ac-rng" role="group" aria-label="Range">${rng}</div></div><span class="v"><b class="num ${T('display-stat-md')}">${roll('wpos',money(inp))}</b>${acPill(dd,cost,'wposd')}</span><div class="ac-chart"></div></div></div></article>`}
+ <div class="ac-pr"><div class="ac-prh"><span class="k ${T('body-md')}">In positions</span><div class="ac-rng" role="group" aria-label="Range">${rng}</div></div><span class="v"><b class="num ${T('display-stat-md')}">${roll('wpos',money(inp))}</b>${acPill(dd,cost,'wposd')}</span><div class="ac-chart"></div></div></div></article>`}
 /* Money card: a guest sees the Sign in card; a user, the Portfolio block above */
 function acMoneyCard(){
  if(user)return acPortfolio();
