@@ -1717,6 +1717,69 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .ac-acts .btn.ghost,.ac-dlg .btn.ghost{background:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0 var(--spacing-5xl);font-size:var(--typeface-size-title_2);line-height:1.5;letter-spacing:0}   /* Button · Ghost flat · Lg */
 .ac-acts .btn.ghost:hover,.ac-dlg .btn.ghost:hover{background:var(--card-2)}
 
+/* Portfolio block (the user, 4 Oct 2026, reference: a «Portfolio assets Performance» dashboard, copied in architecture):
+   a title row with the In-profit meter and Deposit / Withdraw where its Filters sat, plus the two round buttons; left,
+   Total balance with its pill and four tiles; right, the orange panel with In positions, the range tabs and the chart of
+   the value held in positions — hatched area, the chosen stretch in yellow between two markers, a dark tooltip. The
+   card is the carousel's Liquid Glass; colours, type and spacing are tokens. */
+.ac-port{position:relative;padding:var(--spacing-7xl);border-radius:var(--radius-border_radius_6xl);color:var(--text-high_em);background:var(--surface-glass_inset);-webkit-backdrop-filter:blur(var(--blur-base)) saturate(1.8);backdrop-filter:blur(var(--blur-base)) saturate(1.8);box-shadow:inset 0 1px 0 var(--outline-rim),inset 0 -1px 0 var(--color-white-24),inset 1px 0 0 var(--color-white-32),inset -1px 0 0 var(--color-white-24),0 10px 30px rgba(95,109,119,.10),0 4px 12px rgba(95,109,119,.06);isolation:isolate}
+.ac-port::before{content:"";position:absolute;inset:0;z-index:2;padding:1px;border-radius:inherit;background:linear-gradient(135deg,var(--color-white-88),var(--color-white-24) 35%,var(--color-white-8) 60%,var(--color-white-56));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;pointer-events:none}
+.ac-port::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;background:linear-gradient(180deg,var(--color-white-24),transparent 30%);pointer-events:none}
+html[data-theme=dark] .ac-port{background:var(--color-white-5);box-shadow:inset 0 1px 0 var(--outline-rim),inset 0 -1px 0 var(--color-white-5),0 10px 30px rgba(0,0,0,.6),0 4px 12px rgba(0,0,0,.4)}
+html[data-theme=dark] .ac-port::before{background:linear-gradient(135deg,var(--color-white-24),var(--color-white-8) 35%,var(--color-white-3) 60%,var(--color-white-12))}
+html[data-theme=dark] .ac-port::after{background:linear-gradient(180deg,var(--color-white-6),transparent 30%)}
+.ac-ph{display:flex;align-items:center;gap:var(--spacing-2xl);flex-wrap:wrap;margin-bottom:var(--spacing-7xl)}
+.ac-ph h2{margin:0;color:var(--ink);font-weight:var(--typeface-weight-primary-medium)}
+.ac-meter{display:inline-flex;align-items:center;gap:var(--spacing-lg);height:var(--sizing-control-xl);padding:0 var(--spacing-2xl);border-radius:var(--radius-border_radius_round);background:var(--card-2);color:var(--ink)}
+.ac-meter i{display:flex;align-items:center;gap:2px}
+.ac-meter i b{display:block;width:2px;height:12px;border-radius:1px;background:var(--neutral_inverse_white-alpha_24)}
+.ac-meter i b:nth-child(4n+1){height:16px}
+.ac-meter i b.on{background:var(--surface-warning_med_em)}
+.ac-meter-l{color:var(--ink-3);margin-left:calc(-1 * var(--spacing-sm))}
+.ac-ph .ac-acts{margin-left:auto;align-items:center}
+.ac-ib{width:var(--sizing-control-xl);height:var(--sizing-control-xl);display:inline-grid;place-items:center;border-radius:var(--radius-border_radius_round);background:var(--card-2);color:var(--ink);transition:background 200ms,transform 300ms var(--spring)}
+.ac-ib:hover{background:var(--neutral_inverse_white-alpha_12);transform:translateY(-1px)}
+.ac-ib svg{width:var(--sizing-icon-sm);height:var(--sizing-icon-sm)}
+.ac-pb{display:grid;grid-template-columns:minmax(300px,36%) minmax(0,1fr);gap:var(--spacing-8xl)}
+.ac-pl{display:flex;flex-direction:column;min-width:0}
+.ac-pl>.k{color:var(--ink-3)}
+.ac-pl>.v{display:flex;align-items:center;gap:var(--spacing-xl);flex-wrap:wrap;margin:var(--spacing-md) 0 var(--spacing-8xl);color:var(--ink)}
+.ac-tiles{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-2xl);margin-top:auto}
+.ac-tile{display:flex;flex-direction:column;gap:var(--spacing-md);min-width:0;padding:var(--spacing-4xl);border-radius:var(--radius-border_radius_3xl);background:var(--card-2)}
+.ac-tile .k{display:flex;align-items:center;gap:var(--spacing-md);color:var(--ink-3)}
+.ac-tile .k i{width:3px;height:14px;border-radius:2px;background:var(--tk)}
+.ac-tile .v{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* pills: green or red on the glass, white on the orange */
+.ac-pp{display:inline-flex;align-items:center;gap:var(--spacing-xs);height:var(--sizing-control-xs);padding:0 var(--spacing-xl);border-radius:var(--radius-border_radius_round);background:var(--yes-bg);color:var(--yes-label);white-space:nowrap}
+.ac-pp.down{background:var(--no-bg);color:var(--no-label)}
+.ac-pp.flat{background:var(--card-2);color:var(--ink-2)}
+.ac-pr{position:relative;display:flex;flex-direction:column;min-width:0;padding:var(--spacing-7xl);border-radius:var(--radius-border_radius_26);background:var(--surface-primary_med_em);color:var(--text-white);overflow:hidden}
+.ac-pr .k{color:var(--text-white_med_em)}
+.ac-prh{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-2xl);flex-wrap:wrap}
+.ac-rng{display:flex;gap:var(--spacing-2xl)}
+.ac-rng button{position:relative;padding:var(--spacing-xs) 0;color:var(--text-white_med_em);font-size:var(--typeface-size-caption_2);font-weight:var(--typeface-weight-primary-semibold);transition:color 150ms}
+.ac-rng button:hover,.ac-rng button[aria-pressed=true]{color:var(--text-white)}
+.ac-rng button[aria-pressed=true]::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:1px;background:var(--text-white)}
+.ac-pr>.v{display:flex;align-items:center;gap:var(--spacing-xl);flex-wrap:wrap;margin:var(--spacing-md) 0 var(--spacing-2xl);color:var(--text-white)}
+.ac-pr .ac-pp,.ac-pr .ac-pp.down,.ac-pr .ac-pp.flat{background:var(--surface-white);color:var(--text-black)}
+.ac-chart{position:relative;flex:1;min-height:240px;color:var(--text-white);touch-action:pan-y}
+.ac-csvg,.ac-csvg svg{position:absolute;inset:0;width:100%;height:100%}
+.ac-csvg svg{display:block;overflow:visible}
+.ac-ax{fill:var(--text-white_med_em);font-size:12px;font-weight:500;font-family:var(--font)}
+.ac-grid{stroke:var(--color-white-12);stroke-width:1}
+.ac-line{fill:none;stroke:var(--text-white);stroke-width:1.5;stroke-opacity:.9;stroke-linejoin:round;stroke-linecap:round}
+.ac-seg{fill:none;stroke:var(--surface-warning_med_em);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.ac-seg-glow{stroke-width:7;stroke-opacity:.5}
+.ac-pillar{stroke:var(--color-white-56);stroke-width:1}
+.ac-dot{fill:var(--surface-white);stroke:var(--surface-primary_med_em);stroke-width:3}
+.ac-cempty{position:absolute;inset:0;display:grid;place-items:center;color:var(--text-white_med_em)}
+.ac-ctip{position:absolute;z-index:3;top:var(--spacing-6xl);display:none;flex-direction:column;gap:var(--spacing-md);min-width:200px;padding:var(--spacing-xl) var(--spacing-2xl);border-radius:var(--radius-border_radius_14);background:var(--surface-ink);color:var(--text-inverse_black_neutral);box-shadow:var(--shadow-3);pointer-events:none}
+.ac-ctip.on{display:flex}
+.ac-ctip .r{display:flex;justify-content:space-between;gap:var(--spacing-2xl)}
+.ac-ctip .r span:first-child{opacity:.7}
+.ac-ctip .pc{text-align:center;padding:var(--spacing-xs) 0;border-radius:var(--radius-border_radius_md);background:var(--neutral_inverse_black-alpha_12,var(--color-white-12))}
+@media (max-width:1100px){.ac-pb{grid-template-columns:1fr}.ac-tiles{margin-top:0}.ac-pl>.v{margin-bottom:var(--spacing-5xl)}}
+@media (max-width:900px){.ac-port{padding:var(--spacing-4xl)}.ac-pr{padding:var(--spacing-4xl)}.ac-chart{min-height:200px}.ac-ph .ac-acts{margin-left:0;width:100%}.ac-ph .ac-acts .btn{flex:1;min-width:0}.ac-ph{margin-bottom:var(--spacing-5xl)}.ac-tile .v{font-size:var(--typeface-size-heading_1);line-height:var(--typeface-line_height-heading_1)}.ac-prh{flex-direction:column;align-items:flex-start;gap:var(--spacing-md)}.ac-pr>.v{margin-top:var(--spacing-2xl)}}
 /* the three pills: Nav Item, Current = the ink pill, Default = medium ink-2 */
 .ac-tabs{display:flex;gap:var(--spacing-xxs);flex-wrap:wrap}
 .ac-tabs button{height:var(--sizing-control-lg);padding:0 var(--spacing-2xl);border-radius:var(--radius-border_radius_round);color:var(--ink-2);font-size:var(--typeface-size-body_2);line-height:var(--typeface-line_height-body_2);font-weight:var(--typeface-weight-primary-medium);white-space:nowrap;transition:background 200ms,color 200ms}
@@ -5302,6 +5365,7 @@ document.addEventListener('click',e=>{
  const tab=e.target.closest('[role=tab]');if(tab){selectTab(tab);return}
  const asg=e.target.closest('[data-acseg]');if(asg){const [k,v]=asg.dataset.acseg.split('|');AC[k]=v;renderAccount();const b=document.querySelector(`[data-acseg="${k}|${v}"]`);if(b)b.focus();return}
  const acx=e.target.closest('[data-accancel]');if(acx){const [ev,i,j]=acx.dataset.accancel.split('|');cancelOrders(EVENTS[ev],+i,[+j]);renderAccount();return}
+ const arg=e.target.closest('[data-acrng]');if(arg){AC.rng=arg.dataset.acrng;hqa('[data-acrng]').forEach(b=>b.setAttribute('aria-pressed',String(b===arg)));const box=hq('.ac-chart');if(box)box._sel=null;acChartDraw();return}
  const ast=e.target.closest('[data-acset]');if(ast){acSet(ast.dataset.acset);return}
  const pk=e.target.closest('[data-pick]');if(pk&&!pk.disabled){const [ev,i,s]=pk.dataset.pick.split('|');if(view==='event'&&ev===curEv){sel=+i;side=s;mode='buy';priceAtInput=null;clearConfirm();renderTrade();markSel();drawEventChart(false);afterPick(false)}else{pendingPick={ev,out:+i,side:s,mode:'buy'};go('#event/'+ev)}return}
  const sp=e.target.closest('[data-sellpos]');if(sp){e.preventDefault();const [ev,i,s]=sp.dataset.sellpos.split('|');pendingPick={ev,out:+i,side:s,mode:'sell',all:true};sellStr='all';if(view==='event'&&ev===curEv){renderEvent()}else go('#event/'+ev);return}
@@ -5353,7 +5417,7 @@ document.addEventListener('click',e=>{
    positions and the five closed ones, the open orders of the seeded markets and their history, the ledger's
    transfers. Each list is the event page's position-table component drawn with the account's columns.
    ============================================================ */
-const AC={tab:'pos',pos:'open',ord:'open',tx:'dep'};   /* which tab is up, and which half of each card's switch */
+const AC={tab:'pos',pos:'open',ord:'open',tx:'dep',rng:'1M'};   /* which tab is up, and which half of each card's switch */
 const acDT=d=>fmtDate(d)+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
 const acShort=a=>a&&a.length>14?a.slice(0,6)+'…'+a.slice(-6):(a||'—');
 const acPct=(d,c)=>'('+(c?Math.abs(d/c*100).toFixed(0):'0')+'%)';
@@ -5437,8 +5501,66 @@ function acAppeals(rows){const head=acHd(['Market',['Submitted','l'],['Status','
   +`<span class="pn ac-act" role="cell"><button type="button" class="sell" data-aplx="d${k}" aria-expanded="false" aria-controls="aplx-d${k}">Details</button></span>`,` class="ac-row aplrow" data-aplrow="${x.e.id}|${x.o.i}"`)
   +`<div class="ac-row ac-aplx" id="aplx-d${k}" role="row" hidden><span class="pn" role="cell">${aplDetail(x.a,s)}</span></div>`);
  return acTbl('',4,head,body)}
-/* Money card: the balance, the hairline, what sits in positions with its gain pill, Deposit and Withdraw */
+/* ---- Portfolio block (4 Oct 2026): the signed-in Money card as the reference dashboard ---- */
+const AC_RNG=[['1D',1],['1W',7],['1M',30],['3M',91],['1Y',365],['All',0]];
+const IC_REFRESH='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 9a6 6 0 0 0-10.9-2.5M4 11a6 6 0 0 0 10.9 2.5"/><path d="M16 4v5h-5M4 16v-5h5"/></svg>';
+const IC_OUT='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 14 14 6M8 6h6v6"/></svg>';
+/* the day a position has been held since: its Buy in the ledger, else the day its market opened */
+const acHeldSince=p=>{const b=ledger.find(h=>h.k==='Buy'&&h.ev===p.ev);return b?b.d:EVENTS[p.ev].open};
+/* a market's price on a day, read off its 40-point history (open … now) and interpolated; now = the live price */
+function acPriceAt(e,o,t){const h=o.h;if(!h||!h.length)return o.p;const span=NOW-e.open;if(t>=NOW||span<=0)return o.p;const x=(t-e.open)/span*(h.length-1);if(x<=0)return h[0];const i=Math.floor(x);return i>=h.length-1?h[h.length-1]:h[i]+(h[i+1]-h[i])*(x-i)}
+const acInOrders=()=>{let s=0;if(!user||user.zero)return 0;Object.values(EVENTS).forEach(e=>e.outs.forEach(o=>(o.orders||[]).forEach(r=>{s+=(r.n-r.filled)*r.price/100})));return s};
+/* the value held in positions over the range, a point per step; each position counts from the day it was bought */
+function acSeries(days){const end=NOW.getTime();const first=positions.length?Math.min(...positions.map(p=>acHeldSince(p).getTime())):end-30*864e5;
+ const start=days?end-days*864e5:Math.min(first,end-7*864e5);   /* All: from the first day a position was held */const steps=days===1?24:days===7?28:days===30?30:days===91?91:Math.min(120,Math.max(30,Math.round((end-start)/864e5)));
+ const pts=[];for(let i=0;i<=steps;i++){const t=new Date(start+(end-start)*i/steps);let v=0;positions.forEach(p=>{if(t<acHeldSince(p))return;const e=EVENTS[p.ev],o=e.outs[p.out];const pr=acPriceAt(e,o,t);v+=p.n*(p.side==='yes'?pr:100-pr)/100});pts.push({t,v})}
+ if(pts.length)pts[pts.length-1].v=inPositions();return pts}
+const acK=v=>v>=1000?'$'+(v/1000).toFixed(v>=10000?0:1).replace(/\.0$/,'')+'K':'$'+Math.round(v);
+function acTicks(lo,hi){const raw=(hi-lo)/3;if(!(raw>0))return[];const mag=Math.pow(10,Math.floor(Math.log10(raw)));const n=raw/mag;const step=(n<1.5?1:n<3.5?2:n<7.5?5:10)*mag;const out=[];for(let v=Math.ceil(lo/step)*step;v<hi;v+=step)if(v>lo)out.push(v);return out}
+/* axis labels by range: hours · days · months, the current month reading «Now» as on the reference */
+function acXTicks(pts,rng){const out=[];const key=t=>rng==='1D'?t.getHours():rng==='1W'||rng==='1M'?t.getDate()+'/'+t.getMonth():t.getMonth()+'/'+t.getFullYear();
+ pts.forEach((p,i)=>{if(i&&key(p.t)===key(pts[i-1].t))return;const t=p.t;
+  if(rng==='1D'){if(t.getHours()%6)return;out.push({i,l:String(t.getHours()).padStart(2,'0')+':00'})}
+  else if(rng==='1W'){out.push({i,l:fmtDay(t)})}
+  else if(rng==='1M'){if(t.getDate()%6!==1&&i)return;out.push({i,l:fmtDay(t)})}
+  else out.push({i,l:t.getMonth()===NOW.getMonth()&&t.getFullYear()===NOW.getFullYear()?'Now':MONTHS[t.getMonth()]})});
+ return out}
+const acDefaultSel=pts=>{const i=pts.findIndex(p=>p.v>0);return i<0||i>=pts.length-1?0:i};
+const acPill=(d,base,id)=>{const pc=base>0?Math.abs(d/base*100):0,dir=acTone(d);return `<span class="ac-pp ${dir} ${T('label-md-bold')} num"${id?` id="${id}"`:''}>${dir==='down'?'↙':'↗'} ${pc.toFixed(1)}%</span>`};
+function acChartDraw(root){const box=hq('.ac-chart',root||document);if(!box)return;const W=box.clientWidth,H=box.clientHeight;if(!W||!H)return;
+ const rng=AC_RNG.find(r=>r[0]===AC.rng)||AC_RNG[2];const pts=acSeries(rng[1]);box._pts=pts;const n=pts.length;
+ const padL=44,padR=14,padT=10,padB=28,x0=padL,x1=W-padR,y0=padT,y1=H-padB;
+ const vs=pts.map(p=>p.v),vmax=Math.max(...vs);let lo=Math.min(...vs),hi=vmax;if(hi-lo<1)hi=lo+1;const pad=(hi-lo)*.15;lo=Math.max(0,lo-pad);hi+=pad;
+ const X=i=>x0+(x1-x0)*i/(n-1),Y=v=>y1-(y1-y0)*(v-lo)/(hi-lo);
+ const line=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' ');
+ const yl=vmax>0?acTicks(lo,hi).map(v=>`<text x="${x0-8}" y="${(Y(v)+4).toFixed(1)}" text-anchor="end" class="ac-ax">${acK(v)}</text><line x1="${x0}" x2="${x1}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="ac-grid"/>`).join(''):'';
+ let lastX=-99;const xl=acXTicks(pts,rng[0]).filter(({i})=>{const x=X(i);if(x-lastX<44)return false;lastX=x;return true}).map(({i,l})=>`<rect x="${(X(i)-14).toFixed(1)}" y="${y0}" width="28" height="${y1-y0}" fill="url(#acband)"/><text x="${X(i).toFixed(1)}" y="${H-8}" text-anchor="middle" class="ac-ax">${l}</text>`).join('');
+ const sel=box._sel!=null&&box._sel<n-1?box._sel:acDefaultSel(pts);const has=vmax>0;
+ const seg=has?pts.slice(sel).map((p,k)=>(k?'L':'M')+X(sel+k).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' '):'';
+ const chosen=has?`<rect x="${X(sel).toFixed(1)}" y="${y0}" width="${(x1-X(sel)).toFixed(1)}" height="${y1-y0}" fill="url(#acselg)"/><line x1="${X(sel).toFixed(1)}" x2="${X(sel).toFixed(1)}" y1="${y0}" y2="${y1}" class="ac-pillar"/><path d="${seg}" class="ac-seg ac-seg-glow" filter="url(#acglow)"/><path d="${seg}" class="ac-seg"/><circle cx="${X(sel).toFixed(1)}" cy="${Y(pts[sel].v).toFixed(1)}" r="5" class="ac-dot"/><circle cx="${x1}" cy="${Y(pts[n-1].v).toFixed(1)}" r="5" class="ac-dot"/>`:'';
+ hq('.ac-csvg',box).innerHTML=`<svg viewBox="0 0 ${W} ${H}" aria-hidden="true"><defs><pattern id="achatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="currentColor" stroke-opacity=".3" stroke-width="1.4"/></pattern><linearGradient id="acband" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity="0"/><stop offset=".5" stop-color="currentColor" stop-opacity=".09"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient><linearGradient id="acselg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".14"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient><filter id="acglow" x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur stdDeviation="3"/></filter></defs>${yl}${xl}<path d="${line} L${x1} ${y1} L${x0} ${y1} Z" fill="url(#achatch)"/><path d="${line}" class="ac-line"/>${chosen}</svg>`;
+ let em=hq('.ac-cempty',box);if(!has){if(!em){em=document.createElement('div');em.className='ac-cempty '+T('body-sm');em.textContent='Your first position draws the line.';box.appendChild(em)}}else if(em)em.remove();
+ const tip=hq('.ac-ctip',box);if(!tip)return;if(!has){tip.classList.remove('on');return}
+ const a=pts[sel],b=pts[n-1],day=t=>rng[0]==='1D'?String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'):fmtDay(t);
+ const pc=a.v>0?(b.v-a.v)/a.v*100:null;
+ tip.innerHTML=`<div class="r ${T('label-md')}"><span>${day(a.t)}</span><b class="num">${money(a.v)}</b></div><div class="pc ${T('label-md-bold')} num">${pc===null?'—':(pc>=0?'+':'−')+Math.abs(pc).toFixed(2)+'%'}</div><div class="r ${T('label-md')}"><span>Now</span><b class="num">${money(b.v)}</b></div>`;
+ tip.classList.add('on');const tw=tip.offsetWidth,sx=X(sel);tip.style.left=(sx+16+tw<=W?sx+16:Math.max(0,sx-16-tw))+'px'}
+function acChartMount(root){const box=hq('.ac-chart',root);if(!box)return;acChartDraw(root);
+ if(!box._ro){box._ro=new ResizeObserver(()=>{if(box.isConnected)acChartDraw()});box._ro.observe(box)}
+ box.addEventListener('pointermove',e=>{const pts=box._pts;if(!pts)return;const r=box.getBoundingClientRect();const f=(e.clientX-r.left-44)/(r.width-58);const i=Math.max(0,Math.min(pts.length-2,Math.round(f*(pts.length-1))));if(i!==box._sel){box._sel=i;acChartDraw()}});
+ box.addEventListener('pointerleave',()=>{if(box._sel!=null){box._sel=null;acChartDraw()}})}
+function acPortfolio(){const inp=inPositions(),cost=positions.reduce((s,p)=>s+posCost(p),0),dd=inp-cost,ord=acInOrders(),held=user.held||0,total=user.balance+inp+ord+held;
+ const prof=positions.filter(p=>posValue(p)-posCost(p)>.004).length,share=positions.length?Math.round(prof/positions.length*100):null;
+ const meter=`<span class="ac-meter" title="Share of your positions in profit"><i aria-hidden="true">${Array.from({length:16},(_,k)=>`<b${share!==null&&k<Math.round(share/100*16)?' class="on"':''}></b>`).join('')}</i><span class="n num ${T('body-md-semibold')}">${share===null?'—':share}</span></span><span class="ac-meter-l ${T('body-md')}">In profit</span>`;
+ const tiles=[['Available',roll('wbal',money(user.balance)),'var(--s1)'],['In positions',money(inp),'var(--s2)'],['In orders',money(ord),'var(--s4)'],['Unrealized P&L',acSigned(dd),dd>=0?'var(--yes)':'var(--no)']].map(([k,v,c])=>`<div class="ac-tile" style="--tk:${c}"><span class="k ${T('body-md')}"><i aria-hidden="true"></i>${k}</span><b class="v num ${T('heading-h2')}">${v}</b></div>`).join('');
+ const rng=AC_RNG.map(([k])=>`<button type="button" data-acrng="${k}" aria-pressed="${AC.rng===k}">${k}</button>`).join('');
+ const notes=(arriving?`<span class="ac-note ${T('label-sm-medium')}" id="warr">${money(arriving)} arriving · usually 2–5 min</span>`:'')+(held>0?`<span class="ac-note ${T('label-sm-medium')}" id="whold">${money(held)} on hold${aplHeld()?' · '+nAp(aplHeld()):''}</span>`:'');
+ return `<article class="ac-port"><div class="ac-ph"><h2 class="${T('heading-h3')}">Portfolio</h2>${meter}<div class="ac-acts"><button type="button" class="btn ink" id="wdep">Deposit</button><button type="button" class="btn ghost" id="wwd">Withdraw</button><button type="button" class="ac-ib" data-acset="refresh" aria-label="Refresh">${IC_REFRESH}</button><button type="button" class="ac-ib" data-acset="topos" aria-label="Go to positions">${IC_OUT}</button></div></div>
+ <div class="ac-pb"><div class="ac-pl"><span class="k ${T('body-md')}">Total balance</span><span class="v"><b class="num ${T('display-stat-md')}" id="wtot">${money(total)}</b>${acPill(dd,total-dd,'wtotd')}</span>${notes}<div class="ac-tiles">${tiles}</div></div>
+ <div class="ac-pr"><div class="ac-prh"><span class="k ${T('body-md')}">In positions</span><div class="ac-rng" role="group" aria-label="Range">${rng}</div></div><span class="v"><b class="num ${T('display-stat-md')}">${roll('wpos',money(inp))}</b>${acPill(dd,cost,'wposd')}</span><div class="ac-chart"><div class="ac-csvg"></div><div class="ac-ctip" aria-hidden="true"></div></div></div></div></article>`}
+/* Money card: a guest sees the Sign in card; a user, the Portfolio block above */
 function acMoneyCard(){
+ if(user)return acPortfolio();
  if(!user)return `<article class="card ac-money"><div class="ac-mrow"><div class="ac-stat"><span class="k ${T('overline-eyebrow')}">Balance</span><span class="ac-guest ${T('body-sm')}">Sign in to see your balance and positions.</span></div><div class="ac-acts"><button type="button" class="btn ink" id="wsign">Sign in</button></div></div></article>`;
  const inp=inPositions(),cost=positions.reduce((s,p)=>s+posCost(p),0),dd=inp-cost;
  return `<article class="card ac-money"><div class="ac-mrow"><div class="ac-stat"><span class="k ${T('overline-eyebrow')}">Available balance</span><span class="v ${T('display-stat-md')}">${roll('wbal',money(user.balance))}</span>${arriving?`<span class="ac-note ${T('label-sm-medium')}" id="warr">${money(arriving)} arriving · usually 2–5 min</span>`:''}${user.held>0?`<span class="ac-note ${T('label-sm-medium')}" id="whold">${money(user.held)} on hold${aplHeld()?' · '+nAp(aplHeld()):''}</span>`:''}</div><div class="ac-vdiv" aria-hidden="true"></div><div class="ac-stat"><span class="k ${T('overline-eyebrow')}">In positions</span><span class="ac-vrow"><span class="v ${T('display-stat-sm')}">${roll('wpos',money(inp))}</span>${positions.length?`<span class="ac-gain ${T('label-md-bold')} ${acTone(dd)}" id="wposd">${acSigned(dd)}</span>`:''}</span></div><div class="ac-acts"><button type="button" class="btn ink" id="wdep">Deposit</button><button type="button" class="btn ghost" id="wwd">Withdraw</button></div></div></article>`}
@@ -5456,7 +5578,7 @@ function renderAccount(){const body=$('#account-body');
  const apl=aplRows.length?panel('apl',acAppeals(aplRows)):'';
  body.innerHTML=`<div class="ac-page">${head}${acMoneyCard()}${tablist}${pos}${ord}${tx}${apl}</div>`;
  hydratePics(body);
- if(user){$('#wdep').addEventListener('click',()=>openDeposit());$('#wwd').addEventListener('click',openWithdraw)}else $('#wsign').addEventListener('click',()=>{authReturn='#account';go('#signin')})}
+ if(user){$('#wdep').addEventListener('click',()=>openDeposit());$('#wwd').addEventListener('click',openWithdraw);acChartMount(body)}else $('#wsign').addEventListener('click',()=>{authReturn='#account';go('#signin')})}
 /* ---- Settings (#account/settings): the Security card and the Log out everywhere dialog ---- */
 function renderSettings(){const body=$('#settings-body');
  const row=(l,v,act)=>`<div class="ac-row" role="row"><span class="pn" role="cell">${l}</span><span class="pn sb" role="cell">${v}</span><span class="pn ac-act" role="cell">${act}</span></div>`;
@@ -5474,7 +5596,9 @@ function acSet(k){
  else if(k==='everywhere')acDialog(true);
  else if(k==='cancel')acDialog(false);
  else if(k==='confirm')acLogout('Logged out everywhere');
- else if(k==='signin'){authReturn='#account/settings';go('#signin')}}
+ else if(k==='signin'){authReturn='#account/settings';go('#signin')}
+ else if(k==='refresh'){renderAccount();toast('Up to date',{ms:2500})}
+ else if(k==='topos'){AC.tab='pos';renderAccount();const el=$('#atab-pos');if(el)el.scrollIntoView({behavior:reduceMotion()?'auto':'smooth',block:'start'})}}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#acdlg')&&!$('#acdlg').hidden)acDialog(false)});
 /* the Net tooltip: fixed to the viewport under its header, so the table's sideways scroller cannot clip it */
 function acTip(h,on){const t=h.querySelector('.ac-tip');if(!t)return;if(!on){t.classList.remove('on');return}
@@ -5523,7 +5647,7 @@ function applyTick(e,o,old){
   retargetEventChart();
   if(o.i===sel){calc();const h2=$('#trade-h span');if(h2)h2.firstChild.textContent=`${e.outs.length>1?o.n+' · ':''}${side==='yes'?'Yes':'No'} ${priceOf(e,o,side)}¢`}
   const wp=$('#wpos');if(wp)wp.textContent=money(inPositions())}
- if(view==='account'&&$('#wpos')){const inp=inPositions(),cost=positions.reduce((s,p)=>s+posCost(p),0),dd=inp-cost;const old2=parseFloat($('#wpos').textContent.replace(/[$,]/g,''))||inp;tween($('#wpos'),old2,inp,money,400);const d=$('#wposd');if(d&&positions.length){d.textContent=acSigned(dd);d.className='ac-gain '+T('label-md-bold')+' '+acTone(dd)}}
+ if(view==='account'&&$('#wpos')){const inp=inPositions(),cost=positions.reduce((s,p)=>s+posCost(p),0),dd=inp-cost;const old2=parseFloat($('#wpos').textContent.replace(/[$,]/g,''))||inp;tween($('#wpos'),old2,inp,money,400);const d=$('#wposd');if(d&&positions.length)d.outerHTML=acPill(dd,cost,'wposd');const tt=$('#wtot');if(tt){const total=user.balance+inp+acInOrders()+(user.held||0);tt.textContent=money(total);const td=$('#wtotd');if(td&&positions.length)td.outerHTML=acPill(dd,total-dd,'wtotd')}acChartDraw()}
  /* screen-reader status: at most every 30 s, only the market being watched, never while typing an amount */
  const tracked=view==='event'?(e.id===curEv&&o.i===sel):(e.id===FEATURED.ev&&o.i===FEATURED.out);
  if(tracked){if(announcedP===null)announcedP=old;const now=Date.now();if(now-lastAnnounce>30000&&Math.abs(o.p-announcedP)>=1&&document.activeElement!==$('#tamt')){lastAnnounce=now;announcedP=o.p;$('#status-live').textContent=`${o.n}: now ${o.p} percent`}}}
