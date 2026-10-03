@@ -1390,13 +1390,13 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .oxs,.owin{margin-inline:calc(-1 * var(--ocpad));padding-inline:var(--ocpad)}
 /* desktop: one grid for the whole table and every row a subgrid of it, so the columns of all rows stay in line.
    The columns share the width equally, as drawn, but none gets narrower than its longest cell in any row; when
-   they no longer fit, the grid runs past the market and the scroller takes it sideways. The last 2px track and
-   its gap stand in for the body's end padding, so a table scrolled to its end stops the same 18 short of the
+   they no longer fit, the grid runs past the market and the scroller takes it sideways. The last track (the body's
+   end padding less the gap, never below 0) and its gap stand in for the body's end padding, so a table scrolled to its end stops the same 18 short of the
    card's edge as it does at rest; rules, fades and placeholders stop with the columns. */
 @media (width > 900px){
   .oxs,.owin{padding-inline-end:0}
-  .otw{display:grid;grid-template-columns:63px repeat(6,minmax(max-content,1fr)) calc(var(--ocpad) - 16px);column-gap:16px}
-  .ordtbl .otw{grid-template-columns:63px repeat(4,minmax(max-content,1fr)) 90px calc(var(--ocpad) - 16px)}
+  .otw{--otgap:var(--spacing-5xl);display:grid;grid-template-columns:63px repeat(6,minmax(max-content,1fr)) max(0px,calc(var(--ocpad) - var(--otgap)));column-gap:var(--otgap)}
+  .ordtbl .otw{grid-template-columns:63px repeat(4,minmax(max-content,1fr)) 90px max(0px,calc(var(--ocpad) - var(--otgap)))}
   .otw>*{grid-column:1/-2}
   .otw>.hrow,.otw>.orow{grid-column:1/-1;grid-template-columns:subgrid}
 }
@@ -1475,7 +1475,7 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
    max-content wide, so a six-figure holding widens its column instead of being clipped, and the panel
    switches to the stacked form on its own width — not the window's — once the table stops fitting. */
 .possum{container-type:inline-size}
-.postbl{display:grid;grid-template-columns:56px repeat(6,minmax(max-content,1fr)) auto;align-items:center;column-gap:16px}
+.postbl{display:grid;grid-template-columns:56px repeat(6,minmax(max-content,1fr)) auto;align-items:center;column-gap:var(--spacing-5xl)}   /* 24, as the account tables (4 Oct 2026) */
 .postbl .ph{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding-bottom:10px;white-space:nowrap}
 .postbl .ph.r,.postbl .pn{text-align:right}
 .postbl .pn{font-size:14px;font-weight:500;color:var(--ink-2);white-space:nowrap;padding:10px 0}
@@ -1792,7 +1792,7 @@ html[data-theme=dark] .ac-port::after{background:linear-gradient(180deg,var(--co
 /* the table is the event page's «Your position» skin (.postbl): 11 px caps header, 14/500 ink-2 cells with 10 px of
    air above and below, the key figure bold in ink, rows parted by the dashed rule, a 16 px column gap, flush ends.
    Market takes what the number columns leave; no column gets narrower than its longest cell. */
-.ac-tbl{--mk:2.8fr;--gap:16px;display:grid;   /* the event table's 16 (the user, 3 Oct 2026: «да, сделай 16 px») */grid-template-columns:minmax(var(--mkmin,280px),var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:min-content}
+.ac-tbl{--mk:2.8fr;--gap:var(--spacing-5xl);display:grid;   /* 24 = spacing/5xl (the user, 4 Oct 2026: with big sums the columns looked squeezed at 16 — «widen a little»), the same in the event tables */grid-template-columns:minmax(var(--mkmin,280px),var(--mk)) repeat(var(--n),minmax(max-content,1fr));column-gap:var(--gap);align-items:center;min-width:min-content}
 /* min-content: the grid is never narrower than its columns, so it overflows as a whole — the scroller then keeps its
    end padding after the last column, and Market keeps 280 for a readable title before the table starts to scroll */
 .ac-tbl.ac-pos-hist{--mk:3.1fr}
@@ -3444,6 +3444,17 @@ EVENTS.dem2028.outs[2].orders=[{side:'yes',type:'Limit buy',price:11,n:300,fille
    every number cell is a "filled / ordered" pair, a market order has no ordered half. ---- */
 const kfmt=v=>v>=1e6?'$'+(v/1e6).toFixed(v>=1e7?0:1).replace(/\.0$/,'')+'M':v>=1000?'$'+Math.round(v/1e3)+'k':money(v);
 const nfmt=n=>Math.round(n).toLocaleString('en-US');
+/* TEMPORARY amounts demo (the user, 4 Oct 2026: «half the figures big, half small — e.g. 44,000 to 4,000,000», then «the
+   table with big sums everywhere there are tables»): in every table the top half of the rows takes a large size — its
+   shares, or a transfer's sum, become one of DEMO_BIG — and its money follows at the same prices; the bottom half keeps
+   the real figures. Display only: balances, positions and orders stay as they are. Empty DEMO_BIG to undo */
+const DEMO_BIG=[4000000,44000,400000,1250000];
+const demoF=(k,count,size)=>DEMO_BIG.length&&k<Math.ceil(count/2)&&size>0?DEMO_BIG[k%DEMO_BIG.length]/size:1;
+const demoNum=v=>+String(v).replace(/[^\d.]/g,'')||0;
+const demoOrd=(r,f)=>f===1?r:{...r,n:r.n*f,filled:r.filled*f,paid:r.paid!=null?r.paid*f:r.paid};
+const demoHist=(r,f)=>{if(f===1)return r;const sz=v=>/\d/.test(String(v))?nfmt(demoNum(v)*f):v,vr=(r.vRaw||0)*f,vw=r.vWantRaw==null?null:r.vWantRaw*f;
+ return {...r,n:sz(r.n),nWant:sz(r.nWant),vRaw:vr,vWantRaw:vw==null?r.vWantRaw:vw,v:vr?kfmt(vr):r.v,vWant:vw==null?r.vWant:kfmt(vw)}};
+const demoHistF=(k,count,r)=>demoF(k,count,demoNum(r.nWant)||demoNum(r.n));
 function makeHistory(e,o){const rows=[];if(e.thin)return rows;
  const base=Math.max(8000,Math.round(o.vol/26));let t=NOW.getTime()-36e5*19;
  for(let i=0;i<26;i++){
@@ -4735,17 +4746,17 @@ function holdHTML(e,o){const ps=positions.filter(p=>p.ev===e.id&&p.out===o.i);
  const st=stageOf(e,o),done=st==='final'||st==='cancelled';   /* a settled or void market has no "if Yes" left to promise: it says what the shares paid back */
  const last=done?(st==='cancelled'?'Refunded':'Paid out'):'To win';
  const cell=(lab,val,cls='')=>`<span class="pn num${cls?' '+cls:''}"><span class="pl">${lab}</span><span>${val}</span></span>`;
- let first=true;
- const rows=['yes','no'].map(sd=>{const p=ps.find(x=>x.side===sd);if(!p)return '';const v=posValue(p),c=posCost(p),d=v-c;const yes=sd==='yes';
+ let first=true,k=0;
+ const rows=['yes','no'].map(sd=>{const p=ps.find(x=>x.side===sd);if(!p)return '';const f=demoF(k++,ps.length,p.n),n=p.n*f,v=posValue(p)*f,c=posCost(p)*f,d=v-c;const yes=sd==='yes';   /* TEMPORARY amounts demo */
   const line=first?'':'<span class="pline" aria-hidden="true"></span>';first=false;
   return line
    +`<span class="ps"><span class="chip ${yes?'y':'n'}">${yes?'Yes':'No'}</span></span>`
-   +cell('Shares',p.n.toLocaleString('en-US',{maximumFractionDigits:2}))
+   +cell('Shares',n.toLocaleString('en-US',{maximumFractionDigits:2}))
    +cell('Avg price',p.avg+'¢')
    +cell('Paid',money(c))
    +cell('Now',money(v)+`<span class="pdelta d ${d>=0?'up':'down'}">${signed(d)}</span>`,'pnow')
    +cell('PnL',`<span class="d ${d>=0?'up':'down'}">${signed(d)}</span>`,'ppnl')
-   +cell(last,done?money(v):money(p.n))
+   +cell(last,done?money(v):money(n))
    +`<span class="pa">${sellLink(e,o,p,'Close')}</span>`}).join('');
  const head=`<span class="ph">Side</span><span class="ph r">Shares</span><span class="ph r">Avg price</span><span class="ph r">Paid</span><span class="ph r">Now</span><span class="ph r">PnL</span><span class="ph r">${last}</span><span class="ph"></span>`;
  return `<div class="possum"><div class="posbody"><span class="k">Your position</span><div class="postbl">${head}${rows}</div></div></div>`}
@@ -4941,7 +4952,7 @@ function ohist(e,o){const rows=o.hist||[];
  const pair=(a,b)=>`<span class="pair"><b>${a}</b><i>/ ${b}</i></span>`;
  const head=`<div class="hrow hhead" aria-hidden="true"><span>Outcome</span><span class="r">Side</span><span class="r">Status</span><span class="r">Price</span><span class="r">Shares</span><span class="r">Value</span><span class="r">Time</span></div>`;
  const shown=Math.min(o.histN||HPAGE,rows.length);
- const body=rows.slice(0,shown).map(r=>`<div class="hrow"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="r">${r.type}</span><span class="st${r.status==='Cancelled'?' cx':''}"><i aria-hidden="true"></i>${r.status}</span>${pair(r.px,r.pxWant)}${pair(r.n,r.nWant)}${pair(r.v,r.vWant)}<span class="tm num">${fmtDay(r.at)}, ${String(r.at.getHours()).padStart(2,'0')}:${String(r.at.getMinutes()).padStart(2,'0')}</span></div>`).join(TLINE);
+ const body=rows.slice(0,shown).map((r0,k)=>{const r=demoHist(r0,demoHistF(k,shown,r0));return `<div class="hrow"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="r">${r.type}</span><span class="st${r.status==='Cancelled'?' cx':''}"><i aria-hidden="true"></i>${r.status}</span>${pair(r.px,r.pxWant)}${pair(r.n,r.nWant)}${pair(r.v,r.vWant)}<span class="tm num">${fmtDay(r.at)}, ${String(r.at.getHours()).padStart(2,'0')}:${String(r.at.getMinutes()).padStart(2,'0')}</span></div>`}).join(TLINE);   /* TEMPORARY amounts demo */
  const more=o.histMore==='loading'?`<div class="ohpend">${skel(1)}</div>`
   :o.histMore==='error'?`<div class="ohmore"><button type="button" class="sell" data-histmore="${o.i}">Show more</button></div>`:'';
  /* under eight orders there is no window — the list just sits there (Figma Outcome Body) */
@@ -4951,14 +4962,15 @@ function oorders(e,o){if(!o.orders.length)return `<div class="empty"><b>No open 
  /* phone form: Open Order Card (Figma 717:704) — chip, side and Cancel on one line, the filled / ordered pairs under it */
  const opair=(a,b)=>`<span class="pair"><b>${a}</b><i>/ ${b}</i></span>`;
  const lit=j=>o.flashIdx&&o.flashIdx.has(j)&&Date.now()<o.flashUntil?' oflash':'';
- const ocard=(r,j)=>`<div class="ordcard${lit(j)}"><div class="l1"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="ty">${r.type}</span><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></div><div class="l2">${opair(oAvg(r),r.price+'¢')}${opair(r.filled,r.n)}${opair(money(oPaid(r)),money(r.n*r.price/100))}</div></div>`;
+ const R=o.orders.map((r,j)=>demoOrd(r,demoF(j,o.orders.length,r.n)));   /* TEMPORARY amounts demo */
+ const ocard=(r,j)=>`<div class="ordcard${lit(j)}"><div class="l1"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="ty">${r.type}</span><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></div><div class="l2">${opair(oAvg(r),r.price+'¢')}${opair(nfmt(r.filled),nfmt(r.n))}${opair(money(oPaid(r)),money(r.n*r.price/100))}</div></div>`;
  /* desktop: the same table History uses — outcome chip, side, and the filled / ordered pairs, with
     Cancel where History puts its time. Under eight orders there is no window (Figma "· open"). */
  const mkt=r=>/Market/.test(r.type);
  const head=`<div class="orow ohead" aria-hidden="true"><span>Outcome</span><span class="r">Side</span><span class="r">Price</span><span class="r">Shares</span><span class="r">Value</span><span></span></div>`;
- const rows=o.orders.map((r,j)=>`<div class="orow${lit(j)}"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="r">${r.type}</span>${opair(oAvg(r),mkt(r)?'Market':r.price+'¢')}${opair(nfmt(r.filled),nfmt(r.n))}${opair(money(oPaid(r)),mkt(r)?'Market':money(r.n*r.price/100))}<span class="oact"><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></span></div>`).join(TLINE);
+ const rows=R.map((r,j)=>`<div class="orow${lit(j)}"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="r">${r.type}</span>${opair(oAvg(r),mkt(r)?'Market':r.price+'¢')}${opair(nfmt(r.filled),nfmt(r.n))}${opair(money(oPaid(r)),mkt(r)?'Market':money(r.n*r.price/100))}<span class="oact"><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></span></div>`).join(TLINE);
  const tbl=o.orders.length>7?`<div class="owin"><div class="otw">${head}${rows}<div class="ofade"></div></div></div>`:`<div class="oxs"><div class="otw">${head}${rows}</div></div>`;
- return `<div class="ordcards">${o.orders.map(ocard).join('')}</div><div class="ordtbl">${tbl}</div>`}
+ return `<div class="ordcards">${R.map(ocard).join('')}</div><div class="ordtbl">${tbl}</div>`}
 
 /* chart */
 const EX={W:760,H:240,pr:10,pt:16,pb:24};
@@ -5435,11 +5447,7 @@ function acPositions(){const open=[],done=[];
 function acPosOpen(open){if(!user)return acGuest('positions');
  if(!open.length)return acEmpty('No positions yet.','Your first call shows up here.',`<a class="btn ink" href="#home">Browse markets</a>`);
  const head=acHd(['Market','Avg price','Cost','To win','Value now','Realized PnL']);
- /* TEMPORARY amounts demo (the user, 4 Oct 2026: «half big, half small — e.g. 44,000 to 4,000,000»): the top half of the
-    rows hold large positions (the share counts below), so long figures stand next to the usual small ones; cost, value
-    and PnL follow from the same prices. The table only: the Portfolio block above keeps the real positions */
- const AC_BIG_N=[4000000,44000,400000,1250000],half=Math.ceil(open.length/2);
- const rows=open.map((r0,k)=>{const f=k<half&&AC_BIG_N[k]?AC_BIG_N[k]/r0.n:1,r=f===1?r0:{...r0,n:r0.n*f,c:r0.c*f,v:r0.v*f,d:r0.d*f,rz:r0.rz*f};
+ const rows=open.map((r0,k)=>{const f=demoF(k,open.length,r0.n),r=f===1?r0:{...r0,n:r0.n*f,c:r0.c*f,v:r0.v*f,d:r0.d*f,rz:r0.rz*f};   /* TEMPORARY amounts demo */
   return acRow(acMk(r.e,r.o,acChip(r.yes,nfmt(r.n)+' '+(r.yes?'Yes':'No')))
   +acCell('Avg price',r.avg+'¢','r')+acCell('Cost',money(r.c),'r')+acCell('To win',money(r.n),'r')
   +acCell('Value now',`<span class="ac-stack"><span>${money(r.v)}</span><span class="d ${acTone(r.d)}">${acSigned(r.d)} ${acPct(r.d,r.c)}</span></span>`,'r b')
@@ -5450,7 +5458,8 @@ function acPosHist(done){if(!user)return acGuest('closed positions');
  if(!done.length)return acEmpty('No closed positions yet.','Sold and resolved positions show up here.');
  const hint=`<span class="ac-hint" tabindex="0" aria-describedby="ac-nettip">Net<span class="ac-tip" role="tooltip" id="ac-nettip"><span class="t ${T('overline-tooltip')}">Net</span><span class="${T('label-sm-regular')}">Net = (Trading PnL + Resolution Payout) − Cost of the shares held until resolution</span></span></span>`;
  const head=acHd(['Market','Avg price','Cost',[hint,'r'],'PnL','Resolution','Closed']);
- const rows=done.map(r=>{const net=r.pnl+(r.res==null?0:r.res-r.c),t=acTone(net);
+ const rows=done.map((r0,k)=>{const f=demoF(k,done.length,r0.n),r=f===1?r0:{...r0,n:r0.n*f,c:r0.c*f,pnl:r0.pnl*f,res:r0.res==null?null:r0.res*f};   /* TEMPORARY amounts demo */
+  const net=r.pnl+(r.res==null?0:r.res-r.c),t=acTone(net);
   return acRow(acMk(r.e,r.o,acChip(r.yes,r.yes?'Yes':'No'))
    +acCell('Avg price',r.avg+'¢','r')+acCell('Cost',money(r.c),'r')
    +acCell('Net',`<span class="ac-stack"><span>${acSigned(net)}</span><span class="d ${t}">${acPct(net,r.c)}</span></span>`,'r b '+t)
@@ -5464,9 +5473,10 @@ function acOrdOpen(){if(!user)return acGuest('orders');
  if(!rows.length)return acEmpty('No open orders.');
  const mkt=r=>/Market/.test(r.type);
  const head=acHd(['Market','Side','Price','Shares','Value',['','r']]);
- const body=rows.map(({e,o,r,j})=>acRow(acMk(e,o,acChip(r.side==='yes',r.side==='yes'?'Yes':'No'))
+ const body=rows.map(({e,o,r:r0,j},k)=>{const r=demoOrd(r0,demoF(k,rows.length,r0.n));   /* TEMPORARY amounts demo */
+  return acRow(acMk(e,o,acChip(r.side==='yes',r.side==='yes'?'Yes':'No'))
   +acCell('Side',r.type,'r m')+acCell('Price',acPair(oAvg(r),mkt(r)?'Market':r.price+'¢'),'r m')+acCell('Shares',acPair(nfmt(r.filled),nfmt(r.n)),'r m')+acCell('Value',acPair(money(oPaid(r)),mkt(r)?'Market':money(r.n*r.price/100)),'r m')
-  +`<span class="pn ac-act" role="cell"><button type="button" class="sell" data-accancel="${e.id}|${o.i}|${j}">Cancel</button></span>`));
+  +`<span class="pn ac-act" role="cell"><button type="button" class="sell" data-accancel="${e.id}|${o.i}|${j}">Cancel</button></span>`)});
  return acTbl('ac-tight ac-ord-open',5,head,body)}
 /* the filled and cancelled orders of the markets the visitor trades, newest first, thirty at most */
 function acOrdHist(){if(!user)return acGuest('order history');
@@ -5475,10 +5485,11 @@ function acOrdHist(){if(!user)return acGuest('order history');
  rows.sort((a,b)=>b.r.at-a.r.at);
  if(!rows.length)return acEmpty('No order history yet.','Filled and cancelled orders show here.');
  const head=acHd(['Market','Side','Status','Price','Shares','Value','Time']);
- const body=rows.slice(0,30).map(({e,o,r})=>acRow(acMk(e,o,acChip(r.side==='yes',r.side==='yes'?'Yes':'No'))
+ const body=rows.slice(0,30).map(({e,o,r:r0},k,arr)=>{const r=demoHist(r0,demoHistF(k,arr.length,r0));   /* TEMPORARY amounts demo */
+  return acRow(acMk(e,o,acChip(r.side==='yes',r.side==='yes'?'Yes':'No'))
   +acCell('Side',r.type,'r g')+acCell('Status',`<span class="ac-st${r.status==='Cancelled'?' cx':''}"><i aria-hidden="true"></i>${r.status}</span>`,'r g')
   +acCell('Price',acPair(r.px,r.pxWant),'r g')+acCell('Shares',acPair(r.n,r.nWant),'r g')+acCell('Value',acPair(acFull(r.vRaw,r.v),acFull(r.vWantRaw,r.vWant)),'r g')
-  +acCell('Time',fmtDay(r.at)+', '+String(r.at.getHours()).padStart(2,'0')+':'+String(r.at.getMinutes()).padStart(2,'0'),'r g')));
+  +acCell('Time',fmtDay(r.at)+', '+String(r.at.getHours()).padStart(2,'0')+':'+String(r.at.getMinutes()).padStart(2,'0'),'r g'))});
  return acTbl('ac-tight ac-ord-hist',6,head,body)}
 /* transfers: the ledger's deposits or withdrawals — asset · network, the address, a Status Tag, the sum, the moment */
 function acTx(kind){if(!user)return acGuest('transfers');
@@ -5486,7 +5497,8 @@ function acTx(kind){if(!user)return acGuest('transfers');
  if(!rows.length)return acEmpty(dep?'No deposits yet.':'No withdrawals yet.','Your transfers will show here.');
  const tag=st=>`<span class="ac-tag ${st==='Completed'?'ok':/^Cancel/.test(st)?'no':''} ${T('body-sm-bold')}"><i aria-hidden="true"></i>${st}</span>`;
  const head=acHd(dep?[['Deposit','l'],['From','l'],['Status','l'],'Amount','Date']:[['Withdrawal','l'],['To','l'],['Status','l'],'Amount','Fee','Date']);
- const body=rows.map(h=>acRow(`<span class="pn ac-wide sb" role="cell">${esc(h.m)}</span>`+acCell(dep?'From':'To',acShort(h.addr))+acCell('Status',tag(h.st||'Completed'))+acCell('Amount',money(h.v),'r b')+(dep?'':acCell('Fee',money(h.fee||0),'r'))+acCell('Date',acDT(h.d),'r')));
+ const body=rows.map((h0,k)=>{const f=demoF(k,rows.length,h0.v),h=f===1?h0:{...h0,v:h0.v*f};   /* TEMPORARY amounts demo; the fee stays a fee */
+  return acRow(`<span class="pn ac-wide sb" role="cell">${esc(h.m)}</span>`+acCell(dep?'From':'To',acShort(h.addr))+acCell('Status',tag(h.st||'Completed'))+acCell('Amount',money(h.v),'r b')+(dep?'':acCell('Fee',money(h.fee||0),'r'))+acCell('Date',acDT(h.d),'r'))});
  return acTbl('ac-tx',dep?4:5,head,body)}
 /* appeals keep their tab only while there is one to show: the file's page has three tabs */
 function acAppeals(rows){const head=acHd(['Market',['Submitted','l'],['Status','l'],'Bond',['','r']]);
