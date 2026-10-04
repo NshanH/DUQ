@@ -2976,10 +2976,9 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
 .h-fx .h-mx-roll { position: absolute; inset: 0; min-height: 0; }
 .h-fx .h-mx-roll-i { position: relative; overflow: hidden; align-items: stretch; }
 /* no orange glow (the user, 4 Oct 2026: «оранжевое не нужно, только чёрное и blur») — the shade below does the work */
-.h-fx-ghost { position: absolute; left: var(--spacing-xl); top: -5px; z-index: 0; display: flex; flex-direction: column; font-size: 58px; line-height: .84; font-weight: var(--typeface-weight-primary-extrabold); letter-spacing: var(--typeface-letter_spacing-xl); white-space: nowrap; pointer-events: none; }
-.h-fx-g1 { background: linear-gradient(180deg, var(--color-white-100), var(--color-dark-300)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.h-fx-g2 { background: linear-gradient(180deg, var(--color-primary-400), var(--color-primary-600)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.h-fx-img { position: absolute; right: 0; top: 0; z-index: 0; width: 56%; height: 100%; object-fit: cover; -webkit-mask: linear-gradient(90deg, transparent, #000 42%); mask: linear-gradient(90deg, transparent, #000 42%); }
+/* the banner fills the whole card — no ghost letters, no side mask (the user, 4 Oct 2026: «удали ghost-буквы и покажи image полностью»);
+   the card is about 3:1 and the banner 16:9, so the event's bpos says which band of the picture stays in view */
+.h-fx-img { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; }
 /* a dark blurred band under the words, so they read over the photo and the letters (the user, 4 Oct 2026: «текст не видно, добавляй чёрный blur») */
 .h-fx-shade { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; height: 66%; pointer-events: none; background: linear-gradient(to top, var(--color-black-72) 0%, var(--color-black-56) 45%, transparent 100%); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); -webkit-mask: linear-gradient(to top, #000 50%, transparent); mask: linear-gradient(to top, #000 50%, transparent); }
 .h-fx-text { position: absolute; z-index: 2; left: var(--spacing-xxl); right: var(--spacing-xxl); bottom: var(--spacing-lg); display: flex; flex-direction: column; gap: 2px; text-shadow: 0 1px 8px var(--color-black-48); }
@@ -3342,17 +3341,17 @@ const EVENTS={
  btc:{cat:'crypto',q:'Bitcoin above $150k by New Year?',pic:'btc',resolves:'Dec 31, 2025',open:new Date(2025,8,1),vol:1.2e6,settle:'Settled by CF Benchmarks',tpl:'multi',
   rules:[['Resolves Yes','if Bitcoin trades above $150,000 at any point before Dec 31, 2025, 11:59 PM ET.'],['Source.','CF Benchmarks Bitcoin Real-Time Index, sixty-second average.'],['Fee.','1.5% of winnings, already inside every payout you see.']],
   outs:[{n:'Above $150k',p:41,d:-3.1,vol:1.2e6}]},
- shutdown:{cat:'politics',q:'How long will the government shutdown last?',pic:'capitol',banner:'shutb',ghost:['SHUT','DOWN'],resolves:'Dec 31, 2025',open:new Date(2025,9,1),vol:364e3,settle:'Settled by the Office of Management and Budget',tpl:'multi',
+ shutdown:{cat:'politics',q:'How long will the government shutdown last?',pic:'capitol',banner:'shutb',bpos:'50% 25%',resolves:'Dec 31, 2025',open:new Date(2025,9,1),vol:364e3,settle:'Settled by the Office of Management and Budget',tpl:'multi',
   rules:[['Resolves Yes','if the federal government shutdown that began Oct 1, 2025 is still in effect for more days than the outcome threshold.'],['Source.','Official OMB and Congressional Record announcements.'],['Fee.','1.5% of winnings, already inside every payout you see.'],['If the outcome is disputed.','Anyone can appeal a proposed outcome for 24 hours by putting up a $500.00 bond. One appeal sends the market to a moderator. Trading stays open the whole time, nothing pays out until the outcome is final.']],
   outs:[{n:'More than 30 days',p:62,d:1.4,vol:180e3},{n:'More than 44 days',p:30,d:3.0,vol:120e3},{n:'More than 60 days',p:12,d:0.5,vol:44e3},{n:'More than 90 days',p:4,d:0,vol:20e3}],
   orule:o=>`Resolves Yes if the shutdown lasts ${o.n.toLowerCase()}.`},
- dem2028:{cat:'politics',q:'Who wins the 2028 Democratic nomination?',pic:'capitol',banner:'demb',ghost:['DEM','2028'],resolves:'Jul 31, 2028',open:new Date(2025,8,1),vol:2.4e6,settle:'Settled by the DNC roll-call vote',tpl:'exclusive',
+ dem2028:{cat:'politics',q:'Who wins the 2028 Democratic nomination?',pic:'capitol',banner:'demb',bpos:'50% 50%',resolves:'Jul 31, 2028',open:new Date(2025,8,1),vol:2.4e6,settle:'Settled by the DNC roll-call vote',tpl:'exclusive',
   rules:[['Resolves','to the candidate formally nominated at the 2028 Democratic National Convention.'],['Source.','Official DNC roll-call result.'],['Fee.','1.5% of winnings, already inside every payout you see.']],
   outs:[{n:'Gavin Newsom',ab:'GN',p:31,d:1.2,vol:820e3},{n:'Kamala Harris',ab:'KH',p:22,d:-0.8,vol:610e3},{n:'Josh Shapiro',ab:'JS',p:14,d:0.4,vol:330e3},{n:'Pete Buttigieg',ab:'PB',p:9,d:0.1,vol:210e3},{n:'Someone else',ab:'?',p:24,d:-0.9,vol:430e3}]},
  nuclear:{cat:'politics',q:'Nuclear weapon detonation in 2025?',pic:'nuclear',resolves:'Dec 31, 2025',open:new Date(2025,0,1),vol:113e3,settle:'Settled by consensus of major news agencies',tpl:'multi',
   rules:[['Resolves Yes','if any nuclear weapon is detonated anywhere in the world before Dec 31, 2025, 11:59 PM ET. Tests count; accidents count.'],['Source.','Consensus of at least three of Reuters, AP, AFP and the IAEA.'],['Fee.','1.5% of winnings, already inside every payout you see.']],
   outs:[{n:'Detonation in 2025',p:23,d:-0.8,vol:113e3}]},
- khamenei:{cat:'politics',q:'Khamenei out as Supreme Leader of Iran in 2025?',pic:'iran',banner:'iranb',ghost:['IRAN','2025'],resolves:'Dec 31, 2025',open:new Date(2025,0,1),vol:8.5e6,settle:'Settled by consensus of major news agencies',tpl:'multi',
+ khamenei:{cat:'politics',q:'Khamenei out as Supreme Leader of Iran in 2025?',pic:'iran',banner:'iranb',bpos:'50% 60%',resolves:'Dec 31, 2025',open:new Date(2025,0,1),vol:8.5e6,settle:'Settled by consensus of major news agencies',tpl:'multi',
   rules:[['Resolves Yes','if Ali Khamenei ceases to hold the office of Supreme Leader of Iran for any reason before Dec 31, 2025, 11:59 PM ET.'],['Source.','Consensus of at least three of Reuters, AP, AFP and BBC.'],['Fee.','1.5% of winnings, already inside every payout you see.']],
   outs:[{n:'Out in 2025',p:23,d:0.4,vol:8.5e6}]},
  nigeria:{cat:'politics',q:'US strikes Nigeria by December?',pic:'nigeria',resolves:'Dec 1, 2025',open:new Date(2025,10,11),vol:110e3,settle:'Settled by consensus of major news agencies',tpl:'multi',isNew:true,thin:true,
@@ -3365,13 +3364,13 @@ const EVENTS={
  dotamajor:{cat:'sports',q:'Juggernaut wins the Dota 2 major?',pic:'dota',resolves:'Nov 30, 2025',open:new Date(2025,10,3),vol:240e3,settle:'Settled by the official tournament result',tpl:'multi',isNew:true,
   rules:[['Resolves Yes','if Team Juggernaut wins the grand final of the November 2025 Dota 2 major.'],['Source.','Official tournament bracket published by the organiser.'],['Fee.','1.5% of winnings, already inside every payout you see.']],
   outs:[{n:'Juggernaut wins',p:18,d:4.4,vol:240e3}]},
- ucl:{cat:'sports',q:'Chelsea vs Barcelona',pic:'ucl',banner:'uclb',league:'UEFA Champions League',when:'Nov 13, 22:30',resolves:'Nov 13, 2025',open:new Date(2025,10,6),vol:410e3,settle:'Settled by the official match result',tpl:'exclusive',
+ ucl:{cat:'sports',q:'Chelsea vs Barcelona',pic:'ucl',banner:'uclb',bpos:'50% 20%',league:'UEFA Champions League',when:'Nov 13, 22:30',resolves:'Nov 13, 2025',open:new Date(2025,10,6),vol:410e3,settle:'Settled by the official match result',tpl:'exclusive',
   rules:[['Resolves','to the outcome of the match after 90 minutes plus stoppage time. Extra time and penalties do not count.'],['Source.','Official UEFA match report.'],['Fee.','1.5% of winnings, already inside every payout you see.']],
   outs:[{n:'Chelsea',ab:'CHE',p:40,d:1.5,vol:170e3},{n:'Draw',ab:'',p:24,d:-0.5,vol:80e3},{n:'Barcelona',ab:'BAR',p:36,d:-1.0,vol:160e3}]},
- nba:{cat:'sports',q:'LA Clippers vs Toronto Raptors',pic:'nba',banner:'nbab',league:'NBA',when:'Nov 13, 22:30',resolves:'Nov 13, 2025',open:new Date(2025,10,8),vol:96e3,settle:'Settled by the official match result',tpl:'exclusive',
+ nba:{cat:'sports',q:'LA Clippers vs Toronto Raptors',pic:'nba',banner:'nbab',bpos:'50% 0%',league:'NBA',when:'Nov 13, 22:30',resolves:'Nov 13, 2025',open:new Date(2025,10,8),vol:96e3,settle:'Settled by the official match result',tpl:'exclusive',
   rules:[['Resolves','to the winner of the game, overtime included.'],['Source.','Official NBA box score.'],['Fee.','1.5% of winnings, already inside every payout you see.']],
   outs:[{n:'LA Clippers',ab:'LAC',p:45,d:-2.0,vol:44e3},{n:'Toronto Raptors',ab:'TOR',p:55,d:2.0,vol:52e3}]},
- dota:{cat:'sports',q:'Zero Tenacity vs Yangon Galactic',pic:'dota',banner:'dotab',league:'European Pro League 32 · Dota 2',when:'Nov 13, 22:30',resolves:'Nov 13, 2025',open:new Date(2025,10,10),vol:31e3,settle:'Settled by the official match result',tpl:'exclusive',isNew:true,
+ dota:{cat:'sports',q:'Zero Tenacity vs Yangon Galactic',pic:'dota',banner:'dotab',bpos:'50% 30%',league:'European Pro League 32 · Dota 2',when:'Nov 13, 22:30',resolves:'Nov 13, 2025',open:new Date(2025,10,10),vol:31e3,settle:'Settled by the official match result',tpl:'exclusive',isNew:true,
   rules:[['Resolves','to the winner of the best-of-three series.'],['Source.','Official league bracket.'],['Fee.','1.5% of winnings, already inside every payout you see.']],
   outs:[{n:'Zero Tenacity',ab:'ZT',p:42,d:0.8,vol:13e3},{n:'Yangon Galactic',ab:'YG',p:58,d:-0.8,vol:18e3}]},
  fed:{cat:'finance',q:'Fed cuts rates in September?',pic:'ecb',resolves:'Sep 18, 2025',open:new Date(2025,6,1),vol:2.4e6,settle:'Settled by the FOMC statement',tpl:'multi',resolved:{out:0,yes:true,date:'Sep 18, 2025'},
@@ -4660,10 +4659,10 @@ function hCardReferral(){const rate=`<span class="h-wc-l"><b class="h-wc-fig ${T
 const H_SOON=['ucl','shutdown','nba','dem2028','dota','khamenei'];
 const hSoonIds=()=>H_SOON.filter(id=>EVENTS[id]&&EVENTS[id].banner&&evLive(EVENTS[id]));
 let hSoon=0;
-/* the card's inside: ghost letters (the two sides' abbreviations, or the event's own pair for politics), the banner,
+/* the card's inside: the banner over the whole card (its focal band = bpos), the black blurred shade,
    the name and «league · start» for sport / «category · resolves» for politics */
-const hSoonName=id=>{const e=EVENTS[id];const g=e.ghost||e.outs.map(o=>o.ab).filter(Boolean);
- return `<span class="h-fx-ghost" aria-hidden="true"><b class="h-fx-g1">${esc(g[0]||'')}</b><b class="h-fx-g2">${esc(g[1]||'')}</b></span><img class="h-fx-img" data-pic="${e.banner||e.pic}" alt=""><span class="h-fx-shade" aria-hidden="true"></span><span class="h-fx-text"><b class="h-fx-t ${T('body-md-bold')}">${esc(e.q)}</b><span class="h-fx-s ${T('label-sm-medium')}"><i aria-hidden="true"></i>${esc([e.league||CATS[e.cat],e.when||e.resolves].filter(Boolean).join(' · '))}</span></span>`};
+const hSoonName=id=>{const e=EVENTS[id];
+ return `<img class="h-fx-img" data-pic="${e.banner||e.pic}" style="object-position:${e.bpos||'50% 50%'}" alt=""><span class="h-fx-shade" aria-hidden="true"></span><span class="h-fx-text"><b class="h-fx-t ${T('body-md-bold')}">${esc(e.q)}</b><span class="h-fx-s ${T('label-sm-medium')}"><i aria-hidden="true"></i>${esc([e.league||CATS[e.cat],e.when||e.resolves].filter(Boolean).join(' · '))}</span></span>`};
 function hCardSoon(){const ids=hSoonIds();if(!ids.length)return hCardMove();const id=ids[hSoon%ids.length];
  return `<article class="h-gc h-wc h-mx-soon h-fx" data-hev="${id}" tabindex="0" role="link" aria-label="Featured: ${esc(EVENTS[id].q)}"><span class="h-mx-roll"><span class="h-mx-roll-i">${hSoonName(id)}</span></span></article>`}
 function hSoonTick(){const card=hq('.h-rail .h-mx-soon');const ids=hSoonIds();
