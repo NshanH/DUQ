@@ -2983,8 +2983,7 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
 .h-fx-shade { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; height: 66%; pointer-events: none; background: linear-gradient(to top, var(--color-black-72) 0%, var(--color-black-56) 45%, transparent 100%); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); -webkit-mask: linear-gradient(to top, #000 50%, transparent); mask: linear-gradient(to top, #000 50%, transparent); }
 .h-fx-text { position: absolute; z-index: 2; left: var(--spacing-xxl); right: var(--spacing-xxl); bottom: var(--spacing-lg); display: flex; flex-direction: column; gap: 2px; text-shadow: 0 1px 8px var(--color-black-48); }
 .h-fx-t { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--text-white); text-wrap: balance; }
-.h-fx-s { display: flex; align-items: center; gap: var(--spacing-sm); color: var(--text-white_med_em); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.h-fx-s i { width: 8px; height: 8px; flex: none; background: radial-gradient(circle, var(--color-primary-600) 1.1px, transparent 1.3px) 0 0 / 4px 4px; }   /* the reference's dotted spark */
+.h-fx-s { display: block; color: var(--text-white_med_em); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* one line of text; the dotted spark before it is gone (the user, 4 Oct 2026: «delete icon») */
 @media (prefers-reduced-motion: reduce) {
   .h-mx-roll-i.h-in, .h-mx-roll-i.h-out { animation: none; }
   .h-mx-roll-i.h-out { display: none; }
@@ -4662,7 +4661,7 @@ let hSoon=0;
 /* the card's inside: the banner over the whole card (its focal band = bpos), the black blurred shade,
    the name and «league · start» for sport / «category · resolves» for politics */
 const hSoonName=id=>{const e=EVENTS[id];
- return `<img class="h-fx-img" data-pic="${e.banner||e.pic}" style="object-position:${e.bpos||'50% 50%'}" alt=""><span class="h-fx-shade" aria-hidden="true"></span><span class="h-fx-text"><b class="h-fx-t ${T('body-md-bold')}">${esc(e.q)}</b><span class="h-fx-s ${T('label-sm-medium')}"><i aria-hidden="true"></i>${esc([e.league||CATS[e.cat],e.when||e.resolves].filter(Boolean).join(' · '))}</span></span>`};
+ return `<img class="h-fx-img" data-pic="${e.banner||e.pic}" style="object-position:${e.bpos||'50% 50%'}" alt=""><span class="h-fx-shade" aria-hidden="true"></span><span class="h-fx-text"><b class="h-fx-t ${T('body-md-bold')}">${esc(e.q)}</b><span class="h-fx-s ${T('label-sm-medium')}">${esc([e.league||CATS[e.cat],e.when||e.resolves].filter(Boolean).join(' · '))}</span></span>`};
 function hCardSoon(){const ids=hSoonIds();if(!ids.length)return hCardMove();const id=ids[hSoon%ids.length];
  return `<article class="h-gc h-wc h-mx-soon h-fx" data-hev="${id}" tabindex="0" role="link" aria-label="Featured: ${esc(EVENTS[id].q)}"><span class="h-mx-roll"><span class="h-mx-roll-i">${hSoonName(id)}</span></span></article>`}
 function hSoonTick(){const card=hq('.h-rail .h-mx-soon');const ids=hSoonIds();
