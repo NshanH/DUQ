@@ -2649,7 +2649,7 @@ html[data-theme=dark] .h-cc-bridge { color: var(--color-white-5); }
 @keyframes h-ec-fade { from { opacity: 0; } }
 @media (max-width:900px) { .h-ec-name { max-width: 92px; } }
 /* ---------- Market Card (market-card.style.ts 35:553) ---------- */
-.h-mc { display: flex; min-height: 248px; width: 100%; min-width: 0; flex-direction: column; gap: var(--spacing-xl); padding: var(--spacing-2xl); cursor: pointer; }   /* 16 on every side (the user, 4 Oct 2026; Figma Market Card had 24) */
+.h-mc { display: flex; width: 100%; min-width: 0; flex-direction: column; gap: var(--spacing-xl); padding: var(--spacing-5xl); cursor: pointer; }   /* 24 on every side, the height hugs the content: no 248 floor on any width (the user, 4 Oct 2026: «change 16 to 24 and hug content») */
 .h-mc-head { display: flex; width: 100%; align-items: center; gap: var(--spacing-xl); }
 .h-mc-txt { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: var(--spacing-xxs); }
 .h-mc-q { overflow-wrap: break-word; color: var(--text-high_em); }
@@ -2684,7 +2684,7 @@ html[data-theme=dark] .h-cc-bridge { color: var(--color-white-5); }
 .h-mc.h-wide { flex-direction: row; gap: var(--spacing-6xl); }
 .h-mc.h-wide .h-mc-l { display: flex; width: min(380px, 40%); flex-shrink: 0; flex-direction: column; gap: var(--spacing-xl); }
 .h-mc.h-wide .h-mc-r { display: flex; min-width: 0; flex: 1; flex-direction: column; }
-/* the phone keeps the same 248 as the web: every card one height (the user, 4 Oct 2026); it no longer shrinks to its content */
+/* the phone, like the web, hugs the content (the user, 4 Oct 2026) */
 /* ---------- Cards beside the banner (NEW, not in Figma): glass, a small picture, no full-card photos (28 Sep) ---------- */
 .h-rail { display: grid; min-width: 0; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: var(--spacing-2xl); }
 .h-zone.h-stack .h-rail { grid-template-rows: none; grid-template-columns: repeat(3, minmax(0, 1fr)); height: 112px; }
