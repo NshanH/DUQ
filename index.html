@@ -2649,7 +2649,7 @@ html[data-theme=dark] .h-cc-bridge { color: var(--color-white-5); }
 @keyframes h-ec-fade { from { opacity: 0; } }
 @media (max-width:900px) { .h-ec-name { max-width: 92px; } }
 /* ---------- Market Card (market-card.style.ts 35:553) ---------- */
-.h-mc { display: flex; min-height: 248px; width: 100%; min-width: 0; flex-direction: column; gap: var(--spacing-xl); padding: var(--spacing-5xl); cursor: pointer; }
+.h-mc { display: flex; min-height: 248px; width: 100%; min-width: 0; flex-direction: column; gap: var(--spacing-xl); padding: var(--spacing-2xl); cursor: pointer; }   /* 16 on every side (the user, 4 Oct 2026; Figma Market Card had 24) */
 .h-mc-head { display: flex; width: 100%; align-items: center; gap: var(--spacing-xl); }
 .h-mc-txt { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: var(--spacing-xxs); }
 .h-mc-q { overflow-wrap: break-word; color: var(--text-high_em); }
@@ -2684,7 +2684,7 @@ html[data-theme=dark] .h-cc-bridge { color: var(--color-white-5); }
 .h-mc.h-wide { flex-direction: row; gap: var(--spacing-6xl); }
 .h-mc.h-wide .h-mc-l { display: flex; width: min(380px, 40%); flex-shrink: 0; flex-direction: column; gap: var(--spacing-xl); }
 .h-mc.h-wide .h-mc-r { display: flex; min-width: 0; flex: 1; flex-direction: column; }
-@media (max-width:900px) { .h-mc { min-height: 0; } }
+/* the phone keeps the same 248 as the web: every card one height (the user, 4 Oct 2026); it no longer shrinks to its content */
 /* ---------- Cards beside the banner (NEW, not in Figma): glass, a small picture, no full-card photos (28 Sep) ---------- */
 .h-rail { display: grid; min-width: 0; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: var(--spacing-2xl); }
 .h-zone.h-stack .h-rail { grid-template-rows: none; grid-template-columns: repeat(3, minmax(0, 1fr)); height: 112px; }
@@ -4244,7 +4244,7 @@ function hCard(e,opts={}){const one=e.outs.length===1,ex=hIsEx(e);
  const bin=o=>`<div class="h-mc-bot"><p class="h-mc-ch ${T('display-stat-lg')} num"><span data-op="${e.id}-${o.i}" data-fmt="">${o.p}</span><span class="${T('display-unit')}">%</span></p>${hPair(e,o,'sm','h-inline')}</div>`;
  let body;
  if(one)body=`<div class="h-mline" data-ev="${e.id}"></div>${bin(e.outs[0])}`;
- else if(ex)body=`<ul class="h-mc-rows h-ex">${hLeaders(e,3).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md')}">${esc(x.n)}</span><span class="h-ch ${T('label-md-bold')} num" data-op="${e.id}-${x.i}">${x.p}%</span>${hBuy(e,x)}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-3,'')}`;
+ else if(ex)body=`<ul class="h-mc-rows h-ex">${hLeaders(e,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md')}">${esc(x.n)}</span><span class="h-ch ${T('label-md-bold')} num" data-op="${e.id}-${x.i}">${x.p}%</span>${hBuy(e,x)}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'')}`;   /* two markets at most on every card, so every card keeps one height (the user, 4 Oct 2026) */
  else body=`<ul class="h-mc-rows">${e.outs.slice(0,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md-regular')}">${esc(x.n)}</span><span class="h-ch ${T('label-md-bold')} num" data-op="${e.id}-${x.i}">${x.p}%</span>${hPair(e,x,'xs','h-inline')}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'markets')}`;
  if(opts.wide)return `<article class="h-gc h-mc h-wide" data-ev="${e.id}"><div class="h-mc-l">${head}<div class="h-mc-isl">${one?bin(e.outs[0]):body}</div></div><div class="h-mc-r"><div class="h-ec" data-ev="${e.id}"></div></div></article>`;
  return `<article class="h-gc h-mc" data-ev="${e.id}">${head}<div class="h-mc-isl">${body}</div></article>`}
