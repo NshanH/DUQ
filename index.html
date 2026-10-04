@@ -1762,9 +1762,17 @@ html[data-theme=dark] .ac-port::after{background:linear-gradient(180deg,var(--co
 .ac-pr>.v{display:flex;align-items:center;gap:var(--spacing-xl);flex-wrap:wrap;margin:var(--spacing-xs) 0 var(--spacing-xl);color:var(--ink)}
 .ac-chart{position:relative;flex:1;min-height:200px;color:var(--ink);touch-action:pan-y}
 .ac-chart .h-ec{position:absolute;inset:0}   /* the home banner's chart fills the panel's chart box */
-.ac-buy{fill:var(--surface-primary_med_em);stroke:var(--surface-surface_1);stroke-width:2}
-.ac-buy-halo{fill:var(--surface-primary_low_em_alpha)}
 .ac-cempty{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-3)}
+/* B (the user, 4 Oct 2026, artifact «Баланс без повторов»): In positions across the top, level with its PnL; Available and In orders under it;
+   the panel reads Total PnL as daily bars, green up, red down from the zero line, no end label beside them */
+.ac-tile.ac-wide{grid-column:1/-1}
+.ac-vd{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:var(--spacing-md);min-width:0}
+.ac-bars .h-ec-gutter{display:none}
+.ac-bar{transition:opacity 150ms var(--ease)}
+.ac-bar.up{fill:var(--yes)}
+.ac-bar.down{fill:var(--no)}
+.ac-bars.h-scrub .ac-bar:not(.on){opacity:.35}
+.ac-zero{stroke:var(--hairline-2);stroke-width:var(--sizing-border-hairline)}
 @media (min-width:1101px){.ac-port{height:420px;display:flex;flex-direction:column}.ac-pb{flex:1;min-height:0}.ac-pr{min-height:0}.ac-chart{flex:1;min-height:0}}   /* 540 → 420 (the user, 4 Oct 2026) */
 @media (max-width:1100px){.ac-pb{grid-template-columns:1fr}}
 @media (max-width:900px){.ac-port{padding:var(--spacing-4xl)}.ac-chart{min-height:200px}.ac-ph .ac-acts{margin-left:0;width:100%}.ac-ph .ac-acts .btn{flex:1;min-width:0}.ac-ph{margin-bottom:var(--spacing-5xl)}.ac-tile .v{font-size:var(--typeface-size-heading_1);line-height:var(--typeface-line_height-heading_1)}.ac-prh{flex-direction:column;align-items:flex-start;gap:var(--spacing-md)}.ac-pr>.v{margin-top:var(--spacing-2xl)}}
@@ -5550,56 +5558,83 @@ function acCalTicks(ms,PW){let k=hTicks(ms,PW,64);if(k.length<2)k=hTicks(ms,PW,4
   while(c.getTime()<=end){const x=(c.getTime()-start)/span*PW;if(x>=12&&x<=PW-12)out.push({x,text:MONTHS[c.getUTCMonth()]+' '+c.getUTCDate()});c.setUTCDate(c.getUTCDate()+step)}
   if(out.length>=2&&out.length<=most)return out}
  return k}
+/* B (the user, 4 Oct 2026: «change like artefact copy past», artifact Tmw74bbVMB9n9gVQ66ACq1 «Баланс без повторов»): the panel reads
+   Total PnL; the chart is realized PnL by day as bars, green up, red down from the zero line. A day with nothing sold and nothing
+   resolved has no bar; hover names the day and its sum. All longer than 90 days goes by week (Monday to Sunday), or the bars would
+   be 1–2 px each. Periods 1W, 1M, All; on All the bars add up to Total PnL. No end label, no buy dots. */
+const AC_BRNG=['1W','1M','All'];
+const acDay=t=>{const d=new Date(t);d.setHours(0,0,0,0);return d.getTime()};
+const acToday=()=>acDay(NOW.getTime()-1);
+/* each closed position's Net on the day it closed (History keeps both); the day's bar is the sum of that day's closings */
+function acRealizedItems(){if(!user)return [];return acPositions().done.map(r=>({t:r.d.getTime(),v:r.pnl+(r.res==null?0:r.res-r.c)}))}
+const acRealizedTotal=()=>acRealizedItems().reduce((s,x)=>s+x.v,0);
+/* All starts on the first day anything was held: its Buy in the ledger, else the day a closed position closed */
+function acFirstDay(items){const buy=ev=>{const h=ledger.find(x=>x.k==='Buy'&&x.ev===ev);return h?new Date(h.d).getTime():null};
+ const ts=[...positions.map(p=>new Date(acHeldSince(p)).getTime()),...closedPositions.map(x=>buy(x.ev)??x.d.getTime()),...items.map(x=>x.t)];
+ return acDay(ts.length?Math.min(...ts):acToday())}
+function acByDay(r,items,first){const today=acToday(),n=r==='1W'?7:r==='1M'?30:Math.max(1,Math.round((today-first)/864e5)+1),t=[];
+ for(let i=n-1;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);t.push(d.getTime())}
+ const v=t.map(d=>{const e=new Date(d);e.setDate(e.getDate()+1);return +items.filter(x=>x.t>=d&&x.t<e.getTime()).reduce((s,x)=>s+x.v,0).toFixed(2)});
+ if(!(r==='All'&&n>90))return {t,v,unit:'day'};
+ const wt=[],wv=[];t.forEach((d,i)=>{const m=new Date(d);m.setDate(m.getDate()-(m.getDay()+6)%7);const k=m.getTime();if(wt[wt.length-1]!==k){wt.push(k);wv.push(0)}wv[wv.length-1]=+(wv[wv.length-1]+v[i]).toFixed(2)});
+ return {t:wt,v:wv,unit:'week'}}
+/* round steps that always take in the zero line */
+function acBarTicks(vs){const min=Math.min(0,...vs),max=Math.max(0,...vs),raw=Math.max((max-min)/4,.5);
+ const mag=Math.pow(10,Math.floor(Math.log10(raw))),u=[1,2,2.5,5,10].map(m=>m*mag).find(st=>st>=raw);
+ const lo=Math.floor(min/u)*u;let hi=Math.ceil(max/u)*u;if(hi===lo)hi=lo+u;
+ const ticks=[];for(let v=hi;v>=lo-u/2;v-=u)ticks.push(Math.abs(v)<1e-9?0:+v.toFixed(6));return {lo,hi,ticks}}
+const acKSigned=v=>(v<0?'−':'')+acK(Math.abs(v));
+/* a bar's period: the day, or the week «Oct 6 – 12» */
+const acWhen=(ts,i,week)=>{if(!week)return fmtDay(new Date(ts[i]));const a=new Date(ts[i]),b=new Date(Math.min(ts[i]+6*864e5,acToday()));return fmtDay(a)+' – '+(a.getMonth()===b.getMonth()?b.getDate():fmtDay(b))};
 function acChartDraw(root){const box=hq('.ac-chart',root||document);if(!box)return;
- let el=hq('.h-ec',box);if(!el){box.insertAdjacentHTML('afterbegin','<div class="h-ec ac-ec h-one"><div class="h-ec-plot"></div><div class="h-ec-gutter"></div></div>');el=hq('.h-ec',box)}
- const plot=hq('.h-ec-plot',el),gutter=hq('.h-ec-gutter',el);
- const rng=AC_RNG.find(r=>r[0]===AC.rng)||AC_RNG[2];const pts=acSeries(rng[1]),count=pts.length;el._n=count;
- const vs=pts.map(p=>p.v),sc=acScale(vs),has=!!sc,c='var(--s1)';
- const cur=has&&el._cursor!=null&&el._cursor<count?el._cursor:null,at=cur===null?count-1:cur;
- hLabels(gutter,has?`<div class="h-ec-label" data-k="pos"><span class="h-ec-dotbox"><span class="h-ec-dot${cur===null?' h-live':''}" style="background:${c}"></span></span><span class="h-ec-text"><span class="h-ec-val ${T('display-code-sm')} num" style="min-width:${acLbl(Math.max(...vs)).length}ch">${acLbl(vs[at])}</span></span></div>`:'');   /* the value keeps the widest figure's width, so the plot never twitches under the cursor */
+ let el=hq('.h-ec',box);if(!el){box.insertAdjacentHTML('afterbegin','<div class="h-ec ac-ec h-one ac-bars"><div class="h-ec-plot"></div><div class="h-ec-gutter"></div></div>');el=hq('.h-ec',box)}
+ const plot=hq('.h-ec-plot',el),r=AC_BRNG.includes(AC.rng)?AC.rng:'1M';
+ const items=acRealizedItems(),has=items.length>0,data=acByDay(r,items,acFirstDay(items));
+ const ts=data.t,vs=data.v,n=vs.length,week=data.unit==='week',sc=has?acBarTicks(vs):{lo:-1,hi:1,ticks:[1,0,-1]},lo=sc.lo,hi=sc.hi;
  const Hh=Math.max(96,plot.clientHeight||el.clientHeight),W=Math.max(80,Math.round(plot.clientWidth));
- const PT=10,PB=Hh-26,tickTop=Hh-18,labelH=20,dotC=10;
- const lo=has?sc.lo:0,hi=has?sc.hi:1,grid=[hi,(lo+hi)/2,lo],labs=grid.map(acK);
- const AX=has?Math.ceil(Math.max(...labs.map(t=>t.length*7.2+3)))+8:0,PW=W-AX;
- const x=i=>AX+i/(count-1)*PW,y=v=>PT+(1-(v-lo)/(hi-lo))*(PB-PT);
- if(has){const tops=hPlace([y(vs[at])-dotC],labelH+4,PB-labelH+6);[...gutter.children].forEach((n,k)=>n.style.transform=`translateY(${tops[k]}px)`)}
- const crisp=v=>Math.round(v)+.5;el._ax=AX;el._pw=PW;
- let svg=`<svg width="${W}" height="${Hh}" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="${has?`In positions ${acLbl(vs[count-1])}; scale ${acK(lo)} to ${acK(hi)}`:'No positions yet'}">`;
- grid.forEach(v=>svg+=`<line class="h-ec-grid" x1="${AX}" x2="${W}" y1="${crisp(y(v))}" y2="${crisp(y(v))}"/>`);
- if(has){const d=smooth(vs.map((v,i)=>[x(i),y(v)]));
-  svg+=`<defs><linearGradient id="acecf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${c};stop-opacity:.12"/><stop offset="1" style="stop-color:${c};stop-opacity:0"/></linearGradient></defs><path class="h-ec-area" style="fill:url(#acecf)" d="${d} L${W} ${PB} L${AX} ${PB}Z"/><path class="h-ec-line" data-k="pos" pathLength="1" style="stroke:${c}" d="${d}"/>`;
-  /* the days positions were bought, as dots on the line (the user, 4 Oct 2026: «появление позиций как точки») */
-  const t0=pts[0].t.getTime(),t1=pts[count-1].t.getTime(),buys=new Set();positions.forEach(p=>{const t=acHeldSince(p).getTime();if(t>=t0&&t<=t1)buys.add(Math.round((t-t0)/(t1-t0)*(count-1)))});
-  buys.forEach(i=>svg+=`<circle cx="${x(i).toFixed(1)}" cy="${y(vs[i]).toFixed(1)}" r="9" class="ac-buy-halo"/><circle cx="${x(i).toFixed(1)}" cy="${y(vs[i]).toFixed(1)}" r="4" class="ac-buy"/>`);
-  svg+=hCursor(cur,[{key:'pos',c,values:vs}],x,y,PT,PB)}
+ const PT=10,PB=Hh-26,tickTop=Hh-18,labs=has?sc.ticks.map(acKSigned):[];
+ const AX=has?Math.ceil(Math.max(...labs.map(t=>t.length*7.2+3)))+8:0,PW=W-AX,slot=PW/n;
+ const y=v=>PT+(1-(v-lo)/(hi-lo))*(PB-PT),cx=i=>AX+slot*(i+.5),bw=Math.max(2,Math.min(16,slot*.6)),crisp=v=>Math.round(v)+.5;
+ const cur=has&&el._cursor!=null&&el._cursor<n?el._cursor:null;
+ let svg=`<svg width="${W}" height="${Hh}" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="${has?`Realized PnL by ${week?'week':'day'}, ${r}; scale ${acKSigned(lo)} to ${acKSigned(hi)}`:'No realized PnL yet'}">`;
+ sc.ticks.forEach(v=>svg+=`<line class="${v===0?'ac-zero':'h-ec-grid'}" x1="${AX}" x2="${W}" y1="${crisp(y(v))}" y2="${crisp(y(v))}"/>`);
+ if(cur!==null)svg+=`<line class="h-ec-cursor" x1="${crisp(cx(cur))}" x2="${crisp(cx(cur))}" y1="${PT-4}" y2="${PB}"/>`;
+ vs.forEach((v,i)=>{if(Math.abs(v)<.005)return;const y0=y(0),y1=y(v),h=Math.max(2,Math.abs(y1-y0));
+  svg+=`<rect class="ac-bar ${v>0?'up':'down'}${i===cur?' on':''}" x="${(cx(i)-bw/2).toFixed(1)}" y="${(v>0?y0-h:y0).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(3,bw/2).toFixed(1)}"/>`});
  svg+='</svg>';
- const yl=has?grid.map((v,k)=>`<span class="h-ec-yl ${T('label-sm-medium')} num" style="right:${W-AX+8}px;top:${(y(v)-8.5).toFixed(1)}px">${labs[k]}</span>`).join(''):'';
- /* the home chart's calendar ticks (64 px apart, a denser step when that leaves one label); a day in hours */
- let ticks;if(rng[0]==='1D'){let last=-99;ticks=acXTicks(pts,'1D').map(({i,l})=>({x:x(i),l})).filter(t=>{if(t.x<AX+12||t.x>W-12||t.x-last<56)return false;last=t.x;return true})}
- else ticks=acCalTicks(pts.map(p=>p.t.getTime()),PW).map(t=>({x:AX+t.x,l:t.text}));
- const when=t=>rng[0]==='1D'?fmtDay(t)+', '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'):fmtDate(t);
- const pill=cur===null?'':`<span class="h-ec-pill ${T('label-sm')}" style="left:${Math.min(Math.max(x(cur),52),W-52).toFixed(1)}px">${when(pts[cur].t)}</span>`;
+ const yl=has?sc.ticks.map((v,k)=>`<span class="h-ec-yl ${T('label-sm-medium')} num" style="right:${W-AX+8}px;top:${(y(v)-8.5).toFixed(1)}px">${labs[k]}</span>`).join(''):'';
+ const step=[1,2,7,14,30].find(k=>slot*k>=56)||30,ticks=[];
+ for(let i=n-1;i>=0;i-=step){const x=cx(i);if(x>=AX+16&&x<=W-16)ticks.push({x,l:fmtDay(new Date(ts[i]))})}
+ const pill=cur===null?'':`<span class="h-ec-pill ${T('label-sm')}" style="left:${Math.min(Math.max(cx(cur),100),W-100).toFixed(1)}px">${acWhen(ts,cur,week)} · ${acSigned(vs[cur])}</span>`;
  plot.innerHTML=svg+yl+ticks.map(t=>`<span class="h-ec-tick ${T('label-sm-medium')}" style="left:${t.x.toFixed(1)}px;top:${tickTop}px">${t.l}</span>`).join('')+pill;
  el.classList.toggle('h-scrub',cur!==null);
- let em=hq('.ac-cempty',box);if(!has){if(!em){em=document.createElement('div');em.className='ac-cempty '+T('body-sm');em.textContent='Your first position draws the line.';box.appendChild(em)}}else if(em)em.remove()}
+ el._n=n;el._at=has?e=>{const rc=plot.getBoundingClientRect();return Math.max(0,Math.min(n-1,Math.floor((e.clientX-rc.left-AX)/slot)))}:null;
+ let em=hq('.ac-cempty',box);if(!has){if(!em){em=document.createElement('div');em.className='ac-cempty '+T('body-sm');em.textContent='Sold and resolved positions show up here.';box.appendChild(em)}}else if(em)em.remove()}
 /* hover reads the line like the home chart: the cursor follows the pointer, a finger reads it on the phone */
 function acChartMount(root){const box=hq('.ac-chart',root);if(!box)return;acChartDraw(root);const el=hq('.h-ec',box);if(!el)return;
  if(!reduceMotion()){el.classList.add('h-enter');setTimeout(()=>el.classList.remove('h-enter'),1700)}
  if(!box._ro){box._ro=new ResizeObserver(()=>{if(box.isConnected)acChartDraw()});box._ro.observe(box)}
  if(el._hov)return;el._hov=true;const plot=hq('.h-ec-plot',el);
- const at=e=>{const r=plot.getBoundingClientRect(),n=el._n||0;if(n<2||!el._pw)return null;return Math.max(0,Math.min(n-1,Math.round((e.clientX-r.left-el._ax)/el._pw*(n-1))))};
+ const at=e=>el._at?el._at(e):null;
  const show=e=>{const i=at(e);if(i!==null&&i!==el._cursor){el.classList.remove('h-enter');el._cursor=i;acChartDraw()}};
  const hide=()=>{if(el._cursor!=null){el._cursor=null;acChartDraw()}};
  plot.addEventListener('pointermove',show);plot.addEventListener('pointerdown',show);plot.addEventListener('pointerleave',hide);plot.addEventListener('pointercancel',hide);
  plot.addEventListener('pointerup',e=>{if(e.pointerType!=='mouse')hide()})}
 function acPortfolio(){const inp=inPositions(),cost=positions.reduce((s,p)=>s+posCost(p),0),dd=inp-cost,ord=acInOrders(),held=user.held||0,total=user.balance+inp+ord+held;
- const tiles=[['Available',roll('wbal',money(user.balance)),'var(--s1)'],['In positions',money(inp),'var(--s2)'],['In orders',money(ord),'var(--s4)'],['Unrealized P&L',acSigned(dd),dd>=0?'var(--yes)':'var(--no)']].map(([k,v,c])=>`<div class="ac-tile" style="--tk:${c}"><span class="k ${T('body-md')}"><i aria-hidden="true"></i>${k}</span><b class="v num ${T('heading-h2')}">${v}</b></div>`).join('');
- const rng=AC_RNG.map(([k])=>`<button type="button" data-acrng="${k}" aria-pressed="${AC.rng===k}">${k}</button>`).join('');
+ /* B (the user, 4 Oct 2026: «change like artefact copy past», artifact «Баланс без повторов»): the tiles are what Total balance is made of;
+    In positions runs across the top with its PnL now, written as under Value now in the positions table; no Unrealized P&L tile and no
+    pill at Total balance (the same $12.40 stood there three times) */
+ const tile=(k,v,c,cls,d)=>`<div class="ac-tile${cls?' '+cls:''}" style="--tk:${c}"><span class="k ${T('body-md')}"><i aria-hidden="true"></i>${k}</span>${d?`<span class="ac-vd"><b class="v num ${T('heading-h2')}">${v}</b>${d}</span>`:`<b class="v num ${T('heading-h2')}">${v}</b>`}</div>`;
+ const tiles=tile('In positions',roll('wpos',money(inp)),'var(--s2)','ac-wide',positions.length?acPosD(dd,cost):'')+tile('Available',roll('wbal',money(user.balance)),'var(--s1)')+tile('In orders',money(ord),'var(--s4)');
+ const rng=AC_BRNG.map(k=>`<button type="button" data-acrng="${k}" aria-pressed="${(AC_BRNG.includes(AC.rng)?AC.rng:'1M')===k}">${k}</button>`).join('');
+ const pnl=`<span class="ac-hint" tabindex="0" aria-describedby="ac-pnltip">Total PnL<span class="ac-tip" role="tooltip" id="ac-pnltip"><span class="t ${T('overline-tooltip')}">Total PnL</span><span class="${T('label-sm-regular')}">Realized profit and loss across all your positions: shares you sold and markets that resolved. Open positions aren’t included.</span></span></span>`;
  const notes=(arriving?`<span class="ac-note ${T('label-sm-medium')}" id="warr">${money(arriving)} arriving · usually 2–5 min</span>`:'')+(held>0?`<span class="ac-note ${T('label-sm-medium')}" id="whold">${money(held)} on hold${aplHeld()?' · '+nAp(aplHeld()):''}</span>`:'');
  /* the head row: Total balance where the «Portfolio» title sat, Deposit / Withdraw on the same line (the user, 4 Oct 2026) */
- return `<article class="ac-port"><div class="ac-ph"><div class="ac-tot"><span class="k ${T('body-md')}">Total balance</span><span class="v"><b class="num ${T('display-stat-md')}" id="wtot">${money(total)}</b>${acPill(dd,total-dd,'wtotd')}</span></div><div class="ac-acts"><button type="button" class="btn ink" id="wdep">Deposit</button><button type="button" class="btn ghost" id="wwd">Withdraw</button></div></div>
+ return `<article class="ac-port"><div class="ac-ph"><div class="ac-tot"><span class="k ${T('body-md')}">Total balance</span><span class="v"><b class="num ${T('display-stat-md')}" id="wtot">${money(total)}</b></span></div><div class="ac-acts"><button type="button" class="btn ink" id="wdep">Deposit</button><button type="button" class="btn ghost" id="wwd">Withdraw</button></div></div>
  <div class="ac-pb"><div class="ac-pl">${notes}<div class="ac-tiles">${tiles}</div></div>
- <div class="ac-pr"><div class="ac-prh"><span class="k ${T('body-md')}">In positions</span><div class="ac-rng" role="group" aria-label="Range">${rng}</div></div><span class="v"><b class="num ${T('display-stat-md')}">${roll('wpos',money(inp))}</b>${acPill(dd,cost,'wposd')}</span><div class="ac-chart"></div></div></div></article>`}
+ <div class="ac-pr"><div class="ac-prh"><span class="k ${T('body-md')}">${pnl}</span><div class="ac-rng" role="group" aria-label="Range">${rng}</div></div><span class="v"><b class="num ${T('display-stat-md')}" id="wpnl">${acSigned(acRealizedTotal())}</b></span><div class="ac-chart"></div></div></div></article>`}
+/* In positions' PnL now, as under Value now in the positions table: «+$12.40 (6%)» */
+const acPosD=(dd,cost)=>`<span class="d ${acTone(dd)} num" id="wposd">${acSigned(dd)} ${acPct(dd,cost)}</span>`;
 /* Money card: a guest sees the Sign in card; a user, the Portfolio block above */
 function acMoneyCard(){
  if(user)return acPortfolio();
@@ -5643,7 +5678,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#acdlg')&&!$('#a
 /* the Net tooltip: fixed to the viewport under its header, so the table's sideways scroller cannot clip it */
 function acTip(h,on){const t=h.querySelector('.ac-tip');if(!t)return;if(!on){t.classList.remove('on');return}
  /* the card (its backdrop blur and container query) is the fixed box's containing block: place it in the card's own coordinates */
- const r=h.getBoundingClientRect(),cb=(h.closest('.ac-list')||document.documentElement).getBoundingClientRect();t.classList.add('on');const x=Math.max(8,Math.min(r.right,innerWidth-8)-t.offsetWidth);t.style.left=(x-cb.left)+'px';t.style.top=(r.bottom+8-cb.top)+'px'}
+ const r=h.getBoundingClientRect(),port=h.closest('.ac-port'),cb=(h.closest('.ac-list')||port||document.documentElement).getBoundingClientRect();t.classList.add('on');const x=port?Math.max(8,Math.min(r.left,innerWidth-8-t.offsetWidth)):Math.max(8,Math.min(r.right,innerWidth-8)-t.offsetWidth);t.style.left=(x-cb.left)+'px';t.style.top=(r.bottom+8-cb.top)+'px'}
 document.addEventListener('mouseover',e=>{const h=e.target.closest&&e.target.closest('.ac-hint');if(h)acTip(h,true)});
 document.addEventListener('mouseout',e=>{const h=e.target.closest&&e.target.closest('.ac-hint');if(h&&!h.contains(e.relatedTarget))acTip(h,false)});
 document.addEventListener('focusin',e=>{const h=e.target.closest&&e.target.closest('.ac-hint');if(h)acTip(h,true)});
@@ -5687,7 +5722,7 @@ function applyTick(e,o,old){
   retargetEventChart();
   if(o.i===sel){calc();const h2=$('#trade-h span');if(h2)h2.firstChild.textContent=`${e.outs.length>1?o.n+' · ':''}${side==='yes'?'Yes':'No'} ${priceOf(e,o,side)}¢`}
   const wp=$('#wpos');if(wp)wp.textContent=money(inPositions())}
- if(view==='account'&&$('#wpos')){const inp=inPositions(),cost=positions.reduce((s,p)=>s+posCost(p),0),dd=inp-cost;const old2=parseFloat($('#wpos').textContent.replace(/[$,]/g,''))||inp;tween($('#wpos'),old2,inp,money,400);const d=$('#wposd');if(d&&positions.length)d.outerHTML=acPill(dd,cost,'wposd');const tt=$('#wtot');if(tt){const total=user.balance+inp+acInOrders()+(user.held||0);tt.textContent=money(total);const td=$('#wtotd');if(td&&positions.length)td.outerHTML=acPill(dd,total-dd,'wtotd')}acChartDraw()}
+ if(view==='account'&&$('#wpos')){const inp=inPositions(),cost=positions.reduce((s,p)=>s+posCost(p),0),dd=inp-cost;const old2=parseFloat($('#wpos').textContent.replace(/[$,]/g,''))||inp;tween($('#wpos'),old2,inp,money,400);const d=$('#wposd');if(d&&positions.length)d.outerHTML=acPosD(dd,cost);const tt=$('#wtot');if(tt){const total=user.balance+inp+acInOrders()+(user.held||0);tt.textContent=money(total)}const pn=$('#wpnl');if(pn)pn.textContent=acSigned(acRealizedTotal());acChartDraw()}
  /* screen-reader status: at most every 30 s, only the market being watched, never while typing an amount */
  const tracked=view==='event'?(e.id===curEv&&o.i===sel):(e.id===FEATURED.ev&&o.i===FEATURED.out);
  if(tracked){if(announcedP===null)announcedP=old;const now=Date.now();if(now-lastAnnounce>30000&&Math.abs(o.p-announcedP)>=1&&document.activeElement!==$('#tamt')){lastAnnounce=now;announcedP=o.p;$('#status-live').textContent=`${o.n}: now ${o.p} percent`}}}
