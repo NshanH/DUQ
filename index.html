@@ -1420,7 +1420,8 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .pair{display:grid;grid-template-columns:1fr auto;column-gap:4px;align-items:baseline}
 .pair b{font-weight:500;text-align:right}
 .pair i{font-style:normal;text-align:left;white-space:nowrap}
-.ofade{position:sticky;bottom:0;height:18px;margin-top:-18px;pointer-events:none;background:linear-gradient(rgba(255,255,255,0),var(--glass-pop))}
+/* «Fade — more below»: the window masks its foot while rows sit below and drops the mask at the end of the list */
+.owin:not([data-end]){-webkit-mask-image:linear-gradient(#000 calc(100% - 18px),transparent);mask-image:linear-gradient(#000 calc(100% - 18px),transparent)}
 /* History is fetched, so the fetch is drawn: a 36px skeleton line stands where each row will land —
    two of them for the first page, one at the foot of the window for the next twenty (Figma Outcome Body
    "· history loading"). A page that fails leaves the outlined pill as the only Show more there is. */
@@ -1624,8 +1625,8 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .awin{--pad:24px;max-height:426px;overflow:hidden auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--hairline-2) transparent;border-radius:8px;margin:0 calc(-1*var(--pad)) 0 0;padding-right:var(--pad);position:relative}
 .awin::-webkit-scrollbar{width:6px}
 .awin::-webkit-scrollbar-thumb{background:var(--hairline-2);border-radius:8px}
-.awin::after{content:"";display:block;position:sticky;bottom:0;height:18px;margin:-18px calc(-1*var(--pad)) 0 0;pointer-events:none;opacity:0;transition:opacity 200ms;background:linear-gradient(transparent,var(--glass-pop)),linear-gradient(transparent,var(--bg))}
-.awin[data-below]::after{opacity:1}
+/* «more below» is a mask on the window itself, not a painted band: it matches any ground in either theme (the user, 5 Oct 2026 — the painted fade read as a dark bar in dark mode) */
+.awin[data-below]{-webkit-mask-image:linear-gradient(#000 calc(100% - 18px),transparent);mask-image:linear-gradient(#000 calc(100% - 18px),transparent)}
 @container (max-width:460px){.awin{--pad:14px}}
 .pulse{margin:0;padding:6px 0 0;list-style:none}
 .pulse.stagger>*:nth-child(n+8){animation:none}
@@ -4986,6 +4987,7 @@ function opaneRender(o,keep){const pane=$('#op-'+o.i+'-orders');if(!pane)return;
  const win=pane.querySelector('.owin'),top=win?win.scrollTop:0,left=win?win.scrollLeft:0;
  pane.innerHTML=ordersPane(E(),o);
  const w=pane.querySelector('.owin');if(w){if(keep){w.scrollTop=top;w.scrollLeft=left}
+  w.toggleAttribute('data-end',w.scrollTop+w.clientHeight>=w.scrollHeight-2);   /* a redrawn window at its foot keeps no fade over Show more */
   w.addEventListener('scroll',()=>{if(w.scrollHeight-w.clientHeight-w.scrollTop<=44)histNext(o)},{passive:true})}}
 /* The prototype fakes the request: a short wait, then the page — or the one failure the Edge cases switch asks for. */
 const HPAGE=20;
@@ -5016,7 +5018,7 @@ function ohist(e,o){const rows=o.hist||[];
   :o.histMore==='error'?`<div class="ohmore"><button type="button" class="sell" data-histmore="${o.i}">Show more</button></div>`:'';
  /* under eight orders there is no window — the list just sits there (Figma Outcome Body) */
  if(shown<=7&&o.histMore==='idle')return `<div class="oxs"><div class="otw">${head}${body}</div></div>`;
- return `<div class="owin"><div class="otw">${head}${body}${more}${shown>7&&o.histMore!=='error'?'<div class="ofade"></div>':''}</div></div>`}
+ return `<div class="owin"><div class="otw">${head}${body}${more}</div></div>`}
 function oorders(e,o){if(!o.orders.length)return `<div class="empty"><b>No open orders for this market.</b></div>`;
  /* phone form: Open Order Card (Figma 717:704) — chip, side and Cancel on one line, the filled / ordered pairs under it */
  const opair=(a,b)=>`<span class="pair"><b>${a}</b><i>/ ${b}</i></span>`;
@@ -5028,7 +5030,7 @@ function oorders(e,o){if(!o.orders.length)return `<div class="empty"><b>No open 
  const mkt=r=>/Market/.test(r.type);
  const head=`<div class="orow ohead" aria-hidden="true"><span>Outcome</span><span class="r">Side</span><span class="r">Price</span><span class="r">Shares</span><span class="r">Value</span><span></span></div>`;
  const rows=R.map((r,j)=>`<div class="orow${lit(j)}"><span class="chip ${r.side==='yes'?'y':'n'}">${r.side==='yes'?'Yes':'No'}</span><span class="r">${r.type}</span>${opair(oAvg(r),mkt(r)?'Market':r.price+'¢')}${opair(nfmt(r.filled),nfmt(r.n))}${opair(money(oPaid(r)),mkt(r)?'Market':money(r.n*r.price/100))}<span class="oact"><button type="button" class="sell" data-cancel="${o.i}|${j}">Cancel</button></span></div>`).join(TLINE);
- const tbl=o.orders.length>7?`<div class="owin"><div class="otw">${head}${rows}<div class="ofade"></div></div></div>`:`<div class="oxs"><div class="otw">${head}${rows}</div></div>`;
+ const tbl=o.orders.length>7?`<div class="owin"><div class="otw">${head}${rows}</div></div>`:`<div class="oxs"><div class="otw">${head}${rows}</div></div>`;
  return `<div class="ordcards">${R.map(ocard).join('')}</div><div class="ordtbl">${tbl}</div>`}
 
 /* chart */
@@ -5270,6 +5272,7 @@ function renderActivity(open){const e=E();const f=$('#activity');if(!f)return;co
    ?`<div class="empty" style="padding:32px 16px"><b>Be the first to trade this market.</b>Trades show here as they happen.</div>`
    :`<div class="empty" style="padding:32px 16px"><b>Trading has ended.</b>Payouts went to the holders of the winning side.</div>`;
  const win=f.querySelector('.awin');if(win){actBelow(win);win.addEventListener('scroll',()=>actBelow(win),{passive:true})}}
+document.addEventListener('scroll',e=>{const w=e.target;if(w&&w.classList&&w.classList.contains('owin'))w.toggleAttribute('data-end',w.scrollTop+w.clientHeight>=w.scrollHeight-2)},{capture:true,passive:true});
 function actBelow(w){w.toggleAttribute('data-below',w.scrollHeight-w.clientHeight-w.scrollTop>2)}
 /* деньги: до тысячи полностью, дальше «$1.2k» с точной суммой в подсказке */
 const amoney=v=>{if(v<1000)return money(v);const [x,u]=[[1e9,'B'],[1e6,'M'],[1e3,'k']].find(([n])=>v>=n);const k=Math.round(v/x*10)/10;return `<abbr title="${money(v)}">$${String(k).replace(/\.0$/,'')}${u}</abbr>`};
