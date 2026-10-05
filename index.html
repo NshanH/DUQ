@@ -2014,39 +2014,17 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .bottombar{display:none}
 
 /* ============================================================
-   INVITE FRIENDS (#account/invite) — the page «DUQ Invite Friends» (artifact SDxYBbsBs5YL14a8gQ2pmv), round 5 of
-   29 Sep 2026: the invite and the money on one row, the total only, Earnings as one line, Claims Date · Status · Amount,
-   and no shadows on the page. Every value is a token of the system; the page has its own inv- names because .amt,
-   .when, .seg, .kv, .ch and .line already mean other things here.
+   INVITE FRIENDS (#account/invite) — layout A of «DUQ Invite Layouts» (artifact LPLgwJZYH8BFdQvcfX8tvd, 5 Oct 2026),
+   after the poo.fun referral page: a centred title, three stat tiles, the link with Copy inside it, and one «Refer and
+   earn» card holding Earnings | Claims, Claims drawn as the event page's order history. It replaced round 5 of the
+   artifact SDxYBbsBs5YL14a8gQ2pmv; the data, Claim and the states are the same. Every value is a token of the system;
+   the page has its own inv-/ia- names because .amt, .when, .seg, .kv, .ch and .line already mean other things here.
    ============================================================ */
 #view-invite .inv{width:100%;max-width:1040px;margin:0 auto}
-.inv-head{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-xl);margin-bottom:var(--spacing-4xl)}
-.inv-head h1{margin:0;min-width:0;color:var(--ink)}
-.inv-head a{color:var(--ink);text-decoration:none;border-radius:var(--r-6)}
-.inv-head a:hover{text-decoration:underline;text-underline-offset:3px}
-.inv-col{display:flex;min-width:0;flex-direction:column;gap:var(--spacing-4xl)}
 #view-invite .card{min-width:0;padding:var(--spacing-5xl);box-shadow:none;animation:rise 600ms var(--spring) backwards}
-.inv-top{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:stretch;gap:var(--spacing-4xl)}
-.inv-top>.card{height:100%}
-/* the invite: 25 % and «of trading fees», how many friends joined; the link with your code under them */
-.inv-hero{display:flex;flex-direction:column;justify-content:space-between;gap:var(--spacing-4xl);color:var(--ink)}
-.inv-htop{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;column-gap:var(--spacing-2xl);row-gap:var(--spacing-xs)}
-.inv-rate{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--spacing-md);margin:0}
-.inv-rate span,.inv-friends,.inv-note{color:var(--ink-2)}
-.inv-friends,.inv-note{margin:0}
-.inv-friends{white-space:nowrap}
-.inv-friends b,.inv-note b{color:var(--ink)}
+.inv-note{margin:0;color:var(--ink-2)}
+.inv-note b{color:var(--ink)}
 .inv-note b{letter-spacing:var(--typeface-letter_spacing-wide_xs)}
-/* the link: Text Field Md, Read only — the flat alpha_5 box, 48 high — and one pill */
-.inv-lk{display:flex;width:100%;min-width:0;align-items:center;gap:var(--spacing-md)}
-.inv-lkf{display:flex;min-width:0;flex:1;height:var(--sizing-control-48);align-items:center;overflow:hidden;border-radius:var(--radius-border_radius_2xl);padding:0 var(--spacing-xxl);background:var(--card-2)}
-.inv-lkf p{display:flex;min-width:0;margin:0;white-space:nowrap;color:var(--ink-2);-webkit-user-select:all;user-select:all}
-.inv-lkf p span{min-width:0;overflow:hidden;text-overflow:ellipsis}   /* a narrow phone cuts the address, never the code */
-.inv-lkf b{flex-shrink:0;font-weight:inherit;letter-spacing:var(--typeface-letter_spacing-wide_xs);color:var(--logo-primary)}   /* the one orange thing on the page: your code, in the logo's orange */
-.inv-lkg{min-width:0;flex:1;margin:0;color:var(--ink-2)}
-/* the money: the amount to claim over a full-width Claim */
-.inv-mny{display:flex;flex-direction:column;justify-content:space-between;gap:var(--spacing-4xl)}
-.inv-amt{margin:0;color:var(--ink)}
 #view-invite .btn.lg{height:var(--sizing-control-48);padding:0 var(--spacing-2xl)}   /* Button Size=Lg */
 #view-invite .btn.full{width:100%}
 #view-invite .btn:not(:focus-visible){box-shadow:none}
@@ -2054,8 +2032,6 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .inv-es p{margin:0;color:var(--ink)}
 .inv-es .a{display:flex;width:100%;justify-content:center;padding-top:var(--spacing-sm)}
 /* Activity: the event's tab bar with the period beside it, on one hairline */
-#view-invite .card.inv-act{display:flex;flex-direction:column;gap:var(--spacing-2xl);padding-top:var(--spacing-xxl);animation-delay:120ms}
-.inv-act .inv-es{padding:var(--spacing-5xl) 0}
 .inv-tabsrow{display:flex;align-items:center;gap:var(--spacing-2xl);border-bottom:1px solid var(--hairline)}
 .inv-tabsrow .tabs{border-bottom:0}
 /* Segmented Control Size=Sm: 24 pills on a 2 px alpha_5 track, the ink pill selected */
@@ -2077,31 +2053,64 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .inv-pill{position:absolute;top:var(--spacing-xs);display:flex;gap:var(--spacing-sm);height:var(--sizing-control-22);align-items:center;transform:translateX(-50%);white-space:nowrap;border-radius:var(--r2);padding:0 var(--spacing-lg);background:var(--neutral_inverse_white-alpha_8);color:var(--ink);pointer-events:none}
 .inv-pill span{color:var(--ink-2)}
 .inv-cur[hidden],.inv-dot[hidden],.inv-pill[hidden]{display:none}
-/* Status Tag Style=Dot: a 10 dot + Body/Sm Bold, only the dot follows the tone */
-.inv-st{display:inline-flex;align-items:center;gap:var(--spacing-md);white-space:nowrap;color:var(--ink)}
-.inv-st i{width:var(--sizing-dot-lg);height:var(--sizing-dot-lg);flex-shrink:0;border-radius:var(--r2);background:var(--ink-4)}
-.inv-st.yes i{background:var(--yes)}.inv-st.no i{background:var(--no)}
-/* Claims: Date · Status · Amount; seven rows in a window with a sticky ground under the header and a fade under the
-   last row in view; on a narrow card the same claims as History Cards */
-.inv-clm{display:flex;flex-direction:column;gap:var(--spacing-lg);container-type:inline-size}
-.inv-win{position:relative;overflow:auto;overscroll-behavior:contain;border-radius:var(--radius-border_radius_md);scrollbar-width:thin;scrollbar-color:var(--hairline-2) transparent;margin-right:calc(-1 * var(--spacing-3xl));padding-right:var(--spacing-3xl)}
-.inv-win::after{content:"";position:sticky;bottom:0;display:block;height:var(--spacing-3xl);margin-top:calc(-1 * var(--spacing-3xl));pointer-events:none;opacity:0;transition:opacity 200ms;background:linear-gradient(transparent,var(--card)),linear-gradient(transparent,var(--bg))}
-.inv-win[data-below]::after{opacity:1}
-.inv-tbl{width:100%;border-collapse:collapse}
-.inv-tbl th{position:sticky;top:0;z-index:1;padding:var(--spacing-lg) 0;text-align:left;white-space:nowrap;color:var(--ink-3);background:linear-gradient(var(--card),var(--card)),var(--bg);box-shadow:inset 0 -1px 0 var(--hairline)}
-.inv-tbl td{padding:var(--spacing-xxl) 0;border-bottom:1px solid var(--hairline);vertical-align:middle;white-space:nowrap;color:var(--ink-2)}
-.inv-tbl tr:last-child td{border-bottom:0}
-.inv-tbl .c-date{width:40%}
-.inv-tbl .c-amt{width:1%;padding-left:var(--spacing-5xl);text-align:right;color:var(--ink)}
-.inv-tbl th.c-amt{color:var(--ink-3)}
-.inv-list{display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--hairline-2) transparent}
-.inv-ci{display:flex;align-items:flex-start;gap:var(--spacing-lg);border-top:1px solid var(--hairline);padding:var(--spacing-xl) 0}
-.inv-ci:first-child{border-top:0}
-.inv-ci-l{display:flex;min-width:0;flex:1;flex-direction:column;align-items:flex-start;gap:var(--spacing-xs)}
-.inv-ci-r{display:flex;flex-shrink:0;flex-direction:column;align-items:flex-end;gap:var(--spacing-xs);white-space:nowrap;text-align:right}
-.inv-ci-r b{color:var(--ink)}.inv-ci-r small{color:var(--ink-3)}
-@container (width < 640px){.inv-clm .inv-win{display:none}}
-@container (width >= 640px){.inv-clm .inv-list{display:none}}
+.iic{width:20px;height:20px;flex:none;display:block}
+/* ---- A · stat tiles, the link, one card ---- */
+.ia-hd{display:flex;flex-direction:column;align-items:center;gap:var(--spacing-md);margin:var(--spacing-md) auto var(--spacing-7xl);max-width:640px;text-align:center}
+.ia-hd h1{margin:0;color:var(--ink);text-wrap:balance}
+.ia-hd p{margin:0;color:var(--ink-2);text-wrap:balance}
+.ia-hd .ia-rate{color:var(--yes-text)}
+.ia-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--spacing-2xl)}
+#view-invite .card.ia-tile{display:flex;align-items:center;gap:var(--spacing-xxl);padding:var(--spacing-4xl)}
+.ia-ico{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:var(--radius-border_radius_xl);background:var(--card-2);color:var(--ink)}
+.ia-ico.money{background:var(--yes-bg);color:var(--yes-text)}
+.ia-ico.lg{width:56px;height:56px;border-radius:var(--radius-border_radius_2xl)}
+.ia-ico.lg .iic{width:24px;height:24px}
+.ia-tv{display:flex;min-width:0;flex:1;flex-direction:column;gap:2px}
+.ia-tv p{margin:0;color:var(--ink-3)}
+.ia-tv b{color:var(--ink);font-weight:inherit}
+.ia-tile .btn{flex:none}
+.ia-link{display:flex;align-items:center;gap:var(--spacing-md);margin:var(--spacing-2xl) 0 var(--spacing-2xl) auto;width:min(560px,100%)}
+.ia-lkf{display:flex;min-width:0;flex:1;height:var(--sizing-control-48);align-items:center;gap:var(--spacing-md);padding:0 6px 0 var(--spacing-2xl);border-radius:var(--r2);background:var(--card);border:1px solid var(--hairline)}
+.ia-lkf p{display:flex;min-width:0;flex:1;margin:0;white-space:nowrap;color:var(--ink-2);-webkit-user-select:all;user-select:all}
+.ia-lkf p span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.ia-lkf p b{flex:none;font-weight:inherit;color:var(--logo-primary)}   /* as on the current page: the code is the one orange thing */
+.ia-copy{height:36px;padding:0 var(--spacing-2xl);flex:none}
+.ia-sq{width:var(--sizing-control-48);height:var(--sizing-control-48);flex:none;display:grid;place-items:center;border-radius:var(--r2);background:var(--card);border:1px solid var(--hairline);color:var(--ink);transition:background 200ms}
+.ia-sq:hover{background:var(--card-2)}
+.ia-sq svg{width:18px;height:18px}
+#view-invite .card.ia-card{display:flex;flex-direction:column;gap:var(--spacing-4xl);padding:var(--spacing-5xl)}
+.ia-ch{display:flex;align-items:center;gap:var(--spacing-xxl)}
+.ia-ch h2{margin:0;color:var(--ink)}
+.ia-ch p{margin:2px 0 0;color:var(--ink-2)}
+.ia-in{display:flex;flex-direction:column;gap:var(--spacing-2xl);padding:var(--spacing-4xl);border-radius:var(--radius-border_radius_4xl);background:var(--card-2)}
+.ia-empty{display:flex;flex-direction:column;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-9xl) var(--spacing-2xl);text-align:center}
+.ia-empty .ia-ico{margin-bottom:var(--spacing-md);background:var(--card)}
+.ia-empty p{margin:0;max-width:340px;color:var(--ink-2);text-wrap:balance}
+.ia-empty p.t{color:var(--ink)}
+.ia-empty .btn{margin-top:var(--spacing-xl)}
+
+/* Claims in layout A = the table of the event page (Orders · History): the same header, rows, dashed rules
+   between rows, status dot, sticky header over a 403 window and fade — with the three columns of a claim */
+.ia-ctw{display:grid;grid-template-columns:minmax(max-content,1.2fr) minmax(max-content,1fr) minmax(max-content,1fr);column-gap:var(--spacing-5xl)}
+.ia-ctw>.ia-cr,.ia-ctw>.tline{grid-column:1/-1}
+.ia-cr{display:grid;grid-template-columns:subgrid;align-items:center;padding:var(--spacing-lg) 0;color:var(--ink-2)}
+.ia-cr.ia-cth{padding:0 0 var(--spacing-lg);color:var(--ink-3)}
+.ia-cr .r{text-align:right;justify-self:end}
+.ia-st{display:inline-flex;align-items:center;justify-content:flex-end;gap:var(--spacing-sm);white-space:nowrap}
+.ia-st i{width:6px;height:6px;border-radius:50%;background:var(--yes);flex:none}
+.ia-st.pd i{background:var(--ink-4)}
+.ia-st.no i{background:var(--no)}
+.ia-cwin{max-height:403px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+/* the header stays put and the rows scroll under it; its ground repeats the layers behind it (inset wash, card glass, page) */
+.ia-cwin .ia-cth{position:sticky;top:0;z-index:1;background:linear-gradient(var(--card-2),var(--card-2)),linear-gradient(var(--card),var(--card)),var(--bg)}
+.ia-cwin[data-below]{-webkit-mask-image:linear-gradient(#000 calc(100% - 18px),transparent);mask-image:linear-gradient(#000 calc(100% - 18px),transparent)}
+@media (max-width:900px){
+  .ia-stats{grid-template-columns:1fr}
+  .ia-hd{margin-bottom:var(--spacing-5xl)}
+  .ia-link{margin-left:0;width:100%}
+  #view-invite .card.ia-card{padding:var(--spacing-4xl) var(--spacing-2xl)}
+  .ia-in{padding:var(--spacing-2xl)}
+}
 .inv-fresh{animation:inv-flash 1800ms var(--ease)}   /* a claim that has just arrived or changed */
 @keyframes inv-flash{from{background-color:var(--neutral_inverse_white-alpha_8)}60%{background-color:var(--neutral_inverse_white-alpha_6)}to{background-color:transparent}}
 
@@ -2116,12 +2125,8 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
   .top .brand{display:inline-flex}
   .top .search{display:none;order:10;flex-basis:100%;max-width:none}
   .top.searching .search{display:flex}
-  .inv-head{margin-bottom:var(--spacing-2xl)}
-  .inv-head h1{font-size:var(--typeface-size-heading_3);line-height:1.1;letter-spacing:var(--typeface-letter_spacing-lg)}   /* Heading/H1 Sm */
-  .inv-col,.inv-top,.inv-hero{gap:var(--spacing-2xl)}
-  .inv-top{grid-template-columns:minmax(0,1fr)}
+  .ia-hd h1{font-size:var(--typeface-size-heading_3);line-height:1.1;letter-spacing:var(--typeface-letter_spacing-lg)}   /* Heading/H1 Sm */
   #view-invite .card{padding:var(--spacing-4xl) var(--spacing-2xl)}
-  #view-invite .card.inv-act{padding-top:var(--spacing-xxl)}
   .inv-plot{height:160px}
   .top .search .sugg{left:-1px;right:-1px;width:auto;max-width:none;max-height:calc(100vh - 220px)}
   .top{flex-wrap:wrap}
@@ -4092,25 +4097,6 @@ function invProto(v){const [k,x]=v.split(':');
  const s=INV.S[IV.key];if(s.toast)setTimeout(()=>toast(s.toast,{type:'success'}),80)}
 
 /* ---- blocks ---- */
-const INVSTATUS={completed:['yes','Completed'],pending:['','Pending'],error:['no','Rejected']};
-const invStatus=c=>{const [tone,label]=INVSTATUS[c.status];return `<span class="inv-st ${tone} ${T('body-sm-bold')}"><i></i>${label}</span>`};
-function invLink(){const mob=isMobile();
- return `<div class="inv-lk"><div class="inv-lkf"><p class="${T('body-sm-semibold')}" id="inv-link" title="https://${INVHOST}${REFERRAL.code}"><span>${INVHOST}</span><b>${REFERRAL.code}</b></p></div><button type="button" class="btn ink lg ${T('body-md-semibold')}" data-iact="${mob?'share':'copy'}">${mob?'Share':'Copy'}</button></div>`}
-const invRate=()=>`<p class="inv-rate"><b class="${T('display-stat-md')} num">${REFERRAL.rate}%</b><span class="${T('body-md-semibold')}">of trading fees</span></p>`;
-function invInvite(){const R=IV.R,n=R.load==='error'?0:R.friends||0;
- const friends=n?`<p class="inv-friends ${T('body-md-semibold')}"><b class="num">${n}</b> ${n===1?'joiner':'joiners'}</p>`:'';
- const note=R.joinedWith?`<p class="inv-note ${T('label-sm-regular')}">Joined with <b>${esc(R.joinedWith)}</b> · Code not found</p>`:'';
- return `<section class="card inv-hero" aria-label="Your link"><div class="inv-htop">${invRate()}${friends}</div>${invLink()}${note}</section>`}
-function invMoney(){const t=invTotal();
- return `<section class="card inv-mny" aria-label="To claim" style="animation-delay:60ms"><p class="inv-amt ${T('display-stat-md')} num">${money(t)}</p><button type="button" class="btn ink lg full ${T('body-md-semibold')}" data-iact="claim"${t>=.01&&!IV.busy?'':' disabled'}>${IV.busy?'Claiming…':'Claim'}</button></section>`}
-const invLoadErr=()=>`<section class="card" aria-label="Rewards" style="animation-delay:60ms"><div class="inv-es"><p class="${T('body-lg-semibold')}">Couldn’t load your rewards.</p><div class="a"><button type="button" class="btn ink ${T('body-md-semibold')}" data-iact="retry">Try again</button></div></div></section>`;
-function invClaims(){const R=IV.R;
- if(R.load==='error')return `<div class="inv-es"><p class="${T('body-lg-semibold')}">Couldn’t load your claims.</p></div>`;
- if(!R.claims.length)return `<div class="inv-es"><p class="${T('body-lg-semibold')}">No claims yet.</p></div>`;
- const th=(t,c='')=>`<th scope="col" class="${c} ${T('overline-strong')}">${t}</th>`;
- const rows=R.claims.map(c=>`<tr${c.fresh?' class="inv-fresh"':''}><td class="c-date ${T('body-sm')}">${invDT(c.t)}</td><td>${invStatus(c)}</td><td class="c-amt ${T('body-sm-bold')} num">${money(c.f+c.r)}</td></tr>`).join('');
- const items=R.claims.map(c=>`<div class="inv-ci${c.fresh?' inv-fresh':''}"><div class="inv-ci-l">${invStatus(c)}</div><div class="inv-ci-r"><b class="${T('label-md-bold')} num">${money(c.f+c.r)}</b><small class="${T('label-sm-regular')}">${invDT(c.t)}</small></div></div>`).join('');
- return `<div class="inv-clm"><div class="inv-win" id="inv-win" tabindex="0" aria-label="Claims"><table class="inv-tbl"><thead><tr>${th('Date','c-date')}${th('Status')}${th('Amount','c-amt')}</tr></thead><tbody>${rows}</tbody></table></div><div class="inv-list">${items}</div></div>`}
 function invPoints(){const acc=IV.R.acc,first=Math.min(...acc.keys()),back={'1w':6,'1m':29}[IV.period],out=[];
  const from=back===undefined?first:Math.max(first,INV.add(INV.TODAY,-back));
  for(let t=from;t<=INV.TODAY;t=INV.add(t,1)){const v=acc.get(t);out.push({t,v:v?v.f+v.r:0})}return out}
@@ -4129,23 +4115,60 @@ function invEarnings(){const R=IV.R;IV.geo=null;
  const k=Math.ceil(n/(isMobile()?3:5));
  const ticks=pts.map((p,i)=>(n-1-i)%k?'':`<span class="inv-tick ${T('label-sm-medium')}" style="left:${X(i)/10}%">${INVDAY.format(p.t)}</span>`).join('');
  return `<div class="inv-ch"><div class="inv-plot" tabindex="0" role="group" aria-label="Earned by day, use the arrow keys">${grid}${axis}<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><path class="inv-line" d="${d}" vector-effect="non-scaling-stroke"/></svg><span class="inv-cur" hidden></span><span class="inv-dot" hidden></span><span class="inv-pill ${T('label-sm')}" hidden></span>${ticks}</div></div>`}
-function invActivity(){const R=IV.R;
+/* line icons in the system's own drawing: 24 grid, 1.75 stroke, round caps, currentColor */
+const IIC={
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+ coin:'<circle cx="12" cy="12" r="9"/><path d="M15.5 9.2c-.6-.8-1.7-1.3-3.1-1.3-1.9 0-3.1.9-3.1 2.2 0 3.1 6.6 1.6 6.6 4.6 0 1.4-1.4 2.3-3.4 2.3-1.5 0-2.7-.6-3.3-1.5"/><path d="M12 6v1.9M12 16v2"/>',
+ trend:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+ gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+ userplus:'<path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
+ award:'<circle cx="12" cy="9" r="6"/><path d="M8.5 13.9 7 22l5-3 5 3-1.5-8.1"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ check:'<path d="M5 12.5 10 17 19 7"/>'};
+const iic=k=>`<svg class="iic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IIC[k]}</svg>`;
+/* earned over the account's life: every paid or paying claim, plus what can be claimed now */
+const invEarned=()=>{const R=IV.R;return R.claims.filter(c=>c.status!=='error').reduce((t,c)=>t+c.f+c.r,0)+invTotal()};
+const invFriends=()=>IV.R.load==='error'?0:IV.R.friends||0;
+/* the Activity tabs and their pane, without a card of their own: both layouts put them inside one */
+function invActInner(){const R=IV.R;
  const tabs=[['earnings','Earnings'],['claims','Claims']].map(([k,l])=>`<button type="button" role="tab" aria-selected="${IV.tab===k}" data-iact="tab" data-v="${k}" class="${T('body-md-semibold')}">${l}</button>`).join('');
  const seg=IV.tab==='earnings'&&R.acc&&R.load!=='error'?`<div class="inv-seg" role="radiogroup" aria-label="Period">${[['1w','1W'],['1m','1M'],['all','All']].map(([v,l])=>`<button type="button" role="radio" aria-checked="${IV.period===v}" data-iact="period" data-v="${v}" class="${T('label-sm')}">${l}</button>`).join('')}</div>`:'';
- return `<section class="card inv-act" aria-label="Activity"><div class="inv-tabsrow"><div class="tabs" role="tablist" aria-label="Activity">${tabs}</div>${seg}</div>${IV.tab==='claims'?invClaims():invEarnings()}</section>`}
-function invPage(){const head=`<div class="inv-head"><h1 id="inv-h1" tabindex="-1" class="${T('heading-h1')}">Invite friends</h1><a href="#account" class="${T('body-sm-semibold')}">My account</a></div>`;
- const col=h=>`<div class="inv">${head}<div class="inv-col">${h}</div></div>`;
- if(!user)return col(`<section class="card inv-hero" aria-label="Invite friends"><div class="inv-htop">${invRate()}</div><div class="inv-lk"><p class="inv-lkg ${T('body-md-semibold')}">Sign in to invite friends</p><button type="button" class="btn ink lg ${T('body-md-semibold')}" data-iact="signin">Sign in</button></div></section>`);
- return col(`<div class="inv-top">${invInvite()}${IV.R.load==='error'?invLoadErr():invMoney()}</div>`+invActivity())}
+ return `<div class="inv-tabsrow"><div class="tabs" role="tablist" aria-label="Activity">${tabs}</div>${seg}</div>${IV.tab==='claims'?invClaimsA():invEarnings()}`}
+const invClaimBtn=(cls='')=>{const t=invTotal();return `<button type="button" class="btn ink sm ${cls} ${T('label-md-bold')}" data-iact="claim"${t>=.01&&!IV.busy?'':' disabled'}>${IV.busy?'Claiming…':'Claim'}</button>`};
+
+
+/* Claims for layout A, drawn as the event page's order history: Date · Status · Amount, dashed rules, a dot per status */
+const IACS={completed:['','Completed'],pending:['pd','Pending'],error:['no','Rejected']};
+function invClaimsA(){const R=IV.R;
+ if(R.load==='error')return `<div class="inv-es"><p class="${T('body-lg-semibold')}">Couldn’t load your claims.</p></div>`;
+ if(!R.claims.length)return `<div class="inv-es"><p class="${T('body-lg-semibold')}">No claims yet.</p></div>`;
+ const tm=t=>{const d=new Date(t);return fmtDay(d)+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+ const head=`<div class="ia-cr ia-cth ${T('overline-micro')}" aria-hidden="true"><span>Date</span><span class="r">Status</span><span class="r">Amount</span></div>`;
+ const rows=R.claims.map(c=>{const [k,l]=IACS[c.status];return `<div class="ia-cr ${T('body-sm-medium')}${c.fresh?' inv-fresh':''}"><span class="num">${tm(c.t)}</span><span class="ia-st r ${k}"><i aria-hidden="true"></i>${l}</span><span class="r num">${money(c.f+c.r)}</span></div>`}).join(TLINE);
+ /* under eight claims there is no window — the list just sits there, as on the event page */
+ const tbl=`<div class="ia-ctw">${head}${rows}</div>`;
+ return R.claims.length>7?`<div class="ia-cwin" id="ia-cwin" tabindex="0" aria-label="Claims">${tbl}</div>`:tbl}
+function iaWin(root){const w=root.querySelector('#ia-cwin');if(!w)return;
+ const below=()=>w.toggleAttribute('data-below',w.scrollTop+w.clientHeight<w.scrollHeight-2);below();w.addEventListener('scroll',below,{passive:true})}
+
+/* ---- the page: centred title, three stat tiles, the link with Copy inside it, one card for the activity ---- */
+function invPage(){const R=IV.R,n=invFriends(),err=R.load==='error',t=invTotal();
+ const hd=`<div class="ia-hd"><h1 id="inv-h1" tabindex="-1" class="${T('heading-h1')}">Invite friends, earn <span class="ia-rate">${REFERRAL.rate}%</span> of their fees</h1><p class="${T('body-md')}">Share your link. Every trade a friend makes pays you a quarter of its fee, for as long as they trade.</p></div>`;
+ if(!user)return `<div class="inv">${hd}<section class="card ia-card"><div class="ia-empty"><span class="ia-ico lg">${iic('lock')}</span><p class="t ${T('body-lg-semibold')}">Sign in to invite friends</p><p class="${T('body-sm')}">Your link and your earnings show here once you’re in.</p><button type="button" class="btn ink ${T('body-md-semibold')}" data-iact="signin">Sign in</button></div></section></div>`;
+ const tile=(icon,cls,label,value,extra='')=>`<section class="card ia-tile"><span class="ia-ico ${cls}">${iic(icon)}</span><div class="ia-tv"><p class="${T('label-md')}">${label}</p><b class="${T('display-stat-sm')} num">${value}</b></div>${extra}</section>`;
+ const stats=`<div class="ia-stats">${tile('users','','Friends joined',err?'—':n)}${tile('coin','money','Ready to claim',err?'—':money(t),err?'':invClaimBtn())}${tile('trend','','Total earned',err?'—':money(invEarned()))}</div>`;
+ const link=`<div class="ia-link"><div class="ia-lkf"><p class="${T('body-sm-semibold')}" title="https://${INVHOST}${REFERRAL.code}"><span>${INVHOST}</span><b>${REFERRAL.code}</b></p><button type="button" class="btn ink ia-copy ${T('label-md-bold')}" data-iact="copy">Copy</button></div><button type="button" class="ia-sq" data-iact="share" aria-label="Share your link">${ic('share')}</button></div>`;
+ const note=R.joinedWith?`<p class="inv-note ${T('label-sm-regular')}">Joined with <b>${esc(R.joinedWith)}</b> · Code not found</p>`:'';
+ const empty=!n&&!R.acc&&!R.claims.length&&!err;
+ const body=err?`<div class="ia-in"><div class="inv-es"><p class="${T('body-lg-semibold')}">Couldn’t load your rewards.</p><div class="a"><button type="button" class="btn ink ${T('body-md-semibold')}" data-iact="retry">Try again</button></div></div></div>`
+  :empty?`<div class="ia-in"><div class="ia-empty"><span class="ia-ico lg">${iic('gift')}</span><p class="t ${T('body-lg-semibold')}">No friends yet</p><p class="${T('body-sm')}">Share your link with friends to start earning ${REFERRAL.rate}% of their trading fees.</p><button type="button" class="btn ink ${T('body-md-semibold')}" data-iact="copy">Copy referral link</button></div></div>`
+  :`<div class="ia-in">${invActInner()}</div>`;
+ const card=`<section class="card ia-card" aria-label="Refer and earn"><header class="ia-ch"><span class="ia-ico">${iic('gift')}</span><div><h2 class="${T('heading-h3')}">Refer and earn</h2><p class="${T('body-sm')}">You get ${REFERRAL.rate}% of trading fees from every friend who signs up with your link.</p></div></header>${body}</section>`;
+ return `<div class="inv">${hd}${stats}${link}${note}${card}</div>`}
+
 function renderInvite(){const b=$('#invite-body');if(!b)return;if(!IV.R)invLoad(IV.key);IV.mob=isMobile();
  const h1=document.activeElement&&document.activeElement.id==='inv-h1';b.innerHTML=invPage();if(h1)$('#inv-h1').focus({preventScroll:true});
- invSizeWin(b);invBindChart(b);invClampTicks(b)}
-/* the Claims window: the header plus seven rows, the rest scrolls inside; the phone list keeps seven cards the same way */
-function invSizeWin(root){const list=root.querySelector('.inv-list');
- if(list&&list.offsetParent){const it=[...list.querySelectorAll('.inv-ci')];list.style.maxHeight=it.length>7?Math.ceil(it.slice(0,7).reduce((s,c)=>s+c.getBoundingClientRect().height,0))+'px':''}
- const w=root.querySelector('#inv-win');if(!w||!w.offsetParent)return;const rows=[...w.querySelectorAll('tbody tr')];w.style.maxHeight='';
- if(rows.length>7)w.style.maxHeight=Math.ceil(w.querySelector('thead').getBoundingClientRect().height+rows.slice(0,7).reduce((s,r)=>s+r.getBoundingClientRect().height,0))+'px';
- const below=()=>w.toggleAttribute('data-below',w.scrollTop+w.clientHeight<w.scrollHeight-2);below();w.addEventListener('scroll',below,{passive:true})}
+ invBindChart(b);invClampTicks(b);iaWin(b)}
 /* a date under the first or last point never sticks out of the plot: it is pulled in to the edge */
 function invClampTicks(root){const ch=root.querySelector('.inv-plot');if(!ch)return;const w=ch.clientWidth;
  ch.querySelectorAll('.inv-tick').forEach(t=>{t.style.marginLeft='';const half=t.offsetWidth/2,x=t.offsetLeft;if(x+half>w)t.style.marginLeft=(w-x-half)+'px';else if(x-half<0)t.style.marginLeft=(half-x)+'px'})}
