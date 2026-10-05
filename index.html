@@ -2055,7 +2055,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .inv-cur[hidden],.inv-dot[hidden],.inv-pill[hidden]{display:none}
 .iic{width:20px;height:20px;flex:none;display:block}
 /* ---- A · stat tiles, the link, one card ---- */
-.ia-hd{display:flex;flex-direction:column;align-items:center;gap:var(--spacing-md);margin:var(--spacing-md) auto var(--spacing-7xl);max-width:640px;text-align:center}
+.ia-hd{display:flex;flex-direction:column;align-items:center;gap:var(--spacing-md);margin:calc(var(--spacing-8xl) - var(--spacing-xl)) auto var(--spacing-8xl);max-width:640px;text-align:center}   /* 40 under the top bar's controls (the bar keeps 12 under them), 40 to the tiles */
 .ia-hd h1{margin:0;color:var(--ink);text-wrap:balance}
 .ia-hd p{margin:0;color:var(--ink-2);text-wrap:balance}
 .ia-hd .ia-rate{color:var(--yes-text)}
@@ -2069,7 +2069,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .ia-tv p{margin:0;color:var(--ink-3)}
 .ia-tv b{color:var(--ink);font-weight:inherit}
 .ia-tile .btn{flex:none}
-.ia-link{display:flex;align-items:center;gap:var(--spacing-md);margin:var(--spacing-2xl) 0 var(--spacing-2xl) auto;width:min(560px,100%)}
+.ia-link{display:flex;align-items:center;gap:var(--spacing-md);margin:var(--spacing-8xl) 0 var(--spacing-2xl) auto;width:min(560px,100%)}   /* 40 under the tiles, 16 above the card */
 .ia-lkf{display:flex;min-width:0;flex:1;height:var(--sizing-control-48);align-items:center;gap:var(--spacing-md);padding:0 6px 0 var(--spacing-2xl);border-radius:var(--r2);background:var(--card);border:1px solid var(--hairline)}
 .ia-lkf p{display:flex;min-width:0;flex:1;margin:0;white-space:nowrap;color:var(--ink-2);-webkit-user-select:all;user-select:all}
 .ia-lkf p span{min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -2082,9 +2082,9 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .ia-ch{display:flex;align-items:center;gap:var(--spacing-xxl)}
 .ia-ch h2{margin:0;color:var(--ink)}
 .ia-ch p{margin:2px 0 0;color:var(--ink-2)}
-.ia-in{display:flex;flex-direction:column;gap:var(--spacing-2xl);padding:var(--spacing-4xl);border-radius:var(--radius-border_radius_4xl);background:var(--card-2)}
+.ia-in{display:flex;flex-direction:column;gap:var(--spacing-2xl)}   /* no ground of its own (the user, 5 Oct 2026): tabs, chart and claims sit on the card */
 .ia-empty{display:flex;flex-direction:column;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-9xl) var(--spacing-2xl);text-align:center}
-.ia-empty .ia-ico{margin-bottom:var(--spacing-md);background:var(--card)}
+.ia-empty .ia-ico{margin-bottom:var(--spacing-md)}
 .ia-empty p{margin:0;max-width:340px;color:var(--ink-2);text-wrap:balance}
 .ia-empty p.t{color:var(--ink)}
 .ia-empty .btn{margin-top:var(--spacing-xl)}
@@ -2102,14 +2102,13 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .ia-st.no i{background:var(--no)}
 .ia-cwin{max-height:403px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
 /* the header stays put and the rows scroll under it; its ground repeats the layers behind it (inset wash, card glass, page) */
-.ia-cwin .ia-cth{position:sticky;top:0;z-index:1;background:linear-gradient(var(--card-2),var(--card-2)),linear-gradient(var(--card),var(--card)),var(--bg)}
+.ia-cwin .ia-cth{position:sticky;top:0;z-index:1;background:linear-gradient(var(--card),var(--card)),var(--bg)}   /* the layers behind it: card glass over the page */
 .ia-cwin[data-below]{-webkit-mask-image:linear-gradient(#000 calc(100% - 18px),transparent);mask-image:linear-gradient(#000 calc(100% - 18px),transparent)}
 @media (max-width:900px){
   .ia-stats{grid-template-columns:1fr}
-  .ia-hd{margin-bottom:var(--spacing-5xl)}
-  .ia-link{margin-left:0;width:100%}
+  .ia-hd{margin-top:var(--spacing-md);margin-bottom:var(--spacing-5xl)}
+  .ia-link{margin-left:0;margin-top:var(--spacing-2xl);width:100%}
   #view-invite .card.ia-card{padding:var(--spacing-4xl) var(--spacing-2xl)}
-  .ia-in{padding:var(--spacing-2xl)}
 }
 .inv-fresh{animation:inv-flash 1800ms var(--ease)}   /* a claim that has just arrived or changed */
 @keyframes inv-flash{from{background-color:var(--neutral_inverse_white-alpha_8)}60%{background-color:var(--neutral_inverse_white-alpha_6)}to{background-color:transparent}}
