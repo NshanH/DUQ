@@ -2070,7 +2070,8 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .ia-tv b{color:var(--ink);font-weight:inherit}
 .ia-tile .btn{flex:none}
 .ia-bar{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-5xl);margin:var(--spacing-8xl) 0 var(--spacing-2xl)}   /* the poo.fun row: the section title left, the link right; 40 under the tiles, 16 above the card */
-.ia-bar .ia-ch{min-width:0;flex:1}
+.ia-bar .ia-ch{flex:none}
+.ia-bar .ia-ch p{white-space:nowrap}   /* one line on the web (the user, 5 Oct 2026); the link shrinks instead */
 .ia-link{display:flex;align-items:center;gap:var(--spacing-md);flex:0 1 560px;min-width:0}
 .ia-lkf{display:flex;min-width:0;flex:1;height:var(--sizing-control-48);align-items:center;gap:var(--spacing-md);padding:0 6px 0 var(--spacing-2xl);border-radius:var(--r2);background:var(--card);border:1px solid var(--hairline)}
 .ia-lkf p{display:flex;min-width:0;flex:1;margin:0;white-space:nowrap;color:var(--ink-2);-webkit-user-select:all;user-select:all}
@@ -2110,6 +2111,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
   .ia-stats{grid-template-columns:1fr}
   .ia-hd{margin-top:var(--spacing-md);margin-bottom:var(--spacing-5xl)}
   .ia-bar{flex-direction:column;align-items:stretch;gap:var(--spacing-2xl);margin-top:var(--spacing-5xl)}
+  .ia-bar .ia-ch p{white-space:normal}
   .ia-link{flex:none;width:100%}
   #view-invite .card.ia-card{padding:var(--spacing-4xl) var(--spacing-2xl)}
 }
@@ -4165,7 +4167,7 @@ function invPage(){const R=IV.R,n=invFriends(),err=R.load==='error',t=invTotal()
  const body=err?`<div class="ia-in"><div class="inv-es"><p class="${T('body-lg-semibold')}">Couldn’t load your rewards.</p><div class="a"><button type="button" class="btn ink ${T('body-md-semibold')}" data-iact="retry">Try again</button></div></div></div>`
   :empty?`<div class="ia-in"><div class="ia-empty"><span class="ia-ico lg">${iic('gift')}</span><p class="t ${T('body-lg-semibold')}">No friends yet</p><p class="${T('body-sm')}">Share your link with friends to start earning ${REFERRAL.rate}% of their trading fees.</p><button type="button" class="btn ink ${T('body-md-semibold')}" data-iact="copy">Copy referral link</button></div></div>`
   :`<div class="ia-in">${invActInner()}</div>`;
- const head=`<header class="ia-ch"><span class="ia-ico">${iic('gift')}</span><div><h2 class="${T('heading-h3')}">Refer and earn</h2><p class="${T('body-sm')}">You get ${REFERRAL.rate}% of trading fees from every friend who signs up with your link.</p></div></header>`;
+ const head=`<header class="ia-ch"><span class="ia-ico">${iic('gift')}</span><div><h2 class="${T('heading-h3')}">Refer and earn</h2><p class="${T('body-sm')}">You get ${REFERRAL.rate}% of your friends’ trading fees.</p></div></header>`;
  const card=`<section class="card ia-card" aria-label="Refer and earn">${body}</section>`;
  return `<div class="inv">${hd}${stats}<div class="ia-bar">${head}${link}</div>${note}${card}</div>`}
 
