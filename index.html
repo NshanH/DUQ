@@ -2553,7 +2553,6 @@ svg.i.h-ic-xs{width:var(--sizing-icon-xs);height:var(--sizing-icon-xs)}
 .h-fs-rows { display: flex; width: 100%; flex-direction: column; gap: var(--spacing-xs); }
 .h-fs-row { display: flex; width: 100%; min-height: var(--sizing-control-xs); align-items: center; gap: var(--spacing-lg); }
 .h-fs-row .h-nm { display: -webkit-box; min-width: 0; flex: 1; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.25; color: var(--text-high_em); }
-.h-fs-row .h-ch { flex-shrink: 0; white-space: nowrap; color: var(--text-high_em); }
 /* independent markets: no big number, the rows fill the column, a hairline between them */
 .h-fs-row .h-yn, .h-mc-row .h-yn { min-width: 66px; }
 .h-fs-rows.h-multi { margin-top: 0; flex: 1; justify-content: center; gap: 0; }
@@ -2675,8 +2674,6 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 .h-mc-row { display: flex; width: 100%; align-items: center; gap: var(--spacing-md); }
 .h-mc-rows.h-ex .h-mc-row { gap: var(--spacing-lg); }
 .h-mc-row .h-nm { min-width: 0; flex: 1; overflow-wrap: break-word; color: var(--text-high_em); }
-.h-mc-row .h-ch { width: var(--sizing-control-xl); flex-shrink: 0; text-align: right; color: var(--text-high_em); }
-.h-mc-rows.h-ex .h-mc-row .h-ch { width: auto; white-space: nowrap; }
 .h-mc-bar { display: block; width: 100%; overflow: clip; height: var(--sizing-bar-sm); border-radius: var(--radius-border_radius_round); background: var(--neutral_inverse_white-alpha_5); }
 .h-mc-bar i { display: block; height: 100%; border-radius: var(--radius-border_radius_round); background: var(--surface-ink); }
 .h-mc-rows.h-ex .h-mc-bar { height: var(--sizing-bar-xs); border-radius: var(--radius-border_radius_xxs); }
@@ -2857,9 +2854,9 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 #hfb .h-ec-label.h-is-dim .h-ec-val, #hfb .h-ec-label.h-is-dim .h-ec-name { color: var(--text-base_em); }
 #hfb .h-ec-label.h-is-focus .h-ec-name { color: var(--text-high_em); }
 #hfb .h-ec-label[role="button"] { cursor: pointer; border-radius: var(--radius-border_radius_sm); }
-#hfb .h-fs-row .h-sdot, #hfb .h-fs-row .h-nm, #hfb .h-fs-row .h-ch { transition: opacity var(--h-d-base) var(--ease), color var(--h-d-base) var(--ease); }
+#hfb .h-fs-row .h-sdot, #hfb .h-fs-row .h-nm { transition: opacity var(--h-d-base) var(--ease), color var(--h-d-base) var(--ease); }
 #hfb .h-fs-row.h-is-dim .h-sdot { opacity: .25; }
-#hfb .h-fs-row.h-is-dim .h-nm, #hfb .h-fs-row.h-is-dim .h-ch { color: var(--text-low_em); }
+#hfb .h-fs-row.h-is-dim .h-nm { color: var(--text-low_em); }
 /* ---------- Yes / No: same size, place and fill; hover draws a hairline in the side's colour, press darkens it ---------- */
 #hfb .h-yn { transition: box-shadow var(--h-d-fast) var(--ease); }
 @media (hover: hover) {
@@ -4279,7 +4276,6 @@ function hPair(e,o,size='sm',cls=''){const w=size==='lg'?'body-md-bold':size==='
  const b=s=>`<button type="button" class="h-yn h-${s} h-yn-${size} ${T(w)} h-spring" data-pick="${e.id}|${o.i}|${s}" aria-label="${esc(outLabel(e,o,s))}"${dis}>${s==='yes'?'Yes':'No'} <small class="h-pr ${T(pw)} num">${priceOf(e,o,s)}¢</small></button>`;
  return `<div class="h-pair${cls?' '+cls:''}">${b('yes')}${b('no')}</div>`}
 /* one winner: you back a name — one green Yes; betting against a name is on the event page */
-const hBuy=(e,o)=>`<button type="button" class="h-yn h-yes h-yn-xs ${T('label-sm-bold')} h-spring" data-pick="${e.id}|${o.i}|yes" aria-label="${esc(outLabel(e,o,'yes'))}"${tradable(e,o)?'':' disabled'}>Yes <small class="h-pr ${T('label-sm')} num">${o.p}¢</small></button>`;
 const hMore=(e,n,words)=>n>0?`<a href="#event/${e.id}" class="h-mc-more ${T('label-md')}">${n} more${words?' '+words:''} ${hIcon('chevron-right','h-ic-xs')}</a>`:'';
 
 /* ---------- Market Card (market-card.tsx): binary / independent markets / one winner; a row of one is the wide card ---------- */
@@ -4288,8 +4284,8 @@ function hCard(e,opts={}){const one=e.outs.length===1,ex=hIsEx(e);
  const bin=o=>`<div class="h-mc-bot"><p class="h-mc-ch ${T('display-stat-lg')} num"><span data-op="${e.id}-${o.i}" data-fmt="">${o.p}</span><span class="${T('display-unit')}">%</span></p>${hPair(e,o,'sm','h-inline')}</div>`;
  let body;
  if(one)body=`<div class="h-mline" data-ev="${e.id}"></div>${bin(e.outs[0])}`;
- else if(ex)body=`<ul class="h-mc-rows h-ex">${hLeaders(e,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md')}">${esc(x.n)}</span><span class="h-ch ${T('label-md-bold')} num" data-op="${e.id}-${x.i}">${x.p}%</span>${hBuy(e,x)}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'')}`;   /* two markets at most on every card, so every card keeps one height (the user, 4 Oct 2026) */
- else body=`<ul class="h-mc-rows">${e.outs.slice(0,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md-regular')}">${esc(x.n)}</span><span class="h-ch ${T('label-md-bold')} num" data-op="${e.id}-${x.i}">${x.p}%</span>${hPair(e,x,'xs','h-inline')}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'markets')}`;
+ else if(ex)body=`<ul class="h-mc-rows h-ex">${hLeaders(e,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md')}">${esc(x.n)}</span>${hPair(e,x,'xs','h-inline')}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'')}`;   /* two markets at most on every card, so every card keeps one height (the user, 4 Oct 2026) */
+ else body=`<ul class="h-mc-rows">${e.outs.slice(0,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md-regular')}">${esc(x.n)}</span>${hPair(e,x,'xs','h-inline')}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'markets')}`;
  if(opts.wide)return `<article class="h-gc h-mc h-wide" data-ev="${e.id}"><div class="h-mc-l">${head}<div class="h-mc-isl">${one?bin(e.outs[0]):body}</div></div><div class="h-mc-r"><div class="h-ec" data-ev="${e.id}"></div></div></article>`;
  return `<article class="h-gc h-mc" data-ev="${e.id}">${head}<div class="h-mc-isl">${body}</div></article>`}
 /* kept for the old callers: one card */
@@ -4409,8 +4405,9 @@ function hECCard(el,silent=false){const e=EVENTS[el.dataset.ev];const lines=hLin
 
 /* ================================================================================================
    The banner (featured-carousel.tsx + the three UI/UX passes of 28 Sep 2026): one height on every slide; one market
-   = the chance and Yes / No; independent markets = rows with Yes ¢ / No ¢; one winner = the leader big and one green
-   Yes ¢ a name; the rest behind «N more markets ›». The chart draws exactly the markets the rows show.
+   = the chance and Yes / No; several markets, independent or one winner = rows with Yes ¢ / No ¢ and no chance column
+   (the chart beside them carries the numbers — the user, 5 Oct 2026); one winner also puts the leader big; the rest
+   behind «N more markets ›». The chart draws exactly the markets the rows show.
    ================================================================================================ */
 /* every case once: one market; independent markets, 2 and 10; one winner of 2, 3 and 5 */
 const FEATURED_LIST=[{ev:'btc'},{ev:'santa'},{ev:'ethhigh'},{ev:'nba'},{ev:'ucl'},{ev:'dem2028'}];let featIdx=0,featT=0;
@@ -4427,7 +4424,7 @@ const hFsBig=(e,o,words,hero)=>`<div class="h-fs-big${hero?' h-hero':''}"><p><sp
 function hFsLeft(e){if(e.outs.length===1){const o=e.outs[0];return hFsBig(e,o,'chance',true)+`<div class="h-fs-pair">${hPair(e,o,'lg')}</div>`}
  const ms=hFsMarkets(e),more=e.outs.length-ms.length,ex=hIsEx(e);
  const moreLink=more>0?`<a href="#event/${e.id}" class="h-mc-more h-fs-more ${T('label-md')}">${more} more ${more===1?'market':'markets'} ${hIcon('chevron-right','h-ic-xs')}</a>`:'';
- const rows=ms.map(x=>`<li class="h-fs-row" data-k="${x.i}"><span class="h-sdot" style="background:${x.c}"></span><span class="h-nm ${T('body-sm-semibold')}">${esc(x.n)}</span><span class="h-ch ${T('body-sm-bold')} num" data-op="${e.id}-${x.i}">${x.p}%</span>${ex?hBuy(e,x):hPair(e,x,'xs','h-inline')}</li>`).join('');
+ const rows=ms.map(x=>`<li class="h-fs-row" data-k="${x.i}"><span class="h-sdot" style="background:${x.c}"></span><span class="h-nm ${T('body-sm-semibold')}">${esc(x.n)}</span>${hPair(e,x,'xs','h-inline')}</li>`).join('');
  /* one winner: the big number is always the market with the highest chance */
  const lead=hLeaders(e,1)[0];
  return (ex?hFsBig(e,lead,`${esc(lead.n)} leads`,false):'')+`<ul class="h-fs-rows ${ex?'h-ex':'h-multi'}">${rows}</ul>${moreLink}`}
