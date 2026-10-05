@@ -2674,6 +2674,8 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 .h-mc-row { display: flex; width: 100%; align-items: center; gap: var(--spacing-md); }
 .h-mc-rows.h-ex .h-mc-row { gap: var(--spacing-lg); }
 .h-mc-row .h-nm { min-width: 0; flex: 1; overflow-wrap: break-word; color: var(--text-high_em); }
+.h-mc-row .h-ch { width: var(--sizing-control-xl); flex-shrink: 0; text-align: right; color: var(--text-high_em); }
+.h-mc-rows.h-ex .h-mc-row .h-ch { width: auto; white-space: nowrap; }
 .h-mc-bar { display: block; width: 100%; overflow: clip; height: var(--sizing-bar-sm); border-radius: var(--radius-border_radius_round); background: var(--neutral_inverse_white-alpha_5); }
 .h-mc-bar i { display: block; height: 100%; border-radius: var(--radius-border_radius_round); background: var(--surface-ink); }
 .h-mc-rows.h-ex .h-mc-bar { height: var(--sizing-bar-xs); border-radius: var(--radius-border_radius_xxs); }
@@ -4272,6 +4274,7 @@ const hLive=()=>Object.values(EVENTS).filter(evLive);
 const hByVol=list=>[...list].sort((a,b)=>b.vol-a.vol);
 
 /* ---------- Yes / No (yes-no-button.style.ts): the chance on the row, what you buy and its price on the button ---------- */
+const hBuy=(e,o)=>`<button type="button" class="h-yn h-yes h-yn-xs ${T('label-sm-bold')} h-spring" data-pick="${e.id}|${o.i}|yes" aria-label="${esc(outLabel(e,o,'yes'))}"${tradable(e,o)?'':' disabled'}>Yes <small class="h-pr ${T('label-sm')} num">${o.p}¢</small></button>`;
 function hPair(e,o,size='sm',cls=''){const w=size==='lg'?'body-md-bold':size==='xs'?'label-sm-bold':'body-sm-bold',pw=size==='lg'?'body-sm-semibold':size==='xs'?'label-sm':'label-md',dis=tradable(e,o)?'':' disabled';
  const b=s=>`<button type="button" class="h-yn h-${s} h-yn-${size} ${T(w)} h-spring" data-pick="${e.id}|${o.i}|${s}" aria-label="${esc(outLabel(e,o,s))}"${dis}>${s==='yes'?'Yes':'No'} <small class="h-pr ${T(pw)} num">${priceOf(e,o,s)}¢</small></button>`;
  return `<div class="h-pair${cls?' '+cls:''}">${b('yes')}${b('no')}</div>`}
@@ -4280,12 +4283,15 @@ const hMore=(e,n,words)=>n>0?`<a href="#event/${e.id}" class="h-mc-more ${T('lab
 
 /* ---------- Market Card (market-card.tsx): binary / independent markets / one winner; a row of one is the wide card ---------- */
 function hCard(e,opts={}){const one=e.outs.length===1,ex=hIsEx(e);
+ /* home only (the user, 5 Oct 2026): rows of several markets lose the chance column and every row gets Yes and No;
+    search and the category pages keep the chance beside the name and the one Yes pill of a one-winner event */
+ const home=!!opts.home,ch=x=>`<span class="h-ch ${T('label-md-bold')} num" data-op="${e.id}-${x.i}">${x.p}%</span>`;
  const head=`<div class="h-mc-head">${hPhoto(e)}<div class="h-mc-txt"><h3 class="h-mc-q ${T('body-md-semibold')}"><a href="#event/${e.id}">${esc(e.q)}</a></h3><p class="h-mc-meta ${T('label-sm-regular')}">${hFacts(e)}</p></div></div>`;
  const bin=o=>`<div class="h-mc-bot"><p class="h-mc-ch ${T('display-stat-lg')} num"><span data-op="${e.id}-${o.i}" data-fmt="">${o.p}</span><span class="${T('display-unit')}">%</span></p>${hPair(e,o,'sm','h-inline')}</div>`;
  let body;
  if(one)body=`<div class="h-mline" data-ev="${e.id}"></div>${bin(e.outs[0])}`;
- else if(ex)body=`<ul class="h-mc-rows h-ex">${hLeaders(e,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md')}">${esc(x.n)}</span>${hPair(e,x,'xs','h-inline')}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'')}`;   /* two markets at most on every card, so every card keeps one height (the user, 4 Oct 2026) */
- else body=`<ul class="h-mc-rows">${e.outs.slice(0,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md-regular')}">${esc(x.n)}</span>${hPair(e,x,'xs','h-inline')}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'markets')}`;
+ else if(ex)body=`<ul class="h-mc-rows h-ex">${hLeaders(e,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md')}">${esc(x.n)}</span>${home?'':ch(x)}${home?hPair(e,x,'xs','h-inline'):hBuy(e,x)}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'')}`;   /* two markets at most on every card, so every card keeps one height (the user, 4 Oct 2026) */
+ else body=`<ul class="h-mc-rows">${e.outs.slice(0,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md-regular')}">${esc(x.n)}</span>${home?'':ch(x)}${hPair(e,x,'xs','h-inline')}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'markets')}`;
  if(opts.wide)return `<article class="h-gc h-mc h-wide" data-ev="${e.id}"><div class="h-mc-l">${head}<div class="h-mc-isl">${one?bin(e.outs[0]):body}</div></div><div class="h-mc-r"><div class="h-ec" data-ev="${e.id}"></div></div></article>`;
  return `<article class="h-gc h-mc" data-ev="${e.id}">${head}<div class="h-mc-isl">${body}</div></article>`}
 /* kept for the old callers: one card */
@@ -4305,7 +4311,7 @@ function hLayoutGrids(root=document){
   if(cols===3&&rem===2)kids.slice(-2).forEach(k=>k.classList.add('h-s3'));
   if(cols>1&&rem===1)kids[kids.length-1].classList.add('h-s6');
   kids.forEach(k=>{if(!k.dataset.ev||!k.classList.contains('h-mc'))return;const want=k.classList.contains('h-s6')&&cols>1;
-   if(want!==k.classList.contains('h-wide')){const t=document.createElement('div');t.innerHTML=hCard(EVENTS[k.dataset.ev],{wide:want});const n=t.firstElementChild;n.classList.toggle('h-s6',k.classList.contains('h-s6'));k.replaceWith(n);hydratePics(n);hDraw(n)}})})}
+   if(want!==k.classList.contains('h-wide')){const t=document.createElement('div');t.innerHTML=hCard(EVENTS[k.dataset.ev],{wide:want,home:!!k.closest('.h-home')});const n=t.firstElementChild;n.classList.toggle('h-s6',k.classList.contains('h-s6'));k.replaceWith(n);hydratePics(n);hDraw(n)}})})}
 function hDraw(root){hqa('.h-mline',root).forEach(hLine);hqa('.h-ec',root).forEach(el=>{if(el.closest('.h-fb'))return;hEC(el);hChartRO.observe(el)})}
 
 /* ================================================================================================
@@ -4710,7 +4716,7 @@ function hLayoutZone(root){const z=hq('.h-zone',root);if(!z)return;const lay=()=
 
 /* ---------- sections: Trending, then the categories in the side menu's order; three cards each, «See all» opens the category ---------- */
 function hSections(){const lv=hLive();const secs=[['trending','Trending',hByVol(lv).slice(0,6)],...Object.keys(CATS).map(c=>[c,CATS[c],hByVol(lv.filter(e=>e.cat===c))])];
- return secs.filter(s=>s[2].length).map(([c,t,list])=>`<section class="h-hsec" aria-label="${esc(t)}"><div class="h-sech"><h2 class="${T('heading-h2')}">${esc(t)}</h2><a href="#cat/${c}" class="h-tl ${T('body-sm-semibold')}">See all</a></div><div class="h-grid">${list.slice(0,3).map(e=>hCard(e)).join('')}</div></section>`).join('')}
+ return secs.filter(s=>s[2].length).map(([c,t,list])=>`<section class="h-hsec" aria-label="${esc(t)}"><div class="h-sech"><h2 class="${T('heading-h2')}">${esc(t)}</h2><a href="#cat/${c}" class="h-tl ${T('body-sm-semibold')}">See all</a></div><div class="h-grid">${list.slice(0,3).map(e=>hCard(e,{home:true})).join('')}</div></section>`).join('')}
 
 function renderHome(){const body=hq('#home-body');let html='';
  if(query){const list=searchList(query).map(r=>r.e);   /* the same list, in the same order and the same number, as the suggestions */
