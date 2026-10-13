@@ -6966,7 +6966,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
 
   /* ---------- settings (remembered per viewer) ---------- */
   var KEY = 'duq-flow-tune';
-  var D = { on: true, colors: 'duq', density: 'medium', speed: 1, trail: 17 };
+  var D = { on: true, colors: 'duq', density: 'medium', speed: 1, trail: 5 };   // the user's pick, 14 Oct 2026: short ~5-frame trails
   var S = Object.assign({}, D);
   try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
@@ -6979,6 +6979,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
     ocean: { hueStart: 180, hueRange: 90, saturation: 88, lightness: 60 }
   };
   var STILL_FRAME_STEPS = 40, STEP_MS = 1000 / 60, STEP_TOLERANCE_MS = 2, MAX_STEPS_PER_FRAME = 3;
+  var DOT_OPACITY = 0.8;   // a dot at full life is 80% opaque (the component draws 90%), the user's pick, 14 Oct 2026
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- colours from the tokens (--bg, --yes, --no) ---------- */
@@ -7030,7 +7031,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
     p.x += Math.cos(angle) * sp; p.y += Math.sin(angle) * sp; p.life++;
     if (p.life > p.maxLife) { p.x = Math.random() * width; p.y = Math.random() * height; p.life = 0; p.f = Math.random() < .5 ? 0 : 1; p.hue = hueFor(p); return; }
     p.x = wrap(p.x, width); p.y = wrap(p.y, height);
-    var progress = p.life / p.maxLife, alpha = Math.min(progress * 8, 1) * Math.min((1 - progress) * 6, 1) * 0.9;
+    var progress = p.life / p.maxLife, alpha = Math.min(progress * 8, 1) * Math.min((1 - progress) * 6, 1) * DOT_OPACITY;
     var th = THEMES[S.colors], h, s, l;
     if (th) { h = (p.hue + (angle / (Math.PI * 2)) * 70 + 360) % 360; s = th.saturation; l = th.lightness; }
     else { h = (p.hue + (angle / (Math.PI * 2)) * 12 + 360) % 360; s = fam[p.f][1]; l = fam[p.f][2]; }   // brand colours keep to their own hue
