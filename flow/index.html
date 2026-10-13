@@ -6966,7 +6966,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
 
   /* ---------- settings (remembered per viewer) ---------- */
   var KEY = 'duq-flow-tune';
-  var D = { on: true, colors: 'duq', density: 'medium', speed: 1, trail: 5 };   // the user's pick, 14 Oct 2026: short ~5-frame trails
+  var D = { on: true, colors: 'duq', density: 'medium', speed: 1.4, trail: 5 };   // the user's pick, 14 Oct 2026: 1.4× speed, short ~5-frame trails
   var S = Object.assign({}, D);
   try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
