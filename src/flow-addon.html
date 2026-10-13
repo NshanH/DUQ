@@ -1,0 +1,212 @@
+
+<!-- ===== FLOW FIELD (sandbox) =====
+     KokonutUI «Flow Field» v1.0.0 (MIT, @dorian_baffier, kokonutui.com — `npx shadcn@latest add @kokonutui/flow-field`)
+     ported from React + canvas to plain canvas for the prototype: the same noise field, particle life, 60 Hz fixed step,
+     trail fade, still frame for reduced motion, radial vignette and top/bottom fades. It replaces only the landing
+     background (#field); the headline, the button and the header stay as they are. Colours: «Yes / No» takes --yes,
+     --no and --bg from tokens.css; Aurora / Ember / Ocean are the component's own themes, kept for comparison. -->
+<style>
+#flow{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
+#flow-shade{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 65% 60% at 50% 50%,transparent 20%,rgb(var(--ff-bg) / .92) 100%),
+    linear-gradient(to bottom,rgb(var(--ff-bg)) 0,rgb(var(--ff-bg) / 0) 160px),
+    linear-gradient(to top,rgb(var(--ff-bg)) 0,rgb(var(--ff-bg) / 0) 160px)}
+#landing:not(.ff-on) #flow,#landing:not(.ff-on) #flow-shade{display:none}
+#landing.ff-on #field{visibility:hidden}
+/* the Tune panel: the same quiet pill as the Hero sandbox, bottom right */
+.ftune{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:var(--spacing-md);font:var(--typeface-weight-primary-semibold) var(--typeface-size-caption_1)/var(--typeface-line_height-caption_1) var(--font);color:var(--ink)}
+.ftune>button{height:32px;padding:0 var(--spacing-xl);border-radius:var(--radius-border_radius_round);background:var(--glass-pop);border:1px solid var(--hairline);-webkit-backdrop-filter:blur(var(--blur-pop));backdrop-filter:blur(var(--blur-pop));box-shadow:var(--shadow-3);color:var(--ink);font:inherit;cursor:pointer}
+.ftune-p{width:300px;max-width:calc(100vw - 32px);display:grid;gap:var(--spacing-xl);padding:var(--spacing-2xl);border-radius:var(--radius-border_radius_3xl);background:var(--glass-pop);border:1px solid var(--hairline);-webkit-backdrop-filter:blur(var(--blur-pop));backdrop-filter:blur(var(--blur-pop));box-shadow:var(--shadow-3)}
+.ftune-p .ft-row{display:grid;gap:var(--spacing-xs);color:var(--ink-2)}
+.ftune-p .ft-seg{display:flex;flex-wrap:wrap;gap:2px;padding:2px;border-radius:var(--radius-border_radius_round);background:var(--card-2)}
+.ftune-p .ft-seg button{flex:1 1 auto;height:26px;padding:0 var(--spacing-lg);border:0;border-radius:var(--radius-border_radius_round);background:none;color:var(--ink-2);font:inherit;cursor:pointer;white-space:nowrap}
+.ftune-p .ft-seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.ftune-p label{display:grid;grid-template-columns:1fr auto;gap:var(--spacing-xs) var(--spacing-md);align-items:center;color:var(--ink-2)}
+.ftune-p label b{color:var(--ink);font-weight:inherit;font-variant-numeric:tabular-nums}
+.ftune-p input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--ink)}
+.ftune-p .ft-acts{display:flex;gap:var(--spacing-md)}
+.ftune-p .ft-acts button{height:28px;padding:0 var(--spacing-lg);border-radius:var(--radius-border_radius_round);background:var(--card-2);border:0;color:var(--ink);font:inherit;cursor:pointer}
+.ftune button:focus-visible,.ftune input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+</style>
+<script>
+(function () {
+  var L = document.getElementById('landing'), field = document.getElementById('field');
+  if (!L || !field) return;
+  var root = document.documentElement;
+
+  /* ---------- the canvas and the shade sit where #field sits ---------- */
+  var cv = document.createElement('canvas'); cv.id = 'flow'; cv.setAttribute('aria-hidden', 'true');
+  var shade = document.createElement('div'); shade.id = 'flow-shade'; shade.setAttribute('aria-hidden', 'true');
+  field.parentNode.insertBefore(shade, field.nextSibling);
+  field.parentNode.insertBefore(cv, shade);
+  var ctx = cv.getContext('2d');
+
+  /* ---------- settings (remembered per viewer) ---------- */
+  var KEY = 'duq-flow-tune';
+  var D = { on: true, colors: 'duq', density: 'medium', speed: 1, trail: 17 };
+  var S = Object.assign({}, D);
+  try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+  var save = function () { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+  /* ---------- the component's constants ---------- */
+  var COUNTS = { sparse: 600, medium: 1200, dense: 2000 };
+  var THEMES = {
+    aurora: { hueStart: 120, hueRange: 200, saturation: 90, lightness: 62 },
+    ember: { hueStart: 0, hueRange: 55, saturation: 95, lightness: 58 },
+    ocean: { hueStart: 180, hueRange: 90, saturation: 88, lightness: 60 }
+  };
+  var STILL_FRAME_STEPS = 40, STEP_MS = 1000 / 60, STEP_TOLERANCE_MS = 2, MAX_STEPS_PER_FRAME = 3;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- colours from the tokens (--bg, --yes, --no) ---------- */
+  var probe = document.createElement('i'); probe.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+  document.body.appendChild(probe);
+  function rgbOf(v) { probe.style.color = ''; probe.style.color = v; var m = getComputedStyle(probe).color.match(/[\d.]+/g); return m ? m.slice(0, 3).map(Number) : [0, 0, 0]; }
+  function hslOf(c) {
+    var r = c[0] / 255, g = c[1] / 255, b = c[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, h = 0, s = 0;
+    if (mx !== mn) { var d = mx - mn; s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn);
+      h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; }
+    return [h, Math.round(s * 100), Math.round(l * 100)];
+  }
+  var bg = [11, 13, 18], fam = [[160, 73, 41], [0, 90, 60]], dark = false;
+  function readTokens() {
+    var cs = getComputedStyle(root);
+    dark = root.dataset.theme === 'dark';
+    bg = rgbOf(cs.getPropertyValue('--bg').trim() || '#0b0d12');
+    var y = hslOf(rgbOf(cs.getPropertyValue('--yes').trim() || '#1cb785'));
+    var n = hslOf(rgbOf(cs.getPropertyValue('--no').trim() || '#f53e3e'));
+    // a 1.3-px speck needs a little more light than a filled pill on the dark ground, and a little less on the light one
+    fam = [[y[0], y[1], dark ? Math.max(y[2], 52) : Math.min(y[2], 42)], [n[0], n[1], dark ? Math.max(n[2], 58) : Math.min(n[2], 52)]];
+    L.style.setProperty('--ff-bg', bg.join(' '));
+  }
+
+  /* ---------- the field ---------- */
+  var fillStyles = new Map();
+  function fillStyle(h, s, l, a) {
+    h = Math.round(h) % 360; a = Math.round(a * 100);
+    var key = ((h * 101 + a) * 101 + s) * 101 + l, st = fillStyles.get(key);
+    if (!st) { st = 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a / 100 + ')'; fillStyles.set(key, st); }
+    return st;
+  }
+  function fieldAngle(x, y, t) {
+    var s = 0.0025;
+    return Math.sin(x * s + t * 0.0007) * Math.PI + Math.cos(y * s + t * 0.0005) * Math.PI +
+      Math.sin((x + y) * s * 0.6 + t * 0.0009) * Math.PI * 0.6 + Math.cos((x - y) * s * 0.4 + t * 0.0006) * Math.PI * 0.4;
+  }
+  function wrap(v, max) { return v < 0 ? v + max : v > max ? v - max : v; }
+
+  var width = 0, height = 0, dpr = 1, particles = [], time = 0, animId = 0, lastFrameTime = 0, pendingMs = 0, running = false;
+  function hueFor(p) { var th = THEMES[S.colors]; return th ? th.hueStart + Math.random() * th.hueRange : fam[p.f][0]; }
+  function spawn() {
+    var maxLife = 200 + Math.floor(Math.random() * 300);
+    var p = { x: Math.random() * width, y: Math.random() * height, speed: 1.1 + Math.random() * 1.8, hue: 0, f: Math.random() < .5 ? 0 : 1, life: Math.floor(Math.random() * maxLife), maxLife: maxLife };
+    p.hue = hueFor(p); return p;
+  }
+  function stepParticle(p) {
+    var angle = fieldAngle(p.x, p.y, time), sp = p.speed * S.speed;
+    p.x += Math.cos(angle) * sp; p.y += Math.sin(angle) * sp; p.life++;
+    if (p.life > p.maxLife) { p.x = Math.random() * width; p.y = Math.random() * height; p.life = 0; p.f = Math.random() < .5 ? 0 : 1; p.hue = hueFor(p); return; }
+    p.x = wrap(p.x, width); p.y = wrap(p.y, height);
+    var progress = p.life / p.maxLife, alpha = Math.min(progress * 8, 1) * Math.min((1 - progress) * 6, 1) * 0.9;
+    var th = THEMES[S.colors], h, s, l;
+    if (th) { h = (p.hue + (angle / (Math.PI * 2)) * 70 + 360) % 360; s = th.saturation; l = th.lightness; }
+    else { h = (p.hue + (angle / (Math.PI * 2)) * 12 + 360) % 360; s = fam[p.f][1]; l = fam[p.f][2]; }   // brand colours keep to their own hue
+    ctx.beginPath(); ctx.arc(p.x, p.y, 1.3, 0, Math.PI * 2); ctx.fillStyle = fillStyle(h, s, l, alpha); ctx.fill();
+  }
+  function step() {
+    time++;
+    ctx.fillStyle = 'rgba(' + bg.join(', ') + ', ' + (1 / S.trail).toFixed(3) + ')';
+    ctx.fillRect(0, 0, width, height);
+    for (var i = 0; i < particles.length; i++) stepParticle(particles[i]);
+  }
+  function paintGround() { ctx.fillStyle = 'rgb(' + bg.join(', ') + ')'; ctx.fillRect(0, 0, width, height); }
+  function fitCount() {
+    var n = COUNTS[S.density] || COUNTS.medium;
+    while (particles.length < n) particles.push(spawn());
+    if (particles.length > n) particles.length = n;
+  }
+  function resize() {
+    var w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight;
+    if (!w || !h || (w === width && h === height)) return;
+    var canRescale = particles.length > 0 && width > 0 && height > 0, sx = w / width, sy = h / height;
+    width = w; height = h; dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(width * dpr); cv.height = Math.round(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    paintGround();
+    if (canRescale) particles.forEach(function (p) { p.x *= sx; p.y *= sy; }); else { particles = []; fitCount(); }
+    if (reduce) for (var i = 0; i < STILL_FRAME_STEPS; i++) step();
+  }
+  function render(now) {
+    pendingMs = lastFrameTime ? pendingMs + Math.min(now - lastFrameTime, 100) : STEP_MS;
+    lastFrameTime = now;
+    var steps = 0;
+    while (pendingMs >= STEP_MS - STEP_TOLERANCE_MS && steps < MAX_STEPS_PER_FRAME) { step(); pendingMs -= STEP_MS; steps++; }
+    if (steps === MAX_STEPS_PER_FRAME) pendingMs = 0;
+    animId = requestAnimationFrame(render);
+  }
+  function start() { if (running || reduce) return; running = true; lastFrameTime = 0; animId = requestAnimationFrame(render); }
+  function stop() { running = false; cancelAnimationFrame(animId); }
+  // only while the landing is on screen, the flow is chosen and the tab is visible
+  var visible = false;
+  var io = new IntersectionObserver(function (es) { visible = !!(es[0] && es[0].isIntersecting); sync(); });
+  io.observe(cv);
+  document.addEventListener('visibilitychange', sync);
+  function sync() { if (S.on && visible && !document.hidden) { resize(); start(); } else stop(); }
+  new ResizeObserver(function () { if (S.on) resize(); }).observe(cv);
+  new MutationObserver(function () { readTokens(); fillStyles.clear(); particles.forEach(function (p) { p.hue = hueFor(p); }); if (width) paintGround(); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
+  /* ---------- the current field (#field) keeps running under the flow, only hidden: it also paints the yes / no
+     words of the headline, and those must look exactly as they do now ---------- */
+  function apply(fresh) {
+    L.classList.toggle('ff-on', !!S.on);
+    fitCount();
+    if (fresh) { particles.forEach(function (p) { p.hue = hueFor(p); }); }
+    sync(); save(); paintTune();
+  }
+
+  /* ---------- Tune panel ---------- */
+  var T = document.createElement('div'); T.className = 'ftune'; T.id = 'ftune';
+  T.innerHTML =
+    '<div class="ftune-p" id="ftune-p" role="group" aria-label="Background settings" hidden>' +
+    '<div class="ft-row"><span>Background</span><div class="ft-seg" data-k="on"><button type="button" data-v="1">Flow field</button><button type="button" data-v="0">Current</button></div></div>' +
+    '<div class="ft-row"><span>Colours</span><div class="ft-seg" data-k="colors"><button type="button" data-v="duq">Yes / No</button><button type="button" data-v="aurora">Aurora</button><button type="button" data-v="ember">Ember</button><button type="button" data-v="ocean">Ocean</button></div></div>' +
+    '<div class="ft-row"><span>Particles</span><div class="ft-seg" data-k="density"><button type="button" data-v="sparse">600</button><button type="button" data-v="medium">1,200</button><button type="button" data-v="dense">2,000</button></div></div>' +
+    '<label for="ft-speed">Speed <b id="ft-speed-v"></b><input type="range" id="ft-speed" min="0.4" max="2" step="0.1"></label>' +
+    '<label for="ft-trail">Trail <b id="ft-trail-v"></b><input type="range" id="ft-trail" min="5" max="50" step="1"></label>' +
+    '<div class="ft-acts"><button type="button" id="ft-reset">Reset</button></div></div>' +
+    '<button type="button" id="ftune-btn" aria-expanded="false" aria-controls="ftune-p">Tune</button>';
+  L.appendChild(T);
+  var P = T.querySelector('#ftune-p'), B = T.querySelector('#ftune-btn'), sp = T.querySelector('#ft-speed'), tr = T.querySelector('#ft-trail');
+  function paintTune() {
+    T.querySelectorAll('.ft-seg').forEach(function (g) {
+      var k = g.dataset.k, cur = k === 'on' ? (S.on ? '1' : '0') : S[k];
+      g.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === cur)); });
+    });
+    sp.value = S.speed; T.querySelector('#ft-speed-v').textContent = Number(S.speed).toFixed(1) + '×';
+    tr.value = S.trail; T.querySelector('#ft-trail-v').textContent = '~' + S.trail + ' frames';
+    T.querySelectorAll('.ft-row:not(:first-child), label').forEach(function (n) { n.style.opacity = S.on ? '' : '.45'; });
+  }
+  B.addEventListener('click', function () { P.hidden = !P.hidden; B.setAttribute('aria-expanded', String(!P.hidden)); });
+  T.addEventListener('click', function (e) {
+    var b = e.target.closest('.ft-seg button'); if (!b) return;
+    var k = b.parentNode.dataset.k, v = b.dataset.v;
+    if (k === 'on') S.on = v === '1'; else S[k] = v;
+    apply(k === 'colors');
+  });
+  sp.addEventListener('input', function () { S.speed = Number(sp.value); paintTune(); save(); });
+  tr.addEventListener('input', function () { S.trail = Number(tr.value); paintTune(); save(); });
+  T.querySelector('#ft-reset').addEventListener('click', function () { S = Object.assign({}, D); apply(true); });
+
+  /* ---------- this page is shared on its own: the tab says «DUQ Flow Field» where the prototype says «DUQ test» ---------- */
+  var tt = document.querySelector('title');
+  var retitle = function () { if (document.title.indexOf('DUQ test') !== -1) document.title = document.title.replace('DUQ test', 'DUQ Flow Field'); };
+  if (tt) new MutationObserver(retitle).observe(tt, { childList: true, characterData: true, subtree: true });
+  retitle();
+
+  /* ---------- the reference screenshot was dark: open dark unless the viewer chose a theme ---------- */
+  try { if (!localStorage.getItem('duq-theme') && root.dataset.theme !== 'dark') { var tb = document.querySelector('#landing .themebtn'); if (tb) tb.click(); } } catch (e) {}
+
+  readTokens();
+  apply(false);
+})();
+</script>
