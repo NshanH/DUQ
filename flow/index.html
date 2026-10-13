@@ -6979,7 +6979,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
     ocean: { hueStart: 180, hueRange: 90, saturation: 88, lightness: 60 }
   };
   var STILL_FRAME_STEPS = 40, STEP_MS = 1000 / 60, STEP_TOLERANCE_MS = 2, MAX_STEPS_PER_FRAME = 3;
-  var DOT_OPACITY = 0.8;   // a dot at full life is 80% opaque (the component draws 90%), the user's pick, 14 Oct 2026
+  var DOT_OPACITY = 0.6;   // a dot at full life is 60% opaque (the component draws 90%), the user's pick, 14 Oct 2026
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- colours from the tokens (--bg, --yes, --no) ---------- */
