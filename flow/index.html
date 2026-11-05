@@ -6950,6 +6950,24 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
 .ftune-p .ft-acts{display:flex;gap:var(--spacing-md)}
 .ftune-p .ft-acts button{height:28px;padding:0 var(--spacing-lg);border-radius:var(--radius-border_radius_round);background:var(--card-2);border:0;color:var(--ink);font:inherit;cursor:pointer}
 .ftune button:focus-visible,.ftune input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* wide screens (from 1620, where rule E has taken the side menu away): the page keeps 80 px from each window edge
+   instead of standing as one 1440 column in the middle (the user, 5 Nov 2026: «kogda propodaet menu peding left right
+   stranici sdelai 80px»). The top bar and the category row under it bleed by the same 80, so their ground still spans
+   the window; the sign-in page keeps its own padding (body.is-auth .main wins on specificity). */
+@media (min-width:1620px){
+  .main{max-width:none;padding-left:var(--spacing-11xl);padding-right:var(--spacing-11xl)}
+  .top{margin-left:calc(-1 * var(--spacing-11xl));margin-right:calc(-1 * var(--spacing-11xl));padding-left:var(--spacing-11xl);padding-right:var(--spacing-11xl)}
+  .hnavwrap::before{left:calc(-1 * var(--spacing-11xl));right:calc(-1 * var(--spacing-11xl))}
+  /* the Prototype states switch, pinned bottom left, now sits over the content (80 is narrower than the switch):
+     it gets the Tune pill's glass ground, so it reads as a floating tool and the text under it doesn't show through */
+  .side .proto>button{height:32px;padding:0 var(--spacing-xl);border-radius:var(--radius-border_radius_round);background:var(--glass-pop);border:1px solid var(--hairline);-webkit-backdrop-filter:blur(var(--blur-pop));backdrop-filter:blur(var(--blur-pop));box-shadow:var(--shadow-3);color:var(--ink)}
+  /* «vo vsex mesta 80»: the landing's header (logo, search, theme, sign in) stands on the same 80 instead of its
+     centred 1168 column, so nothing jumps between the landing and the app */
+  #landing .column-box{max-width:none;padding-left:var(--spacing-11xl);padding-right:var(--spacing-11xl)}
+  /* sign-in hides the top bar, but the category row under it stayed on its own over the empty page (rule E leaves it
+     there in the main prototype too) */
+  body.is-auth .hnavwrap{display:none}
+}
 </style>
 <script>
 (function () {
