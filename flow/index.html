@@ -6952,14 +6952,18 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
      within a fraction of a pixel. Specificity: the surfaces are listed in :where() and lifted by :not(#lgm):not(.lgm-x)
      to exactly 1-1-0 — over the pages' own rules (#view-invite .card ties and loses on order), while the narrower rules
      below (short cards, the phone sheet, the focus ring) still win; an :is() list would weigh as its heaviest member
-     (.h-fb:not(.h-cc .h-fb), 1-3-0) and beat them. -->
+     (.h-fb:not(.h-cc .h-fb), 1-3-0) and beat them.
+     v163 (the user, 8 Nov 2026: «soxraniv etot stil, nemnogo bordera beli sdelai nejneye, a bg seri nemnogo dai
+     opacity»): the same style, its white edges about half as strong (light: one rim instead of six, the light lines at
+     .5; dark: rim .06, top line .14 / .045, glint .035) and the grey fill a little see-through (light .6 instead of .73,
+     dark .85 instead of solid). -->
 <style>
 :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port):not(#lgm):not(.lgm-x){
-  --lgm-fill:rgb(246 246 246 / .73);
+  --lgm-fill:rgb(246 246 246 / .6);
   --lgm-ring:rgb(0 0 0 / .15);--lgm-side:rgb(0 0 0 / .255);--lgm-dside:rgb(0 0 0 / .115);
   --lgm-glint:rgb(255 255 255 / 0);
-  --lgm-rim:rgb(255 255 255 / 1);--lgm-rimx:rgb(255 255 255 / 1);
-  --lgm-t1:rgb(255 255 255 / 1);--lgm-t2:rgb(255 255 255 / 1);--lgm-b1:rgb(255 255 255 / 1);--lgm-b2:rgb(255 255 255 / 1);
+  --lgm-rim:rgb(255 255 255 / 1);--lgm-rimx:rgb(255 255 255 / 0);
+  --lgm-t1:rgb(255 255 255 / .5);--lgm-t2:rgb(255 255 255 / .5);--lgm-b1:rgb(255 255 255 / .5);--lgm-b2:rgb(255 255 255 / .5);
   --lgm-drop:rgb(0 0 0 / .25);
   --lgm-shadow:
     inset 0 .5px 0 var(--lgm-t1),inset 0 1px 0 var(--lgm-t2),inset 0 -.5px 0 var(--lgm-b1),inset 0 -1px 0 var(--lgm-b2),
@@ -6980,11 +6984,11 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
   -webkit-backdrop-filter:none;backdrop-filter:none;
 }
 html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port):not(#lgm):not(.lgm-x){
-  --lgm-fill:rgb(26 26 30);
+  --lgm-fill:rgb(26 26 30 / .85);
   --lgm-ring:rgb(0 0 0);--lgm-side:rgb(0 0 0);--lgm-dside:rgb(0 0 0 / 0);
-  --lgm-glint:rgb(255 255 255 / .057);
-  --lgm-rim:rgb(255 255 255 / .102);--lgm-rimx:rgb(255 255 255 / 0);
-  --lgm-t1:rgb(255 255 255 / .255);--lgm-t2:rgb(255 255 255 / .078);--lgm-b1:rgb(255 255 255 / .013);--lgm-b2:rgb(255 255 255 / .074);
+  --lgm-glint:rgb(255 255 255 / .035);
+  --lgm-rim:rgb(255 255 255 / .06);--lgm-rimx:rgb(255 255 255 / 0);
+  --lgm-t1:rgb(255 255 255 / .14);--lgm-t2:rgb(255 255 255 / .045);--lgm-b1:rgb(255 255 255 / .008);--lgm-b2:rgb(255 255 255 / .045);
   --lgm-drop:rgb(0 0 0 / .45);
 }
 /* the Portfolio block's own glass (rim gradient, sheen) gives way to Medium */
