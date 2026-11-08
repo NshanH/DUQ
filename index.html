@@ -2944,6 +2944,10 @@ html[data-theme=dark] .h-tick-pill {
 .h-duel-dot[aria-current="true"] { width: 16px; background: #fff; }
 .h-duel-dot:focus-visible { outline: none; box-shadow: 0 0 0 var(--sizing-border-ring) var(--focus); }
 @media (max-width:900px) { .h-rail.h-rail-one > .h-duel { height: auto; } .h-duel-track { height: 340px; flex: none; } }
+/* v189 (the user, via the other session: «zdes est bug po radiusu»): the card is a superellipse (lg-cards.html, corner-shape
+   1.825 at 54.6); border-radius: inherit takes the radius but not the shape, so the track (which clips the photos) and the
+   light edge take the shape too — otherwise the card's glass shows in the four corners */
+.h-duel-track, .h-wc.h-duel::after { corner-shape: inherit; }
 .h-crowd.h-wc:hover, .h-tug.h-wc:hover { translate: none; }
 .h-zone.h-trio.h-trio-off > .h-crowd, .h-zone.h-trio.h-stack > .h-crowd { display: none; }
 @media (max-width:900px) { .h-zone.h-trio > .h-crowd { display: none; } .h-rail.h-rail-one > .h-tug { height: auto; } }
