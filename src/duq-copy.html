@@ -695,11 +695,11 @@ html[data-theme=dark] .postbl{--pos-ground:color-mix(in srgb,#121621 85%,var(--b
 .seg button[aria-pressed=true]{background:var(--pill);color:#fff}
 .lbl{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:14px 0 6px}
 .amt{display:flex;align-items:center;gap:6px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);padding:9px 15px;background:var(--glass-field)}
-/* v211 (the user, 9 Nov 2026: «isprav» + the focused Reset password field): a field's focus is an inner ring — its border
-   and 1 px inside in the focus colour — instead of a 2 px ring 2–3 px outside it, which widened the field past the
-   column and ate the gap to the button. The same for Amount, the withdraw fields, the sign-in fields and the code cells */
-.amt:focus-within{outline:none;border-color:var(--focus);box-shadow:inset 0 0 0 1px var(--focus)}
-.amt[aria-invalid=true]:focus-within,.amt.bad:focus-within{box-shadow:inset 0 0 0 1px var(--no-text)}
+/* v212 (the user, 9 Nov 2026: «kak to drugoe, i text email ochen bloje k inputu»): a field's focus is Figma's again —
+   «a 3 px gap in surface/surface_bg and a 2 px ring in outline/focus_ring, both outside the shape, built exactly as on
+   Buttons» (Input fields › Rules); v211's inner ring is gone. The same for Amount, the withdraw fields, the sign-in
+   fields and the code cells */
+.amt:focus-within{outline:2px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 4px var(--bg)}
 .amt[aria-invalid=true],.amt.bad{border-color:var(--no-text)}
 .amt span{font-size:22px;font-weight:600;color:var(--ink-3);line-height:1}
 .amt input{flex:1;border:0;background:none;color:var(--ink);font:800 30px/1 var(--font);letter-spacing:-.03em;outline:none;min-width:0;width:100%;height:1em;padding:0;font-variant-numeric:tabular-nums}
@@ -1114,8 +1114,8 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .money .in button{font-size:13px;font-weight:600;color:var(--ink-2)}
 .money .code{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:0 0 12px}
 .money .code input{width:100%;min-width:0;height:52px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);background:var(--glass-field);text-align:center;font:800 22px/1 var(--font);color:var(--ink);outline:none;font-variant-numeric:tabular-nums}
-.money .code input:focus{outline:none;border-color:var(--focus);box-shadow:inset 0 0 0 1px var(--focus)}
-.money .in:focus-within{border-color:var(--focus);box-shadow:inset 0 0 0 1px var(--focus)}
+.money .code input:focus{outline:2px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 4px var(--bg)}
+.money .in:focus-within{outline:2px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 4px var(--bg)}
 .money .wait{display:flex;align-items:center;gap:12px;padding:14px;border-radius:var(--r-14);background:var(--card-2);font-size:14px;margin:0 0 14px}
 .money .spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--hairline-2);border-top-color:var(--ink);animation:spin 1s linear infinite;flex:none}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -1344,9 +1344,9 @@ body.is-auth .main{padding:0}
 .auth .steps i{height:4px;flex:1;border-radius:2px;background:var(--card-2)}
 .auth .steps i.on{background:var(--pill)}
 .auth label.f{display:block;margin:0 0 12px}
-.auth label.f span{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-bottom:6px}
+.auth label.f span{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-bottom:var(--spacing-xl)}   /* v212: 12 to the field (was 6; Figma's label → field is 8, but the field's focus ring sits 5 outside it) */
 .auth .in{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);padding:0 16px;background:var(--glass-field);height:52px}
-.auth .in:focus-within{outline:none;border-color:var(--focus);box-shadow:inset 0 0 0 1px var(--focus)}
+.auth .in:focus-within{outline:2px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 4px var(--bg)}
 .auth .in input{flex:1;min-width:0;border:0;background:none;outline:none;font:600 16px/1 var(--font);color:var(--ink)}
 .auth .in input::placeholder{color:var(--ink-3);font-weight:500}
 .auth .in button{font-size:13px;font-weight:600;color:var(--ink-2)}
@@ -1355,7 +1355,7 @@ body.is-auth .main{padding:0}
 .auth .who button{font-weight:600;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
 .auth .code{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:0 0 12px}
 .auth .code input{width:100%;min-width:0;height:56px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);background:var(--glass-field);text-align:center;font:800 24px/1 var(--font);color:var(--ink);outline:none;font-variant-numeric:tabular-nums}
-.auth .code input:focus{outline:none;border-color:var(--focus);box-shadow:inset 0 0 0 1px var(--focus)}
+.auth .code input:focus{outline:2px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 4px var(--bg)}
 .auth .timers{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-2);margin:0 0 16px}
 .auth .timers b{color:var(--ink);font-variant-numeric:tabular-nums}
 .auth .timers button{font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
