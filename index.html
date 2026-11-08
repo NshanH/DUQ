@@ -7012,8 +7012,10 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
 }
 html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card):not(#lgm):not(.lgm-x){
   /* v176 (the user, 8 Nov 2026: «dai mne 4 versi serogo, men eto kak to ne nravica» → «davai 4 steklo poprobuem»):
-     the system's glass card, white 6 % over the page, instead of the neutral #1a1a1e at .85 */
-  --lgm-fill:var(--surface-glass_card);
+     the system's glass card, white 6 % over the page, instead of the neutral #1a1a1e at .85; v177 («teper na 2
+     variant»): the system's modal card #15181e, a little see-through (.85) as before — the phone's trade sheet
+     takes it too again */
+  --lgm-fill:color-mix(in srgb,var(--surface-modal_card) 85%,transparent);
   --lgm-ring:rgb(0 0 0);--lgm-side:rgb(0 0 0);--lgm-dside:rgb(0 0 0 / 0);
   --lgm-glint:rgb(255 255 255 / .035);
   --lgm-rim:rgb(255 255 255 / .06);--lgm-rimx:rgb(255 255 255 / 0);
@@ -7057,11 +7059,7 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
 .h-cc-card:not(#lgm):not(.lgm-x){border-radius:38px;corner-shape:round}
 /* the phone's trade sheet: rounded on top only, and Medium's frost, since it slides over the page */
 @media (max-width:900px){
-  .trade:not(#lgm):not(.lgm-x){border-radius:34px 34px 0 0;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-  /* v176: the sheet lies over the page, so in the dark theme it keeps a solid ground (the system's popover glass)
-     rather than the cards' white 6 % */
-  html[data-theme=dark] .trade:not(#lgm):not(.lgm-x){--lgm-fill:var(--surface-glass_pop)}
-  @supports (corner-shape:superellipse(2)){.trade:not(#lgm):not(.lgm-x){border-radius:54.6px 54.6px 0 0}}
+  .trade:not(#lgm):not(.lgm-x){border-radius:34px 34px 0 0;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}  @supports (corner-shape:superellipse(2)){.trade:not(#lgm):not(.lgm-x){border-radius:54.6px 54.6px 0 0}}
 }
 </style>
 <!-- LG-CARDS:END -->
