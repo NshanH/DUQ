@@ -1058,8 +1058,11 @@ body.is-landing .app{display:none}
 /* the top bar stays: on scroll it drops onto a matte ground, and nothing in it changes size — the bar, the search and
    the buttons keep their height (the user, 2 Oct 2026; Figma "32. Event — scrolled" had shrunk them) */
 .top{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:45;margin:-20px -28px 20px;padding:20px 28px 12px}
-.top::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;background:var(--bg);backdrop-filter:blur(14px) saturate(var(--glass-sat));-webkit-backdrop-filter:blur(14px) saturate(var(--glass-sat));-webkit-mask-image:linear-gradient(#000 74%,transparent);mask-image:linear-gradient(#000 74%,transparent);transition:opacity 220ms var(--ease)}
-.top.scrolled::before{opacity:.92}
+.top::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px) saturate(var(--glass-sat));-webkit-backdrop-filter:blur(14px) saturate(var(--glass-sat));-webkit-mask-image:linear-gradient(#000 74%,transparent);mask-image:linear-gradient(#000 74%,transparent);transition:opacity 220ms var(--ease)}
+.top.scrolled::before{opacity:1}
+/* the bar's ground (and the category row's) is the page colour at 92 % over a blurred page: the 92 used to be the
+   layer's opacity over an opaque ground, which let 8 % of the page through unblurred — titles read sharp through the
+   bar (v173, the user, 8 Nov 2026: «zdes bug»). Now the 8 % that shows is the blurred page */
 .top .brand{display:none}
 /* search is 360 in the Top Bar, top and scrolled alike (Figma Top Bar 37:83, 23 Sep 2026); it may shrink on a narrow window, never grows */
 .search{flex:0 1 360px;max-width:360px;height:44px;border-radius:var(--r2);background:var(--glass-field);border:1px solid var(--hairline);backdrop-filter:blur(var(--blur-field));-webkit-backdrop-filter:blur(var(--blur-field));display:flex;align-items:center;gap:10px;padding:0 14px;color:var(--ink)}
@@ -2325,16 +2328,18 @@ body.is-landing{height:100%;overflow:hidden;display:flex;flex-direction:column;f
   .top .brand .wm{height:24px}
   .top .brand .wm use{transform:translateY(-30px)}   /* the symbol's viewBox offset lands twice and drops the mark: lift it back */
   .top::before{-webkit-mask-image:none;mask-image:none}   /* the row under the bar carries the fade */
-  /* the row stays pinned under the compact bar (56) while the page scrolls, on the bar's own ground */
-  .hnavwrap{display:block;position:sticky;top:56px;z-index:44;margin:0 0 20px}
-  .hnavwrap::before{content:"";position:absolute;left:-28px;right:-28px;top:0;bottom:-16px;z-index:-1;opacity:0;pointer-events:none;background:var(--bg);backdrop-filter:blur(14px) saturate(var(--glass-sat));-webkit-backdrop-filter:blur(14px) saturate(var(--glass-sat));-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent);transition:opacity 220ms var(--ease)}
-  .top.scrolled+.hnavwrap::before{opacity:.92}
+  /* the row stays pinned right under the bar while the page scrolls, on the bar's own ground. The bar is 76 tall over
+     900 px (20 + 44 + 12), guest and signed in; the row used to stick at 56 and slid 20 px under the bar, which cut the
+     tops of the labels (v173, the user, 8 Nov 2026: «zdes bug»). At 76 it stays where it is at the top of the page */
+  .hnavwrap{display:block;position:sticky;top:76px;z-index:44;margin:0 0 20px}
+  .hnavwrap::before{content:"";position:absolute;left:-28px;right:-28px;top:0;bottom:-16px;z-index:-1;opacity:0;pointer-events:none;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px) saturate(var(--glass-sat));-webkit-backdrop-filter:blur(14px) saturate(var(--glass-sat));-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent);transition:opacity 220ms var(--ease)}
+  .top.scrolled+.hnavwrap::before{opacity:1}
   .hnavwrap .nav{flex-direction:row;align-items:center;gap:2px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
   .hnavwrap .nav::-webkit-scrollbar{display:none}
   .hnavwrap .nav a{flex:none;width:auto;white-space:nowrap}
   .hnavwrap .nav a:hover{transform:none}
   .hnavwrap .nav .sep{flex:none;width:1px;height:20px;margin:0 10px}
-  .trade{top:112px}   /* under the compact bar and the row: 56 + 40 + 16 */
+  .trade{top:132px}   /* under the bar and the row: 76 + 40 + 16 */
   /* sign-in hides the top bar; the category row under it would stay on its own over the empty page */
   body.is-auth .hnavwrap{display:none}
   /* the Prototype states switch, pinned bottom left, sits over the content now: a glass pill, so the text under it
@@ -6965,15 +6970,19 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
      v163 (the user, 8 Nov 2026: «soxraniv etot stil, nemnogo bordera beli sdelai nejneye, a bg seri nemnogo dai
      opacity»): the same style, its white edges about half as strong (light: one rim instead of six, the light lines at
      .5; dark: rim .06, top line .14 / .045, glint .035) and the grey fill a little see-through (light .6 instead of .73,
-     dark .85 instead of solid). -->
+     dark .85 instead of solid).
+     v173 (the user, 8 Nov 2026: «mnogo smyagchai shadow, i bordera toje myagki, chorni v borderax ochen yavni» + the
+     light theme's market cards): light only — the drop shadow at .08 instead of .25, and the dark edge about a third as
+     strong (ring .06 instead of .15, side crescents .08 instead of .255, inner sides .04 instead of .115). The dark
+     theme stays as it was. -->
 <style>
 :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card):not(#lgm):not(.lgm-x){
   --lgm-fill:rgb(246 246 246 / .6);
-  --lgm-ring:rgb(0 0 0 / .15);--lgm-side:rgb(0 0 0 / .255);--lgm-dside:rgb(0 0 0 / .115);
+  --lgm-ring:rgb(0 0 0 / .06);--lgm-side:rgb(0 0 0 / .08);--lgm-dside:rgb(0 0 0 / .04);
   --lgm-glint:rgb(255 255 255 / 0);
   --lgm-rim:rgb(255 255 255 / 1);--lgm-rimx:rgb(255 255 255 / 0);
   --lgm-t1:rgb(255 255 255 / .5);--lgm-t2:rgb(255 255 255 / .5);--lgm-b1:rgb(255 255 255 / .5);--lgm-b2:rgb(255 255 255 / .5);
-  --lgm-drop:rgb(0 0 0 / .25);
+  --lgm-drop:rgb(0 0 0 / .08);
   --lgm-shadow:
     inset 0 .5px 0 var(--lgm-t1),inset 0 1px 0 var(--lgm-t2),inset 0 -.5px 0 var(--lgm-b1),inset 0 -1px 0 var(--lgm-b2),
     inset .5px 0 0 var(--lgm-dside),inset -.5px 0 0 var(--lgm-dside),
