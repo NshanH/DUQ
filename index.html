@@ -6922,35 +6922,44 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
 </script>
 <script>if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('700 96px "Onest"'),document.fonts.load('900 96px "Onest"')]).then(function(){window.dispatchEvent(new Event("resize"))}).catch(function(){})}</script>
 <!-- LG-CARDS:BEGIN — generated from ~/duq/lg-cards.html by ~/duq/vendor/liquid-glass/embed.py; edit the template, not this copy -->
-<!-- ===== Market cards: Liquid Glass - Medium as a CSS copy (v155, 8 Nov 2026) =====
-     «izmeni bg kartochki na liquid glass medium» → the component as is (v152 Clear, v153 Medium, v154 refraction off) →
-     «ochen tyajelo rabotaet» → «da sdelai css kopiu». The market cards (.h-mc — home sections, categories, results)
-     keep the look of IOSGlass size="medium" of the user's «Liquid Glass» system (artifact 7CwFr94nNPSUjSEPhKXpWg), drawn
-     by the card's own box: no React, no layers, no blend modes, masks or filters (the component put ~17 layers under
-     every card). Over our flat page every layer of Medium resolves to a plain colour, and these are those colours:
+<!-- ===== Card surfaces: Liquid Glass - Medium as a CSS copy (v156, 8 Nov 2026) =====
+     v152–v154 put the IOSGlass component of the user's «Liquid Glass» system (artifact 7CwFr94nNPSUjSEPhKXpWg) under
+     the market cards; «ochen tyajelo rabotaet» → v155 drew its look with the card's own box (no React, no layers, no
+     blend modes, masks or filters); «super, izmeni i v drugix mestax toje tak» + the event page («naprimer zdes») → v156
+     gives every card surface that look: the market cards (.h-mc); every .card — the event's chart card, market rows and
+     trade panel, My account's lists, money and empty cards, Settings, Invite friends (card and tiles), sign-in; the
+     Portfolio block (.ac-port, whose own carousel-style glass and its ::before / ::after go); the signed-in home's banner
+     (.h-fb) and rail cards (.h-wc, not the Flip Fox photo card). Popovers stay as they were — the deposit modal
+     (.card.money), menus, the search list — and so do controls (pills, fields).
+     Over our flat page every layer of Medium resolves to a plain colour, and these are those colours:
      · fills — light: white .7 Lighten + #bfbfbf .1 Darken = rgb(246 246 246 / .73) over any light ground;
                 dark: #1a1a1a .7 / .9 Luminosity + #1a1a1a Lighten over #0b0d12 = rgb(26 26 30);
      · the 0.5 px Plus Darker ring #dbdbdb / #a6a6a6 and the side crescents (±1.25, spread −.75), where ring and crescent
        burn twice; the light theme's darker sides of the specular light (#e3e3e3, inset ±.5);
      · the Plus Lighter rims (#282828 / #1a1a1a, inset 0 ±40 10 −40 at .9): in light they clip the top 3 px to white,
-       so the rim is stacked six times; Medium's light lines (top .12/.024, bottom .04/.035; dark .207/.067, .113/.063)
-       and the dark side glint #0d0d0d, as the plain whites they give over the pane;
-     · the drop shadow 0 8 48 at .25 / .45; the frost and the refraction move nothing over a flat page and are left out;
+       so the rim is stacked six times; Medium's light lines (top .12/.024, bottom .04/.035; dark .207/.067, the bottom
+       as the component really draws it) and the dark side glint #0d0d0d, as the plain whites they give over the pane;
+     · the drop shadow 0 8 48 at .25 / .45; frost and refraction move nothing over a flat page and are left out (the
+       .card's own blur 26 goes with them; the phone's trade sheet, which slides over the page, keeps Medium's frost 8);
      · the corner: Medium's radius 34 with Figma's smoothing .6 = a superellipse 54.6 px with K 1.825 (CSS corner-shape;
-       within 0.37 px of the component's path); without corner-shape a plain 34.
+       within 0.37 px of the component's path). Like the component, a card lower than 109 px keeps radius 34 with less
+       smoothing — the market rows (88) and the Invite tiles (90): 44 px, K 1.45. Without corner-shape a plain 34.
+     · .card's 1 px hairline border goes (Medium draws its own 0.5 px ring); the market rows' clip-path (round 26) goes,
+       so the ring and the shadow show and the content is clipped by the row's own rounded box.
      Checked against the component on the same page load at 2×: top, bottom and sides within 1–3 levels, the corners
-     within a fraction of a pixel (after a 1 px blur 0.12 % of the pixels differ by more than 12 levels). -->
+     within a fraction of a pixel. Specificity: the surfaces are listed in :where() and lifted by :not(#lgm):not(.lgm-x)
+     to exactly 1-1-0 — over the pages' own rules (#view-invite .card ties and loses on order), while the narrower rules
+     below (short cards, the phone sheet, the focus ring) still win; an :is() list would weigh as its heaviest member
+     (.h-fb:not(.h-cc .h-fb), 1-3-0) and beat them. -->
 <style>
-.h-mc{
+:where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port):not(#lgm):not(.lgm-x){
   --lgm-fill:rgb(246 246 246 / .73);
   --lgm-ring:rgb(0 0 0 / .15);--lgm-side:rgb(0 0 0 / .255);--lgm-dside:rgb(0 0 0 / .115);
   --lgm-glint:rgb(255 255 255 / 0);
   --lgm-rim:rgb(255 255 255 / 1);--lgm-rimx:rgb(255 255 255 / 1);
   --lgm-t1:rgb(255 255 255 / 1);--lgm-t2:rgb(255 255 255 / 1);--lgm-b1:rgb(255 255 255 / 1);--lgm-b2:rgb(255 255 255 / 1);
   --lgm-drop:rgb(0 0 0 / .25);
-  border-radius:34px;
-  background:var(--lgm-fill);
-  box-shadow:
+  --lgm-shadow:
     inset 0 .5px 0 var(--lgm-t1),inset 0 1px 0 var(--lgm-t2),inset 0 -.5px 0 var(--lgm-b1),inset 0 -1px 0 var(--lgm-b2),
     inset .5px 0 0 var(--lgm-dside),inset -.5px 0 0 var(--lgm-dside),
     inset .5px 0 0 var(--lgm-glint),inset -.5px 0 0 var(--lgm-glint),
@@ -6962,15 +6971,36 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
     inset 0 40px 10px -40px var(--lgm-rimx),inset 0 -40px 10px -40px var(--lgm-rimx),
     0 0 0 .5px var(--lgm-ring),1.25px 0 0 -.75px var(--lgm-side),-1.25px 0 0 -.75px var(--lgm-side),
     0 8px 48px var(--lgm-drop);
+  border:0;
+  border-radius:34px;
+  background:var(--lgm-fill);
+  box-shadow:var(--lgm-shadow);
+  -webkit-backdrop-filter:none;backdrop-filter:none;
 }
-@supports (corner-shape:superellipse(2)){.h-mc{border-radius:54.6px;corner-shape:superellipse(1.825)}}
-html[data-theme=dark] .h-mc{
+html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port):not(#lgm):not(.lgm-x){
   --lgm-fill:rgb(26 26 30);
   --lgm-ring:rgb(0 0 0);--lgm-side:rgb(0 0 0);--lgm-dside:rgb(0 0 0 / 0);
   --lgm-glint:rgb(255 255 255 / .057);
   --lgm-rim:rgb(255 255 255 / .102);--lgm-rimx:rgb(255 255 255 / 0);
   --lgm-t1:rgb(255 255 255 / .255);--lgm-t2:rgb(255 255 255 / .078);--lgm-b1:rgb(255 255 255 / .013);--lgm-b2:rgb(255 255 255 / .074);
   --lgm-drop:rgb(0 0 0 / .45);
+}
+/* the Portfolio block's own glass (rim gradient, sheen) gives way to Medium */
+.ac-port::before,.ac-port::after{display:none}
+/* the market rows: their clip-path (round 26) would cut the ring and the shadow off; the row's own rounded box
+   (overflow hidden) clips the content instead */
+.oc:not(#lgm):not(.lgm-x){clip-path:none}
+/* focus stays visible: the ring goes on top of the glass */
+.h-wc:focus-visible:not(#lgm):not(.lgm-x){box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--focus),var(--lgm-shadow)}
+/* Medium's smoothed corner; a card lower than 109 px gets the component's reduced smoothing */
+@supports (corner-shape:superellipse(2)){
+  :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port):not(#lgm):not(.lgm-x){border-radius:54.6px;corner-shape:superellipse(1.825)}
+  :where(.oc:not(.open),.ia-tile):not(#lgm):not(.lgm-x){border-radius:44px;corner-shape:superellipse(1.45)}
+}
+/* the phone's trade sheet: rounded on top only, and Medium's frost, since it slides over the page */
+@media (max-width:900px){
+  .trade:not(#lgm):not(.lgm-x){border-radius:34px 34px 0 0;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  @supports (corner-shape:superellipse(2)){.trade:not(#lgm):not(.lgm-x){border-radius:54.6px 54.6px 0 0}}
 }
 </style>
 <!-- LG-CARDS:END -->
