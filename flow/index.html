@@ -2823,14 +2823,16 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 /* v182 (the user, 8 Nov 2026: «eti chipi izmeni na liquid glass small»): the ticker's chips in Liquid Glass — Small of the
    user's system (IOSGlass size="small"), the CSS copy first written for the hero carousel in v167: the fill, the inner
    shade under the top edge, the 0.5 px ring and side crescents, the rims and light lines, a soft drop. No frost: the
-   chips move, and over the plain ground a blur would show nothing but cost every frame */
+   chips move, and over the plain ground a blur would show nothing but cost every frame.
+   v183 (the user, 8 Nov 2026: «oni ostalis serimi, goluboi osnovnoi»): the glass is tinted with the system's blue (--s1,
+   the charts' first colour): light — a pale blue pane, its ring blue; dark — blue glass, its light lines blue-white */
 .h-tick-pill {
-  --lgs-fill: rgb(242 242 242 / .55);
+  --lgs-fill: color-mix(in srgb, var(--s1) 12%, rgb(255 255 255 / .6));
   --lgs-shade: rgb(0 0 0 / .052), rgb(0 0 0 / .041) 4px, rgb(0 0 0 / .031) 8px, rgb(0 0 0 / .021) 12px, rgb(0 0 0 / .014) 16px, rgb(0 0 0 / .009) 20px, rgb(0 0 0 / .003) 26px, rgb(0 0 0 / .001) 32px, rgb(0 0 0 / 0) 37px;
-  --lgs-ring: rgb(0 0 0 / .096); --lgs-side: rgb(0 0 0 / .196);
+  --lgs-ring: color-mix(in srgb, var(--s1) 30%, transparent); --lgs-side: color-mix(in srgb, var(--s1) 22%, transparent);
   --lgs-rim: rgb(255 255 255 / .9); --lgs-rimx: rgb(255 255 255 / .9);
   --lgs-t1: rgb(255 255 255 / 0); --lgs-t2: rgb(255 255 255 / 0); --lgs-b1: rgb(255 255 255 / 0); --lgs-b2: rgb(255 255 255 / 0);
-  --lgs-drop: rgb(0 0 0 / .02);
+  --lgs-drop: color-mix(in srgb, var(--s1) 10%, transparent);
   background: linear-gradient(var(--lgs-shade)) no-repeat, var(--lgs-fill);
   box-shadow:
     inset 0 .5px 0 var(--lgs-t1), inset 0 1px 0 var(--lgs-t2), inset 0 -.5px 0 var(--lgs-b1), inset 0 -1px 0 var(--lgs-b2),
@@ -2841,14 +2843,14 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
     0 8px 15px var(--lgs-drop);
 }
 html[data-theme=dark] .h-tick-pill {
-  --lgs-fill: rgb(255 255 255 / .1);
+  --lgs-fill: color-mix(in srgb, var(--s1) 20%, transparent);
   --lgs-shade: rgb(0 0 0 / .357), rgb(0 0 0 / .281) 4px, rgb(0 0 0 / .211) 8px, rgb(0 0 0 / .147) 12px, rgb(0 0 0 / .095) 16px, rgb(0 0 0 / .059) 20px, rgb(0 0 0 / .024) 26px, rgb(0 0 0 / .006) 32px, rgb(0 0 0 / 0) 37px;
   --lgs-ring: rgb(0 0 0 / .9); --lgs-side: rgb(0 0 0 / .85);
-  --lgs-rim: rgb(255 255 255 / .107); --lgs-rimx: rgb(255 255 255 / 0);
-  --lgs-t1: rgb(255 255 255 / .2); --lgs-t2: rgb(255 255 255 / .076); --lgs-b1: rgb(255 255 255 / .12); --lgs-b2: rgb(255 255 255 / .085);
+  --lgs-rim: rgb(150 185 255 / .16); --lgs-rimx: rgb(255 255 255 / 0);
+  --lgs-t1: rgb(185 210 255 / .34); --lgs-t2: rgb(185 210 255 / .12); --lgs-b1: rgb(185 210 255 / .2); --lgs-b2: rgb(185 210 255 / .12);
   --lgs-drop: rgb(0 0 0 / .04);
 }
-@media (hover: hover) { .h-tick-pill:hover { --lgs-fill: rgb(242 242 242 / .75); } html[data-theme=dark] .h-tick-pill:hover { --lgs-fill: rgb(255 255 255 / .14); } }
+@media (hover: hover) { .h-tick-pill:hover { --lgs-fill: color-mix(in srgb, var(--s1) 18%, rgb(255 255 255 / .75)); } html[data-theme=dark] .h-tick-pill:hover { --lgs-fill: color-mix(in srgb, var(--s1) 28%, transparent); } }
 .h-tick-pill .h-photo { width: 28px; height: 28px; border-radius: 50%; }
 .h-tick-lead { color: var(--text-med_em); }
 .h-tick-d.up { color: var(--text-success_med_em); }
