@@ -1944,6 +1944,28 @@ html[data-theme=dark] .h-tick-pill {
 /* v185 (the user, 8 Nov 2026: «paddingi s konteinerov sdelai kak marketi kak 3i image»): the two side cards take the
    market cards' padding, 24 on every side (was the rail cards' 14 / 16) */
 .h-wc.h-crowd, .h-wc.h-tug { padding: var(--spacing-5xl); }
+/* v186 (the user, 8 Nov 2026: «5 variant postav» — of the eight UIs drawn for the head-to-head): the right card is a photo
+   duel — the match's banner cut on a diagonal into the teams' colours (the cut drawn in the same % as the two clips), the
+   chances large on top, a draw chip on the cut, glass buttons; white type on the photo in both themes, a thin light edge
+   over it. The tug-of-war rules above (.h-tug-vs, -rope, -knot, -mom…) are left unused, for a way back */
+.h-tug-photo { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.h-tug-photo > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.h-tug-photo > .l { position: absolute; inset: 0; clip-path: polygon(0 0, 58% 0, 42% 100%, 0 100%); background: linear-gradient(90deg, color-mix(in srgb, var(--ca) 70%, transparent), color-mix(in srgb, var(--ca) 25%, transparent)); }
+.h-tug-photo > .r { position: absolute; inset: 0; clip-path: polygon(58% 0, 100% 0, 100% 100%, 42% 100%); background: linear-gradient(270deg, color-mix(in srgb, var(--cb) 70%, transparent), color-mix(in srgb, var(--cb) 25%, transparent)); }
+.h-tug-photo > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.h-tug-photo > .sh { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(0 0 0 / .45), rgb(0 0 0 / 0) 35%, rgb(0 0 0 / 0) 55%, rgb(0 0 0 / .7)); }
+.h-wc.h-tug::after { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), inset 0 0 0 1px rgb(255 255 255 / .07); pointer-events: none; }
+.h-tug .h-tug-head { color: #fff; }
+.h-tug .h-tug-meta { color: rgb(255 255 255 / .75); }
+.h-tug-sides { position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: space-between; gap: var(--spacing-md); margin-top: auto; color: #fff; }
+.h-tug-sides > div { min-width: 0; }
+.h-tug-sides > .r { text-align: right; }
+.h-tug-sides b { display: block; line-height: .95; letter-spacing: -.04em; text-shadow: 0 2px 14px rgb(0 0 0 / .35); }
+.h-tug-draw { position: relative; z-index: 1; align-self: center; padding: 3px 10px; border-radius: var(--radius-border_radius_round); background: rgb(0 0 0 / .45); color: #fff; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.h-tug .h-tug-back { margin-top: 0; }
+.h-tug .h-tug-back a { background: rgb(255 255 255 / .16); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .3); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+@media (hover: hover) { .h-tug .h-tug-back a:hover { background: rgb(255 255 255 / .26); } }
+@media (max-width:900px) { .h-rail.h-rail-one > .h-tug { min-height: 320px; } }
 .h-crowd.h-wc:hover, .h-tug.h-wc:hover { translate: none; }
 .h-zone.h-trio.h-trio-off > .h-crowd, .h-zone.h-trio.h-stack > .h-crowd { display: none; }
 @media (max-width:900px) { .h-zone.h-trio > .h-crowd { display: none; } .h-rail.h-rail-one > .h-tug { height: auto; } }
@@ -4058,13 +4080,11 @@ function hCrowdInner(){const e=EVENTS[FEATURED.ev],one=e.outs.length===1,o=one?e
 const hCrowdCard=()=>`<article class="h-gc h-wc h-crowd" aria-label="Where the crowd goes">${hCrowdInner()}</article>`;
 function hCrowdSync(){const c=hq('#home-body .h-crowd');if(c)c.innerHTML=hCrowdInner()}
 const H_TUG='ucl',H_SHORT={Barcelona:'Barça','Toronto Raptors':'Raptors','LA Clippers':'Clippers'};
-function hTugInner(){const e=EVENTS[H_TUG];if(!e)return '';const d=e.outs.find(hDraw0),t=e.outs.filter(o=>!hDraw0(o)),a=t[0],b=t[1],ia=e.outs.indexOf(a),ib=e.outs.indexOf(b);
- const sum=a.p+(d?d.p:0)+b.p,wa=a.p/sum*100,wd=(d?d.p:0)/sum*100,knot=Math.min(92,Math.max(8,50-(a.p-b.p)*1.5));
- const mom=o=>{const v=o.d||0;return `<span class="${v>.05?'up':v<-.05?'down':'flat'} num">${v>.05?'▲ ':v<-.05?'▼ ':''}${Math.abs(v).toFixed(1)} today</span>`};
- const nm=o=>H_SHORT[o.n]||o.n,side=(o,i,r)=>`<div class="h-tug-side${r?' r':''}"><span class="h-tug-crest" style="background:var(--s${i+1})">${esc(o.ab||o.n.slice(0,3).toUpperCase())}</span><b class="${T('display-stat-lg')} num">${o.p}%</b><span class="${T('label-md')}">${esc(o.n)}</span></div>`;
- return `<div class="h-tug-bg" aria-hidden="true"><i style="--c:var(--s${ia+1})"></i><i style="--c:var(--s${ib+1})"></i></div><div class="h-tug-head"><span class="${T('label-md')}">${esc(e.league||'')}</span><span class="h-tug-meta ${T('label-sm-regular')}">${esc(e.when||'')}</span></div><div class="h-tug-vs">${side(a,ia,0)}<div class="h-tug-mid"><span class="${T('label-sm-bold')}">VS</span>${d?`<span class="${T('label-sm-regular')} num">draw ${d.p}%</span>`:''}</div>${side(b,ib,1)}</div><div class="h-tug-rope" style="--a:${wa.toFixed(1)}%;--d:${(wa+wd).toFixed(1)}%;--ca:var(--s${ia+1});--cb:var(--s${ib+1})" aria-hidden="true"><span class="h-tug-knot" style="left:${knot.toFixed(1)}%"></span></div><div class="h-tug-mom ${T('label-sm-bold')}">${mom(a)}${mom(b)}</div><div class="h-tug-back ${T('label-md-bold')}"><a href="#event/${H_TUG}" style="--c:var(--s${ia+1})">Back ${esc(nm(a))} <span class="num">${a.p}¢</span></a><a href="#event/${H_TUG}" style="--c:var(--s${ib+1})">Back ${esc(nm(b))} <span class="num">${b.p}¢</span></a></div>`}
+function hTugInner(){const e=EVENTS[H_TUG];if(!e)return '';const d=e.outs.find(hDraw0),t=e.outs.filter(o=>!hDraw0(o)),a=t[0],b=t[1],ia=e.outs.indexOf(a),ib=e.outs.indexOf(b),id=d?e.outs.indexOf(d):-1;
+ const nm=o=>H_SHORT[o.n]||o.n;
+ return `<div class="h-tug-photo" style="--ca:var(--s${ia+1});--cb:var(--s${ib+1})" aria-hidden="true"><img data-pic="${e.banner||e.pic}" alt="" style="object-position:${e.bpos||'50% 30%'}"><i class="l"></i><i class="r"></i><svg viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="58" y1="0" x2="42" y2="100" stroke="rgb(255 255 255 / .85)" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg><i class="sh"></i></div><div class="h-tug-head"><span class="${T('label-md')}">${esc((e.league||'').replace(/^UEFA /,''))}</span><span class="h-tug-meta ${T('label-sm-regular')}">${esc(e.when||'')}</span></div><div class="h-tug-sides"><div><span class="${T('label-md-bold')}">${esc(a.n)}</span><b class="${T('display-stat-lg')} num" data-o="${ia}" data-f="pct">${a.p}%</b></div><div class="r"><span class="${T('label-md-bold')}">${esc(b.n)}</span><b class="${T('display-stat-lg')} num" data-o="${ib}" data-f="pct">${b.p}%</b></div></div>${d?`<span class="h-tug-draw ${T('label-sm-bold')} num" data-o="${id}" data-f="draw">draw ${d.p}%</span>`:''}<div class="h-tug-back ${T('label-md-bold')}"><a href="#event/${H_TUG}">Back ${esc(nm(a))} <span class="num" data-o="${ia}" data-f="cent">${a.p}¢</span></a><a href="#event/${H_TUG}">Back ${esc(nm(b))} <span class="num" data-o="${ib}" data-f="cent">${b.p}¢</span></a></div>`}
 const hCardTug=()=>{const e=EVENTS[H_TUG];return e&&evLive(e)?`<article class="h-gc h-wc h-tug" aria-label="${esc(e.q)}">${hTugInner()}</article>`:hCardLive()};
-function hTugSync(id){if(id!==H_TUG)return;const c=hq('#home-body .h-tug');if(c)c.innerHTML=hTugInner()}
+function hTugSync(id){if(id!==H_TUG)return;const c=hq('#home-body .h-tug');if(!c)return;const e=EVENTS[H_TUG];hqa('[data-o]',c).forEach(x=>{const o=e.outs[+x.dataset.o];if(!o)return;x.textContent=x.dataset.f==='cent'?o.p+'¢':x.dataset.f==='draw'?'draw '+o.p+'%':o.p+'%'})}
 const hRail=()=>hCardTug();
 function hRailAfter(root){const rail=hq('.h-rail',root);if(!rail)return;hydratePics(rail);const c1=hq('.h-mx-card',rail);if(c1){hFitPill(c1);hSizeRO.observe(c1);hCountUp(c1)}const au=hq('.h-au',rail);if(au)hAuroraMount(au)}
 function hRenderRail(){const rail=hq('#home-body .h-rail');if(!rail)return;rail.innerHTML=hRail();hRailAfter(rail.parentNode)}
