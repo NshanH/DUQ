@@ -1391,9 +1391,11 @@ body.is-landing{height:100%;overflow:hidden;display:flex;flex-direction:column;f
 /* wide screens — rule E of «Wide Screens» (25 Sep 2026): past 1440 the column grows with the window up to 1440 —
    only the chart and the market cards gain, the trade panel stays 340 — and from 1620, where the column reaches its
    cap and the side menu would start drifting away from it, the menu becomes a row under the top bar, the logo moves
-   into the top bar and the whole page stands as one 1440 column in the middle, equal margins on both sides */
+   into the top bar and the whole page stands as one 1440 column in the middle, equal margins on both sides.
+   Since v164 (the user, 8 Nov 2026: «seichas spryatai left menu, vo vsex rashireniax») the side menu is gone at every
+   width past the phone: the rule holds from 901 (width > 900, the exact complement of the phone's max-width 900) */
 .hnavwrap{display:none}
-@media (min-width:1620px){
+@media (width > 900px){
   .app{grid-template-columns:minmax(0,1fr)}
   /* the rail leaves; only the Prototype states switch stays, pinned to the bottom left corner */
   .side{position:fixed;left:0;top:auto;bottom:0;height:auto;padding:0 0 16px 16px;border:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;overflow:visible;z-index:47}
@@ -1414,6 +1416,11 @@ body.is-landing{height:100%;overflow:hidden;display:flex;flex-direction:column;f
   .hnavwrap .nav a:hover{transform:none}
   .hnavwrap .nav .sep{flex:none;width:1px;height:20px;margin:0 10px}
   .trade{top:112px}   /* under the compact bar and the row: 56 + 40 + 16 */
+  /* sign-in hides the top bar; the category row under it would stay on its own over the empty page */
+  body.is-auth .hnavwrap{display:none}
+  /* the Prototype states switch, pinned bottom left, sits over the content now: a glass pill, so the text under it
+     never shows through */
+  .side .proto>button{height:32px;padding:0 var(--spacing-xl);border-radius:var(--radius-border_radius_round);background:var(--glass-pop);border:1px solid var(--hairline);-webkit-backdrop-filter:blur(var(--blur-pop));backdrop-filter:blur(var(--blur-pop));box-shadow:var(--shadow-3);color:var(--ink)}
 }
 /* more categories than the row holds: it scrolls sideways inside the column (trackpad, swipe, the arrows); the side
    that has more fades out and shows a round arrow like the page's back button */
@@ -1452,8 +1459,8 @@ svg.i.h-ic-xs{width:var(--sizing-icon-xs);height:var(--sizing-icon-xs)}
 .h-mc-q a{color:inherit}
 .h-wc:focus-visible,.h-mc:focus-within{outline:none}
 .h-wc:focus-visible{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--focus)}
-/* the home's content starts under the top bar's box (84 = --sizing-header-box), as on the showcase */
-@media (min-width:901px) and (max-width:1619px){body.is-home .top{margin-bottom:calc(var(--sizing-header-box) - 76px)}}
+/* (v164: the rail-layout rule that started the home's content under the top bar's box between 901 and 1619 went with
+   the rail — past the phone the category row sits right under the bar at every width) */
 /* the phone: the side menu's categories in a row under the top bar, on the home, its categories and search */
 @media (max-width:900px){
   body.is-home .hnavwrap{display:block;position:relative;margin:0 -16px 16px}
@@ -3318,9 +3325,9 @@ function outLabel(e,o,s){return `${s==='yes'?'Yes':'No'}, ${priceOf(e,o,s)} cent
 function reduceMotion(){return matchMedia('(prefers-reduced-motion: reduce)').matches}
 /* one class, one threshold: the bar compacts once the page has moved under it */
 addEventListener('scroll',()=>{const t=$('#top');if(t)t.classList.toggle('scrolled',(window.scrollY||0)>24)},{passive:true});
-/* rule E: from 1620 the side menu's links move into the row under the top bar, and back into the rail below it — one
-   nav in two homes, so the current category and every handler stay with it */
-const WIDE=matchMedia('(min-width:1620px)');
+/* rule E: past the phone (since v164, before that from 1620) the side menu's links live in the row under the top bar;
+   the phone keeps them in its own row — one nav, so the current category and every handler stay with it */
+const WIDE=matchMedia('(width > 900px)');
 function hnavEdges(){const w=$('#hnavwrap'),n=$('#nav');if(!w||!n)return;const on=WIDE.matches&&n.parentElement===w;
  w.classList.toggle('more-l',on&&n.scrollLeft>1);w.classList.toggle('more-r',on&&n.scrollLeft+n.clientWidth<n.scrollWidth-1)}
 function hnavCurrent(){const n=$('#nav'),w=$('#hnavwrap');if(!n||!w||n.parentElement!==w)return;const a=n.querySelector('[aria-current=page]');if(!a)return;

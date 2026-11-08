@@ -27,11 +27,11 @@
 .ftune-p .ft-acts{display:flex;gap:var(--spacing-md)}
 .ftune-p .ft-acts button{height:28px;padding:0 var(--spacing-lg);border-radius:var(--radius-border_radius_round);background:var(--card-2);border:0;color:var(--ink);font:inherit;cursor:pointer}
 .ftune button:focus-visible,.ftune input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-/* wide screens (from 1620, where rule E has taken the side menu away): the page keeps 80 px from each window edge
+/* wide screens (where rule E has taken the side menu away: from 1620, since v164 everywhere past the phone): the page keeps 80 px from each window edge
    instead of standing as one 1440 column in the middle (the user, 5 Nov 2026: «kogda propodaet menu peding left right
    stranici sdelai 80px»). The top bar and the category row under it bleed by the same 80, so their ground still spans
    the window; the sign-in page keeps its own padding (body.is-auth .main wins on specificity). */
-@media (min-width:1620px){
+@media (width > 900px){   /* since v164 the side menu is hidden at every width past the phone */
   .main{max-width:none;padding-left:var(--spacing-11xl);padding-right:var(--spacing-11xl)}
   .top{margin-left:calc(-1 * var(--spacing-11xl));margin-right:calc(-1 * var(--spacing-11xl));padding-left:var(--spacing-11xl);padding-right:var(--spacing-11xl)}
   .hnavwrap::before{left:calc(-1 * var(--spacing-11xl));right:calc(-1 * var(--spacing-11xl))}
