@@ -3389,9 +3389,7 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
 /* v199 (the user, 9 Nov 2026: «vezde v headere, i search toje sdelai» + a shot of the top bar's theme button): the same
    Small on the top bar — its theme button and its search field (was white .08 / the glass field, 12 px frost, a hairline
    border). The search keeps a transparent 1 px border, so its focus still shows in the border's colour */
-/* v202 (the user, 9 Nov 2026: «deposit i my account toje liquid glass small»): the top bar's Deposit and My account on the
-   same Small (were ghost buttons without a fill, Figma Top Bar); My account on its own page keeps its dark pill */
-:is(#landing .themebtn,.top .themebtn,.top .search,.top .btn.deposit,.top .btn.account:not([aria-current=page])){
+:is(#landing .themebtn,.top .themebtn,.top .search){
   --lgs-fill:rgb(242 242 242 / .55);
   --lgs-shade:rgb(0 0 0 / .052),rgb(0 0 0 / .041) 4px,rgb(0 0 0 / .031) 8px,rgb(0 0 0 / .021) 12px,rgb(0 0 0 / .014) 16px,rgb(0 0 0 / .009) 20px,rgb(0 0 0 / .003) 26px,rgb(0 0 0 / .001) 32px,rgb(0 0 0 / 0) 37px;
   --lgs-ring:rgb(0 0 0 / .096);--lgs-side:rgb(0 0 0 / .196);
@@ -3406,7 +3404,7 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
     0 0 0 .5px var(--lgs-ring),1.25px 0 0 -.75px var(--lgs-side),-1.25px 0 0 -.75px var(--lgs-side),
     0 8px 15px var(--lgs-drop);
   backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-@media (hover:hover){:is(#landing .themebtn,.top .themebtn,.top .search,.top .btn.deposit,.top .btn.account:not([aria-current=page])):hover{--lgs-fill:rgb(242 242 242 / .75)}}
+@media (hover:hover){:is(#landing .themebtn,.top .themebtn,.top .search):hover{--lgs-fill:rgb(242 242 242 / .75)}}
 :is(.top .search){border:1px solid transparent}
 :is(.top .search):focus-within{border-color:var(--focus)}
 #landing .themebtn svg{width:var(--sizing-icon-lg);height:var(--sizing-icon-lg)}
@@ -3438,14 +3436,14 @@ html[data-theme=dark]{
 }
 html[data-theme=dark] .themebtn .sun{display:none}
 html[data-theme=dark] .themebtn .moon{display:block}
-html[data-theme=dark] :is(#landing .themebtn,.top .themebtn,.top .search,.top .btn.deposit,.top .btn.account:not([aria-current=page])){   /* v195 / v199: Liquid Glass Small, dark */
+html[data-theme=dark] :is(#landing .themebtn,.top .themebtn,.top .search){   /* v195 / v199: Liquid Glass Small, dark */
   --lgs-fill:rgb(255 255 255 / .1);
   --lgs-shade:rgb(0 0 0 / .357),rgb(0 0 0 / .281) 4px,rgb(0 0 0 / .211) 8px,rgb(0 0 0 / .147) 12px,rgb(0 0 0 / .095) 16px,rgb(0 0 0 / .059) 20px,rgb(0 0 0 / .024) 26px,rgb(0 0 0 / .006) 32px,rgb(0 0 0 / 0) 37px;
   --lgs-ring:rgb(0 0 0 / .9);--lgs-side:rgb(0 0 0 / .85);
   --lgs-rim:rgb(255 255 255 / .107);--lgs-rimx:rgb(255 255 255 / 0);
   --lgs-t1:rgb(255 255 255 / .2);--lgs-t2:rgb(255 255 255 / .076);--lgs-b1:rgb(255 255 255 / .12);--lgs-b2:rgb(255 255 255 / .085);
   --lgs-drop:rgb(0 0 0 / .04)}
-@media (hover:hover){html[data-theme=dark] :is(#landing .themebtn,.top .themebtn,.top .search,.top .btn.deposit,.top .btn.account:not([aria-current=page])):hover{--lgs-fill:rgb(255 255 255 / .14)}}
+@media (hover:hover){html[data-theme=dark] :is(#landing .themebtn,.top .themebtn,.top .search):hover{--lgs-fill:rgb(255 255 255 / .14)}}
 /* wordmark: ink turns white, the orange hook stays */
 html[data-theme=dark] .brand,html[data-theme=dark] #landing .brand{--ink:#f2f3f5}
 /* white pill → dark text everywhere the light theme hard-codes white on the pill */
