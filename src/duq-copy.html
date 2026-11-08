@@ -240,11 +240,15 @@ body.is-landing .app{display:none}
 .yn button{height:44px;border-radius:var(--r2);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform 300ms var(--spring),filter 200ms,background 200ms}
 .yn button:active{transform:scale(.96)}
 .yn .y{background:var(--yes-bg);color:var(--yes-label)}.yn .n{background:var(--no-bg);color:var(--no-label)}
-.yn .y small{color:var(--yes-text)}.yn .n small{color:var(--no-text)}
-.yn button:hover{filter:brightness(.97);transform:translateY(-1px)}
-.yn small{font-weight:600;font-size:13px}
-.yn button[aria-pressed=true].y{box-shadow:inset 0 0 0 2px var(--yes-fill)}
-.yn button[aria-pressed=true].n{box-shadow:inset 0 0 0 2px var(--no-fill)}
+/* v198 (Figma Yes/No Button 21:74): the price like the label — its size, weight and colour text/*_high_em (was 13 semibold
+   in *_med_em); hover the fill surface/*_base_em_hover (was brightness .97); selected a 2 px ring outside in
+   outline/*_high_em (was 2 px inside in the solid fill colour); focus the ring in the side's colour */
+.yn button:hover{transform:translateY(-1px)}
+.yn .y:not(:disabled):hover{background:var(--surface-success_base_em_hover)}.yn .n:not(:disabled):hover{background:var(--surface-danger_base_em_hover)}
+.yn button small{font:inherit;color:inherit}
+.yn button[aria-pressed=true].y{box-shadow:0 0 0 var(--sizing-border-ring) var(--outline-success_high_em)}
+.yn button[aria-pressed=true].n{box-shadow:0 0 0 var(--sizing-border-ring) var(--outline-danger_high_em)}
+.yn .y:focus-visible{outline-color:var(--outline-success_high_em)}.yn .n:focus-visible{outline-color:var(--outline-danger_high_em)}
 .yn button:disabled{opacity:.5;cursor:default;transform:none;filter:none}
 .yn.done .rr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-height:40px;padding:4px 12px;border-radius:var(--r2);font-weight:800;font-size:15px;letter-spacing:-.01em;text-align:center}
 .yn.done .rr.y{background:var(--yes-fill);color:#fff}
@@ -1464,7 +1468,7 @@ svg.i.h-ic{width:var(--sizing-icon-lg);height:var(--sizing-icon-lg)}
 svg.i.h-ic-sm{width:var(--sizing-icon-sm);height:var(--sizing-icon-sm)}
 svg.i.h-ic-xs{width:var(--sizing-icon-xs);height:var(--sizing-icon-xs)}
 /* a market that stopped trading keeps its price and its place, the button does nothing */
-.h-yn:disabled{opacity:.4;cursor:default;translate:none;scale:none;filter:none}
+.h-yn:disabled{opacity:.5;cursor:default;translate:none;scale:none;filter:none}
 /* a live number that just moved takes the direction colour and fades back */
 .h-root [data-op]{transition:color 900ms var(--ease)}
 .h-mc-q a{color:inherit}
@@ -1580,15 +1584,22 @@ svg.i.h-ic-xs{width:var(--sizing-icon-xs);height:var(--sizing-icon-xs)}
 .h-yn { position: relative; display: inline-flex; min-width: 0; align-items: center; justify-content: center; white-space: nowrap; border-radius: var(--radius-border_radius_round); }
 .h-yn.h-yes { background: var(--surface-success_base_em); color: var(--text-success_high_em); }
 .h-yn.h-no { background: var(--surface-danger_base_em); color: var(--text-danger_high_em); }
+/* v198 (the user, 9 Nov 2026: «apply changes» + Figma Yes/No Button 21:74 and Yes/No Pair 21:103): the price is set
+   like the label — the same text style (Xs Label/Sm Bold, Sm–Md Body/Sm Bold, Lg Body/Md Bold) and the same colour,
+   text/*_high_em (was a size smaller, semibold, in *_med_em); hover takes the fill surface/*_base_em_hover (was the
+   base fill at brightness .97); focus: the 3 px gap and a 2 px ring in outline/*_high_em; disabled at .5 (was .4) */
 @media (hover: hover) {
   .h-yn:hover { translate: 0 -1px; }
-  .h-yn.h-yes:hover { background: var(--surface-success_base_em); filter: brightness(.97); }
-  .h-yn.h-no:hover { background: var(--surface-danger_base_em); filter: brightness(.97); }
+  .h-yn.h-yes:not(:disabled):hover { background: var(--surface-success_base_em_hover); }
+  .h-yn.h-no:not(:disabled):hover { background: var(--surface-danger_base_em_hover); }
 }
 .h-yn:active { translate: 0 0; scale: .96; }
-.h-yn .h-pr { flex-shrink: 0; }
-.h-yn.h-yes .h-pr { color: var(--text-success_med_em); }
-.h-yn.h-no .h-pr { color: var(--text-danger_med_em); }
+.h-yn .h-pr { flex-shrink: 0; color: inherit; }
+.h-yn.h-yes:focus-visible { outline-color: var(--outline-success_high_em); }
+.h-yn.h-no:focus-visible { outline-color: var(--outline-danger_high_em); }
+/* Yes/No Pair: Xs 4 apart (spacing/xs), Sm 6 (spacing/sm), Md and Lg 8 (spacing/md) */
+.h-pair.h-pair-xs { gap: var(--spacing-xs); }
+.h-pair.h-pair-md, .h-pair.h-pair-lg { gap: var(--spacing-md); }
 .h-yn-xs { height: var(--sizing-control-xs); gap: var(--spacing-xs); padding: 0 var(--spacing-lg); }
 .h-yn-sm { height: var(--sizing-control-lg); gap: var(--spacing-sm); padding: 0 var(--spacing-xl); }
 .h-yn-md { height: var(--sizing-control-xl); gap: var(--spacing-sm); padding: 0 var(--spacing-xxl); }
@@ -2289,12 +2300,12 @@ html:not([data-theme=dark]) .h-duel { --duel-yes: var(--color-success-400); --du
 #hfb .h-yn { transition: box-shadow var(--h-d-fast) var(--ease); }
 @media (hover: hover) {
   #hfb .h-yn:hover { translate: none; }
-  #hfb .h-yn.h-yes:hover { background: var(--surface-success_base_em); box-shadow: inset 0 0 0 var(--sizing-border-hairline) var(--outline-success_low_em); }
-  #hfb .h-yn.h-no:hover { background: var(--surface-danger_base_em); box-shadow: inset 0 0 0 var(--sizing-border-hairline) var(--outline-danger_low_em); }
+  /* v198: hover as Figma Yes/No Button (State=Hover) — the fill surface/*_base_em_hover; the side's hairline is gone, and
+     so is the darker hairline on press (State=Pressed keeps the default fill) */
+  #hfb .h-yn.h-yes:not(:disabled):hover { background: var(--surface-success_base_em_hover); }
+  #hfb .h-yn.h-no:not(:disabled):hover { background: var(--surface-danger_base_em_hover); }
 }
 #hfb .h-yn:active { translate: none; scale: none; }
-#hfb .h-yn.h-yes:active { box-shadow: inset 0 0 0 var(--sizing-border-hairline) var(--outline-success_med_em); }
-#hfb .h-yn.h-no:active { box-shadow: inset 0 0 0 var(--sizing-border-hairline) var(--outline-danger_med_em); }
 /* ---------- the announcement of a slide changed by hand: for screen readers only ---------- */
 #hfb .h-fb-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* ---------- phone: every touch target at least 44 px, the picture unchanged ---------- */
@@ -3725,10 +3736,11 @@ const hLive=()=>Object.values(EVENTS).filter(evLive);
 const hByVol=list=>[...list].sort((a,b)=>b.vol-a.vol);
 
 /* ---------- Yes / No (yes-no-button.style.ts): the chance on the row, what you buy and its price on the button ---------- */
-const hBuy=(e,o)=>`<button type="button" class="h-yn h-yes h-yn-xs ${T('label-sm-bold')} h-spring" data-pick="${e.id}|${o.i}|yes" aria-label="${esc(outLabel(e,o,'yes'))}"${tradable(e,o)?'':' disabled'}>Yes <small class="h-pr ${T('label-sm')} num">${o.p}¢</small></button>`;
-function hPair(e,o,size='sm',cls=''){const w=size==='lg'?'body-md-bold':size==='xs'?'label-sm-bold':'body-sm-bold',pw=size==='lg'?'body-sm-semibold':size==='xs'?'label-sm':'label-md',dis=tradable(e,o)?'':' disabled';
+/* v198 (Figma Yes/No Button 21:74): the price in the label's own text style (was label-sm / label-md / body-sm-semibold); the pair carries its size for the gap (Yes/No Pair 21:103) */
+const hBuy=(e,o)=>`<button type="button" class="h-yn h-yes h-yn-xs ${T('label-sm-bold')} h-spring" data-pick="${e.id}|${o.i}|yes" aria-label="${esc(outLabel(e,o,'yes'))}"${tradable(e,o)?'':' disabled'}>Yes <small class="h-pr ${T('label-sm-bold')} num">${o.p}¢</small></button>`;
+function hPair(e,o,size='sm',cls=''){const w=size==='lg'?'body-md-bold':size==='xs'?'label-sm-bold':'body-sm-bold',pw=w,dis=tradable(e,o)?'':' disabled';
  const b=s=>`<button type="button" class="h-yn h-${s} h-yn-${size} ${T(w)} h-spring" data-pick="${e.id}|${o.i}|${s}" aria-label="${esc(outLabel(e,o,s))}"${dis}>${s==='yes'?'Yes':'No'} <small class="h-pr ${T(pw)} num">${priceOf(e,o,s)}¢</small></button>`;
- return `<div class="h-pair${cls?' '+cls:''}">${b('yes')}${b('no')}</div>`}
+ return `<div class="h-pair h-pair-${size}${cls?' '+cls:''}">${b('yes')}${b('no')}</div>`}
 /* one winner: you back a name — one green Yes; betting against a name is on the event page */
 const hMore=(e,n,words)=>n>0?`<a href="#event/${e.id}" class="h-mc-more ${T('label-md')}">${n} more${words?' '+words:''} ${hIcon('chevron-right','h-ic-xs')}</a>`:'';
 

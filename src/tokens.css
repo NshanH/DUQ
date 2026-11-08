@@ -896,6 +896,8 @@ html[data-theme=dark]{
   --text-info_low_em:#4a9fee;
   --text-info_base_em:#dcedfe;
   --outline-info_low_em:#84bef8;
+  --surface-success_base_em_hover:#dcefe7;
+  --surface-danger_base_em_hover:#f5e3e3;
 }
 html[data-theme=dark]{
   --chart-series_5:#edb872;
@@ -910,4 +912,6 @@ html[data-theme=dark]{
   --text-info_low_em:#0266af;
   --text-info_base_em:#024172;
   --outline-info_low_em:#075089;
+  --surface-success_base_em_hover:#21be8b29;
+  --surface-danger_base_em_hover:#f7575729;
 }
