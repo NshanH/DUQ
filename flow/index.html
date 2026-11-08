@@ -2264,6 +2264,9 @@ body.is-auth .main{padding:0}
 
 /* ---- landing, scoped under #landing. Same ground and light as the app (audit-visual §5.8). ---- */
 #landing{--column:1168px;--gutter:24px;--hero-size:clamp(44px,6.7vw,96px)}
+/* v181 (the user, 8 Nov 2026: «zdes toje izmeni bg kak novi s golubim» → «2 · Синий свет в центре»): in the dark theme the
+   landing's ground is a soft blue light behind the headline, its edges the app's near-black #07090f */
+html[data-theme=dark] body.is-landing{background:radial-gradient(ellipse 62% 70% at 50% 46%,#111a33 0%,#0a0e1c 45%,#07090f 78%)}
 body.is-landing{height:100%;overflow:hidden;display:flex;flex-direction:column;font-size:13px;line-height:24px}
 #landing a{color:inherit;text-decoration:none}
 #landing .brand{--ink:#0e1117;--accent:var(--brand)}
