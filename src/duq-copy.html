@@ -6001,13 +6001,15 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
 </script>
 <script>if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('700 96px "Onest"'),document.fonts.load('900 96px "Onest"')]).then(function(){window.dispatchEvent(new Event("resize"))}).catch(function(){})}</script>
 <!-- LG-CARDS:BEGIN — generated from ~/duq/lg-cards.html by ~/duq/vendor/liquid-glass/embed.py; edit the template, not this copy -->
-<!-- ===== Market cards: Liquid Glass - Clear (v152, 8 Nov 2026) =====
+<!-- ===== Market cards: Liquid Glass - Medium (v153, 8 Nov 2026; v152 had Clear) =====
      «izmeni bg kartochki na liquid glass medium» → «tolko ostav liquid glass medium» (the component as is) → «izmeni na
-     clear» → «tolko marketi»: only the market cards (.h-mc — home sections, categories, results). Their ground is
-     IOSClear of the user's «Liquid Glass» system (artifact 7CwFr94nNPSUjSEPhKXpWg, version 1794097275-9011), mounted
-     under each card's content as is: refraction, frost 6 (blur 3px), the Linear Dodge #101010 and Luminosity white .04
-     fills, the Plus Darker ring #ccc, crescents, inner shade and sides, the Plus Lighter rims, light at 40 % and glint,
-     radius 23 with corner smoothing 0.6, the drop shadow 0 8 15 at .02 — one look in light and dark.
+     clear» → «tolko marketi» (only the market cards, in the main prototype) → «izmeni na medium». The market cards
+     (.h-mc — home sections, categories, results) take IOSGlass size="medium" of the user's «Liquid Glass» system
+     (artifact 7CwFr94nNPSUjSEPhKXpWg, version 1794097275-9011) as their ground, mounted under each card's content as
+     is: refraction, frost 16 (blur 8px), the three fills in their blend modes (light: white .7 Lighten, #bfbfbf .1
+     Darken; dark: #1a1a1a .7 and .9 Luminosity, #1a1a1a Lighten), the Plus Darker ring and crescents (#dbdbdb / #a6a6a6)
+     and sides, the Plus Lighter rims, light and glint, radius 34 with corner smoothing 0.6, the drop shadow 0 8 48
+     at .25 / .45.
      The system's tokens are scoped to the glass host .lgm (so its --accent-* never reach the prototype); bundle.css and
      bundle.js as published; React 18.3.1 UMD from cdnjs (byte for byte the copy the system ships). -->
 <style>/* vendor/liquid-glass/tokens.scoped.css */
@@ -6335,7 +6337,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
    host stays at z-index auto and the card's own content (head, island; left, right on the wide card) rises to
    z-index 1 over every glass, the neighbours' shadows included. No absolutely positioned element in a card used the
    card as its box, and every overlay above the cards (search 60, menus 10–20, toast, sheet, modal) sits at 3 or more. */
-.h-mc{background:none;box-shadow:none;border-radius:23px}
+.h-mc{background:none;box-shadow:none;border-radius:34px}
 .h-mc>.lgm{position:absolute;inset:0;pointer-events:none}
 .h-mc>:not(.lgm){position:relative;z-index:1}
 </style>
@@ -6878,8 +6880,8 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
 })();
 </script>
 <script>
-/* one IOSClear per market card, as its ground; the home re-renders its cards, so new ones are picked up and the glass
-   of removed ones is unmounted */
+/* one IOSGlass Medium per market card, as its ground; the home re-renders its cards, so new ones are picked up and the
+   glass of removed ones is unmounted */
 (function () {
   if (!window.React || !window.ReactDOM || !window.IOS27) return;
   var roots = new Map();
@@ -6889,7 +6891,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
     host.setAttribute('aria-hidden', 'true');
     card.appendChild(host);
     var root = ReactDOM.createRoot(host);
-    root.render(React.createElement(IOS27.IOSClear, { width: '100%', height: '100%' }));
+    root.render(React.createElement(IOS27.IOSGlass, { size: 'medium', width: '100%', height: '100%' }));
     roots.set(host, root);
   }
   function sync() {
