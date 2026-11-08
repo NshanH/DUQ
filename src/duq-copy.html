@@ -648,7 +648,7 @@ html[data-theme=dark] .postbl{--pos-ground:color-mix(in srgb,#121621 85%,var(--b
 .trade .lim .lbl{margin:0 0 4px;font-size:11px;line-height:16.5px}   /* Figma Limit grid: labels Bold 11/16.5, 2 above */
 .trade .lim{display:grid;grid-template-columns:122px minmax(0,1fr);gap:8px;margin-top:8px;padding-top:2px}
 /* limit: a compact price / shares pair under the amount — shares follow the amount and the price */
-.trade .lim .amt{height:36px;padding:0 12px;border-radius:var(--r-14);gap:4px}
+.trade .lim .amt{height:36px;padding:0 12px;border-radius:var(--radius-border_radius_round);gap:4px}
 .trade .lim .amt input,.trade .lim .amt output{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:700 15px/1 var(--font);letter-spacing:0;outline:none;font-variant-numeric:tabular-nums}
 .trade .lim .amt output{color:var(--ink)}
 .trade .lim .amt span{font-size:13px;font-weight:600}
@@ -663,7 +663,11 @@ html[data-theme=dark] .postbl{--pos-ground:color-mix(in srgb,#121621 85%,var(--b
 /* стекло только в открытом состоянии (Figma Order Type Select 664:1162); закрытый — подпись med_em, открытый — high_em,
    стрелка в обоих low_em */
 .ot-btn[aria-expanded=true]{color:var(--ink);background:var(--glass-field);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.ot-btn:hover{box-shadow:var(--shadow)}
+/* v209 (the user, 9 Nov 2026: «check style, v protipe kak to druge» + Figma Order Type Select 664:1162): open, the glass field
+   frosts at 12 (was 6); no hover shadow, Figma has none. And («vse inputi full rounded» + the Amount field): every input
+   field is a full pill — Amount and the limit price, the withdraw fields, the sign-in fields and the code cells (were
+   18 / 14); the multi-line textareas keep theirs */
+.ot-btn[aria-expanded=true]{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .ot-btn svg{width:16px;height:16px;color:var(--ink-3);transition:transform 300ms var(--spring)}
 .ot-btn[aria-expanded=true] svg{transform:rotate(180deg)}
 .ot-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:12;min-width:136px;background:var(--glass-pop);backdrop-filter:blur(24px) saturate(var(--glass-sat));-webkit-backdrop-filter:blur(24px) saturate(var(--glass-sat));border:1px solid var(--hairline);border-radius:16px;padding:6px;box-shadow:var(--shadow-3);animation:in 300ms var(--spring)}
@@ -690,7 +694,7 @@ html[data-theme=dark] .postbl{--pos-ground:color-mix(in srgb,#121621 85%,var(--b
 .seg button{height:36px;border-radius:var(--r2);font-weight:700;color:var(--ink-3);transition:all 300ms var(--spring)}
 .seg button[aria-pressed=true]{background:var(--pill);color:#fff}
 .lbl{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:14px 0 6px}
-.amt{display:flex;align-items:center;gap:6px;border:1px solid var(--hairline-2);border-radius:var(--r-18);padding:9px 15px;background:var(--glass-field)}
+.amt{display:flex;align-items:center;gap:6px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);padding:9px 15px;background:var(--glass-field)}
 .amt:focus-within{outline:2px solid var(--focus);outline-offset:3px}
 .amt[aria-invalid=true],.amt.bad{border-color:var(--no-text)}
 .amt span{font-size:22px;font-weight:600;color:var(--ink-3);line-height:1}
@@ -1101,11 +1105,11 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .money .row2{display:flex;gap:8px;margin-top:6px}.money .row2 .btn{flex:1}
 .kv{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:var(--r-14);background:var(--card-2);font-size:14px;margin:0 0 14px}
 .kv div{display:flex;justify-content:space-between;gap:12px;color:var(--ink-2)}.kv b{color:var(--ink);text-align:right}
-.money .in{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline-2);border-radius:var(--r-18);padding:0 14px;background:var(--glass-field);height:48px}
+.money .in{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);padding:0 14px;background:var(--glass-field);height:48px}
 .money .in input{flex:1;min-width:0;border:0;background:transparent;outline:none;font:600 14px/1 var(--font);color:var(--ink)}
 .money .in button{font-size:13px;font-weight:600;color:var(--ink-2)}
 .money .code{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:0 0 12px}
-.money .code input{width:100%;min-width:0;height:52px;border:1px solid var(--hairline-2);border-radius:var(--r-14);background:var(--glass-field);text-align:center;font:800 22px/1 var(--font);color:var(--ink);outline:none;font-variant-numeric:tabular-nums}
+.money .code input{width:100%;min-width:0;height:52px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);background:var(--glass-field);text-align:center;font:800 22px/1 var(--font);color:var(--ink);outline:none;font-variant-numeric:tabular-nums}
 .money .code input:focus{outline:2px solid var(--focus);outline-offset:2px}
 .money .wait{display:flex;align-items:center;gap:12px;padding:14px;border-radius:var(--r-14);background:var(--card-2);font-size:14px;margin:0 0 14px}
 .money .spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--hairline-2);border-top-color:var(--ink);animation:spin 1s linear infinite;flex:none}
@@ -1336,7 +1340,7 @@ body.is-auth .main{padding:0}
 .auth .steps i.on{background:var(--pill)}
 .auth label.f{display:block;margin:0 0 12px}
 .auth label.f span{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-bottom:6px}
-.auth .in{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline-2);border-radius:var(--r-18);padding:0 16px;background:var(--glass-field);height:52px}
+.auth .in{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);padding:0 16px;background:var(--glass-field);height:52px}
 .auth .in:focus-within{outline:2px solid var(--focus);outline-offset:2px}
 .auth .in input{flex:1;min-width:0;border:0;background:none;outline:none;font:600 16px/1 var(--font);color:var(--ink)}
 .auth .in input::placeholder{color:var(--ink-3);font-weight:500}
@@ -1345,7 +1349,7 @@ body.is-auth .main{padding:0}
 .auth .who b{font-weight:700}
 .auth .who button{font-weight:600;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
 .auth .code{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:0 0 12px}
-.auth .code input{width:100%;min-width:0;height:56px;border:1px solid var(--hairline-2);border-radius:var(--r-14);background:var(--glass-field);text-align:center;font:800 24px/1 var(--font);color:var(--ink);outline:none;font-variant-numeric:tabular-nums}
+.auth .code input{width:100%;min-width:0;height:56px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);background:var(--glass-field);text-align:center;font:800 24px/1 var(--font);color:var(--ink);outline:none;font-variant-numeric:tabular-nums}
 .auth .code input:focus{outline:2px solid var(--focus);outline-offset:2px}
 .auth .timers{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-2);margin:0 0 16px}
 .auth .timers b{color:var(--ink);font-variant-numeric:tabular-nums}
