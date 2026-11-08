@@ -7529,8 +7529,12 @@ html[data-theme=dark] :where(.h-cc-card,.h-fb:not(.h-cc .h-fb),.h-now,.h-crowd,.
 /* Medium's smoothed corner; a card lower than 109 px gets the component's reduced smoothing */
 @supports (corner-shape:superellipse(2)){
   :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card):not(#lgm):not(.lgm-x){border-radius:54.6px;corner-shape:superellipse(1.825)}
-  :where(.ia-tile):not(#lgm):not(.lgm-x){border-radius:44px;corner-shape:superellipse(1.45)}
 }
+/* v205 (the user, 9 Nov 2026: «check radius» + Figma Referral › Stats › Tile · Friends joined 2204:4391, an instance of
+   Card / Elevation=Rest): the Invite page's stat tiles take Figma's plain 26 (radius/border_radius_26, no smoothing) —
+   they were Medium's 44 with smoothing 1.45. Their icon tile was already 12 (radius/border_radius_xl). After the
+   @supports corner and as heavy (1-1-0), so it wins in every browser */
+:where(.ia-tile):not(#lgm):not(.lgm-x){border-radius:var(--radius-border_radius_26);corner-shape:round}
 /* the market rows, closed and open: a plain radius, no smoothing (v157, the user, 8 Nov 2026: «border radius 40» → only
    the market rows, a plain 40; v158: «sdelai 20»; v159: «change to 32»; v160: «26»; v161: «28»). 1-2-0, so it
    outweighs the corner above in every browser */
