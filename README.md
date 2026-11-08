@@ -3,7 +3,7 @@
 Interactive prototype of the DUQ prediction market.
 
 - Live: https://nshanh.github.io/DUQ/
-- Current version: v164 — no left side menu at any width: past the phone the categories sit in a row under the top bar; cards in the look of Liquid Glass Medium (plain CSS)
+- Current version: v165 — no left side menu at any width; cards in the look of Liquid Glass Medium (plain CSS), the hero carousel, market cards and market rows with a plain 28 px radius
 - Test page, the landing background as KokonutUI Flow Field: https://nshanh.github.io/DUQ/flow/
 
 ## Files
