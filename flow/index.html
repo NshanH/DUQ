@@ -3478,33 +3478,6 @@ html[data-theme=dark] :is(#landing .themebtn,.top .themebtn,.top .search){   /* 
   --lgs-t1:rgb(255 255 255 / .2);--lgs-t2:rgb(255 255 255 / .076);--lgs-b1:rgb(255 255 255 / .12);--lgs-b2:rgb(255 255 255 / .085);
   --lgs-drop:rgb(0 0 0 / .04)}
 @media (hover:hover){html[data-theme=dark] :is(#landing .themebtn,.top .themebtn,.top .search):hover{--lgs-fill:rgb(255 255 255 / .14)}}
-/* v215 (the user, 9 Nov 2026: «ne doljen bit transparent i sdelai liquid small» + the Most traded panel showing the
-   landing's headline through it): the search suggestions (landing and top bar) on Liquid Glass Small (the CSS copy of
-   v182: the inner shade under the top edge, 0.5 px ring, side crescents, rims, light lines) but opaque — Small's own fill
-   already laid over the page (light rgb(242 242 242) at 55 %, dark white at 10 %), no frost — keeping their 20 radius and
-   the popover's shadow (was v214's Medium, see-through) */
-.sugg:not(#lgs){border:0;
-  --lgs-fill:color-mix(in srgb,rgb(242 242 242) 55%,var(--bg));
-  --lgs-shade:rgb(0 0 0 / .052),rgb(0 0 0 / .041) 4px,rgb(0 0 0 / .031) 8px,rgb(0 0 0 / .021) 12px,rgb(0 0 0 / .014) 16px,rgb(0 0 0 / .009) 20px,rgb(0 0 0 / .003) 26px,rgb(0 0 0 / .001) 32px,rgb(0 0 0 / 0) 37px;
-  --lgs-ring:rgb(0 0 0 / .096);--lgs-side:rgb(0 0 0 / .196);
-  --lgs-rim:rgb(255 255 255 / .9);--lgs-rimx:rgb(255 255 255 / .9);
-  --lgs-t1:rgb(255 255 255 / 0);--lgs-t2:rgb(255 255 255 / 0);--lgs-b1:rgb(255 255 255 / 0);--lgs-b2:rgb(255 255 255 / 0);
-  --lgs-drop:rgb(0 0 0 / .02);
-  background:linear-gradient(var(--lgs-shade)) no-repeat,var(--lgs-fill);
-  box-shadow:inset 0 .5px 0 var(--lgs-t1),inset 0 1px 0 var(--lgs-t2),inset 0 -.5px 0 var(--lgs-b1),inset 0 -1px 0 var(--lgs-b2),
-    inset 0 40px 10px -40px var(--lgs-rim),inset 0 -40px 10px -40px var(--lgs-rim),
-    inset 0 40px 10px -40px var(--lgs-rimx),inset 0 -40px 10px -40px var(--lgs-rimx),
-    inset 0 40px 10px -40px var(--lgs-rimx),inset 0 -40px 10px -40px var(--lgs-rimx),
-    0 0 0 .5px var(--lgs-ring),1.25px 0 0 -.75px var(--lgs-side),-1.25px 0 0 -.75px var(--lgs-side),
-    0 8px 15px var(--lgs-drop),var(--shadow-3);
-  -webkit-backdrop-filter:none;backdrop-filter:none}
-html[data-theme=dark] .sugg:not(#lgs){
-  --lgs-fill:color-mix(in srgb,#fff 10%,var(--bg));
-  --lgs-shade:rgb(0 0 0 / .357),rgb(0 0 0 / .281) 4px,rgb(0 0 0 / .211) 8px,rgb(0 0 0 / .147) 12px,rgb(0 0 0 / .095) 16px,rgb(0 0 0 / .059) 20px,rgb(0 0 0 / .024) 26px,rgb(0 0 0 / .006) 32px,rgb(0 0 0 / 0) 37px;
-  --lgs-ring:rgb(0 0 0 / .9);--lgs-side:rgb(0 0 0 / .85);
-  --lgs-rim:rgb(255 255 255 / .107);--lgs-rimx:rgb(255 255 255 / 0);
-  --lgs-t1:rgb(255 255 255 / .2);--lgs-t2:rgb(255 255 255 / .076);--lgs-b1:rgb(255 255 255 / .12);--lgs-b2:rgb(255 255 255 / .085);
-  --lgs-drop:rgb(0 0 0 / .04)}
 /* wordmark: ink turns white, the orange hook stays */
 html[data-theme=dark] .brand,html[data-theme=dark] #landing .brand{--ink:#f2f3f5}
 /* white pill → dark text everywhere the light theme hard-codes white on the pill */
@@ -7532,7 +7505,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
      theme is now only a little softer than v163, about a quarter off: drop .18 (v163 .25, v173 .08), ring .11 (.15 /
      .06), side crescents .19 (.255 / .08), inner sides .085 (.115 / .04). The dark theme stays as it was. -->
 <style>
-:where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card):not(#lgm):not(.lgm-x){
+:where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card,.sugg):not(#lgm):not(.lgm-x){
   --lgm-fill:rgb(246 246 246 / .6);
   --lgm-ring:rgb(0 0 0 / .11);--lgm-side:rgb(0 0 0 / .19);--lgm-dside:rgb(0 0 0 / .085);
   --lgm-glint:rgb(255 255 255 / 0);
@@ -7557,7 +7530,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
   box-shadow:var(--lgm-shadow);
   -webkit-backdrop-filter:none;backdrop-filter:none;
 }
-html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card):not(#lgm):not(.lgm-x){
+html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card,.sugg):not(#lgm):not(.lgm-x){
   /* v176 (the user, 8 Nov 2026: «dai mne 4 versi serogo, men eto kak to ne nravica» → «davai 4 steklo poprobuem»):
      the system's glass card, white 6 % over the page, instead of the neutral #1a1a1e at .85; v177 («teper na 2
      variant»): the system's modal card #15181e, a little see-through (.85) as before — the phone's trade sheet
@@ -7602,6 +7575,12 @@ html[data-theme=dark] :where(.h-cc-card,.h-fb:not(.h-cc .h-fb),.h-now,.h-crowd,.
    they were Medium's 44 with smoothing 1.45. Their icon tile was already 12 (radius/border_radius_xl). After the
    @supports corner and as heavy (1-1-0), so it wins in every browser */
 :where(.ia-tile):not(#lgm):not(.lgm-x){border-radius:var(--radius-border_radius_26);corner-shape:round}
+/* v216 (the user, 9 Nov 2026: «izmeni na medium» after v215's Small, which was asked to be «ne transparent»): the search
+   suggestions (landing and top bar) on Medium again — its edges, rims, light lines and drop — but opaque: Medium's own
+   fill already laid over the page (light rgb(246 246 246) at 60 %, dark #121621 at 85 %), so nothing reads through and
+   no frost is needed; their own 20 radius */
+:where(.sugg):not(#lgm):not(.lgm-x){border-radius:var(--radius-border_radius_3xl);corner-shape:round;--lgm-fill:color-mix(in srgb,rgb(246 246 246) 60%,var(--bg))}
+html[data-theme=dark] :where(.sugg):not(#lgm):not(.lgm-x){--lgm-fill:color-mix(in srgb,#121621 85%,var(--bg))}
 /* the market rows, closed and open: a plain radius, no smoothing (v157, the user, 8 Nov 2026: «border radius 40» → only
    the market rows, a plain 40; v158: «sdelai 20»; v159: «change to 32»; v160: «26»; v161: «28»). 1-2-0, so it
    outweighs the corner above in every browser */
