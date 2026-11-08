@@ -6059,15 +6059,18 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
      v173 (the user, 8 Nov 2026: «mnogo smyagchai shadow, i bordera toje myagki, chorni v borderax ochen yavni» + the
      light theme's market cards): light only — the drop shadow at .08 instead of .25, and the dark edge about a third as
      strong (ring .06 instead of .15, side crescents .08 instead of .255, inner sides .04 instead of .115). The dark
-     theme stays as it was. -->
+     theme stays as it was.
+     v175 (the user, 8 Nov 2026: «chto sdelal po etomy povodu, ya skazal nemnogo»): v173 went too far — the light
+     theme is now only a little softer than v163, about a quarter off: drop .18 (v163 .25, v173 .08), ring .11 (.15 /
+     .06), side crescents .19 (.255 / .08), inner sides .085 (.115 / .04). The dark theme stays as it was. -->
 <style>
 :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card):not(#lgm):not(.lgm-x){
   --lgm-fill:rgb(246 246 246 / .6);
-  --lgm-ring:rgb(0 0 0 / .06);--lgm-side:rgb(0 0 0 / .08);--lgm-dside:rgb(0 0 0 / .04);
+  --lgm-ring:rgb(0 0 0 / .11);--lgm-side:rgb(0 0 0 / .19);--lgm-dside:rgb(0 0 0 / .085);
   --lgm-glint:rgb(255 255 255 / 0);
   --lgm-rim:rgb(255 255 255 / 1);--lgm-rimx:rgb(255 255 255 / 0);
   --lgm-t1:rgb(255 255 255 / .5);--lgm-t2:rgb(255 255 255 / .5);--lgm-b1:rgb(255 255 255 / .5);--lgm-b2:rgb(255 255 255 / .5);
-  --lgm-drop:rgb(0 0 0 / .08);
+  --lgm-drop:rgb(0 0 0 / .18);
   --lgm-shadow:
     inset 0 .5px 0 var(--lgm-t1),inset 0 1px 0 var(--lgm-t2),inset 0 -.5px 0 var(--lgm-b1),inset 0 -1px 0 var(--lgm-b2),
     inset .5px 0 0 var(--lgm-dside),inset -.5px 0 0 var(--lgm-dside),
