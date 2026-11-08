@@ -3383,7 +3383,7 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
    button on Liquid Glass Small — the CSS copy of v167 / v182 (fill, the inner shade under the top edge, 0.5 px ring,
    side crescents, rims, light lines, soft drop) and Small's 3 px frost (was white .72 with a white .8 border / white .07
    with a .12 border in the dark). The top bar's theme button is as it was */
-#landing .themebtn{width:40px;height:40px;border:0}
+#landing .themebtn{width:var(--sizing-control-xl);height:var(--sizing-control-xl);border:0}   /* v201 («i na landinge toje sdelai 44»): 44 as on the top bar (was 40), the icon 20 */
 .top .themebtn{border:0;width:var(--sizing-control-xl);height:var(--sizing-control-xl)}   /* v200 («razmer light dark sdelai kak heiy searcha»): 44, the search's height (was 32), the icon 20 (sizing/icon/lg, was 16) */
 .top .themebtn svg{width:var(--sizing-icon-lg);height:var(--sizing-icon-lg)}
 /* v199 (the user, 9 Nov 2026: «vezde v headere, i search toje sdelai» + a shot of the top bar's theme button): the same
@@ -3407,7 +3407,7 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
 @media (hover:hover){:is(#landing .themebtn,.top .themebtn,.top .search):hover{--lgs-fill:rgb(242 242 242 / .75)}}
 :is(.top .search){border:1px solid transparent}
 :is(.top .search):focus-within{border-color:var(--focus)}
-#landing .themebtn svg{width:18px;height:18px}
+#landing .themebtn svg{width:var(--sizing-icon-lg);height:var(--sizing-icon-lg)}
 
 html[data-theme=dark]{
   color-scheme:dark;
