@@ -1988,7 +1988,7 @@ html[data-theme=dark] .h-tick-pill {
 .h-wc.h-duel::after { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), inset 0 0 0 1px rgb(255 255 255 / .07); pointer-events: none; }
 .h-duel-track { display: flex; min-height: 0; flex: 1; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: inherit; }
 .h-duel-track::-webkit-scrollbar { display: none; }
-.h-duel-slide { position: relative; display: flex; min-width: 0; flex: 0 0 100%; flex-direction: column; overflow: hidden; padding: var(--spacing-5xl) var(--spacing-5xl) 34px; scroll-snap-align: start; scroll-snap-stop: always; }
+.h-duel-slide { position: relative; display: flex; min-width: 0; flex: 0 0 100%; flex-direction: column; overflow: hidden; padding: var(--spacing-5xl) var(--spacing-5xl) 40px; scroll-snap-align: start; scroll-snap-stop: always; }
 .h-duel-ph { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .h-duel-ph > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .h-duel-ph > .l { position: absolute; inset: 0; clip-path: polygon(0 0, 58% 0, 42% 100%, 0 100%); background: linear-gradient(90deg, color-mix(in srgb, var(--ca) 70%, transparent), color-mix(in srgb, var(--ca) 25%, transparent)); }
@@ -2020,7 +2020,12 @@ html[data-theme=dark] .h-tick-pill {
 .h-duel-btns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-md); }
 .h-duel-btns a { display: flex; min-width: 0; align-items: center; justify-content: center; gap: 6px; height: 44px; padding: 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); background: rgb(255 255 255 / .18); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .32); color: #fff; text-decoration: none; white-space: nowrap; }
 @media (hover: hover) { .h-duel-btns a:hover { background: rgb(255 255 255 / .28); } }
-.h-duel-dots { position: absolute; z-index: 4; left: 0; right: 0; bottom: 13px; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+/* v190 (the user, 8 Nov 2026: «dobav left right arrow»): ‹ dots › — arrows either side of the dots, as under the banner */
+.h-duel-nav { position: absolute; z-index: 4; left: 0; right: 0; bottom: 7px; display: flex; align-items: center; justify-content: center; gap: var(--spacing-md); pointer-events: none; }
+.h-duel-arr { display: grid; flex: none; width: var(--sizing-control-24); height: var(--sizing-control-24); place-items: center; padding: 0; border: 0; border-radius: 50%; background: none; color: rgb(255 255 255 / .8); cursor: pointer; pointer-events: auto; transition: background-color var(--h-d-base), color var(--h-d-base); }
+@media (hover: hover) { .h-duel-arr:hover { background: rgb(255 255 255 / .16); color: #fff; } }
+.h-duel-arr:focus-visible { outline: none; box-shadow: 0 0 0 var(--sizing-border-ring) var(--focus); }
+.h-duel-dots { display: flex; justify-content: center; gap: 5px; pointer-events: none; }
 .h-duel-dot { width: 5px; height: 5px; padding: 0; border: 0; border-radius: var(--radius-border_radius_round); background: rgb(255 255 255 / .45); cursor: pointer; pointer-events: auto; transition: width var(--h-d-medium) var(--spring), background-color var(--h-d-base); }
 .h-duel-dot[aria-current="true"] { width: 16px; background: #fff; }
 .h-duel-dot:focus-visible { outline: none; box-shadow: 0 0 0 var(--sizing-border-ring) var(--focus); }
@@ -4175,12 +4180,13 @@ function hDuelSlide(m,s,k,n){const e=m.e,img=`<img data-pic="${e.banner}" alt=""
  return `<section class="h-duel-slide" data-ev="${m.id}" data-s="${s}" role="group" aria-roledescription="slide" aria-label="${k+1} of ${n}">${ph}<div class="h-duel-c">${hDuelContent(m,s)}</div></section>`}
 function hCardDuel(){const ms=H_DUELS.filter(id=>EVENTS[id]&&evLive(EVENTS[id])&&EVENTS[id].banner).map(hDuelModel);if(!ms.length)return hCardTug();
  const sl=[];ms.forEach(m=>{sl.push([m,1]);sl.push([m,2])});const n=sl.length;
- return `<article class="h-gc h-wc h-duel" aria-roledescription="carousel" aria-label="Markets with a photo"><div class="h-duel-track">${sl.map(([m,s],k)=>hDuelSlide(m,s,k,n)).join('')}</div><div class="h-duel-dots">${sl.map((x,k)=>`<button type="button" class="h-duel-dot" data-duel="${k}" aria-label="Slide ${k+1} of ${n}"${k?'':' aria-current="true"'}></button>`).join('')}</div></article>`}
+ return `<article class="h-gc h-wc h-duel" aria-roledescription="carousel" aria-label="Markets with a photo"><div class="h-duel-track">${sl.map(([m,s],k)=>hDuelSlide(m,s,k,n)).join('')}</div><div class="h-duel-nav"><button type="button" class="h-duel-arr" data-duelstep="-1" aria-label="Previous slide">${hIcon('chevron-left','h-ic-sm')}</button><div class="h-duel-dots">${sl.map((x,k)=>`<button type="button" class="h-duel-dot" data-duel="${k}" aria-label="Slide ${k+1} of ${n}"${k?'':' aria-current="true"'}></button>`).join('')}</div><button type="button" class="h-duel-arr" data-duelstep="1" aria-label="Next slide">${hIcon('chevron-right','h-ic-sm')}</button></div></article>`}
 function hDuelSync(id){const c=hq('#home-body .h-duel');if(!c)return;const m=hDuelModel(id);hqa(`.h-duel-slide[data-ev="${id}"]`,c).forEach(x=>{hq('.h-duel-c',x).innerHTML=hDuelContent(m,+x.dataset.s)})}
 const hDuelIdx=tr=>Math.round(tr.scrollLeft/Math.max(1,tr.clientWidth));
 function hDuelGo(k){const c=hq('#home-body .h-duel');if(!c)return;const tr=hq('.h-duel-track',c),n=tr.children.length;k=((k%n)+n)%n;tr.scrollTo({left:k*tr.clientWidth,behavior:reduceMotion()?'auto':'smooth'})}
 document.addEventListener('scroll',e=>{const tr=e.target;if(!tr||!tr.classList||!tr.classList.contains('h-duel-track'))return;const k=hDuelIdx(tr);hqa('.h-duel-dot',tr.parentNode).forEach((d,i)=>{if(i===k)d.setAttribute('aria-current','true');else d.removeAttribute('aria-current')})},true);
 document.addEventListener('click',e=>{const b=e.target.closest('.h-duel-dot');if(!b)return;const c=b.closest('.h-duel');c._t=Date.now();hDuelGo(+b.dataset.duel)});
+document.addEventListener('click',e=>{const b=e.target.closest('.h-duel-arr');if(!b)return;const c=b.closest('.h-duel');c._t=Date.now();hDuelGo(hDuelIdx(hq('.h-duel-track',c))+(+b.dataset.duelstep))});
 ['pointerdown','wheel','touchstart'].forEach(t=>document.addEventListener(t,e=>{const c=e.target.closest&&e.target.closest('.h-duel');if(c)c._t=Date.now()},{passive:true}));
 setInterval(()=>{if(view!=='home'||document.hidden||reduceMotion())return;const c=hq('#home-body .h-duel');if(!c||c.matches(':hover')||c.matches(':focus-within')||Date.now()-(c._t||0)<12000)return;hDuelGo(hDuelIdx(hq('.h-duel-track',c))+1)},8000);
 const hRail=()=>hCardDuel();
