@@ -3,7 +3,7 @@
 Interactive prototype of the DUQ prediction market.
 
 - Live: https://nshanh.github.io/DUQ/
-- Current version: v154 — market cards on Liquid Glass Medium without refraction (IOSGlass size="medium" of the «Liquid Glass» design system, refraction 0; React 18.3.1 from cdnjs)
+- Current version: v155 — market cards in the look of Liquid Glass Medium, drawn by plain CSS (the colours IOSGlass Medium resolves to over the page; corner-shape superellipse for the smoothed corner; no React)
 - Test page, the landing background as KokonutUI Flow Field: https://nshanh.github.io/DUQ/flow/
 
 ## Files
