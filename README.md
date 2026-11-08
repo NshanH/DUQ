@@ -3,7 +3,7 @@
 Interactive prototype of the DUQ prediction market.
 
 - Live: https://nshanh.github.io/DUQ/
-- Current version: v151
+- Current version: v152 — market cards on Liquid Glass Clear (IOSClear of the «Liquid Glass» design system; React 18.3.1 from cdnjs)
 - Test page, the landing background as KokonutUI Flow Field: https://nshanh.github.io/DUQ/flow/
 
 ## Files
