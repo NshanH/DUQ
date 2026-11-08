@@ -2674,12 +2674,14 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 }
 .h-mc-meta { color: var(--text-low_em); }
 .h-mc-isl { display: flex; width: 100%; flex: 1; flex-direction: column; gap: var(--spacing-xl); }
+/* one market: the chart and the chance/Yes-No row stand 16 apart (Figma Home / Market card 2056:162361, 8 Nov 2026) */
+.h-mc-isl:has(> .h-mline) { gap: var(--spacing-2xl); }
 .h-mc-bot { margin-top: auto; display: flex; width: 100%; align-items: flex-end; justify-content: space-between; gap: var(--spacing-lg); }
 .h-mc-ch { display: flex; align-items: baseline; gap: var(--spacing-xxs); white-space: nowrap; color: var(--text-high_em); }
-.h-mc-rows { display: flex; width: 100%; flex-direction: column; gap: var(--spacing-md); }
-.h-mc-rows.h-ex { gap: var(--spacing-sm); }
+.h-mc-rows { display: flex; width: 100%; flex-direction: column; gap: var(--spacing-xl); }   /* 12 between markets (Figma 2056:162361, 8 Nov 2026; was 8) */
+.h-mc-rows.h-ex { gap: var(--spacing-xl); }   /* leaders too: 12 (was 6) */
 .h-mc-rows li { display: flex; flex-direction: column; gap: var(--spacing-md); }
-.h-mc-rows.h-ex li { gap: var(--spacing-sm); }
+.h-mc-rows.h-ex li { gap: var(--spacing-md); }   /* row to bar 8 (was 6) */
 .h-mc-row { display: flex; width: 100%; align-items: center; gap: var(--spacing-md); }
 .h-mc-rows.h-ex .h-mc-row { gap: var(--spacing-lg); }
 .h-mc-row .h-nm { min-width: 0; flex: 1; overflow-wrap: break-word; color: var(--text-high_em); }
@@ -2687,7 +2689,7 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 .h-mc-rows.h-ex .h-mc-row .h-ch { width: auto; white-space: nowrap; }
 .h-mc-bar { display: block; width: 100%; overflow: clip; height: var(--sizing-bar-sm); border-radius: var(--radius-border_radius_round); background: var(--neutral_inverse_white-alpha_5); }
 .h-mc-bar i { display: block; height: 100%; border-radius: var(--radius-border_radius_round); background: var(--surface-ink); }
-.h-mc-rows.h-ex .h-mc-bar { height: var(--sizing-bar-xs); border-radius: var(--radius-border_radius_xxs); }
+.h-mc-rows.h-ex .h-mc-bar { height: var(--sizing-bar-sm); border-radius: var(--radius-border_radius_xxs); }   /* bar 6 (was 4) */
 .h-mc-more { display: inline-flex; align-self: flex-start; align-items: center; gap: var(--spacing-xxs); color: var(--text-med_em); }
 /* The binary card's middle: its chance line (production hid the sparkline, HIDDEN_BLOCKS card.sparkline; the history
    now exists - analytics /probability, 23 Sep 2026). A thin series-1 line with the end dot, no axes. */
@@ -4299,7 +4301,7 @@ function hCard(e,opts={}){const one=e.outs.length===1,ex=hIsEx(e);
  const bin=o=>`<div class="h-mc-bot"><p class="h-mc-ch ${T('display-stat-lg')} num"><span data-op="${e.id}-${o.i}" data-fmt="">${o.p}</span><span class="${T('display-unit')}">%</span></p>${hPair(e,o,'sm','h-inline')}</div>`;
  let body;
  if(one)body=`<div class="h-mline" data-ev="${e.id}"></div>${bin(e.outs[0])}`;
- else if(ex)body=`<ul class="h-mc-rows h-ex">${hLeaders(e,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md')}">${esc(x.n)}</span>${home?'':ch(x)}${home?hPair(e,x,'xs','h-inline'):hBuy(e,x)}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'')}`;   /* two markets at most on every card, so every card keeps one height (the user, 4 Oct 2026) */
+ else if(ex)body=`<ul class="h-mc-rows h-ex">${hLeaders(e,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md-regular')}">${esc(x.n)}</span>${home?'':ch(x)}${home?hPair(e,x,'xs','h-inline'):hBuy(e,x)}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'')}`;   /* two markets at most on every card, so every card keeps one height (the user, 4 Oct 2026) */
  else body=`<ul class="h-mc-rows">${e.outs.slice(0,2).map(x=>`<li><div class="h-mc-row"><span class="h-nm ${T('label-md-regular')}">${esc(x.n)}</span>${home?'':ch(x)}${hPair(e,x,'xs','h-inline')}</div><span class="h-mc-bar"><i data-obar="${e.id}-${x.i}" style="width:${x.p}%"></i></span></li>`).join('')}</ul>${hMore(e,e.outs.length-2,'markets')}`;
  if(opts.wide)return `<article class="h-gc h-mc h-wide" data-ev="${e.id}"><div class="h-mc-l">${head}<div class="h-mc-isl">${one?bin(e.outs[0]):body}</div></div><div class="h-mc-r"><div class="h-ec" data-ev="${e.id}"></div></div></article>`;
  return `<article class="h-gc h-mc" data-ev="${e.id}">${head}<div class="h-mc-isl">${body}</div></article>`}
@@ -7021,36 +7023,42 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
    the guest hero's carousel cards and the market cards (home, categories, results) take the market rows' plain 28
    too. Placed after the @supports corner above and as heavy (1-1-0), so it wins in every browser */
 :where(.oc,.h-mc,.h-cc-card):not(#lgm):not(.lgm-x){border-radius:28px;corner-shape:round}
-/* v166 (the user, 8 Nov 2026: «davai zdes poprobuem clear» → the hero carousel): the guest hero's carousel cards try
-   Liquid Glass - Clear of the same system (IOSClear: glass for media — the photo's glow behind shows through), keeping
-   their 28 corner. The cards turn in 3D, so each is its own stacking context and no blend mode inside can reach the
-   page: Clear's layers are written as the plain colours they give — over our dark ground (dark) and the light one —
-   · fill: #101010 Linear Dodge + white .04 Luminosity = about +25 levels on a dark ground → white .1; on the light
-     ground it clips to white → white .9;
+/* v167 (the user, 8 Nov 2026: «davai zdes poprobuem clear» → v166 Clear on the hero carousel; «izmeni clear na small»):
+   the guest hero's carousel cards try Liquid Glass - Small of the same system (IOSGlass size="small"), keeping their
+   28 corner. The cards turn in 3D, so each is its own stacking context and no blend mode inside can reach the page:
+   Small's layers are written as the plain colours they give over our grounds —
+   · fills: light — black .25 + white .25 + #444 .6 Linear Dodge + #f8f8f8 .2 Luminosity = about .45 of the ground
+     + 133, a grey glass that keeps the ground's tone → rgb(242 242 242 / .55); dark — #999 .17 Luminosity, about
+     +24 levels on our dark ground → white .1;
    · the inner shade under the top edge (#e6e6e6 Plus Darker, Chrome's 0 40 30 −40 profile over 37 px) as a gradient;
-   · the 0.5 px ring #ccc and the crescents #d0d0d0 (Plus Darker); the rims #141414 top / #343434 bottom and the light
-     at 40 % (top .3/.094, bottom .131/.075, Plus Lighter) — on the light ground those clip to white, so they go;
-   · frost 6 = blur 3px; the drop shadow 0 8 15 at .02. */
+   · the 0.5 px ring (#e8e8e8 / #a6a6a6) and the crescents (#d0d0d0 / #a6a6a6), Plus Darker;
+   · the rims (#282828 / #1a1a1a, inset 0 ±40 10 −40 at .9) and the light at 25 % (light .158/.059, .082/.047 —
+     clipped to white on the light pane, so the rim is stacked three times and the lines go; dark .168/.063, .1/.07),
+     Plus Lighter; frost 6 = blur 3px; the drop shadow 0 8 15 at .02 / .04. */
 .h-cc-card:not(#lgm):not(.lgm-x){
-  --lgc-fill:rgb(255 255 255 / .9);
-  --lgc-shade:rgb(0 0 0 / .049),rgb(0 0 0 / .039) 4px,rgb(0 0 0 / .029) 8px,rgb(0 0 0 / .02) 12px,rgb(0 0 0 / .013) 16px,rgb(0 0 0 / .008) 20px,rgb(0 0 0 / .003) 26px,rgb(0 0 0 / .001) 32px,rgb(0 0 0 / 0) 37px;
-  --lgc-ring:rgb(0 0 0 / .21);--lgc-side:rgb(0 0 0 / .2);
-  --lgc-rimt:rgb(255 255 255 / 0);--lgc-rimb:rgb(255 255 255 / 0);
-  --lgc-t1:rgb(255 255 255 / 0);--lgc-t2:rgb(255 255 255 / 0);--lgc-b1:rgb(255 255 255 / 0);--lgc-b2:rgb(255 255 255 / 0);
-  background:linear-gradient(var(--lgc-shade)) no-repeat,var(--lgc-fill);
+  --lgs-fill:rgb(242 242 242 / .55);
+  --lgs-shade:rgb(0 0 0 / .052),rgb(0 0 0 / .041) 4px,rgb(0 0 0 / .031) 8px,rgb(0 0 0 / .021) 12px,rgb(0 0 0 / .014) 16px,rgb(0 0 0 / .009) 20px,rgb(0 0 0 / .003) 26px,rgb(0 0 0 / .001) 32px,rgb(0 0 0 / 0) 37px;
+  --lgs-ring:rgb(0 0 0 / .096);--lgs-side:rgb(0 0 0 / .196);
+  --lgs-rim:rgb(255 255 255 / .9);--lgs-rimx:rgb(255 255 255 / .9);
+  --lgs-t1:rgb(255 255 255 / 0);--lgs-t2:rgb(255 255 255 / 0);--lgs-b1:rgb(255 255 255 / 0);--lgs-b2:rgb(255 255 255 / 0);
+  --lgs-drop:rgb(0 0 0 / .02);
+  background:linear-gradient(var(--lgs-shade)) no-repeat,var(--lgs-fill);
   box-shadow:
-    inset 0 .5px 0 var(--lgc-t1),inset 0 1px 0 var(--lgc-t2),inset 0 -.5px 0 var(--lgc-b1),inset 0 -1px 0 var(--lgc-b2),
-    inset 0 40px 10px -40px var(--lgc-rimt),inset 0 -40px 10px -40px var(--lgc-rimb),
-    0 0 0 .5px var(--lgc-ring),1.25px 0 0 -.75px var(--lgc-side),-1.25px 0 0 -.75px var(--lgc-side),
-    0 8px 15px rgb(0 0 0 / .02);
+    inset 0 .5px 0 var(--lgs-t1),inset 0 1px 0 var(--lgs-t2),inset 0 -.5px 0 var(--lgs-b1),inset 0 -1px 0 var(--lgs-b2),
+    inset 0 40px 10px -40px var(--lgs-rim),inset 0 -40px 10px -40px var(--lgs-rim),
+    inset 0 40px 10px -40px var(--lgs-rimx),inset 0 -40px 10px -40px var(--lgs-rimx),
+    inset 0 40px 10px -40px var(--lgs-rimx),inset 0 -40px 10px -40px var(--lgs-rimx),
+    0 0 0 .5px var(--lgs-ring),1.25px 0 0 -.75px var(--lgs-side),-1.25px 0 0 -.75px var(--lgs-side),
+    0 8px 15px var(--lgs-drop);
   -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
 }
 html[data-theme=dark] .h-cc-card:not(#lgm):not(.lgm-x){
-  --lgc-fill:rgb(255 255 255 / .1);
-  --lgc-shade:rgb(0 0 0 / .347),rgb(0 0 0 / .273) 4px,rgb(0 0 0 / .205) 8px,rgb(0 0 0 / .143) 12px,rgb(0 0 0 / .092) 16px,rgb(0 0 0 / .057) 20px,rgb(0 0 0 / .023) 26px,rgb(0 0 0 / .006) 32px,rgb(0 0 0 / 0) 37px;
-  --lgc-ring:rgb(0 0 0 / .9);--lgc-side:rgb(0 0 0 / .85);
-  --lgc-rimt:rgb(255 255 255 / .091);--lgc-rimb:rgb(255 255 255 / .24);
-  --lgc-t1:rgb(255 255 255 / .37);--lgc-t2:rgb(255 255 255 / .115);--lgc-b1:rgb(255 255 255 / .16);--lgc-b2:rgb(255 255 255 / .09);
+  --lgs-fill:rgb(255 255 255 / .1);
+  --lgs-shade:rgb(0 0 0 / .357),rgb(0 0 0 / .281) 4px,rgb(0 0 0 / .211) 8px,rgb(0 0 0 / .147) 12px,rgb(0 0 0 / .095) 16px,rgb(0 0 0 / .059) 20px,rgb(0 0 0 / .024) 26px,rgb(0 0 0 / .006) 32px,rgb(0 0 0 / 0) 37px;
+  --lgs-ring:rgb(0 0 0 / .9);--lgs-side:rgb(0 0 0 / .85);
+  --lgs-rim:rgb(255 255 255 / .107);--lgs-rimx:rgb(255 255 255 / 0);
+  --lgs-t1:rgb(255 255 255 / .2);--lgs-t2:rgb(255 255 255 / .076);--lgs-b1:rgb(255 255 255 / .12);--lgs-b2:rgb(255 255 255 / .085);
+  --lgs-drop:rgb(0 0 0 / .04);
 }
 /* the carousel's hidden cards keep no frost (as before) */
 .h-cc-card.h-cc-hid:not(#lgm):not(.lgm-x){-webkit-backdrop-filter:none;backdrop-filter:none}
