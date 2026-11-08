@@ -2104,7 +2104,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .ia-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--spacing-2xl)}
 #view-invite .card.ia-tile{display:flex;align-items:center;gap:var(--spacing-xxl);padding:var(--spacing-4xl)}
 .ia-ico{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:var(--radius-border_radius_xl);background:var(--card-2);color:var(--ink)}
-.ia-ico.money{background:var(--yes-bg);color:var(--yes-text)}
+.ia-ico.money,.ia-ico.gift{background:var(--yes-bg);color:var(--yes-text)}   /* v218 (the user, 9 Nov 2026: «apply changes» + Figma Refer bar › Icon tile 2211:5319): the Refer and earn gift tile is green too — surface/success_base_em with the icon in text/success_med_em (was the neutral card-2 with ink) */
 .ia-ico.lg{width:56px;height:56px;border-radius:var(--radius-border_radius_2xl)}
 .ia-ico.lg .iic{width:24px;height:24px}
 .ia-tv{display:flex;min-width:0;flex:1;flex-direction:column;gap:2px}
@@ -4596,7 +4596,7 @@ function invPage(){const R=IV.R,n=invFriends(),err=R.load==='error',t=invTotal()
  const body=err?`<div class="ia-in"><div class="inv-es"><p class="${T('body-lg-semibold')}">Couldn’t load your rewards.</p><div class="a"><button type="button" class="btn ink ${T('body-md-semibold')}" data-iact="retry">Try again</button></div></div></div>`
   :empty?`<div class="ia-in"><div class="ia-empty"><span class="ia-ico lg">${iic('gift')}</span><p class="t ${T('body-lg-semibold')}">No friends yet</p><p class="${T('body-sm')}">Share your link with friends to start earning ${REFERRAL.rate}% of their trading fees.</p><button type="button" class="btn ink ${T('body-md-semibold')}" data-iact="copy">Copy referral link</button></div></div>`
   :`<div class="ia-in">${invActInner()}</div>`;
- const head=`<header class="ia-ch"><span class="ia-ico">${iic('gift')}</span><div><h2 class="${T('heading-h3')}">Refer and earn</h2><p class="${T('body-sm')}">You get ${REFERRAL.rate}% of your friends’ trading fees.</p></div></header>`;
+ const head=`<header class="ia-ch"><span class="ia-ico gift">${iic('gift')}</span><div><h2 class="${T('heading-h3')}">Refer and earn</h2><p class="${T('body-sm')}">You get ${REFERRAL.rate}% of your friends’ trading fees.</p></div></header>`;
  const card=`<section class="card ia-card" aria-label="Refer and earn">${body}</section>`;
  return `<div class="inv">${hd}${stats}<div class="ia-bar">${head}${link}</div>${note}${card}</div>`}
 
