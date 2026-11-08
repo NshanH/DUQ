@@ -6985,7 +6985,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
     inset 0 40px 10px -40px var(--lgm-rimx),inset 0 -40px 10px -40px var(--lgm-rimx),
     inset 0 40px 10px -40px var(--lgm-rimx),inset 0 -40px 10px -40px var(--lgm-rimx),
     0 0 0 .5px var(--lgm-ring),1.25px 0 0 -.75px var(--lgm-side),-1.25px 0 0 -.75px var(--lgm-side),
-    0 8px 48px var(--lgm-drop);
+    0 8px var(--lgm-drop-blur,48px) var(--lgm-drop);
   border:0;
   border-radius:34px;
   background:var(--lgm-fill);
@@ -7006,6 +7006,10 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
    vviddu» — the market rows' look): their own carousel glass — rim gradient (::before), sheen (::after), blur 26 —
    gives way to Medium too; the photo's glow behind them (.h-cc-amb) stays, it is the stage, not the card */
 .h-cc-card::before,.h-cc-card::after{display:none}
+/* the carousel's stage clips 16 px above and 44 px below the centre card (.h-cc overflow hidden; each card's mask
+   reaches 48 px out), so Medium's 0 8 48 drop shadow ended in a hard line under the dots (v169, the user, 8 Nov 2026:
+   «zdes bug po shadow»): the carousel cards keep the same shadow at a 24 px blur, which fades out inside the stage */
+.h-cc-card:not(#lgm):not(.lgm-x){--lgm-drop-blur:24px}
 /* the market rows: their clip-path (round 26) would cut the ring and the shadow off; the row's own rounded box
    (overflow hidden) clips the content instead */
 .oc:not(#lgm):not(.lgm-x){clip-path:none}
