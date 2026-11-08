@@ -2860,6 +2860,9 @@ html[data-theme=dark] .h-tick-pill {
    the banner's market (a gauge on its chance, the last hour's bets in two piles); right — a head-to-head as a tug of war.
    «Up next» (v180) and «Playing now» stay defined for a way back ---------- */
 .h-wc.h-crowd, .h-wc.h-tug { justify-content: flex-start; gap: var(--spacing-lg); cursor: default; }
+/* v185 (the user, 8 Nov 2026: «paddingi s konteinerov sdelai kak marketi kak 3i image»): the two side cards take the
+   market cards' padding, 24 on every side (was the rail cards' 14 / 16) */
+.h-wc.h-crowd, .h-wc.h-tug { padding: var(--spacing-5xl); }
 .h-crowd.h-wc:hover, .h-tug.h-wc:hover { translate: none; }
 .h-zone.h-trio.h-trio-off > .h-crowd, .h-zone.h-trio.h-stack > .h-crowd { display: none; }
 @media (max-width:900px) { .h-zone.h-trio > .h-crowd { display: none; } .h-rail.h-rail-one > .h-tug { height: auto; } }
