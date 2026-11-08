@@ -6076,9 +6076,9 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
   :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port):not(#lgm):not(.lgm-x){border-radius:54.6px;corner-shape:superellipse(1.825)}
   :where(.ia-tile):not(#lgm):not(.lgm-x){border-radius:44px;corner-shape:superellipse(1.45)}
 }
-/* the market rows, closed and open: a plain 40 — no smoothing (v157, the user, 8 Nov 2026: «border radius 40» → only
-   the market rows, a plain 40). 1-2-0, so it outweighs the corner above in every browser */
-.oc:not(#lgm):not(.lgm-x){border-radius:40px;corner-shape:round}
+/* the market rows, closed and open: a plain radius, no smoothing (v157, the user, 8 Nov 2026: «border radius 40» → only
+   the market rows, a plain 40; v158: «sdelai 20»). 1-2-0, so it outweighs the corner above in every browser */
+.oc:not(#lgm):not(.lgm-x){border-radius:20px;corner-shape:round}
 /* the phone's trade sheet: rounded on top only, and Medium's frost, since it slides over the page */
 @media (max-width:900px){
   .trade:not(#lgm):not(.lgm-x){border-radius:34px 34px 0 0;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
