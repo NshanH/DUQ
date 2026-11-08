@@ -2970,8 +2970,34 @@ html:not([data-theme=dark]) .h-duel { --duel-yes: var(--color-success-400); --du
    light edge take the shape too — otherwise the card's glass shows in the four corners */
 .h-duel-track, .h-wc.h-duel::after { corner-shape: inherit; }
 .h-crowd.h-wc:hover, .h-tug.h-wc:hover { translate: none; }
-.h-zone.h-trio.h-trio-off > .h-crowd, .h-zone.h-trio.h-stack > .h-crowd { display: none; }
-@media (max-width:900px) { .h-zone.h-trio > .h-crowd { display: none; } .h-rail.h-rail-one > .h-tug { height: auto; } }
+/* v194 (the user, 9 Nov 2026: «ne spratai etu statistiku, predlagai versi responsiva» → «1 variant» of four drawn): where
+   the three no longer fit, «Where the crowd goes» stays (it was display none under a 1370 row, in a narrow window and on
+   the phone). A laptop (the row under 1370): a band across under the banner and the slider — head, a 132 gauge, the
+   figure, the two piles in two rows of 20, the hour's money. A narrow window (h-stack) and a tablet: a compact card right
+   under the banner — gauge, figure and piles in one row; a phone (under 600): gauge and figure, the piles under them */
+@media (max-width:900px) { .h-rail.h-rail-one > .h-tug { height: auto; } }
+.h-crowd-head { grid-area: head; } .h-crowd-gauge { grid-area: gauge; } .h-crowd-fig { grid-area: fig; } .h-crowd-piles { grid-area: piles; } .h-crowd-foot { grid-area: foot; }
+.h-zone.h-trio.h-trio-off > .h-crowd .h-crowd-gauge { margin: 0; }
+.h-zone.h-trio.h-trio-off > .h-crowd .h-crowd-fig { align-items: flex-start; margin: 0; text-align: left; }
+.h-zone.h-trio.h-trio-off > .h-crowd .h-crowd-foot { margin: 0; white-space: nowrap; }
+@media (min-width:901px) {
+  .h-zone.h-trio.h-trio-off:not(.h-stack) { grid-template-rows: auto auto; }
+  .h-zone.h-trio.h-trio-off:not(.h-stack) > .h-fb { grid-area: 1 / 1; }
+  .h-zone.h-trio.h-trio-off:not(.h-stack) > .h-rail { grid-area: 1 / 2; }
+  .h-zone.h-trio.h-trio-off:not(.h-stack) > .h-crowd { grid-area: 2 / 1 / auto / -1; display: grid; grid-template-columns: auto 132px auto minmax(0, 1fr) auto; grid-template-areas: "head gauge fig piles foot"; align-items: center; column-gap: var(--spacing-8xl); padding: var(--spacing-2xl) var(--spacing-5xl); }
+  .h-zone.h-trio.h-trio-off:not(.h-stack) > .h-crowd .h-crowd-head { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .h-zone.h-trio.h-trio-off:not(.h-stack) > .h-crowd .h-crowd-meta { margin-left: 0; }
+  .h-zone.h-trio.h-trio-off:not(.h-stack) > .h-crowd .h-crowd-dots { grid-template-columns: repeat(20, 1fr); }
+}
+.h-zone.h-trio.h-stack > .h-crowd { order: 1; display: grid; grid-template-columns: 132px auto minmax(0, 1fr); grid-template-areas: "head head head" "gauge fig piles" "foot foot foot"; align-items: center; gap: var(--spacing-lg) var(--spacing-5xl); padding: var(--spacing-2xl) var(--spacing-3xl); }
+.h-zone.h-trio.h-stack > .h-rail { order: 2; }
+@media (max-width:900px) {
+  .h-zone.h-trio > .h-crowd { order: 1; display: grid; grid-template-columns: 132px auto minmax(0, 1fr); grid-template-areas: "head head head" "gauge fig piles" "foot foot foot"; align-items: center; gap: var(--spacing-lg) var(--spacing-5xl); padding: var(--spacing-2xl) var(--spacing-3xl); }
+  .h-zone.h-trio > .h-rail { order: 2; }
+}
+.h-zone.h-trio.h-stack > .h-crowd .h-crowd-dots { grid-template-columns: repeat(20, 1fr); }   /* the piles in two rows of 20 where they sit beside the figure */
+@media (min-width:600px) and (max-width:900px) { .h-zone.h-trio > .h-crowd .h-crowd-dots { grid-template-columns: repeat(20, 1fr); } }
+@media (max-width:599px) { .h-zone.h-trio > .h-crowd { grid-template-columns: 132px minmax(0, 1fr); grid-template-areas: "head head" "gauge fig" "piles piles" "foot foot"; column-gap: var(--spacing-2xl); } }
 .h-crowd-head, .h-tug-head { position: relative; z-index: 1; display: flex; min-width: 0; align-items: center; gap: var(--spacing-md); color: var(--text-high_em); }
 .h-crowd-head > span:first-child, .h-tug-head > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .h-crowd-meta, .h-tug-meta { margin-left: auto; white-space: nowrap; color: var(--text-low_em); }
