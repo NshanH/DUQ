@@ -2765,6 +2765,66 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
   .h-calls-body { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--spacing-5xl); }
   .h-calls-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--spacing-3xl); }
 }
+/* ---------- v180 (the user, 8 Nov 2026: picture variant 1 with variant 1's right container on the left and variant 4's
+   right container on the right): the signed-in hero is a row of three — what the banner shows next, the banner, the
+   games playing now — and under the row this week's markets run by. «Your calls» (v178) stays defined for a way back ---------- */
+.h-zone.h-trio { grid-template-columns: 260px minmax(0, 1fr) var(--sizing-layout-rail_home); }
+.h-zone.h-trio.h-trio-off { grid-template-columns: minmax(0, 1fr) var(--sizing-layout-rail_home); }
+.h-zone.h-trio.h-stack { grid-template-columns: minmax(0, 1fr); }
+.h-zone.h-trio.h-trio-off > .h-next, .h-zone.h-trio.h-stack > .h-next { display: none; }
+@media (max-width:900px) { .h-zone.h-trio, .h-zone.h-trio.h-trio-off { grid-template-columns: minmax(0, 1fr); } .h-zone.h-trio > .h-next { display: none; } .h-rail.h-rail-one > .h-now { height: auto; } }
+/* left: the next slide — its photo, category and question; a click brings it into the banner */
+.h-next { display: flex; min-width: 0; flex-direction: column; gap: var(--spacing-xl); padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; }
+.h-next-ph { position: relative; display: block; flex: none; overflow: hidden; height: 200px; border-radius: 28px; background: var(--neutral_inverse_white-alpha_5); }
+.h-next-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: scale var(--h-d-medium) var(--spring); }
+.h-next-over { color: var(--text-low_em); }
+.h-next-q { display: -webkit-box; overflow: hidden; -webkit-line-clamp: 3; -webkit-box-orient: vertical; color: var(--text-high_em); text-wrap: balance; }
+@media (hover: hover) { .h-next:hover .h-next-ph img { scale: 1.04; } .h-next:hover .h-next-q { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; } }
+.h-next:focus-visible { outline: none; }
+.h-next:focus-visible .h-next-ph { box-shadow: 0 0 0 var(--sizing-border-ring) var(--focus); }
+/* right: the games playing now — the score, the clock and the chances as they move */
+.h-wc.h-now { justify-content: flex-start; gap: var(--spacing-xl); cursor: default; }
+.h-now.h-wc:hover { translate: none; }
+.h-now-head { display: flex; min-width: 0; align-items: center; gap: var(--spacing-md); }
+.h-now-on { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); background: var(--surface-danger_base_em); color: var(--text-danger_high_em); }
+.h-now-on i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: h-now-pulse 1.6s ease-out infinite; }
+@keyframes h-now-pulse { from { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 50%, transparent); } to { box-shadow: 0 0 0 6px transparent; } }
+.h-now-t { color: var(--text-high_em); }
+.h-now-n { margin-left: auto; white-space: nowrap; color: var(--text-low_em); }
+.h-now-games { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.h-now-game { display: flex; flex-direction: column; gap: var(--spacing-md); padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg); border-radius: var(--radius-border_radius_2xl); background: var(--neutral_inverse_white-alpha_5); box-shadow: inset 0 0 0 var(--sizing-border-hairline) var(--neutral_inverse_white-alpha_10); color: inherit; text-decoration: none; transition: background-color var(--h-d-base); }
+@media (hover: hover) { .h-now-game:hover { background: var(--neutral_inverse_white-alpha_10); } }
+.h-now-gt { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-md); color: var(--text-low_em); }
+.h-now-clock { white-space: nowrap; color: var(--text-danger_high_em); }
+.h-now-team { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--spacing-lg); color: var(--text-high_em); }
+.h-now-tn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.h-now-team b { min-width: 24px; text-align: right; }
+.h-now-pc { min-width: 36px; text-align: right; color: var(--text-med_em); }
+.h-now-bar { display: flex; height: 4px; gap: 3px; }
+.h-now-bar i { display: block; min-width: 4px; border-radius: 2px; transition: flex-grow var(--h-d-medium) var(--spring); }
+.h-now-more { display: flex; min-width: 0; align-items: center; gap: var(--spacing-sm); margin-top: auto; padding-top: var(--spacing-lg); border-top: var(--sizing-border-hairline) solid var(--outline-low_em); color: var(--text-med_em); text-decoration: none; }
+.h-now-more b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-high_em); }
+.h-now-more .h-now-clock { margin-left: auto; }
+@container (min-width: 560px) { .h-now-games { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* under the row: this week's markets run by; a hover, a focus or the pause button stops them */
+.h-tick { display: flex; min-width: 0; align-items: center; gap: var(--spacing-2xl); margin-top: var(--spacing-2xl); }
+.h-tick-l { display: flex; flex: none; align-items: center; gap: var(--spacing-md); color: var(--text-high_em); }
+.h-tick-pause { display: grid; flex: none; width: 24px; height: 24px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: none; box-shadow: inset 0 0 0 var(--sizing-border-hairline) var(--neutral_inverse_white-alpha_16); color: var(--text-med_em); cursor: pointer; }
+.h-tick-pause svg { width: 10px; height: 10px; }
+.h-tick-vp { min-width: 0; flex: 1; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 3%, #000 94%, transparent); }
+.h-tick-track { display: flex; width: max-content; animation: h-tick 80s linear infinite; }
+.h-tick-set { display: flex; gap: var(--spacing-md); padding-right: var(--spacing-md); }
+.h-tick:hover .h-tick-track, .h-tick:focus-within .h-tick-track, .h-tick.paused .h-tick-track { animation-play-state: paused; }
+@keyframes h-tick { to { transform: translateX(-50%); } }
+.h-tick-pill { display: flex; flex: none; align-items: center; gap: var(--spacing-md); height: 44px; padding: 0 var(--spacing-2xl) 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); background: var(--neutral_inverse_white-alpha_5); box-shadow: inset 0 0 0 var(--sizing-border-hairline) var(--neutral_inverse_white-alpha_10); color: var(--text-high_em); text-decoration: none; white-space: nowrap; }
+@media (hover: hover) { .h-tick-pill:hover { background: var(--neutral_inverse_white-alpha_10); } }
+.h-tick-pill .h-photo { width: 28px; height: 28px; border-radius: 50%; }
+.h-tick-lead { color: var(--text-med_em); }
+.h-tick-d.up { color: var(--text-success_med_em); }
+.h-tick-d.down { color: var(--text-danger_med_em); }
+.h-tick-d.flat { color: var(--text-low_em); }
+@media (max-width:900px) { .h-tick { gap: var(--spacing-md); margin-top: var(--spacing-xl); } .h-tick-t { display: none; } }
+@media (prefers-reduced-motion: reduce) { .h-now-on i { animation: none; } .h-tick-track { animation: none; } .h-tick-vp { overflow-x: auto; } .h-tick-set[aria-hidden] { display: none; } .h-tick-pause { display: none; } }
 /* the card beside the banner: caption + chevron on top, the figure and its companion at the foot */
 .h-wc { position: relative; display: flex; min-width: 0; min-height: 0; flex-direction: column; justify-content: space-between; gap: var(--spacing-sm); overflow: hidden; border-radius: var(--radius-border_radius_22); padding: var(--spacing-xxl) var(--spacing-2xl); cursor: pointer; container-type: inline-size; animation: h-rise var(--h-d-rise) var(--spring) backwards; transition: translate var(--h-d-medium) var(--spring), box-shadow var(--h-d-base); }
 .h-wc:nth-child(2) { animation-delay: 70ms; }
@@ -3214,13 +3274,13 @@ html[data-theme=dark] .money .qr{background:#fff}
         <button type="button" role="menuitemcheckbox" data-proto="aplfail" aria-checked="false">Next appeal doesn’t go through</button>
         <button type="button" role="menuitemcheckbox" data-proto="aplexpire" aria-checked="false">Window closes while you appeal</button>
       </div>
-      <div class="proto-group" data-g="hpos" role="group" aria-label="Home · Positions">
+      <div class="proto-group" data-g="hpos" role="group" aria-label="Home · Positions" hidden>   <!-- v180: no positions card on the home -->
         <div class="glbl" aria-hidden="true">Home · Positions</div>
         <button type="button" role="menuitemradio" data-hproto="pos:profit" aria-checked="true">In profit</button>
         <button type="button" role="menuitemradio" data-hproto="pos:loss" aria-checked="false">At a loss</button>
         <button type="button" role="menuitemradio" data-hproto="pos:none" aria-checked="false">No positions yet</button>
       </div>
-      <div class="proto-group" data-g="hsum" role="group" aria-label="Home · Positions sum">
+      <div class="proto-group" data-g="hsum" role="group" aria-label="Home · Positions sum" hidden>
         <div class="glbl" aria-hidden="true">Home · Positions sum</div>
         <button type="button" role="menuitemradio" data-hproto="sum:usual" aria-checked="true">Usual</button>
         <button type="button" role="menuitemradio" data-hproto="sum:100k" aria-checked="false">Over 100,000</button>
@@ -4538,7 +4598,7 @@ function featAuto(){featOn=live&&!reduceMotion();fbStart=performance.now()}
 /* by hand (arrows, dots, keys, swipe) or by the clock: the nav stays, only the slide is swapped — the old one fades out
    as a layer while the next comes in from the side it was asked from; focus stays where it was */
 function fbGo(d,to,how){const fb=hq('#hfb');if(!fb){if(hq('.h-cc')){if(to!==null&&to!==undefined)hccTo(to,how);else hccGo(d,how)}return}const n=+fb.dataset.n,cur=((featIdx%n)+n)%n;const next=to!==null&&to!==undefined?to:(cur+d+n)%n;
- fbStart=performance.now();if(next===cur)return;const dir=to!==null&&to!==undefined?(next>cur?1:-1):d>=0?1:-1;featIdx=next;
+ fbStart=performance.now();if(next===cur)return;const dir=to!==null&&to!==undefined?(next>cur?1:-1):d>=0?1:-1;featIdx=next;hNextSync();
  const t=document.createElement('div');t.innerHTML=hSlide(FEATURED_LIST[next].ev);const nfs=t.firstElementChild;hydratePics(nfs);
  hqa('.h-fs.h-fs-out',fb).forEach(o=>o.remove());const old=hq('.h-fs',fb);const hadFocus=old&&old.contains(document.activeElement);
  if(old){Object.assign(old.style,{position:'absolute',top:old.offsetTop+'px',left:old.offsetLeft+'px',width:old.offsetWidth+'px',height:old.offsetHeight+'px'});
@@ -4795,11 +4855,36 @@ function hCallsInner(){
   +`<span class="h-calls-body"><span class="h-calls-score"><svg viewBox="0 0 72 72" aria-hidden="true">${ring}</svg><span class="h-calls-sc"><b class="${T('display-stat-md')} num">${win} of ${n}</b><span class="${T('label-sm-regular')}">going your way</span></span></span><span class="h-calls-list">${rows}</span></span>`
   +`<span class="h-calls-key ${T('label-sm-regular')}" aria-hidden="true"><i class="k-ent"></i>bought at<i class="k-now"></i>now</span>`}
 const hCardCalls=()=>`<article class="h-gc h-wc h-calls" aria-label="Your calls">${hCallsInner()}</article>`;
-const hRail=()=>hCardCalls();
+/* v180: left — the next slide; right — the games playing now (scores and clocks are the prototype's demo: there is no
+   live sports feed; the chances are the markets' own prices and move with them); under the row — this week's markets */
+const H_CAT={politics:'Politics',sports:'Sports',crypto:'Crypto',culture:'Culture',finance:'Finance'};
+const hNextIdx=()=>{const n=FEATURED_LIST.length;return(((featIdx%n)+n)%n+1)%n};
+function hNextCard(){const k=hNextIdx(),e=EVENTS[FEATURED_LIST[k].ev];
+ return `<button type="button" class="h-next" data-hslide="${k}" aria-label="Show next: ${esc(e.q)}"><span class="h-next-ph"><img data-pic="${e.banner||e.pic}" alt="" style="object-position:${e.bpos||'50% 40%'}"></span><span class="h-next-over ${T('overline-eyebrow')}">Up next · ${H_CAT[e.cat]||''}</span><span class="h-next-q ${T('heading-h2')}">${esc(e.q)}</span></button>`}
+function hNextSync(){const c=hq('#home-body .h-next');if(!c)return;const t=document.createElement('div');t.innerHTML=hNextCard();const n=t.firstElementChild;hydratePics(n);c.replaceWith(n)}
+const H_LIVE=[{id:'ucl',lg:'Champions League',clock:"62'",sc:['1','0']},{id:'nba',lg:'NBA',clock:'Q3 · 4:12',sc:['71','76']},{id:'dota',lg:'Dota 2',clock:'Map 2',sc:['1','0']}];
+const hDraw0=o=>/^draw$/i.test(o.n);
+function hLiveGame(g){const e=EVENTS[g.id],teams=e.outs.filter(o=>!hDraw0(o)).slice(0,2),draw=e.outs.find(hDraw0);
+ const bar=[teams[0],draw,teams[1]].filter(Boolean).map(o=>{const i=e.outs.indexOf(o);return `<i data-o="${i}" style="flex:${o.p};background:${o===draw?'var(--neutral_inverse_white-alpha_24)':`var(--s${i+1})`}"></i>`}).join('');
+ return `<a class="h-now-game" href="#event/${g.id}"><span class="h-now-gt ${T('label-sm-regular')}"><span>${g.lg}</span><span class="h-now-clock ${T('label-sm-bold')}">${g.clock}</span></span>${teams.map((o,i)=>`<span class="h-now-team ${T('label-md')}"><span class="h-now-tn">${esc(o.n)}</span><b class="${T('label-md-bold')} num">${g.sc[i]}</b><span class="h-now-pc ${T('label-sm-bold')} num" data-o="${e.outs.indexOf(o)}">${o.p}%</span></span>`).join('')}<span class="h-now-bar" aria-hidden="true">${bar}</span></a>`}
+function hCardLive(){const g=H_LIVE.filter(x=>EVENTS[x.id]&&evLive(EVENTS[x.id]));if(!g.length)return hCardCalls();
+ let more='';if(g[2]){const t=EVENTS[g[2].id].outs.filter(o=>!hDraw0(o));more=`<a class="h-now-more ${T('label-sm-regular')}" href="#event/${g[2].id}"><span>${g[2].lg} ·</span><b>${esc(t[0].n)} ${g[2].sc[0]} – ${g[2].sc[1]} ${esc(t[1].n)}</b><span class="h-now-clock ${T('label-sm-bold')}">${g[2].clock}</span></a>`}
+ return `<article class="h-gc h-wc h-now" aria-label="Playing now"><div class="h-now-head"><span class="h-now-on ${T('label-sm-bold')}"><i></i>Live</span><span class="h-now-t ${T('label-md')}">Playing now</span><span class="h-now-n ${T('label-sm-regular')}">${g.length} ${g.length===1?'game':'games'}</span></div><div class="h-now-games">${g.slice(0,2).map(hLiveGame).join('')}</div>${more}</article>`}
+function hLiveSync(id){const c=hq('#home-body .h-now');if(!c||!H_LIVE.some(g=>g.id===id))return;const e=EVENTS[id],a=hq(`.h-now-game[href="#event/${id}"]`,c);if(!a)return;
+ hqa('.h-now-pc',a).forEach(x=>{const o=e.outs[+x.dataset.o];if(o)x.textContent=o.p+'%'});hqa('.h-now-bar i',a).forEach(x=>{const o=e.outs[+x.dataset.o];if(o)x.style.flex=o.p})}
+const H_TICK={btc:'Bitcoin $150k',khamenei:'Khamenei out',ucl:'Chelsea vs Barça',dem2028:'Dem nominee 2028',ethhigh:'Ethereum high',nba:'Clippers vs Raptors',santa:'Santa’s gifts',eth:'Ethereum low',shutdown:'Shutdown length',ecb:'ECB cut',nuclear:'Nuclear test',nigeria:'US strikes Nigeria',dota:'Zero T. vs Yangon',dotamajor:'Dota major'};
+const H_PAUSE='<svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1.5" y="1" width="2.4" height="8" rx="1" fill="currentColor"/><rect x="6.1" y="1" width="2.4" height="8" rx="1" fill="currentColor"/></svg>';
+const H_PLAY='<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 1.2v7.6L8.8 5z" fill="currentColor"/></svg>';
+function hTicker(){const pill=(id,hidden)=>{const e=EVENTS[id];if(!e||!evLive(e))return '';const one=e.outs.length===1,l=one?e.outs[0]:hLeaders(e,1)[0];if(l.p<=0||l.p>=100)return '';const d=l.d||0,dir=d>.05?'up':d<-.05?'down':'flat';
+  return `<a class="h-tick-pill" href="#event/${id}"${hidden?' tabindex="-1"':''}>${hPhoto(e,'')}<b class="${T('label-md-bold')}">${esc(H_TICK[id])}</b>${one?'':`<span class="h-tick-lead ${T('label-md-regular')}">${esc(l.n)}</span>`}<span class="${T('label-md')} num">${l.p}%</span><span class="h-tick-d ${dir} ${T('label-sm-bold')} num">${d>0?'+':d<0?'−':''}${Math.abs(d).toFixed(1)} 1D${dir==='up'?' ▲':dir==='down'?' ▼':''}</span></a>`};
+ const ids=Object.keys(H_TICK),a=ids.map(id=>pill(id,false)).join(''),b=ids.map(id=>pill(id,true)).join('');if(!a)return '';
+ return `<section class="h-tick" aria-label="This week"><div class="h-tick-l"><span class="h-tick-t ${T('overline-eyebrow')}">This week</span><button type="button" class="h-tick-pause" aria-pressed="false" aria-label="Pause">${H_PAUSE}</button></div><div class="h-tick-vp"><div class="h-tick-track"><div class="h-tick-set">${a}</div><div class="h-tick-set" aria-hidden="true">${b}</div></div></div></section>`}
+document.addEventListener('click',e=>{const b=e.target.closest('.h-tick-pause');if(!b)return;const on=b.closest('.h-tick').classList.toggle('paused');b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',on?'Play':'Pause');b.innerHTML=on?H_PLAY:H_PAUSE});
+const hRail=()=>hCardLive();
 function hRailAfter(root){const rail=hq('.h-rail',root);if(!rail)return;hydratePics(rail);const c1=hq('.h-mx-card',rail);if(c1){hFitPill(c1);hSizeRO.observe(c1);hCountUp(c1)}const au=hq('.h-au',rail);if(au)hAuroraMount(au)}
 function hRenderRail(){const rail=hq('#home-body .h-rail');if(!rail)return;rail.innerHTML=hRail();hRailAfter(rail.parentNode)}
 /* a narrow window (the cards still beside the banner below 900 px of zone): the cards go under it, in a row */
-function hLayoutZone(root){const z=hq('.h-zone',root);if(!z)return;const lay=()=>z.classList.toggle('h-stack',!isMobile()&&z.clientWidth<900);lay();if(!z._ro){z._ro=new ResizeObserver(lay);z._ro.observe(z)}}
+function hLayoutZone(root){const z=hq('.h-zone',root);if(!z)return;const lay=()=>{z.classList.toggle('h-stack',!isMobile()&&z.clientWidth<900);z.classList.toggle('h-trio-off',z.clientWidth<1370)};   /* v180: three in a row only while the banner keeps ≥ 760 */lay();if(!z._ro){z._ro=new ResizeObserver(lay);z._ro.observe(z)}}
 
 /* ---------- sections: Trending, then the categories in the side menu's order; three cards each, «See all» opens the category ---------- */
 function hSections(){const lv=hLive();const secs=[['trending','Trending',hByVol(lv).slice(0,6)],...Object.keys(CATS).map(c=>[c,CATS[c],hByVol(lv.filter(e=>e.cat===c))])];
@@ -4810,7 +4895,7 @@ function renderHome(){const body=hq('#home-body');let html='';
   html=`<div class="h-root"><div class="cathead"><a class="s-back h-t-body-sm-semibold" href="#home">← Home</a><h1 id="home-h1" tabindex="-1">Search</h1><p>${list.length} ${list.length===1?'result':'results'} for “${esc(query)}”</p></div>`+(list.length?`<div class="h-grid">${list.map(e=>sStat(e)?sDone(e):hCard(e)).join('')}</div>`:`<div class="card empty"><b>No markets for “${esc(query)}”.</b>Try a shorter word.</div>`)+'</div>'}
  else if(curCat){const list=evList(curCat);html=`<div class="h-root"><div class="cathead"><h1 id="home-h1" tabindex="-1">${catTitle(curCat)}</h1><p>${list.length?list.length+' market'+(list.length===1?'':'s'):''}</p></div>`+(list.length?`<div class="h-grid">${list.map(e=>hCard(e)).join('')}</div>`:`<div class="card empty"><b>Nothing here yet.</b>New markets land every week.<div><a class="btn ink" href="#home">See all markets</a></div></div>`)+'</div>'}
  /* signed out: the Connected Carousel alone (the user, 3 Oct 2026: the right block goes); signed in: the banner and its card */
- else html=`<div class="h-root h-home"><h1 id="home-h1" tabindex="-1" class="sr-only">Markets</h1><div class="h-zone${user?'':' h-solo'}">${user?hFeatured()+`<div class="h-rail h-rail-one">${hRail()}</div>`:hCarousel()}</div>${hSections()}</div>`;
+ else html=`<div class="h-root h-home"><h1 id="home-h1" tabindex="-1" class="sr-only">Markets</h1><div class="h-zone${user?' h-trio':' h-solo'}">${user?hNextCard()+hFeatured()+`<div class="h-rail h-rail-one">${hRail()}</div>`:hCarousel()}</div>${user?hTicker():''}${hSections()}</div>`;
  body.innerHTML=html;hydratePics(body);
  hLayoutZone(body);hLayoutGrids(body);hDraw(body);
  const fb=hq('#hfb',body);if(fb){bindFeatured(fb);fsWatch(fb);hRailAfter(body);featAuto()}else{const cc=hq('.h-cc',body);if(cc){hccMount(cc);featAuto()}else featOn=false}}
@@ -5859,6 +5944,7 @@ function applyTick(e,o,old){
  $$(`[data-pick^="${e.id}|${o.i}|"]`).forEach(b=>{const s=b.dataset.pick.endsWith('yes')?'yes':'no';b.setAttribute('aria-label',outLabel(e,o,s));const sm=b.querySelector('small');if(sm)sm.textContent=priceOf(e,o,s)+'¢'});
  if(view==='home'){hqa(`#home-body .h-mline[data-ev="${e.id}"]`).forEach(hLine);hqa(`#home-body .h-ec[data-ev="${e.id}"]`).forEach(el=>hEC(el,true));
   const fb=hfbEl();if(fb&&e.id===FEATURED.ev&&hIsEx(e)){const big=hq('.h-fs:not(.h-fs-out) .h-fs-big [data-op]',fb);if(big&&big.dataset.op!==e.id+'-'+hLeaders(e,1)[0].i)hFsFit(fb)}
+  hLiveSync(e.id);
   if(positions.some(p=>p.ev===e.id)){const c=hq('#home-body .h-rail > :first-child');if(c&&c.classList.contains('h-calls')){c.innerHTML=hCallsInner();hydratePics(c)}else if(c&&c.classList.contains('h-mx-card')){const t=document.createElement('div');t.innerHTML=hCardPositions();const n=t.firstElementChild;c.replaceWith(n);if(n.classList.contains('h-mx-card')){hFitPill(n);hSizeRO.observe(n)}}}}
  /* event page */
  if(view==='event'&&e.id===curEv){const el=$('#ocp-'+o.i);if(el){tween(el,old,o.p,v=>Math.round(v));const h=el.closest('.ochead');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
@@ -7091,6 +7177,13 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
   --lgm-rim:rgb(255 255 255 / .06);--lgm-rimx:rgb(255 255 255 / 0);
   --lgm-t1:rgb(255 255 255 / .14);--lgm-t2:rgb(255 255 255 / .045);--lgm-b1:rgb(255 255 255 / .008);--lgm-b2:rgb(255 255 255 / .045);
   --lgm-drop:rgb(0 0 0 / .45);
+}
+/* v180 (the user, 8 Nov 2026: «bordera headera kartochek sdelai nemnogo ochen nemnogo aktivnim blestyashim»): the hero's
+   cards only — the guest carousel, the signed-in banner and its live card — dark theme: the edge a touch brighter, about
+   a quarter up: top line .18 (.14), second and bottom lines .06 (.045), side glint .05 (.035), rim .08 (.06) */
+html[data-theme=dark] :where(.h-cc-card,.h-fb:not(.h-cc .h-fb),.h-now):not(#lgm):not(.lgm-x){
+  --lgm-t1:rgb(255 255 255 / .18);--lgm-t2:rgb(255 255 255 / .06);--lgm-b2:rgb(255 255 255 / .06);
+  --lgm-glint:rgb(255 255 255 / .05);--lgm-rim:rgb(255 255 255 / .08);
 }
 /* the Portfolio block's own glass (rim gradient, sheen) gives way to Medium */
 .ac-port::before,.ac-port::after{display:none}
