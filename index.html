@@ -2073,7 +2073,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .inv-cur[hidden],.inv-dot[hidden],.inv-pill[hidden]{display:none}
 .iic{width:20px;height:20px;flex:none;display:block}
 /* ---- A · stat tiles, the link, one card ---- */
-.ia-hd{display:flex;flex-direction:column;align-items:center;gap:var(--spacing-md);margin:calc(var(--spacing-8xl) - var(--spacing-xl)) auto var(--spacing-8xl);max-width:640px;text-align:center}   /* 40 under the top bar's controls (the bar keeps 12 under them), 40 to the tiles */
+.ia-hd{display:flex;flex-direction:column;align-items:center;gap:var(--spacing-md);margin:var(--spacing-4xl) auto var(--spacing-7xl);max-width:640px;text-align:center}   /* v206 (the user, 9 Nov 2026: «check gap» + Figma Referral 1692:5512): 20 under the row above (Main's gap, spacing/4xl; was 28), 32 to the tiles (top's gap, spacing/7xl; was 40) */
 .ia-hd h1{margin:0;color:var(--ink);text-wrap:balance}
 .ia-hd p{margin:0;color:var(--ink-2);text-wrap:balance}
 .ia-hd .ia-rate{color:var(--yes-text)}
@@ -2087,7 +2087,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .ia-tv p{margin:0;color:var(--ink-3)}
 .ia-tv b{color:var(--ink);font-weight:inherit}
 .ia-tile .btn{flex:none}
-.ia-bar{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-5xl);margin:var(--spacing-8xl) 0 var(--spacing-2xl)}   /* the poo.fun row: the section title left, the link right; 40 under the tiles, 16 above the card */
+.ia-bar{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-5xl);margin:var(--spacing-10xl) 0 var(--spacing-2xl)}   /* the poo.fun row: the section title left, the link right; 64 under the tiles (Page's gap, spacing/10xl; v206, was 40), 16 above the card */
 .ia-bar .ia-ch{flex:none}
 .ia-bar .ia-ch p{white-space:nowrap}   /* one line on the web (the user, 5 Oct 2026); the link shrinks instead */
 .ia-link{display:flex;align-items:center;gap:var(--spacing-md);flex:0 1 560px;min-width:0}
@@ -2099,7 +2099,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .ia-sq{width:var(--sizing-control-48);height:var(--sizing-control-48);flex:none;display:grid;place-items:center;border-radius:var(--r2);background:var(--card);border:1px solid var(--hairline);color:var(--ink);transition:background 200ms}
 .ia-sq:hover{background:var(--card-2)}
 .ia-sq svg{width:18px;height:18px}
-#view-invite .card.ia-card{display:flex;flex-direction:column;gap:var(--spacing-4xl);padding:var(--spacing-5xl)}
+#view-invite .card.ia-card{display:flex;flex-direction:column;gap:var(--spacing-xl);padding:var(--spacing-5xl)}   /* v206: 12 between its parts (Activity card's gap, spacing/xl; was 20) */
 .ia-ch{display:flex;align-items:center;gap:var(--spacing-xxl)}
 .ia-ch h2{margin:0;color:var(--ink)}
 .ia-ch p{margin:2px 0 0;color:var(--ink-2)}
@@ -2132,6 +2132,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
   .ia-bar .ia-ch p{white-space:normal}
   .ia-link{flex:none;width:100%}
   #view-invite .card.ia-card{padding:var(--spacing-4xl) var(--spacing-2xl)}
+  .ia-lkf{gap:var(--spacing-xs)}   /* v206: the phone's link field keeps 4 between the link and Copy (Figma phone Link field, spacing/xs; was 8) */
 }
 .inv-fresh{animation:inv-flash 1800ms var(--ease)}   /* a claim that has just arrived or changed */
 @keyframes inv-flash{from{background-color:var(--neutral_inverse_white-alpha_8)}60%{background-color:var(--neutral_inverse_white-alpha_6)}to{background-color:transparent}}
