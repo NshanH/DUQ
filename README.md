@@ -3,7 +3,7 @@
 Interactive prototype of the DUQ prediction market.
 
 - Live: https://nshanh.github.io/DUQ/
-- Current version: v158 — every card surface in the look of Liquid Glass Medium, drawn by plain CSS; the event's market rows with a plain 20 px radius
+- Current version: v159 — every card surface in the look of Liquid Glass Medium, drawn by plain CSS; the event's market rows with a plain 32 px radius
 - Test page, the landing background as KokonutUI Flow Field: https://nshanh.github.io/DUQ/flow/
 
 ## Files
