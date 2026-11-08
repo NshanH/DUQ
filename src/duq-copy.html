@@ -2172,6 +2172,7 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
 
 html[data-theme=dark]{
   color-scheme:dark;
+  --bg:#07090f;   /* v179 (the user, 8 Nov 2026: «1 · Графит с синевой»): the page's ground, near black with a touch of blue (was the system's #0b0d12; not a token yet) */
   --s1:#6095fa; --s2:#4bc680; --s3:#fa695c; --s4:#f4c352;   /* market colours, dark (see the :root aliases) */
   --s5:#d06dd7; --s6:#58b8c2; --s7:#fa9c5b; --s8:#9d7cfa; --s9:#adc95f; --s10:#f4679f;
   /* Ground, glass, ink, direction, action and the chart series all arrive from
@@ -6160,8 +6161,10 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
   /* v176 (the user, 8 Nov 2026: «dai mne 4 versi serogo, men eto kak to ne nravica» → «davai 4 steklo poprobuem»):
      the system's glass card, white 6 % over the page, instead of the neutral #1a1a1e at .85; v177 («teper na 2
      variant»): the system's modal card #15181e, a little see-through (.85) as before — the phone's trade sheet
-     takes it too again */
-  --lgm-fill:color-mix(in srgb,var(--surface-modal_card) 85%,transparent);
+     takes it too again; v179 (the user, 8 Nov 2026: a dark ground «blije k chornomu no vidno bilo sinii» → «1 ·
+     Графит с синевой»): graphite with a touch of blue, #121621 at .85, over the page's #07090f (not a system token
+     yet: the Figma DS has no such colour) */
+  --lgm-fill:color-mix(in srgb,#121621 85%,transparent);
   --lgm-ring:rgb(0 0 0);--lgm-side:rgb(0 0 0);--lgm-dside:rgb(0 0 0 / 0);
   --lgm-glint:rgb(255 255 255 / .035);
   --lgm-rim:rgb(255 255 255 / .06);--lgm-rimx:rgb(255 255 255 / 0);
