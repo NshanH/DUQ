@@ -1307,12 +1307,14 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 .outs h2 span{color:var(--ink-2);font-weight:500}
 .oc{padding:0;overflow:hidden;clip-path:inset(0 round var(--r));margin-bottom:10px;position:relative}
 #outs>.oc:last-child{margin-bottom:0}   /* the list ends at its last card, no 10 below it (Figma Markets, 23 Sep 2026) */
-/* the accent is the outcome's colour on the ROW, not the card: an 8×40 pill inset 11px, centred
-   (Figma Outcome Row 35:214). Selection changes only its depth. */
-.ochead::before{content:"";position:absolute;left:11px;top:50%;transform:translateY(-50%);width:6px;height:40px;border-radius:var(--r2);background:var(--c,transparent);opacity:var(--series-dim);transition:opacity 200ms}
+/* the accent is the outcome's colour on the ROW, not the card: a 6×40 pill, the row's first item (Figma Outcome Row
+   35:214, 8 Nov 2026: padding 16 all round, gap 12 — accent · name · chance · Yes/No · details; on the phone padding 16,
+   16 between the head and Yes/No, 12 inside the head, the accent 8 wide and the head's full height). Selection changes
+   only its depth. */
+.ochead::before{content:"";width:6px;height:40px;align-self:center;border-radius:var(--r2);background:var(--c,transparent);opacity:var(--series-dim);transition:opacity 200ms}
 .oc.sel .ochead::before{opacity:1}
-.ochead{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 176px 28px;gap:14px;align-items:center;padding:16px 18px 16px 32px;cursor:pointer}
-.ochead .oexp{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:14px;align-items:center;text-align:left;width:100%;min-width:0;border-radius:var(--r-10)}
+.ochead{position:relative;display:grid;grid-template-columns:6px minmax(0,1fr) 176px 28px;gap:var(--spacing-xl);align-items:center;padding:var(--spacing-2xl);cursor:pointer}
+.ochead .oexp{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:var(--spacing-xl);align-items:center;text-align:left;width:100%;min-width:0;border-radius:var(--r-10)}
 .ochead .name{font-weight:700;font-size:15px;text-align:left;padding:4px 0;border-radius:var(--r-6)}
 .ochead .name small{display:block;font-size:12px;color:var(--ink-3);font-weight:500;margin-top:2px}
 .ochead .name .res{display:inline-block;margin-left:8px;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--card-2);padding:2px 8px;border-radius:var(--r2)}
@@ -2154,7 +2156,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
   .evhead .acts button span{display:none}
   .evbody{padding:18px 16px}
   #hchart,#echart{height:auto!important}
-  .ochead{grid-template-columns:1fr;grid-template-rows:auto auto;gap:10px 12px;padding:14px 16px}
+  .ochead{grid-template-columns:1fr;grid-template-rows:auto auto;gap:var(--spacing-2xl) var(--spacing-xl);padding:var(--spacing-2xl)}
   /* акцент живёт в строке заголовка: пилюля 8px во всю её высоту, 12 до названия (Figma 452:39378) */
   .ochead::before{display:none}
   .ochead .oexp{position:relative;padding-left:20px}
