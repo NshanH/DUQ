@@ -587,9 +587,15 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
    card's own ground — its fill over the page — a 16 gap on its left and a soft edge */
 .postbl{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
 .postbl .pa,.postbl .pa-h{position:sticky;right:0;z-index:1}
-.postbl.is-scroll .pa,.postbl.is-scroll .pa-h{padding-left:var(--spacing-2xl);background:linear-gradient(var(--lgm-fill,var(--card)),var(--lgm-fill,var(--card))),var(--bg);box-shadow:-10px 0 12px -10px rgb(0 0 0 / .35)}
+.postbl{--pos-ground:color-mix(in srgb,rgb(246 246 246) 60%,var(--bg))}   /* v208: the card's own fill over the page, opaque (lg-cards.html: light rgb(246 246 246 / .6)) */
+html[data-theme=dark] .postbl{--pos-ground:color-mix(in srgb,#121621 85%,var(--bg))}   /* dark: #121621 at 85 % */
+.postbl.is-scroll .pa,.postbl.is-scroll .pa-h{padding-left:var(--spacing-2xl);background:var(--pos-ground)}
+/* v208 (the user, 9 Nov 2026: «i fadeom» + a shot of «$4,» cut under the pinned Close): the columns sliding under the
+   action fade out over 32 px instead of a hard cut and a shadow edge */
+.postbl.is-scroll .pa::before,.postbl.is-scroll .pa-h::before{content:"";position:absolute;top:0;bottom:0;right:100%;width:var(--spacing-7xl);background:linear-gradient(90deg,color-mix(in srgb,var(--pos-ground) 0%,transparent),var(--pos-ground));pointer-events:none}
 .postbl.is-scroll .pa-h{align-self:stretch}
-html:not([data-theme=dark]) .postbl.is-scroll .pa,html:not([data-theme=dark]) .postbl.is-scroll .pa-h{box-shadow:-10px 0 12px -10px rgb(0 0 0 / .16)}   /* the light theme's edge softer */
+.postbl .pa::before,.postbl .pa-h::before{transition:opacity var(--h-d-base,200ms)}
+.postbl.is-scroll.at-end .pa::before,.postbl.is-scroll.at-end .pa-h::before{opacity:0}   /* scrolled to the end nothing hides under it */
 
 @container (max-width:600px){
   .posbody{gap:8px}
@@ -4409,7 +4415,9 @@ function holdHTML(e,o){const ps=positions.filter(p=>p.ev===e.id&&p.out===o.i);
 /* v207: a position table that outgrows its card scrolls sideways; .is-scroll grounds the pinned action column. Every new
    table (first render and each price tick) is measured and watched for size */
 const posRO=new ResizeObserver(en=>en.forEach(x=>posFit(x.target)));
-function posFit(t){t.classList.toggle('is-scroll',t.scrollWidth>t.clientWidth+1)}
+function posFit(t){t.classList.toggle('is-scroll',t.scrollWidth>t.clientWidth+1);posEnd(t)}
+function posEnd(t){t.classList.toggle('at-end',t.scrollLeft>=t.scrollWidth-t.clientWidth-1)}   /* v208: scrolled to the end, the fade goes */
+document.addEventListener('scroll',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('postbl'))posEnd(t)},true);
 new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(n.nodeType!==1)continue;(n.matches('.postbl')?[n]:n.querySelectorAll('.postbl')).forEach(t=>{posRO.observe(t);posFit(t)})}}).observe(document.body||document.documentElement,{childList:true,subtree:true});
 function ocBody(o){const e=E();const orders=o.orders;
  const hold=`<div class="holds" id="holds-${o.i}">${holdHTML(e,o)}</div>`;
@@ -5366,7 +5374,7 @@ function applyTick(e,o,old){
  if(view==='event'&&e.id===curEv){const el=$('#ocp-'+o.i);if(el){tween(el,old,o.p,v=>Math.round(v));const h=el.closest('.ochead');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
   /* the book follows the price: a new snapshot for the new price, your rows in it (skipped when a fill just redrew it) */
   if(!redrawn)bookRender(o);
-  const last=$('#last-'+o.i);if(last)last.textContent=(bookNo(o)?100-o.p:o.p)+'¢';const hl=$('#holds-'+o.i);if(hl){const t0=hl.querySelector('.postbl'),sl=t0?t0.scrollLeft:0;hl.innerHTML=holdHTML(e,o);const t1=hl.querySelector('.postbl');if(t1){posFit(t1);if(sl)t1.scrollLeft=sl}}   /* v207: a tick keeps where the table was scrolled to (measured first, so the pinned column's gap is already there) */const pc=$('#pc-'+o.i);if(pc)pc.innerHTML=posChips(e,o);
+  const last=$('#last-'+o.i);if(last)last.textContent=(bookNo(o)?100-o.p:o.p)+'¢';const hl=$('#holds-'+o.i);if(hl){const t0=hl.querySelector('.postbl'),sl=t0?t0.scrollLeft:0;hl.innerHTML=holdHTML(e,o);const t1=hl.querySelector('.postbl');if(t1){posFit(t1);if(sl)t1.scrollLeft=sl;posEnd(t1)}}   /* v207: a tick keeps where the table was scrolled to (measured first, so the pinned column's gap is already there) */const pc=$('#pc-'+o.i);if(pc)pc.innerHTML=posChips(e,o);
   const opt=$('#tsel-opt-'+o.i+' b');if(opt)opt.textContent=o.p+'%';if(o.i===sel&&$('#tsel-p'))$('#tsel-p').textContent=o.p+'%';
   retargetEventChart();
   if(o.i===sel){calc();const h2=$('#trade-h span');if(h2)h2.firstChild.textContent=`${e.outs.length>1?o.n+' · ':''}${side==='yes'?'Yes':'No'} ${priceOf(e,o,side)}¢`}
