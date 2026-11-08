@@ -1362,6 +1362,14 @@ body.is-auth .main{padding:0}
 .auth .err{font-size:13px;color:var(--no-text);margin:-6px 0 12px;font-weight:600}
 .auth .nav{display:flex;justify-content:space-between;gap:12px;margin-top:16px;font-size:14px;color:var(--ink-2)}
 .auth .nav a,.auth .nav button{font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:0;font:inherit;font-weight:600;cursor:pointer}
+/* v210 (the user, 9 Nov 2026: «bug gapov isprav» + the Log in card): the old side menu's .nav (a column, its links blocks
+   full width, a shift and a fill on hover) had broken the card's foot into three lines — «New here?», «Sign up» and
+   «Forgot password?» each on its own. It is one row again, the two ends apart, wrapping on a narrow card; and the field
+   keeps 16 to the button (was 12), so its focus ring no longer sits on it */
+.auth .nav{flex-direction:row;flex-wrap:wrap;align-items:baseline;row-gap:var(--spacing-md)}
+.auth .nav a{display:inline;width:auto;border-radius:0;transition:none}
+.auth .nav a:hover{background:none;transform:none;color:var(--ink)}
+.auth label.f{margin-bottom:var(--spacing-2xl)}
 .auth .strength{display:flex;gap:4px;margin:-6px 0 10px}
 .auth .strength i{height:4px;flex:1;border-radius:2px;background:var(--card-2)}
 .auth .strength i.on{background:var(--yes)}
