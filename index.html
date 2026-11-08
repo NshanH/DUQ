@@ -7259,7 +7259,11 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
    z-index 1 over every glass, the neighbours' shadows included. No absolutely positioned element in a card used the
    card as its box, and every overlay above the cards (search 60, menus 10–20, toast, sheet, modal) sits at 3 or more. */
 .h-mc{background:none;box-shadow:none;border-radius:34px}
-.h-mc>.lgm{position:absolute;inset:0;pointer-events:none}
+/* refraction 0 (v154, the user, 8 Nov 2026: «da otkluchi prelomlenie»): the system's own Liquid Glass/Refraction
+   variable, so bundle.js builds no displacement map and sets no backdrop filter for it. Over our flat page the bend
+   moved nothing (pixel diff 0 in both themes), yet Chrome ran its SVG filter on the CPU every frame for all 13 cards:
+   29 fps at rest and 18 while scrolling, 60 without it. Every other layer of Medium stays. */
+.h-mc>.lgm{position:absolute;inset:0;pointer-events:none;--liquid-glass-refraction:0}
 .h-mc>:not(.lgm){position:relative;z-index:1}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
