@@ -2461,7 +2461,8 @@ html[data-theme=dark] .h-ec-cursor { stroke: var(--color-white-35); }
    side crescents, rims, light lines, soft drop) and Small's 3 px frost (was white .72 with a white .8 border / white .07
    with a .12 border in the dark). The top bar's theme button is as it was */
 #landing .themebtn{width:40px;height:40px;border:0}
-.top .themebtn{border:0}
+.top .themebtn{border:0;width:var(--sizing-control-xl);height:var(--sizing-control-xl)}   /* v200 («razmer light dark sdelai kak heiy searcha»): 44, the search's height (was 32), the icon 20 (sizing/icon/lg, was 16) */
+.top .themebtn svg{width:var(--sizing-icon-lg);height:var(--sizing-icon-lg)}
 /* v199 (the user, 9 Nov 2026: «vezde v headere, i search toje sdelai» + a shot of the top bar's theme button): the same
    Small on the top bar — its theme button and its search field (was white .08 / the glass field, 12 px frost, a hairline
    border). The search keeps a transparent 1 px border, so its focus still shows in the border's colour */
