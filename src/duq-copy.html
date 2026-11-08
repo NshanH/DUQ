@@ -1901,37 +1901,35 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 .h-tick:hover .h-tick-track, .h-tick:focus-within .h-tick-track, .h-tick.paused .h-tick-track { animation-play-state: paused; }
 @keyframes h-tick { to { transform: translateX(-50%); } }
 .h-tick-pill { display: flex; flex: none; align-items: center; gap: var(--spacing-md); height: 44px; padding: 0 var(--spacing-2xl) 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); color: var(--text-high_em); text-decoration: none; white-space: nowrap; }
-/* v182 (the user, 8 Nov 2026: «eti chipi izmeni na liquid glass small»): the ticker's chips in Liquid Glass — Small of the
-   user's system (IOSGlass size="small"), the CSS copy first written for the hero carousel in v167: the fill, the inner
-   shade under the top edge, the 0.5 px ring and side crescents, the rims and light lines, a soft drop. No frost: the
-   chips move, and over the plain ground a blur would show nothing but cost every frame.
-   v183 (the user, 8 Nov 2026: «oni ostalis serimi, goluboi osnovnoi»): the glass is tinted with the system's blue (--s1,
-   the charts' first colour): light — a pale blue pane, its ring blue; dark — blue glass, its light lines blue-white */
+/* v182 (the user, 8 Nov 2026: «eti chipi izmeni na liquid glass small»): the ticker's chips took Liquid Glass Small's
+   structure (the CSS copy from v167: fill, inner shade under the top edge, 0.5 px ring, crescents, rims, light lines, soft
+   drop; no frost — they move); v183 («oni ostalis serimi, goluboi osnovnoi») tinted it blue; v184 («bg doljen podxodit k
+   karotchkam markta, ili predlagai 3 versi» — version 1 of three): the market cards' own ground and edge — light: the
+   grey pane at .6 with the white rim and dark ring; dark: graphite #121621 at .85 (the cards' fill, lg-cards.html), the
+   black ring and the soft top line */
 .h-tick-pill {
-  --lgs-fill: color-mix(in srgb, var(--s1) 12%, rgb(255 255 255 / .6));
-  --lgs-shade: rgb(0 0 0 / .052), rgb(0 0 0 / .041) 4px, rgb(0 0 0 / .031) 8px, rgb(0 0 0 / .021) 12px, rgb(0 0 0 / .014) 16px, rgb(0 0 0 / .009) 20px, rgb(0 0 0 / .003) 26px, rgb(0 0 0 / .001) 32px, rgb(0 0 0 / 0) 37px;
-  --lgs-ring: color-mix(in srgb, var(--s1) 30%, transparent); --lgs-side: color-mix(in srgb, var(--s1) 22%, transparent);
-  --lgs-rim: rgb(255 255 255 / .9); --lgs-rimx: rgb(255 255 255 / .9);
-  --lgs-t1: rgb(255 255 255 / 0); --lgs-t2: rgb(255 255 255 / 0); --lgs-b1: rgb(255 255 255 / 0); --lgs-b2: rgb(255 255 255 / 0);
-  --lgs-drop: color-mix(in srgb, var(--s1) 10%, transparent);
+  --lgs-fill: rgb(246 246 246 / .6);
+  --lgs-shade: transparent, transparent;
+  --lgs-ring: rgb(0 0 0 / .11); --lgs-side: rgb(0 0 0 / .19);
+  --lgs-rim: rgb(255 255 255 / 1); --lgs-rimx: rgb(255 255 255 / 0);
+  --lgs-t1: rgb(255 255 255 / .5); --lgs-t2: rgb(255 255 255 / .5); --lgs-b1: rgb(255 255 255 / .5); --lgs-b2: rgb(255 255 255 / .5);
+  --lgs-drop: rgb(0 0 0 / .06);
   background: linear-gradient(var(--lgs-shade)) no-repeat, var(--lgs-fill);
   box-shadow:
     inset 0 .5px 0 var(--lgs-t1), inset 0 1px 0 var(--lgs-t2), inset 0 -.5px 0 var(--lgs-b1), inset 0 -1px 0 var(--lgs-b2),
     inset 0 40px 10px -40px var(--lgs-rim), inset 0 -40px 10px -40px var(--lgs-rim),
     inset 0 40px 10px -40px var(--lgs-rimx), inset 0 -40px 10px -40px var(--lgs-rimx),
-    inset 0 40px 10px -40px var(--lgs-rimx), inset 0 -40px 10px -40px var(--lgs-rimx),
     0 0 0 .5px var(--lgs-ring), 1.25px 0 0 -.75px var(--lgs-side), -1.25px 0 0 -.75px var(--lgs-side),
     0 8px 15px var(--lgs-drop);
 }
 html[data-theme=dark] .h-tick-pill {
-  --lgs-fill: color-mix(in srgb, var(--s1) 20%, transparent);
-  --lgs-shade: rgb(0 0 0 / .357), rgb(0 0 0 / .281) 4px, rgb(0 0 0 / .211) 8px, rgb(0 0 0 / .147) 12px, rgb(0 0 0 / .095) 16px, rgb(0 0 0 / .059) 20px, rgb(0 0 0 / .024) 26px, rgb(0 0 0 / .006) 32px, rgb(0 0 0 / 0) 37px;
-  --lgs-ring: rgb(0 0 0 / .9); --lgs-side: rgb(0 0 0 / .85);
-  --lgs-rim: rgb(150 185 255 / .16); --lgs-rimx: rgb(255 255 255 / 0);
-  --lgs-t1: rgb(185 210 255 / .34); --lgs-t2: rgb(185 210 255 / .12); --lgs-b1: rgb(185 210 255 / .2); --lgs-b2: rgb(185 210 255 / .12);
+  --lgs-fill: color-mix(in srgb, #121621 85%, transparent);
+  --lgs-ring: rgb(0 0 0); --lgs-side: rgb(0 0 0);
+  --lgs-rim: rgb(255 255 255 / .06);
+  --lgs-t1: rgb(255 255 255 / .14); --lgs-t2: rgb(255 255 255 / .045); --lgs-b1: rgb(255 255 255 / .008); --lgs-b2: rgb(255 255 255 / .045);
   --lgs-drop: rgb(0 0 0 / .04);
 }
-@media (hover: hover) { .h-tick-pill:hover { --lgs-fill: color-mix(in srgb, var(--s1) 18%, rgb(255 255 255 / .75)); } html[data-theme=dark] .h-tick-pill:hover { --lgs-fill: color-mix(in srgb, var(--s1) 28%, transparent); } }
+@media (hover: hover) { .h-tick-pill:hover { --lgs-fill: rgb(246 246 246 / .9); } html[data-theme=dark] .h-tick-pill:hover { --lgs-fill: color-mix(in srgb, #1c2333 92%, transparent); } }
 .h-tick-pill .h-photo { width: 28px; height: 28px; border-radius: 50%; }
 .h-tick-lead { color: var(--text-med_em); }
 .h-tick-d.up { color: var(--text-success_med_em); }
@@ -1939,6 +1937,58 @@ html[data-theme=dark] .h-tick-pill {
 .h-tick-d.flat { color: var(--text-low_em); }
 @media (max-width:900px) { .h-tick { gap: var(--spacing-md); margin-top: var(--spacing-xl); } .h-tick-t { display: none; } }
 @media (prefers-reduced-motion: reduce) { .h-now-on i { animation: none; } .h-tick-track { animation: none; } .h-tick-vp { overflow-x: auto; } .h-tick-set[aria-hidden] { display: none; } .h-tick-pause { display: none; } }
+/* ---------- v184 (the user, 8 Nov 2026: «left budet variant 1, a right budet variant 2»): left — where the crowd goes on
+   the banner's market (a gauge on its chance, the last hour's bets in two piles); right — a head-to-head as a tug of war.
+   «Up next» (v180) and «Playing now» stay defined for a way back ---------- */
+.h-wc.h-crowd, .h-wc.h-tug { justify-content: flex-start; gap: var(--spacing-lg); cursor: default; }
+.h-crowd.h-wc:hover, .h-tug.h-wc:hover { translate: none; }
+.h-zone.h-trio.h-trio-off > .h-crowd, .h-zone.h-trio.h-stack > .h-crowd { display: none; }
+@media (max-width:900px) { .h-zone.h-trio > .h-crowd { display: none; } .h-rail.h-rail-one > .h-tug { height: auto; } }
+.h-crowd-head, .h-tug-head { position: relative; z-index: 1; display: flex; min-width: 0; align-items: center; gap: var(--spacing-md); color: var(--text-high_em); }
+.h-crowd-head > span:first-child, .h-tug-head > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.h-crowd-meta, .h-tug-meta { margin-left: auto; white-space: nowrap; color: var(--text-low_em); }
+.h-crowd-gauge { margin: 0 -6px; }
+.h-crowd-gauge svg { display: block; width: 100%; height: auto; overflow: visible; }
+.h-crowd-ticks line { stroke: var(--text-low_em); stroke-width: 1.5; }
+.h-crowd-needle { stroke: var(--text-high_em); stroke-width: 3; stroke-linecap: round; }
+.h-crowd-pin { fill: var(--text-high_em); }
+.h-crowd-gauge text { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.h-crowd-gauge text.no { fill: var(--text-danger_med_em); }
+.h-crowd-gauge text.yes { fill: var(--text-success_med_em); }
+.h-crowd-fig { display: flex; min-width: 0; flex-direction: column; align-items: center; margin-top: calc(-1 * var(--spacing-sm)); color: var(--text-med_em); text-align: center; }
+.h-crowd-fig b { letter-spacing: -.02em; color: var(--text-high_em); }
+.h-crowd-fig span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.h-crowd-piles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-lg); }
+.h-crowd-piles > div { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
+.h-crowd-pl { display: flex; align-items: baseline; justify-content: space-between; color: var(--text-low_em); }
+.h-crowd-pl .no { color: var(--text-danger_med_em); }
+.h-crowd-pl .yes { color: var(--text-success_med_em); }
+.h-crowd-dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+.h-crowd-dots i { display: block; aspect-ratio: 1; border-radius: 50%; background: var(--neutral_inverse_white-alpha_10); }
+.h-crowd-dots i.no { background: var(--text-danger_med_em); }
+.h-crowd-dots i.yes { background: var(--text-success_med_em); }
+.h-crowd-foot { display: flex; min-width: 0; align-items: center; gap: var(--spacing-md); margin-top: auto; color: var(--text-med_em); }
+.h-crowd-foot b { color: var(--text-high_em); }
+.h-crowd-live { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--text-success_med_em); box-shadow: 0 0 0 4px color-mix(in srgb, var(--text-success_med_em) 25%, transparent); }
+.h-tug-bg { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; border-radius: inherit; pointer-events: none; }
+.h-tug-bg i:first-child { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 34%, transparent), transparent); }
+.h-tug-bg i:last-child { background: linear-gradient(270deg, color-mix(in srgb, var(--c) 30%, transparent), transparent); }
+.h-tug-vs { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: var(--spacing-md); margin-top: var(--spacing-sm); }
+.h-tug-side { display: flex; min-width: 0; flex-direction: column; gap: 6px; color: var(--text-high_em); }
+.h-tug-side.r { align-items: flex-end; text-align: right; }
+.h-tug-side b { line-height: 1; letter-spacing: -.03em; }
+.h-tug-side > span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.h-tug-crest { display: grid; flex: none; width: 44px; height: 44px; place-items: center; border-radius: 50%; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .02em; box-shadow: 0 0 0 3px rgb(255 255 255 / .12); }
+.h-tug-mid { display: flex; flex-direction: column; align-items: center; color: var(--text-low_em); }
+.h-tug-rope { position: relative; z-index: 1; height: 14px; margin-top: var(--spacing-md); border-radius: 7px; background: linear-gradient(90deg, var(--ca) 0 var(--a), var(--neutral_inverse_white-alpha_24) var(--a) var(--d), var(--cb) var(--d)); }
+.h-tug-knot { position: absolute; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: var(--surface-ink); box-shadow: 0 0 0 4px rgb(0 0 0 / .3), 0 6px 14px rgb(0 0 0 / .35); transition: left var(--h-d-medium) var(--spring); }
+.h-tug-mom { position: relative; z-index: 1; display: flex; justify-content: space-between; }
+.h-tug-mom .up { color: var(--text-success_med_em); }
+.h-tug-mom .down { color: var(--text-danger_med_em); }
+.h-tug-mom .flat { color: var(--text-low_em); }
+.h-tug-back { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-md); margin-top: auto; }
+.h-tug-back a { display: flex; min-width: 0; align-items: center; justify-content: center; gap: 6px; height: 44px; padding: 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); background: color-mix(in srgb, var(--c) 72%, #000); color: #fff; text-decoration: none; white-space: nowrap; }
+@media (hover: hover) { .h-tug-back a:hover { background: color-mix(in srgb, var(--c) 86%, #000); } }
 /* the card beside the banner: caption + chevron on top, the figure and its companion at the foot */
 .h-wc { position: relative; display: flex; min-width: 0; min-height: 0; flex-direction: column; justify-content: space-between; gap: var(--spacing-sm); overflow: hidden; border-radius: var(--radius-border_radius_22); padding: var(--spacing-xxl) var(--spacing-2xl); cursor: pointer; container-type: inline-size; animation: h-rise var(--h-d-rise) var(--spring) backwards; transition: translate var(--h-d-medium) var(--spring), box-shadow var(--h-d-base); }
 .h-wc:nth-child(2) { animation-delay: 70ms; }
@@ -3710,7 +3760,7 @@ function featAuto(){featOn=live&&!reduceMotion();fbStart=performance.now()}
 /* by hand (arrows, dots, keys, swipe) or by the clock: the nav stays, only the slide is swapped — the old one fades out
    as a layer while the next comes in from the side it was asked from; focus stays where it was */
 function fbGo(d,to,how){const fb=hq('#hfb');if(!fb){if(hq('.h-cc')){if(to!==null&&to!==undefined)hccTo(to,how);else hccGo(d,how)}return}const n=+fb.dataset.n,cur=((featIdx%n)+n)%n;const next=to!==null&&to!==undefined?to:(cur+d+n)%n;
- fbStart=performance.now();if(next===cur)return;const dir=to!==null&&to!==undefined?(next>cur?1:-1):d>=0?1:-1;featIdx=next;hNextSync();
+ fbStart=performance.now();if(next===cur)return;const dir=to!==null&&to!==undefined?(next>cur?1:-1):d>=0?1:-1;featIdx=next;hNextSync();hCrowdSync();
  const t=document.createElement('div');t.innerHTML=hSlide(FEATURED_LIST[next].ev);const nfs=t.firstElementChild;hydratePics(nfs);
  hqa('.h-fs.h-fs-out',fb).forEach(o=>o.remove());const old=hq('.h-fs',fb);const hadFocus=old&&old.contains(document.activeElement);
  if(old){Object.assign(old.style,{position:'absolute',top:old.offsetTop+'px',left:old.offsetLeft+'px',width:old.offsetWidth+'px',height:old.offsetHeight+'px'});
@@ -3992,7 +4042,27 @@ function hTicker(){const pill=(id,hidden)=>{const e=EVENTS[id];if(!e||!evLive(e)
  const ids=Object.keys(H_TICK),a=ids.map(id=>pill(id,false)).join(''),b=ids.map(id=>pill(id,true)).join('');if(!a)return '';
  return `<section class="h-tick" aria-label="This week"><div class="h-tick-l"><span class="h-tick-t ${T('overline-eyebrow')}">This week</span><button type="button" class="h-tick-pause" aria-pressed="false" aria-label="Pause">${H_PAUSE}</button></div><div class="h-tick-vp"><div class="h-tick-track"><div class="h-tick-set">${a}</div><div class="h-tick-set" aria-hidden="true">${b}</div></div></div></section>`}
 document.addEventListener('click',e=>{const b=e.target.closest('.h-tick-pause');if(!b)return;const on=b.closest('.h-tick').classList.toggle('paused');b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',on?'Play':'Pause');b.innerHTML=on?H_PLAY:H_PAUSE});
-const hRail=()=>hCardLive();
+/* v184: left — where the crowd goes on the banner's market; right — a head-to-head as a tug of war. The bet counts and the
+   hour's money are the prototype's demo, derived from the market's volume and chance; the chances are the markets' own */
+function hCrowdInner(){const e=EVENTS[FEATURED.ev],one=e.outs.length===1,o=one?e.outs[0]:hLeaders(e,1)[0],p=o.p;
+ const tot=Math.max(40,Math.round(e.vol/2400)),yes=Math.round(tot*p/100),no=tot-yes,usd=Math.round(e.vol/65);
+ const R=92,cx=150,cy=104,ang=v=>Math.PI*(1-v/100),pt=(v,r=R)=>[cx+r*Math.cos(ang(v)),cy-r*Math.sin(ang(v))],f=n=>n.toFixed(1);
+ const [x0,y0]=pt(0),[x1,y1]=pt(100),[nx,ny]=pt(p,R-24);
+ const ticks=[0,25,50,75,100].map(t=>{const [a,b]=pt(t,R+14),[c,d]=pt(t,R+6);return `<line x1="${f(c)}" y1="${f(d)}" x2="${f(a)}" y2="${f(b)}"/>`}).join('');
+ const svg=`<svg viewBox="0 0 300 112" aria-hidden="true"><defs><linearGradient id="h-crowd-g" x1="0" x2="1"><stop offset="0" stop-color="var(--text-danger_med_em)"/><stop offset=".5" stop-color="var(--text-low_em)"/><stop offset="1" stop-color="var(--text-success_med_em)"/></linearGradient></defs><g class="h-crowd-ticks">${ticks}</g><path d="M${f(x0)} ${f(y0)} A${R} ${R} 0 0 1 ${f(x1)} ${f(y1)}" fill="none" stroke="url(#h-crowd-g)" stroke-width="12" stroke-linecap="round"/><line class="h-crowd-needle" x1="${cx}" y1="${cy}" x2="${f(nx)}" y2="${f(ny)}"/><circle class="h-crowd-pin" cx="${cx}" cy="${cy}" r="7"/><text class="no" x="${f(x0-15)}" y="${cy+4}" text-anchor="end">NO</text><text class="yes" x="${f(x1+15)}" y="${cy+4}">YES</text></svg>`;
+ const mx=Math.max(yes,no,1),pile=(n,c)=>{const k=Math.round(40*n/mx);return Array.from({length:40},(_,i)=>`<i${i<k?` class="${c}"`:''}></i>`).join('')};
+ return `<div class="h-crowd-head"><span class="${T('label-md')}">Where the crowd goes</span><span class="h-crowd-meta ${T('label-sm-regular')}">last hour</span></div><div class="h-crowd-gauge">${svg}</div><div class="h-crowd-fig"><b class="${T('display-stat-md')} num">${p}%</b><span class="${T('label-sm-regular')}">${one?'say Yes':'back '+esc(o.n)}</span></div><div class="h-crowd-piles"><div><span class="h-crowd-pl"><b class="no ${T('label-sm-bold')}">No</b><span class="${T('label-sm-regular')} num">${no} bets</span></span><span class="h-crowd-dots" aria-hidden="true">${pile(no,'no')}</span></div><div><span class="h-crowd-pl"><b class="yes ${T('label-sm-bold')}">Yes</b><span class="${T('label-sm-regular')} num">${yes} bets</span></span><span class="h-crowd-dots" aria-hidden="true">${pile(yes,'yes')}</span></div></div><div class="h-crowd-foot ${T('label-sm-regular')}"><span class="h-crowd-live"></span><b class="num">${MONEY0(usd)}</b> bet in the last hour</div>`}
+const hCrowdCard=()=>`<article class="h-gc h-wc h-crowd" aria-label="Where the crowd goes">${hCrowdInner()}</article>`;
+function hCrowdSync(){const c=hq('#home-body .h-crowd');if(c)c.innerHTML=hCrowdInner()}
+const H_TUG='ucl',H_SHORT={Barcelona:'Barça','Toronto Raptors':'Raptors','LA Clippers':'Clippers'};
+function hTugInner(){const e=EVENTS[H_TUG];if(!e)return '';const d=e.outs.find(hDraw0),t=e.outs.filter(o=>!hDraw0(o)),a=t[0],b=t[1],ia=e.outs.indexOf(a),ib=e.outs.indexOf(b);
+ const sum=a.p+(d?d.p:0)+b.p,wa=a.p/sum*100,wd=(d?d.p:0)/sum*100,knot=Math.min(92,Math.max(8,50-(a.p-b.p)*1.5));
+ const mom=o=>{const v=o.d||0;return `<span class="${v>.05?'up':v<-.05?'down':'flat'} num">${v>.05?'▲ ':v<-.05?'▼ ':''}${Math.abs(v).toFixed(1)} today</span>`};
+ const nm=o=>H_SHORT[o.n]||o.n,side=(o,i,r)=>`<div class="h-tug-side${r?' r':''}"><span class="h-tug-crest" style="background:var(--s${i+1})">${esc(o.ab||o.n.slice(0,3).toUpperCase())}</span><b class="${T('display-stat-lg')} num">${o.p}%</b><span class="${T('label-md')}">${esc(o.n)}</span></div>`;
+ return `<div class="h-tug-bg" aria-hidden="true"><i style="--c:var(--s${ia+1})"></i><i style="--c:var(--s${ib+1})"></i></div><div class="h-tug-head"><span class="${T('label-md')}">${esc(e.league||'')}</span><span class="h-tug-meta ${T('label-sm-regular')}">${esc(e.when||'')}</span></div><div class="h-tug-vs">${side(a,ia,0)}<div class="h-tug-mid"><span class="${T('label-sm-bold')}">VS</span>${d?`<span class="${T('label-sm-regular')} num">draw ${d.p}%</span>`:''}</div>${side(b,ib,1)}</div><div class="h-tug-rope" style="--a:${wa.toFixed(1)}%;--d:${(wa+wd).toFixed(1)}%;--ca:var(--s${ia+1});--cb:var(--s${ib+1})" aria-hidden="true"><span class="h-tug-knot" style="left:${knot.toFixed(1)}%"></span></div><div class="h-tug-mom ${T('label-sm-bold')}">${mom(a)}${mom(b)}</div><div class="h-tug-back ${T('label-md-bold')}"><a href="#event/${H_TUG}" style="--c:var(--s${ia+1})">Back ${esc(nm(a))} <span class="num">${a.p}¢</span></a><a href="#event/${H_TUG}" style="--c:var(--s${ib+1})">Back ${esc(nm(b))} <span class="num">${b.p}¢</span></a></div>`}
+const hCardTug=()=>{const e=EVENTS[H_TUG];return e&&evLive(e)?`<article class="h-gc h-wc h-tug" aria-label="${esc(e.q)}">${hTugInner()}</article>`:hCardLive()};
+function hTugSync(id){if(id!==H_TUG)return;const c=hq('#home-body .h-tug');if(c)c.innerHTML=hTugInner()}
+const hRail=()=>hCardTug();
 function hRailAfter(root){const rail=hq('.h-rail',root);if(!rail)return;hydratePics(rail);const c1=hq('.h-mx-card',rail);if(c1){hFitPill(c1);hSizeRO.observe(c1);hCountUp(c1)}const au=hq('.h-au',rail);if(au)hAuroraMount(au)}
 function hRenderRail(){const rail=hq('#home-body .h-rail');if(!rail)return;rail.innerHTML=hRail();hRailAfter(rail.parentNode)}
 /* a narrow window (the cards still beside the banner below 900 px of zone): the cards go under it, in a row */
@@ -4007,7 +4077,7 @@ function renderHome(){const body=hq('#home-body');let html='';
   html=`<div class="h-root"><div class="cathead"><a class="s-back h-t-body-sm-semibold" href="#home">← Home</a><h1 id="home-h1" tabindex="-1">Search</h1><p>${list.length} ${list.length===1?'result':'results'} for “${esc(query)}”</p></div>`+(list.length?`<div class="h-grid">${list.map(e=>sStat(e)?sDone(e):hCard(e)).join('')}</div>`:`<div class="card empty"><b>No markets for “${esc(query)}”.</b>Try a shorter word.</div>`)+'</div>'}
  else if(curCat){const list=evList(curCat);html=`<div class="h-root"><div class="cathead"><h1 id="home-h1" tabindex="-1">${catTitle(curCat)}</h1><p>${list.length?list.length+' market'+(list.length===1?'':'s'):''}</p></div>`+(list.length?`<div class="h-grid">${list.map(e=>hCard(e)).join('')}</div>`:`<div class="card empty"><b>Nothing here yet.</b>New markets land every week.<div><a class="btn ink" href="#home">See all markets</a></div></div>`)+'</div>'}
  /* signed out: the Connected Carousel alone (the user, 3 Oct 2026: the right block goes); signed in: the banner and its card */
- else html=`<div class="h-root h-home"><h1 id="home-h1" tabindex="-1" class="sr-only">Markets</h1><div class="h-zone${user?' h-trio':' h-solo'}">${user?hNextCard()+hFeatured()+`<div class="h-rail h-rail-one">${hRail()}</div>`:hCarousel()}</div>${user?hTicker():''}${hSections()}</div>`;
+ else html=`<div class="h-root h-home"><h1 id="home-h1" tabindex="-1" class="sr-only">Markets</h1><div class="h-zone${user?' h-trio':' h-solo'}">${user?hCrowdCard()+hFeatured()+`<div class="h-rail h-rail-one">${hRail()}</div>`:hCarousel()}</div>${user?hTicker():''}${hSections()}</div>`;
  body.innerHTML=html;hydratePics(body);
  hLayoutZone(body);hLayoutGrids(body);hDraw(body);
  const fb=hq('#hfb',body);if(fb){bindFeatured(fb);fsWatch(fb);hRailAfter(body);featAuto()}else{const cc=hq('.h-cc',body);if(cc){hccMount(cc);featAuto()}else featOn=false}}
@@ -5056,7 +5126,7 @@ function applyTick(e,o,old){
  $$(`[data-pick^="${e.id}|${o.i}|"]`).forEach(b=>{const s=b.dataset.pick.endsWith('yes')?'yes':'no';b.setAttribute('aria-label',outLabel(e,o,s));const sm=b.querySelector('small');if(sm)sm.textContent=priceOf(e,o,s)+'¢'});
  if(view==='home'){hqa(`#home-body .h-mline[data-ev="${e.id}"]`).forEach(hLine);hqa(`#home-body .h-ec[data-ev="${e.id}"]`).forEach(el=>hEC(el,true));
   const fb=hfbEl();if(fb&&e.id===FEATURED.ev&&hIsEx(e)){const big=hq('.h-fs:not(.h-fs-out) .h-fs-big [data-op]',fb);if(big&&big.dataset.op!==e.id+'-'+hLeaders(e,1)[0].i)hFsFit(fb)}
-  hLiveSync(e.id);
+  hLiveSync(e.id);hTugSync(e.id);if(e.id===FEATURED.ev)hCrowdSync();
   if(positions.some(p=>p.ev===e.id)){const c=hq('#home-body .h-rail > :first-child');if(c&&c.classList.contains('h-calls')){c.innerHTML=hCallsInner();hydratePics(c)}else if(c&&c.classList.contains('h-mx-card')){const t=document.createElement('div');t.innerHTML=hCardPositions();const n=t.firstElementChild;c.replaceWith(n);if(n.classList.contains('h-mx-card')){hFitPill(n);hSizeRO.observe(n)}}}}
  /* event page */
  if(view==='event'&&e.id===curEv){const el=$('#ocp-'+o.i);if(el){tween(el,old,o.p,v=>Math.round(v));const h=el.closest('.ochead');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
@@ -6293,7 +6363,7 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
 /* v180 (the user, 8 Nov 2026: «bordera headera kartochek sdelai nemnogo ochen nemnogo aktivnim blestyashim»): the hero's
    cards only — the guest carousel, the signed-in banner and its live card — dark theme: the edge a touch brighter, about
    a quarter up: top line .18 (.14), second and bottom lines .06 (.045), side glint .05 (.035), rim .08 (.06) */
-html[data-theme=dark] :where(.h-cc-card,.h-fb:not(.h-cc .h-fb),.h-now):not(#lgm):not(.lgm-x){
+html[data-theme=dark] :where(.h-cc-card,.h-fb:not(.h-cc .h-fb),.h-now,.h-crowd,.h-tug):not(#lgm):not(.lgm-x){
   --lgm-t1:rgb(255 255 255 / .18);--lgm-t2:rgb(255 255 255 / .06);--lgm-b2:rgb(255 255 255 / .06);
   --lgm-glint:rgb(255 255 255 / .05);--lgm-rim:rgb(255 255 255 / .08);
 }
