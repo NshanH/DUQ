@@ -6580,7 +6580,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
      theme is now only a little softer than v163, about a quarter off: drop .18 (v163 .25, v173 .08), ring .11 (.15 /
      .06), side crescents .19 (.255 / .08), inner sides .085 (.115 / .04). The dark theme stays as it was. -->
 <style>
-:where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card,.sugg):not(#lgm):not(.lgm-x){
+:where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card,.sugg,.ot-menu,.dd-menu,.proto-menu,.card.money,.ac-dlg):not(#lgm):not(.lgm-x){
   --lgm-fill:rgb(246 246 246 / .6);
   --lgm-ring:rgb(0 0 0 / .11);--lgm-side:rgb(0 0 0 / .19);--lgm-dside:rgb(0 0 0 / .085);
   --lgm-glint:rgb(255 255 255 / 0);
@@ -6605,7 +6605,7 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
   box-shadow:var(--lgm-shadow);
   -webkit-backdrop-filter:none;backdrop-filter:none;
 }
-html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card,.sugg):not(#lgm):not(.lgm-x){
+html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card:not(.money),.ac-port,.h-cc-card,.sugg,.ot-menu,.dd-menu,.proto-menu,.card.money,.ac-dlg):not(#lgm):not(.lgm-x){
   /* v176 (the user, 8 Nov 2026: «dai mne 4 versi serogo, men eto kak to ne nravica» → «davai 4 steklo poprobuem»):
      the system's glass card, white 6 % over the page, instead of the neutral #1a1a1e at .85; v177 («teper na 2
      variant»): the system's modal card #15181e, a little see-through (.85) as before — the phone's trade sheet
@@ -6651,11 +6651,18 @@ html[data-theme=dark] :where(.h-cc-card,.h-fb:not(.h-cc .h-fb),.h-now,.h-crowd,.
    @supports corner and as heavy (1-1-0), so it wins in every browser */
 :where(.ia-tile):not(#lgm):not(.lgm-x){border-radius:var(--radius-border_radius_26);corner-shape:round}
 /* v216 (the user, 9 Nov 2026: «izmeni na medium» after v215's Small, which was asked to be «ne transparent»): the search
-   suggestions (landing and top bar) on Medium again — its edges, rims, light lines and drop — but opaque: Medium's own
-   fill already laid over the page (light rgb(246 246 246) at 60 %, dark #121621 at 85 %), so nothing reads through and
-   no frost is needed; their own 20 radius */
-:where(.sugg):not(#lgm):not(.lgm-x){border-radius:var(--radius-border_radius_3xl);corner-shape:round;--lgm-fill:color-mix(in srgb,rgb(246 246 246) 60%,var(--bg))}
-html[data-theme=dark] :where(.sugg):not(#lgm):not(.lgm-x){--lgm-fill:color-mix(in srgb,#121621 85%,var(--bg))}
+   suggestions on Medium — its edges, rims, light lines and drop — but opaque: Medium's own fill already laid over the
+   page (light rgb(246 246 246) at 60 %, dark #121621 at 85 %), so nothing reads through and no frost is needed.
+   v217 («drugie drop downi i pop upi toje» + the order type menu and Add money): every dropdown and popup the same — the
+   order type menu, the outcome menu, the Prototype states menu, Add money / Withdraw and Log out everywhere (they had
+   their own glass pop with a 24 px frost, a modal card at .97, a hairline border) — each keeping its own radius */
+:where(.sugg,.ot-menu,.dd-menu,.proto-menu,.card.money,.ac-dlg):not(#lgm):not(.lgm-x){corner-shape:round;--lgm-fill:color-mix(in srgb,rgb(246 246 246) 60%,var(--bg));-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-theme=dark] :where(.sugg,.ot-menu,.dd-menu,.proto-menu,.card.money,.ac-dlg):not(#lgm):not(.lgm-x){--lgm-fill:color-mix(in srgb,#121621 85%,var(--bg))}
+:where(.sugg):not(#lgm):not(.lgm-x){border-radius:var(--radius-border_radius_3xl)}
+:where(.ot-menu):not(#lgm):not(.lgm-x){border-radius:16px}
+:where(.dd-menu,.proto-menu):not(#lgm):not(.lgm-x){border-radius:var(--r-22)}
+:where(.card.money,.ac-dlg):not(#lgm):not(.lgm-x){border-radius:var(--r)}
+@media (max-width:900px){:where(.card.money):not(#lgm):not(.lgm-x){border-radius:var(--r) var(--r) 0 0}}   /* the phone's sheet: rounded on top */
 /* the market rows, closed and open: a plain radius, no smoothing (v157, the user, 8 Nov 2026: «border radius 40» → only
    the market rows, a plain 40; v158: «sdelai 20»; v159: «change to 32»; v160: «26»; v161: «28»). 1-2-0, so it
    outweighs the corner above in every browser */
