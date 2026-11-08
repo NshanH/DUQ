@@ -2298,6 +2298,7 @@ body.is-auth .main{padding:0}
 .auth .nav a{display:inline;width:auto;border-radius:0;transition:none}
 .auth .nav a:hover{background:none;transform:none;color:var(--ink)}
 .auth label.f{margin-bottom:var(--spacing-2xl)}
+.auth label.f:has(+ .btn){margin-bottom:var(--spacing-5xl)}   /* v220 (the user, 9 Nov 2026: «gap 24px» + the field over Continue): a field straight over its button keeps 24 to it (was 16) */
 .auth .strength{display:flex;gap:4px;margin:-6px 0 10px}
 .auth .strength i{height:4px;flex:1;border-radius:2px;background:var(--card-2)}
 .auth .strength i.on{background:var(--yes)}
