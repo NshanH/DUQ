@@ -951,7 +951,8 @@ html[data-theme=dark] .ac-port::after{background:linear-gradient(180deg,var(--co
 .ac-back{width:var(--sizing-control-xl);height:var(--sizing-control-xl);flex:none;border-radius:var(--radius-border_radius_round);display:inline-grid;place-items:center;color:var(--ink);background:var(--glass-field);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background 200ms,transform 300ms var(--spring)}
 .ac-back:hover{background:var(--card-2);transform:translateX(-2px)}
 .ac-back svg{width:var(--sizing-icon-lg);height:var(--sizing-icon-lg)}
-.ac-sec{padding:var(--spacing-2xl);container-type:inline-size}   /* the List card's 16 */
+.ac-sec{padding:var(--spacing-5xl);container-type:inline-size}   /* v204 (the user, 9 Nov 2026: «apply padding changes» + Figma Security card 1992:5811): 24 on every side, spacing/5xl (was the List card's 16); the table inside already matched (columns 24 apart, head 10 below, cells 10, rows 4 apart, buttons 34 × 16) */
+@media (max-width:900px){.ac-sec{padding:var(--spacing-2xl)}}   /* the phone keeps 16 (the Figma node is the web card) */
 .ac-sec .ac-tbl{grid-template-columns:180px minmax(0,1fr) auto}
 .ac-sec .ac-tbl .pn{white-space:normal}
 /* Log out everywhere: the scrim and a 420 dialog (Figma «NOT IN DS») */
