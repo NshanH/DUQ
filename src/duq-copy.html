@@ -1062,7 +1062,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .modal .card{width:min(480px,100%);padding:24px;animation:in 400ms var(--spring)}
 .modal h2{margin:0 0 4px;font-size:22px;letter-spacing:-.02em;font-weight:800}
 .modal p{margin:0 0 12px;color:var(--ink-2);font-size:14px}
-.modal .btn.ink{width:100%;height:52px;font-size:16px;margin-top:14px}
+.modal .btn.ink{width:100%;height:52px;font-size:16px;margin-top:var(--spacing-5xl);display:flex}   /* v221 (the user, 9 Nov 2026: «i v withdraw toje gap 24»): 24 above the action, whatever sits over it — a block now, so its margin meets the one above instead of adding to it (was inline, 14 + the hint's 12 = 26, or less) */
 .modal .close{position:absolute;right:16px;top:16px}
 .modal .card{position:relative}
 .modal .card.money{max-height:calc(100vh - 32px);overflow:auto;padding:22px 24px;background:rgba(255,255,255,.97);backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -1078,7 +1078,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .money h2{font-size:24px;letter-spacing:-.03em;font-weight:800;margin:0 0 4px;padding-right:44px}
 .money .lead{margin:0 0 16px;color:var(--ink-2);font-size:14px}
 .money .btn.close{position:absolute;top:16px;right:16px}
-.steps{display:flex;gap:6px;margin:0 0 16px}.steps i{height:4px;flex:1;border-radius:2px;background:var(--card-2)}.steps i.on{background:var(--pill)}
+.steps{display:flex;gap:6px;margin:0 0 16px}.money .steps{margin-bottom:var(--spacing-5xl)}.steps i{height:4px;flex:1;border-radius:2px;background:var(--card-2)}.steps i.on{background:var(--pill)}
 .money .lbl{margin-top:14px}
 .money .pick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .money .pick button{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-14);background:var(--card-2);text-align:left;font-weight:600;font-size:14px;border:2px solid transparent}
@@ -1106,7 +1106,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .warn b{color:var(--ink)}
 .money .feeline{font-size:13px;color:var(--ink-2);margin:8px 2px 4px}
 .money .feeline b{color:var(--ink)}
-.money .row2{display:flex;gap:8px;margin-top:6px}.money .row2 .btn{flex:1}
+.money .row2{display:flex;gap:8px;margin-top:var(--spacing-5xl)}.money .row2 .btn{flex:1}
 .kv{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:var(--r-14);background:var(--card-2);font-size:14px;margin:0 0 14px}
 .kv div{display:flex;justify-content:space-between;gap:12px;color:var(--ink-2)}.kv b{color:var(--ink);text-align:right}
 .money .in{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline-2);border-radius:var(--radius-border_radius_round);padding:0 14px;background:var(--glass-field);height:48px}
@@ -1340,7 +1340,7 @@ body.is-auth .main{padding:0}
 .auth{width:100%;padding:28px 28px 24px}
 .auth h1{font-size:26px;letter-spacing:-.03em;font-weight:800;margin:0 0 6px;line-height:1.15}
 .auth .lead{margin:0 0 18px;color:var(--ink-2);font-size:14px}
-.auth .steps{display:flex;gap:6px;margin:0 0 18px}
+.auth .steps{display:flex;gap:6px;margin:0 0 var(--spacing-5xl)}   /* v221 («i 24 up to progress bar»): 24 from the progress bar to what follows, as in Add money / Withdraw (was 18) */
 .auth .steps i{height:4px;flex:1;border-radius:2px;background:var(--card-2)}
 .auth .steps i.on{background:var(--pill)}
 .auth label.f{display:block;margin:0 0 12px}
