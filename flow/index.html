@@ -2937,8 +2937,20 @@ html[data-theme=dark] .h-tick-pill {
 .h-duel-leg span { display: flex; min-width: 0; align-items: center; gap: 5px; overflow: hidden; white-space: nowrap; }
 .h-duel-leg i { flex: none; width: 7px; height: 7px; border-radius: 50%; }
 .h-duel-btns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-md); }
-.h-duel-btns a { display: flex; min-width: 0; align-items: center; justify-content: center; gap: 6px; height: 44px; padding: 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); background: rgb(255 255 255 / .18); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .32); color: #fff; text-decoration: none; white-space: nowrap; }
-@media (hover: hover) { .h-duel-btns a:hover { background: rgb(255 255 255 / .28); } }
+/* v191 (the user, 9 Nov 2026: «5i vriant» of six drawn for «knopki bili krasnim zelyonim, no nujno po moemu fading … ili
+   blur» and «text knopok sdelai kak no yes, ya imeyu vvidu cifri, vo vsex mestax»): dark frosted glass, an edge in the
+   side's colour fading out upward, a soft glow of it under the button (was white glass .18 with a .32 ring). Yes / No take
+   green and red (success / danger 500), a team or a candidate its own colour — --bc, set per button by hDuelContent. The
+   price as on the system Yes / No buttons of the market cards (h-yn-sm): its own label-md (13 semibold) in the side's
+   colour (--bt); the label stays white */
+.h-duel-btns a { position: relative; display: flex; min-width: 0; align-items: center; justify-content: center; gap: 6px; height: 44px; padding: 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); background: rgb(8 10 16 / .5); box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--bc, #fff) 85%, transparent); color: #fff; text-decoration: none; white-space: nowrap; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.h-duel-btns a::before { content: ""; position: absolute; inset: 0; padding: 1.5px; border-radius: inherit; background: linear-gradient(0deg, var(--bc, #fff), color-mix(in srgb, var(--bc, #fff) 0%, transparent) 96%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+.h-duel-pr { flex: none; color: var(--bt, #fff); }
+@media (hover: hover) { .h-duel-btns a:hover { background: rgb(20 24 34 / .6); box-shadow: 0 10px 28px -6px color-mix(in srgb, var(--bc, #fff) 95%, transparent); } }
+/* the photo stays dark in both themes, so the prices keep the dark theme's Yes / No colours in the light one too (the
+   palette's 400s, the nearest to the dark text-success / text-danger med_em) */
+.h-duel { --duel-yes: var(--text-success_med_em); --duel-no: var(--text-danger_med_em); }
+html:not([data-theme=dark]) .h-duel { --duel-yes: var(--color-success-400); --duel-no: var(--color-danger-400); }
 /* v190 (the user, 8 Nov 2026: «dobav left right arrow»): ‹ dots › — arrows either side of the dots, as under the banner */
 .h-duel-nav { position: absolute; z-index: 4; left: 0; right: 0; bottom: 7px; display: flex; align-items: center; justify-content: center; gap: var(--spacing-md); pointer-events: none; }
 .h-duel-arr { display: grid; flex: none; width: var(--sizing-control-24); height: var(--sizing-control-24); place-items: center; padding: 0; border: 0; border-radius: 50%; background: none; color: rgb(255 255 255 / .8); cursor: pointer; pointer-events: auto; transition: background-color var(--h-d-base), color var(--h-d-base); }
@@ -5084,7 +5096,7 @@ function hTugSync(id){if(id!==hTugCur())return;const c=hq('#home-body .h-tug');i
 /* v188: the right card — a slider of the events with a photo, each as a duel and as its leader */
 const H_DUELS=['ucl','nba','dota','dem2028','khamenei','shutdown'];
 function hDuelModel(id){const e=EVENTS[id],col=o=>`var(--s${e.outs.indexOf(o)+1})`,when=e.when||('Resolves '+e.resolves),cat=e.league?e.league.replace(/^UEFA /,''):(H_CAT[e.cat]||''),sh=o=>H_SHORT[o.n]||o.n;
- const yesNo=(o,label)=>{const A={n:'Yes',p:o.p,c:'var(--text-success_med_em)',btn:'Buy Yes'},B={n:'No',p:100-o.p,c:'var(--text-danger_med_em)',btn:'Buy No'};return{e,id,cat,when,A,B,chip:label,seg:[A,B],lead:{n:'chance',p:o.p,sub:label?label+' · say Yes':'say Yes'}}};
+ const yesNo=(o,label)=>{const A={n:'Yes',p:o.p,c:'var(--text-success_med_em)',btn:'Buy Yes',bc:'var(--color-success-500)',bt:'var(--duel-yes)'},B={n:'No',p:100-o.p,c:'var(--text-danger_med_em)',btn:'Buy No',bc:'var(--color-danger-500)',bt:'var(--duel-no)'};return{e,id,cat,when,A,B,chip:label,seg:[A,B],lead:{n:'chance',p:o.p,sub:label?label+' · say Yes':'say Yes'}}};
  if(e.outs.length===1)return yesNo(e.outs[0],null);
  if(e.tpl!=='exclusive')return yesNo(e.outs[0],e.outs[0].n);   /* a market of thresholds: its first threshold, as yes or no */
  const d=e.outs.find(hDraw0),t=e.outs.filter(o=>!hDraw0(o));
@@ -5093,7 +5105,9 @@ function hDuelModel(id){const e=EVENTS[id],col=o=>`var(--s${e.outs.indexOf(o)+1}
  const A={n:a.n,p:a.p,c:col(a),btn:'Back '+sh(a),short:sh(a)},B={n:b.n,p:b.p,c:col(b),btn:'Back '+sh(b),short:sh(b)},O={n:'Others',p:op,c:'rgb(255 255 255 / .55)'};
  return{e,id,cat,when,A,B,chip:`others ${op}%`,seg:[A,B,O],lead:{n:a.n,p:a.p,sub:'leads'}}}
 function hDuelContent(m,s){const head=`<div class="h-duel-head"><span class="${T('label-md')}">${esc(m.cat)}</span><span class="h-duel-meta ${T('label-sm-regular')}">${esc(m.when)}</span></div>`;
- const btns=`<div class="h-duel-btns ${T('label-md-bold')}"><a href="#event/${m.id}">${esc(m.A.btn)} <span class="num">${m.A.p}¢</span></a><a href="#event/${m.id}">${esc(m.B.btn)} <span class="num">${m.B.p}¢</span></a></div>`;
+ /* v191: each button its side's colour (--bc edge and glow, --bt price): Yes / No green and red from the model, a team or a candidate its chart colour, the price lightened */
+ const bv=o=>`--bc:${o.bc||o.c};--bt:${o.bt||`color-mix(in srgb,${o.c} 62%,white)`}`;
+ const btns=`<div class="h-duel-btns ${T('label-md-bold')}"><a href="#event/${m.id}" style="${bv(m.A)}">${esc(m.A.btn)} <small class="h-duel-pr ${T('label-md')} num">${m.A.p}¢</small></a><a href="#event/${m.id}" style="${bv(m.B)}">${esc(m.B.btn)} <small class="h-duel-pr ${T('label-md')} num">${m.B.p}¢</small></a></div>`;
  if(s===1)return head+`<p class="h-duel-title ${T('label-md-bold')}">${esc(m.e.q)}</p><div class="h-duel-sides"><div><span class="${T('label-md-bold')}">${esc(m.A.n)}</span><b class="${T('display-stat-lg')} num">${m.A.p}%</b></div><div class="r"><span class="${T('label-md-bold')}">${esc(m.B.n)}</span><b class="${T('display-stat-lg')} num">${m.B.p}%</b></div></div>${m.chip?`<span class="h-duel-chip ${T('label-sm-bold')} num">${esc(m.chip)}</span>`:''}`+btns;
  return head+`<p class="h-duel-title ${T('heading-h3')}">${esc(m.e.q)}</p><div class="h-duel-lead"><b class="${T('display-stat-lg')} num">${m.lead.p}%</b><span><span class="${T('label-md-bold')}">${esc(m.lead.n)}</span><span class="${T('label-sm-regular')}">${esc(m.lead.sub)}</span></span></div><div class="h-duel-bar" aria-hidden="true">${m.seg.map(o=>`<i style="flex:${o.p};background:${o.c}"></i>`).join('')}</div><div class="h-duel-leg ${T('label-sm-regular')}">${m.seg.map(o=>`<span><i style="background:${o.c}"></i>${esc(o.short||o.n)} <span class="num">${o.p}%</span></span>`).join('')}</div>`+btns}
 function hDuelSlide(m,s,k,n){const e=m.e,img=`<img data-pic="${e.banner}" alt="" style="object-position:${e.bpos||'50% 40%'}">`;
