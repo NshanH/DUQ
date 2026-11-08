@@ -354,6 +354,7 @@ body.is-landing .app{display:none}
 .v-labels .lb-box{position:relative}
 .v-labels .lb-svg{display:block;overflow:visible;touch-action:pan-y;-webkit-user-select:none;user-select:none;border-radius:var(--r-10)}
 .v-labels .lb-svg:focus-visible{outline:var(--sizing-border-ring) solid var(--focus);outline-offset:var(--sizing-border-focus_gap)}
+.v-labels .lb-wm{--accent:var(--brand);opacity:.06;pointer-events:none}   /* Figma Event Chart › Watermark: the duq wordmark at 6 % (v174) */
 .v-labels .lb-grid line{stroke:var(--chart-grid);stroke-width:var(--sizing-border-hairline);shape-rendering:crispEdges}
 .v-labels .lb-ax text{fill:var(--ink-3);font-family:var(--font);font-size:var(--lb-as);font-weight:var(--typeface-weight-primary-medium);text-anchor:middle}
 .v-labels .lb-in{animation:lb-in 320ms var(--ease) both}
@@ -420,7 +421,9 @@ html[data-theme=dark] .v-labels .lb-pill{fill:var(--neutral_inverse_white-alpha_
 /* the body sits on the card's own glass, like the row above it: an expanded market card is one surface/glass_card fill
    with no wash under the body, in light and dark alike (Figma «Outcome — More than 30 days» on 54, 25 Sep 2026).
    --ocb stays as the body's wash for the sticky table headers, now clear */
-.ocbody{--ocb:transparent;--ocpad:var(--spacing-3xl);display:none;padding:calc(var(--spacing-3xl) + 2px) var(--ocpad) var(--spacing-3xl);background:var(--dash) 0 0/100% 1px no-repeat,var(--ocb)}
+/* Figma Outcome Body (305:13571): 20 on every side, spacing/4xl (v174, the user, 8 Nov 2026: «apply changes»; it was
+   20 above and 18 at the sides and below) */
+.ocbody{--ocb:transparent;--ocpad:var(--spacing-4xl);display:none;padding:var(--spacing-4xl) var(--ocpad);background:var(--dash) 0 0/100% 1px no-repeat,var(--ocb)}
 .oc.open .ocbody{display:block;animation:in 400ms var(--spring)}
 .vbook{display:flex;flex-direction:column;gap:6px}
 .bh{display:grid;grid-template-columns:auto 1fr 84px 64px;gap:10px;white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:700;padding:4px 0 8px}
@@ -4233,13 +4236,13 @@ function mount(host,e,first,only){
  const aria=()=>esc('Chance over time since '+fmtDate(e.open)+': '+w.outs.map(o=>o.n+' '+Math.round(o.p)+' percent').join(', '));
  root.innerHTML=`<div class="lb-top"></div>
  <div class="lb-box" style="height:${H}px"><svg class="lb-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" tabindex="0" aria-label="${aria()}">
- <g class="lb-grid"></g><g class="lb-ax"></g><g class="lb-leads"></g>
+ <use class="lb-wm" href="#wm" aria-hidden="true"/><g class="lb-grid"></g><g class="lb-ax"></g><g class="lb-leads"></g>
  <g class="lb-lines">${outs.map(o=>`<path class="lb-line" stroke="${o.c}"/>`).join('')}</g>
  <g class="lb-cur"><line class="lb-hair"/><g class="lb-dots">${outs.map(o=>`<circle class="lb-dot" r="${HR}" fill="${o.c}"/>`).join('')}</g>
  <rect class="lb-pill" y="${PY}" height="${PH}" rx="${PH/2}"/><text class="lb-when" y="${PY+PH/2+4}"></text></g></svg>
  <div class="lb-gut">${outs.map(o=>`<button type="button" class="lb-lab" style="--c:${o.c}" aria-pressed="false" title="${esc(o.n)}"><i></i><b class="v">${pct(o.p)}</b><span class="n">${esc(sm&&e.outs.length>1?shortOf(e,o):o.n)}</span></button>`).join('')}<span class="lb-lab lb-probe" aria-hidden="true"><b class="v">100%</b></span></div></div>`;
  const $$h=s=>root.querySelector(s),svg=$$h('svg'),labs=[...root.querySelectorAll('button.lb-lab')];
- const G={grid:$$h('.lb-grid'),ax:$$h('.lb-ax'),leads:$$h('.lb-leads'),lines:$$h('.lb-lines'),hair:$$h('.lb-hair'),dots:$$h('.lb-dots'),pill:$$h('.lb-pill'),when:$$h('.lb-when')};
+ const G={wm:$$h('.lb-wm'),grid:$$h('.lb-grid'),ax:$$h('.lb-ax'),leads:$$h('.lb-leads'),lines:$$h('.lb-lines'),hair:$$h('.lb-hair'),dots:$$h('.lb-dots'),pill:$$h('.lb-pill'),when:$$h('.lb-when')};
  const lineEls=[...G.lines.children],dotEls=[...G.dots.children];
  let yv=w.outs.map(o=>fresh?new Float32Array(o.h.length).fill(y(o.p)):Float32Array.from(o.h,y));
  /* labels never overlap: sort by height, merge colliding neighbours into a group centred on their lines, keep in bounds */
@@ -4259,6 +4262,9 @@ function mount(host,e,first,only){
   return at}
  function layout(){GW=measure();XR=W-GW;labs.forEach(b=>{b.style.width=(GW-LD+R)+'px'});
   G.grid.innerHTML=[0,50,100].map(v=>`<line x1="0" x2="${XR}" y1="${y(v)}" y2="${y(v)}"/>`).join('');
+  /* the watermark (Figma Event Chart › Plot › Watermark, 138 × 60 at 6 %, centred): the wordmark's box centred on
+     the plot and on the 50 line; a phone's narrow chart takes it at 104 */
+  {const ww=sm?104:138,wh=ww*178/378;G.wm.setAttribute('x',(XR/2-ww/2).toFixed(1));G.wm.setAttribute('y',(y(50)-wh/2).toFixed(1));G.wm.setAttribute('width',ww);G.wm.setAttribute('height',wh.toFixed(1))}
   G.hair.setAttribute('y1',PT-HY);G.hair.setAttribute('y2',H-PB);
   drawAxis();drawLines();
   const at=place(null),x0=XR+3,x1=XR+LD-R-2,xm=(x0+x1)/2;

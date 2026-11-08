@@ -3,7 +3,7 @@
 Interactive prototype of the DUQ prediction market.
 
 - Live: https://nshanh.github.io/DUQ/
-- Current version: v173 — no left side menu at any width; every card, the hero carousel included, in the look of Liquid Glass Medium (plain CSS); market cards on Figma Home / Market card's spacing; market cards and market rows with a plain 28 px radius, the hero carousel's cards a plain 38 px; the hero carousel's shadow fades out inside its stage; in the light theme the cards' shadow and dark edge are soft; the category row stays pinned right under the top bar, both on a frosted ground
+- Current version: v174 — no left side menu at any width; every card, the hero carousel included, in the look of Liquid Glass Medium (plain CSS); market cards on Figma Home / Market card's spacing; market cards and market rows with a plain 28 px radius, the hero carousel's cards a plain 38 px; the hero carousel's shadow fades out inside its stage; in the light theme the cards' shadow and dark edge are soft; the category row stays pinned right under the top bar, both on a frosted ground; an open market's body on Figma Outcome Body (20 on every side); the charts carry the duq wordmark at 6 % (Figma Event Chart)
 - Test page, the landing background as KokonutUI Flow Field: https://nshanh.github.io/DUQ/flow/
 
 ## Files
