@@ -6105,10 +6105,14 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
 /* v165 (the user, 8 Nov 2026: «etot stayle ya imeyu vviddu» — the market row — «eti vse toje» — the home's market cards):
    the guest hero's carousel cards and the market cards (home, categories, results) take the market rows' plain 28
    too. Placed after the @supports corner above and as heavy (1-1-0), so it wins in every browser */
-:where(.oc,.h-mc,.h-cc-card):not(#lgm):not(.lgm-x){border-radius:28px;corner-shape:round}
+:where(.oc,.h-mc):not(#lgm):not(.lgm-x){border-radius:28px;corner-shape:round}
 /* v168 (the user, 8 Nov 2026: «opasity i bordera sdelai tak kak v kartinek» + a market card): the hero carousel's
    trials of Clear (v166) and Small (v167) are over — its cards take the market cards' fill and edges again (the
-   Medium look above, as softened in v163), with the 28 corner */
+   Medium look above, as softened in v163) */
+/* v170 (the user, 8 Nov 2026: «tolko na hero izmeni na 36»): the hero carousel's cards alone get a plain 36 (market
+   cards and rows stay 28); every width, the phone's 28 (5xl) included. The system has no 36 radius (6xl 32, 7xl 40),
+   so a plain value. The slide inside (.h-cc-in) inherits it */
+.h-cc-card:not(#lgm):not(.lgm-x){border-radius:36px;corner-shape:round}
 /* the phone's trade sheet: rounded on top only, and Medium's frost, since it slides over the page */
 @media (max-width:900px){
   .trade:not(#lgm):not(.lgm-x){border-radius:34px 34px 0 0;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
