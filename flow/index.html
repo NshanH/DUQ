@@ -2717,6 +2717,54 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 @media (max-width:900px) { .h-rail { display: flex; height: auto; gap: var(--spacing-xl); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: calc(-1 * var(--spacing-xs)) calc(-1 * var(--sizing-layout-gutter_mobile)) calc(-1 * var(--spacing-4xl)); padding: var(--spacing-xs) var(--sizing-layout-gutter_mobile) var(--spacing-4xl); scroll-padding: 0 var(--sizing-layout-gutter_mobile); } }
 @media (max-width:900px) { .h-rail::-webkit-scrollbar { display: none; } }
 @media (max-width:900px) { .h-rail > * { flex: 0 0 272px; height: 112px; scroll-snap-align: start; } }
+/* ---------- v178 (the user, 8 Nov 2026: six ideas for the place beside the signed-in banner → «davai 6 poprobuem»):
+   one card, «Your calls» — a ring with a segment per call (green going the user's way, red against, grey flat), and
+   the four calls that move the most on a 0–100 track: where it was bought (tick) and where it is now (dot) ---------- */
+.h-rail.h-rail-one { grid-template-rows: minmax(0, 1fr); }
+.h-zone.h-stack .h-rail.h-rail-one { grid-template-columns: minmax(0, 1fr); height: auto; }
+@media (max-width:900px) { .h-rail.h-rail-one { display: block; overflow: visible; margin: 0; padding: 0; } .h-rail.h-rail-one > .h-calls { height: auto; } }
+.h-wc.h-calls { justify-content: flex-start; gap: var(--spacing-xl); cursor: default; }   /* over .h-wc's space-between, later in the file */
+.h-calls.h-wc:hover { translate: none; }
+.h-calls-head { display: flex; min-width: 0; align-items: center; gap: var(--spacing-sm); color: var(--text-med_em); text-decoration: none; }
+.h-calls-head .h-wc-chev { margin-left: 0; }
+.h-calls-t { margin-right: auto; }
+@media (hover: hover) { .h-calls-head:hover .h-calls-t { color: var(--text-high_em); } .h-calls-head:hover .h-wc-chev { translate: 2px 0; color: var(--text-high_em); } }
+.h-calls .up { color: var(--text-success_med_em); }
+.h-calls .down { color: var(--text-danger_med_em); }
+.h-calls .flat { color: var(--text-med_em); }
+.h-calls-body { display: flex; min-height: 0; flex-direction: column; gap: var(--spacing-xl); }
+.h-calls-score { display: flex; align-items: center; gap: var(--spacing-xl); }
+.h-calls-score svg { flex: none; width: 72px; height: 72px; transform: rotate(-90deg); }
+.h-calls-arc { fill: none; stroke: var(--neutral_inverse_white-alpha_16); stroke-width: 7; stroke-linecap: round; }
+.h-calls-arc.up { stroke: var(--text-success_med_em); }
+.h-calls-arc.down { stroke: var(--text-danger_med_em); }
+.h-calls-sc { display: flex; flex-direction: column; gap: var(--spacing-xxs); color: var(--text-med_em); }
+.h-calls-sc b { white-space: nowrap; color: var(--text-high_em); }
+.h-calls-list { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+.h-calls-row { display: flex; min-width: 0; flex-direction: column; gap: var(--spacing-sm); color: inherit; text-decoration: none; }
+.h-calls-rh { display: flex; min-width: 0; align-items: center; gap: var(--spacing-sm); }
+.h-calls-n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-high_em); }
+@media (hover: hover) { .h-calls-row:hover .h-calls-n { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; } }
+.h-calls-side.yes { color: var(--text-success_med_em); }
+.h-calls-side.no { color: var(--text-danger_med_em); }
+.h-calls-pnl { margin-left: auto; white-space: nowrap; }
+.h-calls-track { position: relative; height: 6px; border-radius: var(--radius-border_radius_round); background: var(--neutral_inverse_white-alpha_10); }
+.h-calls-seg { position: absolute; top: 0; bottom: 0; border-radius: inherit; background: var(--neutral_inverse_white-alpha_24); }
+.h-calls-seg.up { background: var(--text-success_med_em); }
+.h-calls-seg.down { background: var(--text-danger_med_em); }
+.h-calls-ent { position: absolute; top: -4px; width: 2px; height: 14px; margin-left: -1px; border-radius: 1px; background: var(--text-med_em); }
+.h-calls-now { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--surface-ink); box-shadow: 0 0 0 3px var(--bg); }
+.h-calls-key { display: flex; align-items: center; gap: var(--spacing-xs); margin-top: auto; color: var(--text-low_em); }
+.h-calls-key i { display: inline-block; flex: none; }
+.h-calls-key .k-ent { width: 2px; height: 10px; border-radius: 1px; background: var(--text-med_em); }
+.h-calls-key .k-now { width: 8px; height: 8px; margin-left: var(--spacing-md); border-radius: 50%; background: var(--surface-ink); }
+.h-calls-empty { display: flex; flex-direction: column; gap: var(--spacing-xs); color: var(--text-med_em); }
+.h-calls-empty b { color: var(--text-high_em); }
+/* wide (the card under a narrow banner): the ring beside the tracks, the tracks in two columns */
+@container (min-width: 560px) {
+  .h-calls-body { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--spacing-5xl); }
+  .h-calls-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--spacing-3xl); }
+}
 /* the card beside the banner: caption + chevron on top, the figure and its companion at the foot */
 .h-wc { position: relative; display: flex; min-width: 0; min-height: 0; flex-direction: column; justify-content: space-between; gap: var(--spacing-sm); overflow: hidden; border-radius: var(--radius-border_radius_22); padding: var(--spacing-xxl) var(--spacing-2xl); cursor: pointer; container-type: inline-size; animation: h-rise var(--h-d-rise) var(--spring) backwards; transition: translate var(--h-d-medium) var(--spring), box-shadow var(--h-d-base); }
 .h-wc:nth-child(2) { animation-delay: 70ms; }
@@ -3177,12 +3225,12 @@ html[data-theme=dark] .money .qr{background:#fff}
         <button type="button" role="menuitemradio" data-hproto="sum:100k" aria-checked="false">Over 100,000</button>
         <button type="button" role="menuitemradio" data-hproto="sum:1m" aria-checked="false">Over 1,000,000</button>
       </div>
-      <div class="proto-group" data-g="href" role="group" aria-label="Home · Invite friends">
-        <div class="glbl" aria-hidden="true">Home · Invite friends</div>
+      <div class="proto-group" data-g="href" role="group" aria-label="Invite friends">
+        <div class="glbl" aria-hidden="true">Invite friends</div>
         <button type="button" role="menuitemradio" data-hproto="ref:claim" aria-checked="true">Reward to claim</button>
         <button type="button" role="menuitemradio" data-hproto="ref:none" aria-checked="false">Nothing to claim</button>
       </div>
-      <div class="proto-group" data-g="hthird" role="group" aria-label="Home · Third card">
+      <div class="proto-group" data-g="hthird" role="group" aria-label="Home · Third card" hidden>   <!-- v178: no third card on the home -->
         <div class="glbl" aria-hidden="true">Home · Third card</div>
         <button type="button" role="menuitemradio" data-hproto="third:soon" aria-checked="true">Closing soon</button>
         <button type="button" role="menuitemradio" data-hproto="third:move" aria-checked="false">Top move today</button>
@@ -4727,7 +4775,26 @@ function hCardMove(){const b=hTopMove();if(!b)return hCov('Add money','USDT · U
  return `<article class="h-gc h-wc" data-hev="${e.id}" tabindex="0" role="link"><span class="h-wc-stack">${hCap('Top move today')}<span class="h-wc-ev">${hPhoto(e,'h-p20')}<span class="${T('label-md')}">${esc(one?e.q:o.n+' · '+e.q)}</span></span></span>
   <span class="h-wc-row h-wc-mid"><b class="h-wc-fig ${T('heading-chance')} num" data-op="${e.id}-${o.i}">${o.p}%</b><span class="h-chip h-chip-sm h-${o.d>=0?'yes':'no'} ${T('label-sm-bold')} num">${hDelta(o.d)} pts</span></span></article>`}
 function hCardThird(){if(HS.third==='move')return hCardMove();if(HS.third==='deposit')return hCov('Add money','USDT · USDC','deposit');return hCardSoon()}
-const hRail=()=>hCardPositions()+hCardReferral()+hCardThird();
+/* v178: the rail is one card, «Your calls»; Positions, Invite friends and the third card stay defined for a way back
+   (was: const hRail=()=>hCardPositions()+hCardReferral()+hCardThird();) */
+const hCallFmt=v=>HS.sum!=='usual'?hSigned0(v):hSigned(v);   /* the big-sum states: whole dollars throughout */
+function hCallsInner(){
+ const head=x=>`<a class="h-calls-head" href="#account"><span class="h-calls-t ${T('label-md')}">Your calls</span>${x}${hChev}</a>`;
+ if(HS.pos==='none'||!positions.length)return head('')+`<span class="h-calls-empty"><b class="${T('heading-h3')}">No calls yet.</b><span class="${T('label-md-regular')}">Your first call shows up here.</span></span>`;
+ const k=hScale(),cl=v=>Math.min(100,Math.max(0,v));
+ const L=positions.map(p=>{const e=EVENTS[p.ev];return{p,e,o:e.outs[p.out],ent:cl(hCost(p)/p.n*100),now:cl(posValue(p)/p.n*100),d:(posValue(p)-hCost(p))*k}});
+ const dir=x=>x.now-x.ent>.5?'up':x.ent-x.now>.5?'down':'flat';
+ const n=L.length,win=L.filter(x=>dir(x)==='up').length,pnl=L.reduce((s,x)=>s+x.d,0);
+ const R=30,C=2*Math.PI*R;let ring;
+ if(n<=16){const seg=C/n,gap=n>1?4:0;ring=L.map((x,i)=>`<circle class="h-calls-arc ${dir(x)}" cx="36" cy="36" r="${R}" stroke-dasharray="${Math.max(.01,seg-gap).toFixed(2)} ${(C-seg+gap).toFixed(2)}" stroke-dashoffset="${(-i*seg).toFixed(2)}"/>`).join('')}
+ else{let at=0;ring=['up','flat','down'].map(g=>{const m=L.filter(x=>dir(x)===g).length;if(!m)return '';const len=C*m/n;const c=`<circle class="h-calls-arc ${g}" cx="36" cy="36" r="${R}" stroke-dasharray="${Math.max(.01,len-4).toFixed(2)} ${(C-len+4).toFixed(2)}" stroke-dashoffset="${(-at).toFixed(2)}"/>`;at+=len;return c}).join('')}
+ const rows=[...L].sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,4).map(x=>{const lo=Math.min(x.ent,x.now),hi=Math.max(x.ent,x.now);
+  return `<a class="h-calls-row" href="#event/${x.p.ev}"><span class="h-calls-rh">${hPhoto(x.e,'h-p20')}<span class="h-calls-n ${T('label-sm-bold')}">${esc(x.e.outs.length===1?x.e.q:x.o.n)}</span><span class="h-calls-side ${x.p.side} ${T('label-sm-bold')}">${x.p.side==='yes'?'Yes':'No'}</span><b class="h-calls-pnl ${hDir(x.d)} ${T('label-sm-bold')} num">${hCallFmt(x.d)}</b></span><span class="h-calls-track" aria-hidden="true"><i class="h-calls-seg ${dir(x)}" style="left:${lo.toFixed(1)}%;width:${(hi-lo).toFixed(1)}%"></i><i class="h-calls-ent" style="left:${x.ent.toFixed(1)}%"></i><i class="h-calls-now" style="left:${x.now.toFixed(1)}%"></i></span></a>`}).join('');
+ return head(`<b class="${hDir(pnl)} ${T('label-sm-bold')} num">${hCallFmt(pnl)}</b>`)
+  +`<span class="h-calls-body"><span class="h-calls-score"><svg viewBox="0 0 72 72" aria-hidden="true">${ring}</svg><span class="h-calls-sc"><b class="${T('display-stat-md')} num">${win} of ${n}</b><span class="${T('label-sm-regular')}">going your way</span></span></span><span class="h-calls-list">${rows}</span></span>`
+  +`<span class="h-calls-key ${T('label-sm-regular')}" aria-hidden="true"><i class="k-ent"></i>bought at<i class="k-now"></i>now</span>`}
+const hCardCalls=()=>`<article class="h-gc h-wc h-calls" aria-label="Your calls">${hCallsInner()}</article>`;
+const hRail=()=>hCardCalls();
 function hRailAfter(root){const rail=hq('.h-rail',root);if(!rail)return;hydratePics(rail);const c1=hq('.h-mx-card',rail);if(c1){hFitPill(c1);hSizeRO.observe(c1);hCountUp(c1)}const au=hq('.h-au',rail);if(au)hAuroraMount(au)}
 function hRenderRail(){const rail=hq('#home-body .h-rail');if(!rail)return;rail.innerHTML=hRail();hRailAfter(rail.parentNode)}
 /* a narrow window (the cards still beside the banner below 900 px of zone): the cards go under it, in a row */
@@ -4742,7 +4809,7 @@ function renderHome(){const body=hq('#home-body');let html='';
   html=`<div class="h-root"><div class="cathead"><a class="s-back h-t-body-sm-semibold" href="#home">← Home</a><h1 id="home-h1" tabindex="-1">Search</h1><p>${list.length} ${list.length===1?'result':'results'} for “${esc(query)}”</p></div>`+(list.length?`<div class="h-grid">${list.map(e=>sStat(e)?sDone(e):hCard(e)).join('')}</div>`:`<div class="card empty"><b>No markets for “${esc(query)}”.</b>Try a shorter word.</div>`)+'</div>'}
  else if(curCat){const list=evList(curCat);html=`<div class="h-root"><div class="cathead"><h1 id="home-h1" tabindex="-1">${catTitle(curCat)}</h1><p>${list.length?list.length+' market'+(list.length===1?'':'s'):''}</p></div>`+(list.length?`<div class="h-grid">${list.map(e=>hCard(e)).join('')}</div>`:`<div class="card empty"><b>Nothing here yet.</b>New markets land every week.<div><a class="btn ink" href="#home">See all markets</a></div></div>`)+'</div>'}
  /* signed out: the Connected Carousel alone (the user, 3 Oct 2026: the right block goes); signed in: the banner and its card */
- else html=`<div class="h-root h-home"><h1 id="home-h1" tabindex="-1" class="sr-only">Markets</h1><div class="h-zone${user?'':' h-solo'}">${user?hFeatured()+`<div class="h-rail">${hRail()}</div>`:hCarousel()}</div>${hSections()}</div>`;
+ else html=`<div class="h-root h-home"><h1 id="home-h1" tabindex="-1" class="sr-only">Markets</h1><div class="h-zone${user?'':' h-solo'}">${user?hFeatured()+`<div class="h-rail h-rail-one">${hRail()}</div>`:hCarousel()}</div>${hSections()}</div>`;
  body.innerHTML=html;hydratePics(body);
  hLayoutZone(body);hLayoutGrids(body);hDraw(body);
  const fb=hq('#hfb',body);if(fb){bindFeatured(fb);fsWatch(fb);hRailAfter(body);featAuto()}else{const cc=hq('.h-cc',body);if(cc){hccMount(cc);featAuto()}else featOn=false}}
@@ -5791,7 +5858,7 @@ function applyTick(e,o,old){
  $$(`[data-pick^="${e.id}|${o.i}|"]`).forEach(b=>{const s=b.dataset.pick.endsWith('yes')?'yes':'no';b.setAttribute('aria-label',outLabel(e,o,s));const sm=b.querySelector('small');if(sm)sm.textContent=priceOf(e,o,s)+'¢'});
  if(view==='home'){hqa(`#home-body .h-mline[data-ev="${e.id}"]`).forEach(hLine);hqa(`#home-body .h-ec[data-ev="${e.id}"]`).forEach(el=>hEC(el,true));
   const fb=hfbEl();if(fb&&e.id===FEATURED.ev&&hIsEx(e)){const big=hq('.h-fs:not(.h-fs-out) .h-fs-big [data-op]',fb);if(big&&big.dataset.op!==e.id+'-'+hLeaders(e,1)[0].i)hFsFit(fb)}
-  if(positions.some(p=>p.ev===e.id)){const c=hq('#home-body .h-rail > :first-child');if(c&&c.classList.contains('h-mx-card')){const t=document.createElement('div');t.innerHTML=hCardPositions();const n=t.firstElementChild;c.replaceWith(n);if(n.classList.contains('h-mx-card')){hFitPill(n);hSizeRO.observe(n)}}}}
+  if(positions.some(p=>p.ev===e.id)){const c=hq('#home-body .h-rail > :first-child');if(c&&c.classList.contains('h-calls')){c.innerHTML=hCallsInner();hydratePics(c)}else if(c&&c.classList.contains('h-mx-card')){const t=document.createElement('div');t.innerHTML=hCardPositions();const n=t.firstElementChild;c.replaceWith(n);if(n.classList.contains('h-mx-card')){hFitPill(n);hSizeRO.observe(n)}}}}
  /* event page */
  if(view==='event'&&e.id===curEv){const el=$('#ocp-'+o.i);if(el){tween(el,old,o.p,v=>Math.round(v));const h=el.closest('.ochead');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
   /* the book follows the price: a new snapshot for the new price, your rows in it (skipped when a fill just redrew it) */
