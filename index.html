@@ -7021,6 +7021,39 @@ html[data-theme=dark] :where(.h-mc,.h-wc:not(.h-fx),.h-fb:not(.h-cc .h-fb),.card
    the guest hero's carousel cards and the market cards (home, categories, results) take the market rows' plain 28
    too. Placed after the @supports corner above and as heavy (1-1-0), so it wins in every browser */
 :where(.oc,.h-mc,.h-cc-card):not(#lgm):not(.lgm-x){border-radius:28px;corner-shape:round}
+/* v166 (the user, 8 Nov 2026: «davai zdes poprobuem clear» → the hero carousel): the guest hero's carousel cards try
+   Liquid Glass - Clear of the same system (IOSClear: glass for media — the photo's glow behind shows through), keeping
+   their 28 corner. The cards turn in 3D, so each is its own stacking context and no blend mode inside can reach the
+   page: Clear's layers are written as the plain colours they give — over our dark ground (dark) and the light one —
+   · fill: #101010 Linear Dodge + white .04 Luminosity = about +25 levels on a dark ground → white .1; on the light
+     ground it clips to white → white .9;
+   · the inner shade under the top edge (#e6e6e6 Plus Darker, Chrome's 0 40 30 −40 profile over 37 px) as a gradient;
+   · the 0.5 px ring #ccc and the crescents #d0d0d0 (Plus Darker); the rims #141414 top / #343434 bottom and the light
+     at 40 % (top .3/.094, bottom .131/.075, Plus Lighter) — on the light ground those clip to white, so they go;
+   · frost 6 = blur 3px; the drop shadow 0 8 15 at .02. */
+.h-cc-card:not(#lgm):not(.lgm-x){
+  --lgc-fill:rgb(255 255 255 / .9);
+  --lgc-shade:rgb(0 0 0 / .049),rgb(0 0 0 / .039) 4px,rgb(0 0 0 / .029) 8px,rgb(0 0 0 / .02) 12px,rgb(0 0 0 / .013) 16px,rgb(0 0 0 / .008) 20px,rgb(0 0 0 / .003) 26px,rgb(0 0 0 / .001) 32px,rgb(0 0 0 / 0) 37px;
+  --lgc-ring:rgb(0 0 0 / .21);--lgc-side:rgb(0 0 0 / .2);
+  --lgc-rimt:rgb(255 255 255 / 0);--lgc-rimb:rgb(255 255 255 / 0);
+  --lgc-t1:rgb(255 255 255 / 0);--lgc-t2:rgb(255 255 255 / 0);--lgc-b1:rgb(255 255 255 / 0);--lgc-b2:rgb(255 255 255 / 0);
+  background:linear-gradient(var(--lgc-shade)) no-repeat,var(--lgc-fill);
+  box-shadow:
+    inset 0 .5px 0 var(--lgc-t1),inset 0 1px 0 var(--lgc-t2),inset 0 -.5px 0 var(--lgc-b1),inset 0 -1px 0 var(--lgc-b2),
+    inset 0 40px 10px -40px var(--lgc-rimt),inset 0 -40px 10px -40px var(--lgc-rimb),
+    0 0 0 .5px var(--lgc-ring),1.25px 0 0 -.75px var(--lgc-side),-1.25px 0 0 -.75px var(--lgc-side),
+    0 8px 15px rgb(0 0 0 / .02);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+}
+html[data-theme=dark] .h-cc-card:not(#lgm):not(.lgm-x){
+  --lgc-fill:rgb(255 255 255 / .1);
+  --lgc-shade:rgb(0 0 0 / .347),rgb(0 0 0 / .273) 4px,rgb(0 0 0 / .205) 8px,rgb(0 0 0 / .143) 12px,rgb(0 0 0 / .092) 16px,rgb(0 0 0 / .057) 20px,rgb(0 0 0 / .023) 26px,rgb(0 0 0 / .006) 32px,rgb(0 0 0 / 0) 37px;
+  --lgc-ring:rgb(0 0 0 / .9);--lgc-side:rgb(0 0 0 / .85);
+  --lgc-rimt:rgb(255 255 255 / .091);--lgc-rimb:rgb(255 255 255 / .24);
+  --lgc-t1:rgb(255 255 255 / .37);--lgc-t2:rgb(255 255 255 / .115);--lgc-b1:rgb(255 255 255 / .16);--lgc-b2:rgb(255 255 255 / .09);
+}
+/* the carousel's hidden cards keep no frost (as before) */
+.h-cc-card.h-cc-hid:not(#lgm):not(.lgm-x){-webkit-backdrop-filter:none;backdrop-filter:none}
 /* the phone's trade sheet: rounded on top only, and Medium's frost, since it slides over the page */
 @media (max-width:900px){
   .trade:not(#lgm):not(.lgm-x){border-radius:34px 34px 0 0;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
