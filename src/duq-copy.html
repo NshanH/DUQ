@@ -1900,8 +1900,36 @@ html[data-theme=dark] .h-cc-amb { opacity: .34; }
 .h-tick-set { display: flex; gap: var(--spacing-md); padding-right: var(--spacing-md); }
 .h-tick:hover .h-tick-track, .h-tick:focus-within .h-tick-track, .h-tick.paused .h-tick-track { animation-play-state: paused; }
 @keyframes h-tick { to { transform: translateX(-50%); } }
-.h-tick-pill { display: flex; flex: none; align-items: center; gap: var(--spacing-md); height: 44px; padding: 0 var(--spacing-2xl) 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); background: var(--neutral_inverse_white-alpha_5); box-shadow: inset 0 0 0 var(--sizing-border-hairline) var(--neutral_inverse_white-alpha_10); color: var(--text-high_em); text-decoration: none; white-space: nowrap; }
-@media (hover: hover) { .h-tick-pill:hover { background: var(--neutral_inverse_white-alpha_10); } }
+.h-tick-pill { display: flex; flex: none; align-items: center; gap: var(--spacing-md); height: 44px; padding: 0 var(--spacing-2xl) 0 var(--spacing-md); border-radius: var(--radius-border_radius_round); color: var(--text-high_em); text-decoration: none; white-space: nowrap; }
+/* v182 (the user, 8 Nov 2026: «eti chipi izmeni na liquid glass small»): the ticker's chips in Liquid Glass — Small of the
+   user's system (IOSGlass size="small"), the CSS copy first written for the hero carousel in v167: the fill, the inner
+   shade under the top edge, the 0.5 px ring and side crescents, the rims and light lines, a soft drop. No frost: the
+   chips move, and over the plain ground a blur would show nothing but cost every frame */
+.h-tick-pill {
+  --lgs-fill: rgb(242 242 242 / .55);
+  --lgs-shade: rgb(0 0 0 / .052), rgb(0 0 0 / .041) 4px, rgb(0 0 0 / .031) 8px, rgb(0 0 0 / .021) 12px, rgb(0 0 0 / .014) 16px, rgb(0 0 0 / .009) 20px, rgb(0 0 0 / .003) 26px, rgb(0 0 0 / .001) 32px, rgb(0 0 0 / 0) 37px;
+  --lgs-ring: rgb(0 0 0 / .096); --lgs-side: rgb(0 0 0 / .196);
+  --lgs-rim: rgb(255 255 255 / .9); --lgs-rimx: rgb(255 255 255 / .9);
+  --lgs-t1: rgb(255 255 255 / 0); --lgs-t2: rgb(255 255 255 / 0); --lgs-b1: rgb(255 255 255 / 0); --lgs-b2: rgb(255 255 255 / 0);
+  --lgs-drop: rgb(0 0 0 / .02);
+  background: linear-gradient(var(--lgs-shade)) no-repeat, var(--lgs-fill);
+  box-shadow:
+    inset 0 .5px 0 var(--lgs-t1), inset 0 1px 0 var(--lgs-t2), inset 0 -.5px 0 var(--lgs-b1), inset 0 -1px 0 var(--lgs-b2),
+    inset 0 40px 10px -40px var(--lgs-rim), inset 0 -40px 10px -40px var(--lgs-rim),
+    inset 0 40px 10px -40px var(--lgs-rimx), inset 0 -40px 10px -40px var(--lgs-rimx),
+    inset 0 40px 10px -40px var(--lgs-rimx), inset 0 -40px 10px -40px var(--lgs-rimx),
+    0 0 0 .5px var(--lgs-ring), 1.25px 0 0 -.75px var(--lgs-side), -1.25px 0 0 -.75px var(--lgs-side),
+    0 8px 15px var(--lgs-drop);
+}
+html[data-theme=dark] .h-tick-pill {
+  --lgs-fill: rgb(255 255 255 / .1);
+  --lgs-shade: rgb(0 0 0 / .357), rgb(0 0 0 / .281) 4px, rgb(0 0 0 / .211) 8px, rgb(0 0 0 / .147) 12px, rgb(0 0 0 / .095) 16px, rgb(0 0 0 / .059) 20px, rgb(0 0 0 / .024) 26px, rgb(0 0 0 / .006) 32px, rgb(0 0 0 / 0) 37px;
+  --lgs-ring: rgb(0 0 0 / .9); --lgs-side: rgb(0 0 0 / .85);
+  --lgs-rim: rgb(255 255 255 / .107); --lgs-rimx: rgb(255 255 255 / 0);
+  --lgs-t1: rgb(255 255 255 / .2); --lgs-t2: rgb(255 255 255 / .076); --lgs-b1: rgb(255 255 255 / .12); --lgs-b2: rgb(255 255 255 / .085);
+  --lgs-drop: rgb(0 0 0 / .04);
+}
+@media (hover: hover) { .h-tick-pill:hover { --lgs-fill: rgb(242 242 242 / .75); } html[data-theme=dark] .h-tick-pill:hover { --lgs-fill: rgb(255 255 255 / .14); } }
 .h-tick-pill .h-photo { width: 28px; height: 28px; border-radius: 50%; }
 .h-tick-lead { color: var(--text-med_em); }
 .h-tick-d.up { color: var(--text-success_med_em); }
