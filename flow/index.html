@@ -1989,7 +1989,7 @@ html[data-theme=dark] .toast[data-type=info]{--t-disc:var(--color-info-600)}
 .modal .close{position:absolute;right:16px;top:16px}
 .modal .card{position:relative}
 .modal .card.money{max-height:calc(100vh - 32px);overflow:auto;padding:22px 24px;background:rgba(255,255,255,.97);backdrop-filter:none;-webkit-backdrop-filter:none}
-.money .lbl{margin-top:12px;margin-bottom:6px}
+.money .lbl{margin-top:12px;margin-bottom:var(--spacing-md)}   /* v219 (the user, 9 Nov 2026: «v withdraw toje zagolovki inputov gap toje kak v sign in»): 8 to the field, as the sign-in labels and Figma's Field Label (spacing/md; was 6) */
 .money .pick button{padding:8px 10px}
 .money .row2 .btn{height:48px;min-width:0;padding:0 16px}
 .money .row2 .btn{flex:1;margin-top:0}   /* Back and the primary action share the row evenly and sit on one line: the single-button margin must not apply inside a row */
