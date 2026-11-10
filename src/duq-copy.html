@@ -2593,7 +2593,7 @@ html[data-theme=dark] .money .qr{background:#fff}
 <header class="header column-box">
   <a class="brand" href="#landing" aria-label="DUQ"><svg class="wm" viewBox="0 -30 378 178" aria-hidden="true" focusable="false"><use href="#wm"/></svg></a>
   <!-- v222 (the user, 10 Nov 2026: «zdes search nenujen»): no search on the landing; the app's top bar keeps its own -->
-  <div class="hacts"><div class="lbgsw" role="group" aria-label="Background version" title="Background: 1 — river of time, 2 — gravity"><button type="button" data-lbg="river" aria-pressed="false" aria-label="Background version 1: river of time">1</button><button type="button" data-lbg="gravity" aria-pressed="true" aria-label="Background version 2: gravity">2</button></div><button type="button" class="themebtn" aria-pressed="false" aria-label="Switch to dark mode"><svg class="sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M4.7 15.3l1.4-1.4M13.9 6.1l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.5 12.2A6.8 6.8 0 0 1 7.8 3.5a6.8 6.8 0 1 0 8.7 8.7Z"/></svg></button><button type="button" class="btn-text" data-enter="home" data-signin="1">Sign in</button></div>
+  <div class="hacts"><div class="lbgsw" role="group" aria-label="Background version" title="Background: Default — the crowd, 1 — river of time, 2 — gravity"><button type="button" data-lbg="dots" aria-pressed="true" aria-label="Background: Default, the crowd">Default</button><button type="button" data-lbg="river" aria-pressed="false" aria-label="Background version 1: river of time">1</button><button type="button" data-lbg="gravity" aria-pressed="false" aria-label="Background version 2: gravity">2</button></div><button type="button" class="themebtn" aria-pressed="false" aria-label="Switch to dark mode"><svg class="sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M4.7 15.3l1.4-1.4M13.9 6.1l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.5 12.2A6.8 6.8 0 0 1 7.8 3.5a6.8 6.8 0 1 0 8.7 8.7Z"/></svg></button><button type="button" class="btn-text" data-enter="home" data-signin="1">Sign in</button></div>
 </header>
 <main class="hero">
   <h1 class="headline" tabindex="-1">
@@ -5484,12 +5484,13 @@ html[data-theme=dark] #grav .gv-in{box-shadow:0 1px 0 rgba(255,255,255,.05) inse
 #grav.sm .gv-stamp{font-size:20px;padding:3px 9px;border-width:2px;border-radius:7px}
 @media (prefers-reduced-motion:reduce){#grav .gv-stamp{transition:opacity .2s ease}}
 
-/* the version switch on the landing: 1 = the river, 2 = gravity (Liquid Glass Small, like the theme button) */
+/* the version switch on the landing: Default = the crowd field (the main one, v225), 1 = the river, 2 = gravity (Liquid Glass Small, like the theme button) */
 #landing .lbgsw{display:inline-flex;align-items:center;gap:2px;height:var(--sizing-control-xl);padding:4px;border-radius:var(--radius-border_radius_round);margin-right:4px}
-#landing .lbgsw button{width:36px;height:36px;border:0;padding:0;border-radius:var(--radius-border_radius_round);background:none;color:var(--ink-2);font:600 14px/1 var(--font);cursor:pointer;transition:background-color .15s ease,color .15s ease}
+#landing .lbgsw button{min-width:36px;height:36px;border:0;padding:0 12px;border-radius:var(--radius-border_radius_round);background:none;color:var(--ink-2);font:600 14px/1 var(--font);cursor:pointer;transition:background-color .15s ease,color .15s ease}
 #landing .lbgsw button[aria-pressed=true]{background:var(--pill);color:var(--pill-ink);cursor:default}
 @media (hover:hover) and (pointer:fine){#landing .lbgsw button[aria-pressed=false]:hover{color:var(--ink)}}
 #landing .lbgsw button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+@media (max-width:640px){#landing .lbgsw{height:40px;padding:3px;gap:1px;margin-right:2px}#landing .lbgsw button{min-width:32px;height:34px;padding:0 9px;font-size:13px}}
 </style>
 <script>
 /* v223 / v224 — the landing's ground in two versions (switch 1 / 2 in the landing header, keys 1 / 2, ?bg=1|2, remembered):
@@ -5717,20 +5718,25 @@ function duqGravity(land){
 
 (function(){
  const land=document.getElementById('landing');if(!land)return;
- const cv=document.getElementById('field');if(cv)cv.style.display='none';
- const makers={river:duqRiver,gravity:duqGravity},inst={};let cur=null;
- window.DUQ_LBG='river';   // any value but 'dots' keeps the old field off
- const pick=()=>{const q=new URLSearchParams(location.search).get('bg');if(q==='1'||q==='river')return'river';if(q==='2'||q==='gravity')return'gravity';try{const v=localStorage.getItem('duq-lbg');if(makers[v])return v}catch(e){}return'gravity'};
+ const cv=document.getElementById('field');if(cv)cv.style.display='none';   /* shown again when Default is picked */
+ /* Default = the dot-crowd field (its own script below; it hands its API over through duqBgRegister) */
+ let dots=null;
+ const duqDots=()=>({root:null,show(on){if(cv)cv.style.display=on?'':'none';if(!on){if(dots)dots.stop();land.querySelectorAll('.headline .w,.headline .v,.headline .q').forEach(e=>{e.style.transform='';e.style.color='';e.style.fontVariationSettings=''})}},
+  start(){if(!dots){if(window.duqDotsBoot)window.duqDotsBoot();return}dots.repaint&&dots.repaint();dots.start()},stop(){if(dots)dots.stop()},commit(y){if(dots)dots.commit(y)}});
+ const makers={dots:duqDots,river:duqRiver,gravity:duqGravity},inst={};let cur=null;
+ window.duqBgRegister=a=>{dots=a;if(document.documentElement.dataset.theme==='dark')a.setTheme(true);if(cur==='dots'&&live())a.start()};
+ const pick=()=>{const q=new URLSearchParams(location.search).get('bg');if(q==='0'||q==='default'||q==='dots')return'dots';if(q==='1'||q==='river')return'river';if(q==='2'||q==='gravity')return'gravity';try{const v=localStorage.getItem('duq-lbg-v3');if(makers[v])return v}catch(e){}return'dots'};
  const live=()=>!window.duqLive||window.duqLive();
- function use(k,save){if(!makers[k]||cur===k)return;if(cur&&inst[cur]){inst[cur].stop();inst[cur].root.hidden=true}
-  cur=k;window.DUQ_LBG=k;if(!inst[k])inst[k]=makers[k](land);inst[k].root.hidden=false;
-  if(save){try{localStorage.setItem('duq-lbg',k)}catch(e){}}
+ function show(k,on){const i=inst[k];if(!i)return;if(i.show)i.show(on);else{i.root.hidden=!on;if(!on)i.stop()}}
+ function use(k,save){if(!makers[k]||cur===k)return;if(cur){inst[cur].stop();show(cur,false)}
+  cur=k;window.DUQ_LBG=k;if(!inst[k])inst[k]=makers[k](land);show(k,true);
+  if(save){try{localStorage.setItem('duq-lbg-v3',k)}catch(e){}}
   document.querySelectorAll('#landing .lbgsw [data-lbg]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lbg===k)));
   if(live())inst[k].start()}
- window.duqField={start(){if(cur)inst[cur].start()},stop(){if(cur)inst[cur].stop()},commit(y){if(cur)inst[cur].commit(y)},setTheme(){}};
+ window.duqField={start(){if(cur)inst[cur].start()},stop(){if(cur)inst[cur].stop()},commit(y){if(cur)inst[cur].commit(y)},setTheme(d){if(dots)dots.setTheme(d)}};
  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#landing .lbgsw [data-lbg]');if(b)use(b.dataset.lbg,true)});
  document.addEventListener('keydown',e=>{if(!document.body.classList.contains('is-landing')||e.metaKey||e.ctrlKey||e.altKey)return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
-  if(e.key==='1')use('river',true);else if(e.key==='2')use('gravity',true)});
+  if(e.key==='0')use('dots',true);else if(e.key==='1')use('river',true);else if(e.key==='2')use('gravity',true)});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)window.duqField.stop();else if(live())window.duqField.start()});
  use(pick(),false);
 })();
@@ -5738,7 +5744,10 @@ function duqGravity(land){
 <script>
 (function () {
   'use strict';
-  if (window.DUQ_LBG && window.DUQ_LBG !== 'dots') return;   // v223 / v224: the landing's ground is version 1 (river) or 2 (gravity); this dot-crowd field is kept, switched off
+  // v225 (the user: «moi osnovnoi budet default versia»): this dot-crowd field is the landing's Default ground again; versions 1 (river) and
+  // 2 (gravity) sit beside it on the switch. It boots now when Default is on, else later when the switch picks it; it only runs while on.
+  var deferred = !!(window.DUQ_LBG && window.DUQ_LBG !== 'dots');
+  var isOn = function () { return !window.DUQ_LBG || window.DUQ_LBG === 'dots'; };
 
   /* ---------- tokens used by the script (same values as the CSS above) ---------- */
   var PAGE    = [0.941, 0.941, 0.961];   // #f0f0f5 — one ground for landing and app
@@ -6772,7 +6781,7 @@ function duqGravity(land){
     window.addEventListener('touchmove', function (e) { var t = e.touches[0]; if (t) pointer(t.clientX, t.clientY); }, { passive: true });
     document.addEventListener('mouseleave', function () { mouseSeen = 0; });
     window.addEventListener('click', function (e) {
-      if (!document.body.classList.contains('is-landing')) return;
+      if (!document.body.classList.contains('is-landing') || !isOn()) return;
       if (e.target && e.target.closest && e.target.closest('a, button')) return;
       commit(e.clientX < (ax[0] + ax[1]) / 2);
     });
@@ -6812,17 +6821,19 @@ function duqGravity(land){
     var rt = 0;
     window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { measureWordBoxes(); resize(); if (!running) draw(); }, 120); });
     // the app owns the loop: it starts the field only while the landing is shown and live updates are on
-    window.duqField = {
-      start: function () { if (!reduced && !holdFrame) start(); },
+    var api = {
+      start: function () { if (!reduced && !holdFrame && isOn()) start(); },
       stop: stop,
       commit: commit,
-      setTheme: setTheme
+      setTheme: setTheme,
+      repaint: function () { words.yes.lastW = words.no.lastW = -1; words.yes.lastC = words.no.lastC = ''; words.yes.lastPop = words.no.lastPop = -1; lastQ = -1; }
     };
+    if (window.duqBgRegister) window.duqBgRegister(api); else window.duqField = api;
     if (document.documentElement.dataset.theme === 'dark') setTheme(true);
     if (reduced || holdFrame) return;                 // a complete still frame, nothing moves
     bindInput();
-    if (!window.duqLive || window.duqLive()) start();
-    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (!window.duqLive || window.duqLive()) start(); });
+    if (isOn() && (!window.duqLive || window.duqLive())) start();
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (isOn() && (!window.duqLive || window.duqLive())) start(); });
   // the first measurement can run before the web font (or the view) is ready: measure again a little later
   [300, 1200, 3000].forEach(function (ms) { setTimeout(function () { measureWordBoxes(); resize(); if (!running) draw(); }, ms); });
   }
@@ -6840,8 +6851,8 @@ function duqGravity(land){
     if ((window.innerWidth > 1 && window.innerHeight > 1) || waited > 3000) { booted = true; window.removeEventListener('resize', bootWhenSized); boot(); }
     else { waited += 120; setTimeout(bootWhenSized, 120); }
   }
-  window.addEventListener('resize', bootWhenSized);
-  bootWhenSized();
+  if (deferred) window.duqDotsBoot = function () { if (booted) return; window.addEventListener('resize', bootWhenSized); bootWhenSized(); };
+  else { window.addEventListener('resize', bootWhenSized); bootWhenSized(); }
 })();
 </script>
 <script>if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('700 96px "Onest"'),document.fonts.load('900 96px "Onest"')]).then(function(){window.dispatchEvent(new Event("resize"))}).catch(function(){})}</script>
