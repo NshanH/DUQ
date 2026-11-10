@@ -6355,9 +6355,112 @@ applyTheme(document.documentElement.dataset.theme==='dark',false);
  if(params.has('dbg')){setTimeout(()=>{const pre=document.body.appendChild(document.createElement('pre'));pre.id='dbg';pre.hidden=true;pre.textContent=(params.get('txt')||'').split(',').filter(Boolean).map(s=>{const el=document.querySelector(s);return s+' => '+(el?el.textContent.replace(/\s+/g,' ').trim().slice(0,400):'none')}).join('\n')+'\n'+params.get('dbg').split(',').map(s=>{const el=document.querySelector(s);if(!el)return s+': none';const r=el.getBoundingClientRect();return `${s}: x=${r.left.toFixed(0)} y=${r.top.toFixed(0)} w=${r.width.toFixed(0)} h=${r.height.toFixed(0)} fs=${getComputedStyle(el).fontSize} disp=${getComputedStyle(el).display}`}).join('\n')+`\nviewport ${innerWidth}x${innerHeight} scrollW=${document.documentElement.scrollWidth} body=${document.body.className}`;if(window.parent!==window)parent.postMessage(pre.textContent,'*')},1500)}
 })();
 </script>
+<style>
+/* v223 (the user, 10 Nov 2026: «snachala sdelai variant 8»): the landing's ground is idea 8 «Река времени» — real events
+   ride lanes right → left towards a Now line, the countdown melting on a log time axis, and resolve YES / NO at the line */
+#river{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:strict}
+#river .rv-lane{position:absolute;left:0;right:0;height:0;border-top:1px dashed var(--hairline)}
+#river .rv-now i{position:absolute;width:2px;margin-left:-1px;border-radius:1px;background:var(--ink-3);opacity:.6}
+#river .rv-nowlbl{position:absolute;transform:translate(-50%,-50%);font:600 11px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);background:var(--card);border:1px solid var(--hairline);border-radius:var(--radius-border_radius_round);padding:6px 10px}
+#river .rv-axis{position:absolute;right:0;height:0;border-top:1px solid var(--hairline)}
+#river .rv-tick{position:absolute;top:-4px;width:1px;height:8px;background:var(--hairline-2)}
+#river .rv-tlbl{position:absolute;top:10px;transform:translateX(-50%);font:500 11px/1 var(--font);color:var(--ink-3);white-space:nowrap}
+#river .rv-chip{position:absolute;left:0;top:0;display:flex;align-items:center;gap:8px;height:var(--rv-h,40px);padding:0 14px 0 4px;border-radius:var(--radius-border_radius_round);background:linear-gradient(var(--card),var(--card)),var(--bg);border:1px solid var(--hairline);color:var(--ink);font:600 13px/1 var(--font);white-space:nowrap;will-change:transform,opacity;box-shadow:0 2px 10px rgba(8,11,15,.06);transition:border-color .3s ease,box-shadow .5s ease}
+#river .rv-chip img,#river .rv-ph{width:calc(var(--rv-h,40px) - 8px);height:calc(var(--rv-h,40px) - 8px);border-radius:50%;object-fit:cover;flex:none;display:block;background:var(--card-2)}
+#river .rv-c{display:inline-flex;align-items:center;gap:4px;font-weight:500;color:var(--ink-3);font-variant-numeric:tabular-nums}
+#river .rv-c svg{width:10px;height:10px}
+#river .rv-chip.yes{border-color:var(--yes);box-shadow:0 0 0 4px color-mix(in srgb,var(--yes) 18%,transparent),0 0 28px color-mix(in srgb,var(--yes) 45%,transparent)}
+#river .rv-chip.no{border-color:var(--no);box-shadow:0 0 0 4px color-mix(in srgb,var(--no) 18%,transparent),0 0 28px color-mix(in srgb,var(--no) 45%,transparent)}
+#river .rv-chip.yes .rv-c{color:var(--yes-text);font-weight:700}
+#river .rv-chip.no .rv-c{color:var(--no-text);font-weight:700}
+#river .rv-ring{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:2px solid;animation:rv-ring .9s cubic-bezier(.2,.7,.3,1) forwards}
+#river .rv-ring.yes{border-color:var(--yes)}#river .rv-ring.no{border-color:var(--no)}
+@keyframes rv-ring{from{transform:scale(.6);opacity:.9}to{transform:scale(3.2);opacity:0}}
+@media (max-width:640px){#river .rv-chip{font-size:12px;gap:6px;padding-right:11px}#river .rv-tlbl{font-size:10px}}
+</style>
+<script>
+/* v223 — «Река времени» (idea 8 of the low-fi sheets). Replaces the dot-crowd field: its script stays in the file and
+   returns early while DUQ_LBG is 'river'. Same API as the field (window.duqField: start / stop / commit / setTheme), so
+   routing, live updates and the y / n keys keep working: y / n sends the next event rushing to Now with your answer. */
+window.DUQ_LBG='river';
+(function(){
+ 'use strict';
+ const land=document.getElementById('landing');if(!land)return;
+ const cv=document.getElementById('field');if(cv)cv.style.display='none';
+ const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ /* [event id, chip title, chance of Yes] — titles and odds from the prototype's own markets */
+ const RIV=[['btc','Bitcoin above $150k',41],['eth','Ethereum below $1,500',64],['ecb','ECB cuts in October',62],['ucl','Chelsea beat Barcelona',40],['nba','Clippers beat the Raptors',45],['dota','Zero Tenacity win',42],['nuclear','Nuclear detonation in 2025',23],['khamenei','Khamenei out in 2025',23],['nigeria','US strikes Nigeria by December',21],['santa','Santa delivers 7B+ gifts',71],['dotamajor','Juggernaut wins the major',18],['shutdown','Shutdown lasts 30+ days',62],['dem2028','Newsom wins the nomination',31],['eth','Ethereum below $1,000',22],['eth','Ethereum below $3,000',83],['santa','Santa delivers 8B+ gifts',24],['shutdown','Shutdown lasts 60+ days',12],['dem2028','Harris wins the nomination',22],['ucl','Chelsea and Barcelona draw',24]];
+ const picOf=id=>{try{const e=EVENTS[id];return e&&PIC[e.pic]||''}catch(_){return ''}};
+ const CHECK='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6.5l2.6 2.6L10 3.4"/></svg>';
+ const CROSS='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6"/></svg>';
+ /* log time axis: u = 0 at Now, u = 1 at the right edge = 45 days */
+ const T0=10,TMAX=45*1440,A=Math.log(1+TMAX/T0);
+ const tAt=u=>T0*(Math.exp(A*u)-1),uAt=t=>Math.log(1+t/T0)/A;
+ const fmt=t=>t<55?`in ${Math.max(5,Math.round(t/5)*5)} min`:t<1410?`in ${Math.max(1,Math.round(t/60))} h`:t<2*1440?'in 1 day':t<13*1440?`in ${Math.round(t/1440)} days`:`in ${Math.round(t/10080)} weeks`;
+ const root=document.createElement('div');root.id='river';root.setAttribute('aria-hidden','true');
+ root.innerHTML='<div class="rv-lanes"></div><div class="rv-now"></div><div class="rv-axis"></div><div class="rv-chips"></div>';
+ land.insertBefore(root,land.firstChild);
+ const lanesEl=root.querySelector('.rv-lanes'),nowEl=root.querySelector('.rv-now'),axisEl=root.querySelector('.rv-axis'),chipsEl=root.querySelector('.rv-chips');
+ let W=0,H=0,nowX=0,axisY=0,chipH=40,lanes=[],chips=[],raf=0,last=0,running=false,warming=false,deck=[],dk=0;
+ const nextEv=()=>{for(let k=0;k<RIV.length;k++){if(dk>=deck.length){deck=RIV.slice().sort(()=>Math.random()-.5);dk=0}const e=deck[dk++];if(!chips.some(c=>c.t===e[1]))return e}return deck[dk-1]};   /* no event twice on screen */
+ const R=el=>el?el.getBoundingClientRect():null;
+ function layout(){
+  W=window.innerWidth;H=window.innerHeight;const phone=W<=640;chipH=phone?32:40;root.style.setProperty('--rv-h',chipH+'px');
+  const hdr=R(land.querySelector('.header')),h1=R(land.querySelector('.headline')),cta=R(land.querySelector('.cta'));
+  const top=(hdr&&hdr.bottom>0?hdr.bottom:72)+(phone?8:14);
+  nowX=Math.round(Math.max(phone?40:96,Math.min(W*.14,300)));
+  axisY=H-(phone?34:40);
+  const bTop=h1&&h1.height?h1.top:H*.36,bBot=cta&&cta.height?cta.bottom:H*.64;
+  const step=chipH+(phone?16:24),maxPer=H>1100?3:2;
+  const bands=[[top+28+chipH/2,bTop-chipH/2-22],[bBot+chipH/2+26,axisY-chipH/2-24]];
+  const ys=[];bands.forEach(([a,b])=>{if(b<a)return;const n=Math.min(maxPer,Math.floor((b-a)/step)+1);const y0=a+((b-a)-(n-1)*step)/2;for(let i=0;i<n;i++)ys.push(Math.round(y0+i*step))});
+  const base=Math.max(14,Math.min(32,W*.018));
+  let changed=false;if(ys.length!==lanes.length){chips.forEach(c=>c.el.remove());chips=[];lanes=ys.map((y,i)=>({y,v:base*(.86+((i*3)%5)*.07),list:[],gap:0}));changed=true}
+  else lanes.forEach((l,i)=>{l.y=ys[i];l.v=base*(.86+((i*3)%5)*.07)});
+  lanesEl.innerHTML=lanes.map(l=>`<i class="rv-lane" style="top:${l.y}px"></i>`).join('');
+  const cross=h1&&nowX>h1.left-24&&nowX<h1.right+24;
+  const segs=cross?[[top+14,bTop-16],[bBot+16,axisY]]:[[top+14,axisY]];
+  nowEl.innerHTML=segs.map(([a,b])=>`<i style="left:${nowX}px;top:${a}px;height:${Math.max(0,b-a)}px"></i>`).join('')+`<span class="rv-nowlbl" style="left:${nowX}px;top:${top+14}px">Now</span>`;
+  axisEl.style.top=axisY+'px';axisEl.style.left=nowX+'px';
+  axisEl.innerHTML='<i class="rv-tick" style="left:0"></i>'+[[60,'1 h'],[1440,'1 day'],[10080,'1 week'],[43200,'1 month']].slice(0,phone?3:4).map(([t,lb])=>{const x=Math.round(uAt(t)*(W-nowX));return `<i class="rv-tick" style="left:${x}px"></i><span class="rv-tlbl" style="left:${x}px">${lb}</span>`}).join('');
+  return changed;
+ }
+ function makeChip(l,x){const [id,title,p]=nextEv();const el=document.createElement('div');el.className='rv-chip';const src=picOf(id);
+  el.innerHTML=(src?`<img src="${src}" alt="" decoding="async">`:'<i class="rv-ph"></i>')+`<span class="rv-t">${title}</span><span class="rv-c"></span>`;
+  chipsEl.appendChild(el);const c={el,l,x,w:el.offsetWidth||240,p,t:title,done:false,force:null,lbl:'',cEl:el.querySelector('.rv-c'),o:-1};l.list.push(c);chips.push(c);return c}
+ function ring(x,y,yes){if(warming)return;const r=document.createElement('i');r.className='rv-ring '+(yes?'yes':'no');r.style.left=x+'px';r.style.top=y+'px';root.appendChild(r);r.addEventListener('animationend',()=>r.remove())}
+ function step(dt){
+  for(const l of lanes){const lc=l.list[l.list.length-1];if(!lc||lc.x+lc.w<W-l.gap){makeChip(l,W+8);l.gap=70+Math.random()*(W<=640?140:300)}
+   for(const c of l.list)c.x-=(c.force!=null&&!c.done?l.v*9:l.v)*dt}
+  for(let i=chips.length-1;i>=0;i--){const c=chips[i];const head=c.x+chipH/2;
+   if(!c.done&&head<=nowX){c.done=true;const yes=c.force!=null?c.force:Math.random()*100<c.p;c.el.classList.add(yes?'yes':'no');c.cEl.innerHTML=(yes?'YES':'NO')+(yes?CHECK:CROSS);c.lbl='';ring(nowX,c.l.y,yes)}
+   if(c.x+c.w<-12){c.el.remove();chips.splice(i,1);c.l.list.splice(c.l.list.indexOf(c),1)}}
+ }
+ function paint(){const fade=Math.max(nowX,160);
+  for(const c of chips){c.el.style.transform=`translate3d(${c.x.toFixed(1)}px,${c.l.y-chipH/2}px,0)`;const head=c.x+chipH/2;
+   const o=c.done?Math.max(0,Math.min(1,(head-(nowX-fade))/fade)):1;if(Math.abs(o-c.o)>.01){c.el.style.opacity=o.toFixed(2);c.o=o}
+   if(!c.done){const lb=fmt(tAt(Math.max(0,(head-nowX)/(W-nowX))));if(lb!==c.lbl){c.cEl.textContent=lb;c.lbl=lb}}}}
+ function warm(){warming=true;for(let i=0;i<1600;i++)step(.05);warming=false;paint()}
+ function frame(t){if(!running){raf=0;return}const dt=Math.min(.05,last?(t-last)/1000:0);last=t;step(dt);paint();raf=requestAnimationFrame(frame)}
+ function start(){if(running||reduced||document.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
+ function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0}
+ function commit(yes){let best=null;for(const c of chips)if(!c.done&&c.force==null&&(!best||c.x<best.x))best=c;if(best)best.force=!!yes;if(!running&&!reduced){start()}}
+ function rebuild(){const was=running;stop();chips.forEach(c=>c.el.remove());chips=[];lanes=[];layout();warm();if(was)start()}
+ layout();warm();
+ window.duqField={start,stop,commit,setTheme(){}};
+ if(!window.duqLive||window.duqLive())start();
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else if(!window.duqLive||window.duqLive())start()});
+ let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(rebuild,160)});
+ /* the first layout can run before the web font: lanes follow the real headline once it is in */
+ const relayout=()=>{if(layout())warm();else paint()};
+ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(relayout);
+ [300,1200].forEach(ms=>setTimeout(relayout,ms));
+})();
+</script>
 <script>
 (function () {
   'use strict';
+  if (window.DUQ_LBG === 'river') return;   // v223: the river (idea 8) is the landing's ground; this dot-crowd field is kept, switched off
 
   /* ---------- tokens used by the script (same values as the CSS above) ---------- */
   var PAGE    = [0.941, 0.941, 0.961];   // #f0f0f5 — one ground for landing and app
@@ -7625,6 +7728,7 @@ html[data-theme=dark] :where(.sugg,.ot-menu,.dd-menu,.proto-menu,.card.money,.ac
     linear-gradient(to top,rgb(var(--ff-bg)) 0,rgb(var(--ff-bg) / 0) 160px)}
 #landing:not(.ff-on) #flow,#landing:not(.ff-on) #flow-shade{display:none}
 #landing.ff-on #field{visibility:hidden}
+#landing.ff-on #river{visibility:hidden}   /* v223: the landing's new ground (idea 8, the river) hides under the flow too; «Current» shows it */
 /* the Tune panel: the same quiet pill as the Hero sandbox, bottom right */
 .ftune{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:var(--spacing-md);font:var(--typeface-weight-primary-semibold) var(--typeface-size-caption_1)/var(--typeface-line_height-caption_1) var(--font);color:var(--ink)}
 .ftune>button{height:32px;padding:0 var(--spacing-xl);border-radius:var(--radius-border_radius_round);background:var(--glass-pop);border:1px solid var(--hairline);-webkit-backdrop-filter:blur(var(--blur-pop));backdrop-filter:blur(var(--blur-pop));box-shadow:var(--shadow-3);color:var(--ink);font:inherit;cursor:pointer}
