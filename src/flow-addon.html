@@ -13,7 +13,7 @@
     linear-gradient(to top,rgb(var(--ff-bg)) 0,rgb(var(--ff-bg) / 0) 160px)}
 #landing:not(.ff-on) #flow,#landing:not(.ff-on) #flow-shade{display:none}
 #landing.ff-on #field{visibility:hidden}
-#landing.ff-on #river{visibility:hidden}   /* v223: the landing's new ground (idea 8, the river) hides under the flow too; «Current» shows it */
+#landing.ff-on #river,#landing.ff-on #grav{visibility:hidden}   /* v223 / v224: the landing's grounds (1 river, 2 gravity) hide under the flow too; «Current» shows the chosen one */
 /* the Tune panel: the same quiet pill as the Hero sandbox, bottom right */
 .ftune{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:var(--spacing-md);font:var(--typeface-weight-primary-semibold) var(--typeface-size-caption_1)/var(--typeface-line_height-caption_1) var(--font);color:var(--ink)}
 .ftune>button{height:32px;padding:0 var(--spacing-xl);border-radius:var(--radius-border_radius_round);background:var(--glass-pop);border:1px solid var(--hairline);-webkit-backdrop-filter:blur(var(--blur-pop));backdrop-filter:blur(var(--blur-pop));box-shadow:var(--shadow-3);color:var(--ink);font:inherit;cursor:pointer}
