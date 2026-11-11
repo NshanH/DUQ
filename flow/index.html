@@ -3509,6 +3509,13 @@ html[data-theme=dark] .charttip{background:rgba(242,243,245,.96);color:#0e1117;b
 html[data-theme=dark] .charttip b{color:rgba(14,17,23,.6)}
 /* the QR tile stays white: scanners need it */
 html[data-theme=dark] .money .qr{background:#fff}
+/* v228 (the user, 11 Nov 2026: «text on buttons always upper case», on «Add money to buy Yes»): every button's label in capitals —
+   ink / ghost buttons and links styled as buttons, the landing's call to action, the Yes / No buttons (cards, banner, outcome
+   rows, trade panel), the duel's Back / Buy buttons, Sell / Show more, Claim / Copy, the background switch — with a light
+   tracking for capitals. Not buttons: tabs, segmented controls, selects and text links (Sign in on the landing) stay as they are.
+   Figma DS v2 still sets its button labels in sentence case: this is the user's rule on top of it */
+:is(.btn,.btn-link,button.sell,button.y,button.n,.h-btn,.h-yn,.h-duel-btns a){text-transform:uppercase;letter-spacing:.03em}
+#landing .lbgsw button{text-transform:uppercase;letter-spacing:.03em}
 </style>
 <script>try{if(localStorage.getItem('duq-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
 </head>
