@@ -6431,7 +6431,7 @@ html[data-theme=dark] #grav .gv-in{box-shadow:0 1px 0 rgba(255,255,255,.05) inse
 #landing .lbgsw button[aria-pressed=true]{background:var(--pill);color:var(--pill-ink);cursor:default}
 @media (hover:hover) and (pointer:fine){#landing .lbgsw button[aria-pressed=false]:hover{color:var(--ink)}}
 #landing .lbgsw button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-@media (max-width:640px){#landing .lbgsw{height:40px;padding:3px;gap:1px;margin-right:2px}#landing .lbgsw button{min-width:28px;height:34px;padding:0 7px;font-size:12px}}
+@media (max-width:640px){#landing .lbgsw{height:40px;padding:3px;gap:0;margin-right:0}#landing .lbgsw button{min-width:26px;height:34px;padding:0 6px;font-size:12px}}
 </style>
 <script>
 /* v223 / v224 — the landing's ground in two versions (switch 1 / 2 in the landing header, keys 1 / 2, ?bg=1|2, remembered):
@@ -6695,7 +6695,7 @@ function duqStop(land){
   if(first||reduced)apply();else{chip.classList.add('swap');setTimeout(()=>{apply();chip.classList.remove('swap')},250)}
   phase='bet';pt=0;nextBet=.3;bus=null}
  const size=()=>.86+.42*Math.pow(Math.random(),3);
- function addPerson(side,you){const s=size();people.push({side,x:side==='yes'?-14*U:W+14*U,s,ph:Math.random()*6,dir:side==='yes'?1:-1,mode:'walk',you:!!you,v:(you?92:46)*U*(.9+Math.random()*.2),a:1,fade:0,delay:0})}
+ function addPerson(side,you){const s=size();people.push({side,x:side==='yes'?-14*U:W+14*U,s,ph:Math.random()*6,dir:side==='yes'?1:-1,mode:'walk',you:!!you,v:(you?2:1)*Math.max(46*U,W*.05)*(.9+Math.random()*.2),a:1,fade:0,delay:0})}
  /* ---- the bus: a small kinematic script ---- */
  function startBus(){const nx=doorAt(NX),yx=doorAt(YX);bus={x:W+40*U,mode:'cruise',t:0,from:0,to:0,dur:0,brake:false,door:0,pax:0,need:0,wheel:0,x0:0};
   bus.brakeAt=nx+200*U;bus.stopX=outcome?yx:nx;bus.nx=nx}
@@ -6720,7 +6720,8 @@ function duqStop(land){
  function stepPeople(dt){const qi={yes:0,no:0};
   for(const p of people){
    if(p.mode==='walk'||p.mode==='queue'){const i=qi[p.side]++;const tx=slot(p.side,i);const d=tx-p.x;
-    if(Math.abs(d)>.6){const st=Math.min(Math.abs(d),p.v*dt);p.x+=Math.sign(d)*st;p.ph+=dt*2.2*Math.PI*2*(p.v/(46*U))*.9;p.dir=Math.sign(d)||p.dir;p.mode=Math.abs(d)>SP*.6?'walk':p.mode;p.moving=true}
+    if(Math.abs(d)>.6){const far=Math.abs(d),boost=1+1.4*Math.min(1,Math.max(0,(far-150*U)/(350*U))),v=p.v*boost;   /* far from the queue they hurry, near it they walk */
+     const st=Math.min(far,v*dt);p.x+=Math.sign(d)*st;p.ph+=dt*2.2*Math.PI*2*Math.min(2.6,v/(46*U))*.8;p.dir=Math.sign(d)||p.dir;p.mode=Math.abs(d)>SP*.6?'walk':p.mode;p.moving=true}
     else{p.x=tx;p.mode='queue';p.moving=false;p.dir=p.side==='yes'?1:-1}}
    else if(p.mode==='board'){if(p.delay>0){p.delay-=dt;p.moving=false;continue}const d=p.door-p.x;p.dir=Math.sign(d)||p.dir;
     if(Math.abs(d)>2){p.x+=Math.sign(d)*Math.min(Math.abs(d),p.vb*dt);p.ph+=dt*2.2*Math.PI*2*Math.min(2.4,p.vb/(46*U))*.8;p.moving=true}
@@ -6732,7 +6733,7 @@ function duqStop(land){
   for(const side of ['yes','no']){const q=people.filter(p=>p.side===side&&(p.mode==='queue'||p.mode==='walk'));if(q.length>140)for(const p of q.slice(140))p.mode='gone'}}
  function director(dt){pt+=dt;
   if(phase==='bet'){nextBet-=dt;while(nextBet<=0){addPerson(Math.random()*100<ev[2]?'yes':'no');nextBet+=-Math.log(1-Math.random())/rate}
-   if(pt>10.5){phase='bus';pt=0;startBus()}}
+   if(pt>11.5){phase='bus';pt=0;startBus()}}
   else if(phase==='bus'){busStep(dt);if(bus.mode==='gone'){phase='quiet';pt=0}}
   else if(phase==='quiet'){if(pt>.6&&!people.some(p=>p.mode==='leave'))nextEvent()}}
  /* ---- drawing ---- */
@@ -6749,7 +6750,7 @@ function duqStop(land){
  function street(){const b=BASE-TOP;c.fillStyle=col.road;c.fillRect(0,b+5*U,W,40*U);
   c.strokeStyle=col.line2;c.lineWidth=1.5;c.beginPath();c.moveTo(0,b+.5);c.lineTo(W,b+.5);c.stroke();
   c.setLineDash([10*U,12*U]);c.strokeStyle=col.line;c.lineWidth=1.2;c.beginPath();c.moveTo(0,b+44*U);c.lineTo(W,b+44*U);c.stroke();c.setLineDash([])}
- function stop(x,lab,cl){const b=BASE-TOP;c.strokeStyle=col.line2;c.lineWidth=2;c.beginPath();c.moveTo(x,b);c.lineTo(x,b-34*U);c.stroke();
+ function drawStop(x,lab,cl){const b=BASE-TOP;c.strokeStyle=col.line2;c.lineWidth=2;c.beginPath();c.moveTo(x,b);c.lineTo(x,b-34*U);c.stroke();
   rr(x-17*U,b-51*U,34*U,17*U,4*U);c.fillStyle=cl;c.fill();c.fillStyle='#fff';c.font=`800 ${Math.round(10*U)}px Onest, ${getComputedStyle(document.body).fontFamily}`;c.textAlign='center';c.textBaseline='middle';c.fillText(lab,x,b-42.3*U);c.textAlign='left';c.textBaseline='alphabetic'}
  function drawBus(){const b=bus;if(!b||b.mode==='gone')return;const x=b.x,y=BASE-TOP+7*U,w=178*U,h=37*U;
   c.save();c.fillStyle=col.dark?'rgba(0,0,0,.4)':'rgba(8,11,15,.09)';rr(x+4*U,y+h-3*U,w-8*U,8*U,4*U);c.fill();
@@ -6769,7 +6770,7 @@ function duqStop(land){
   if(b.mode==='cruise'||b.mode==='leave'){c.strokeStyle=col.dark?'rgba(255,255,255,.18)':'rgba(8,11,15,.14)';c.lineWidth=1.6;c.lineCap='round';const dir=b.mode==='cruise'?1:1;
    for(const[dy,l]of[[10,46],[20,64],[30,38]]){c.beginPath();c.moveTo(x+w+8*U,y+dy*U);c.lineTo(x+w+8*U+l*U,y+dy*U);c.stroke()}}
   c.restore()}
- function paint(){c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H-TOP);street();stop(YX,'YES',col.yes);stop(NX,'NO',col.no);
+ function paint(){c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H-TOP);street();drawStop(YX,'YES',col.yes);drawStop(NX,'NO',col.no);
   const order=people.slice().sort((a,b)=>(a.mode==='board'||a.mode==='in')-(b.mode==='board'||b.mode==='in'));
   for(const p of order)if(p.mode!=='board'&&p.mode!=='in')person(p);
   drawBus();
