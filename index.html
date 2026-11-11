@@ -1185,6 +1185,11 @@ body.is-landing .app{display:none}
 .tabs button{padding:10px 14px 0 0;font-weight:600;color:var(--ink-3);position:relative;min-height:44px}
 .tabs button[aria-selected=true]{color:var(--ink)}
 .tabs button[aria-selected=true]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--ink);border-radius:var(--r2)}
+/* v226 (the user, 11 Nov 2026: «zdes bug uia» — the Activity tab): a tab's keyboard focus was the generic button ring — square, hugging
+   the label on the left (a tab has no left padding) and backed by the 4 px page-colour ring, a black box on the card. Now its own ring:
+   rounded, 8 px round the label on both sides, the underline left outside, nothing filled */
+.tabs [role=tab]:focus-visible,html[data-theme=dark] .tabs [role=tab]:focus-visible{outline:none;box-shadow:none}
+.tabs [role=tab]:focus-visible::before{content:"";position:absolute;left:-8px;right:6px;top:4px;bottom:5px;border-radius:var(--radius-border_radius_14);box-shadow:0 0 0 var(--sizing-border-ring) var(--focus);pointer-events:none}
 .flash{animation:flash 500ms var(--ease)}
 @keyframes flash{0%{background:rgba(8,11,15,.06)}100%{background:transparent}}
 .roll{display:inline-block;transition:transform 240ms var(--spring)}
@@ -3518,7 +3523,7 @@ html[data-theme=dark] .money .qr{background:#fff}
 <header class="header column-box">
   <a class="brand" href="#landing" aria-label="DUQ"><svg class="wm" viewBox="0 -30 378 178" aria-hidden="true" focusable="false"><use href="#wm"/></svg></a>
   <!-- v222 (the user, 10 Nov 2026: «zdes search nenujen»): no search on the landing; the app's top bar keeps its own -->
-  <div class="hacts"><div class="lbgsw" role="group" aria-label="Background version" title="Background: Default — the crowd, 1 — river of time, 2 — gravity"><button type="button" data-lbg="dots" aria-pressed="true" aria-label="Background: Default, the crowd">Default</button><button type="button" data-lbg="river" aria-pressed="false" aria-label="Background version 1: river of time">1</button><button type="button" data-lbg="gravity" aria-pressed="false" aria-label="Background version 2: gravity">2</button></div><button type="button" class="themebtn" aria-pressed="false" aria-label="Switch to dark mode"><svg class="sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M4.7 15.3l1.4-1.4M13.9 6.1l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.5 12.2A6.8 6.8 0 0 1 7.8 3.5a6.8 6.8 0 1 0 8.7 8.7Z"/></svg></button><button type="button" class="btn-text" data-enter="home" data-signin="1">Sign in</button></div>
+  <div class="hacts"><div class="lbgsw" role="group" aria-label="Background version" title="Background: Default — the crowd, 1 — river of time, 2 — gravity, 3 — the stop"><button type="button" data-lbg="dots" aria-pressed="true" aria-label="Background: Default, the crowd">Default</button><button type="button" data-lbg="river" aria-pressed="false" aria-label="Background version 1: river of time">1</button><button type="button" data-lbg="gravity" aria-pressed="false" aria-label="Background version 2: gravity">2</button><button type="button" data-lbg="stop" aria-pressed="false" aria-label="Background version 3: the stop">3</button></div><button type="button" class="themebtn" aria-pressed="false" aria-label="Switch to dark mode"><svg class="sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M4.7 15.3l1.4-1.4M13.9 6.1l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.5 12.2A6.8 6.8 0 0 1 7.8 3.5a6.8 6.8 0 1 0 8.7 8.7Z"/></svg></button><button type="button" class="btn-text" data-enter="home" data-signin="1">Sign in</button></div>
 </header>
 <main class="hero">
   <h1 class="headline" tabindex="-1">
@@ -6409,13 +6414,24 @@ html[data-theme=dark] #grav .gv-in{box-shadow:0 1px 0 rgba(255,255,255,.05) inse
 #grav.sm .gv-stamp{font-size:20px;padding:3px 9px;border-width:2px;border-radius:7px}
 @media (prefers-reduced-motion:reduce){#grav .gv-stamp{transition:opacity .2s ease}}
 
+/* v226 (the user, 11 Nov 2026: «dai versiu 22 «Остановка»»): version 3 — idea 22 «Остановка» (d_m_o storyboard, seed TxCity) */
+#stopbg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:strict}
+#stopbg canvas{position:absolute;left:0;width:100%;display:block}
+#stopbg .sb-chip{position:absolute;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 4px;border-radius:var(--radius-border_radius_round);background:linear-gradient(var(--card),var(--card)),var(--bg);border:1px solid var(--hairline);color:var(--ink);font:600 13px/1 var(--font);white-space:nowrap;box-shadow:0 2px 10px rgba(8,11,15,.06);transition:opacity .25s cubic-bezier(.23,1,.32,1)}
+#stopbg .sb-chip.swap{opacity:0}
+#stopbg .sb-chip img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none;background:var(--card-2)}
+#stopbg .sb-p{display:inline-flex;align-items:center;gap:4px;color:var(--yes-text);font-weight:700;font-variant-numeric:tabular-nums}
+#stopbg .sb-p.res.no{color:var(--no-text)}
+#stopbg .sb-p svg{width:10px;height:10px}
+@media (max-width:640px){#stopbg .sb-chip{font-size:12px;height:32px;max-width:calc(100vw - 32px)}#stopbg .sb-chip img{width:24px;height:24px}#stopbg .sb-t{overflow:hidden;text-overflow:ellipsis}}
+
 /* the version switch on the landing: Default = the crowd field (the main one, v225), 1 = the river, 2 = gravity (Liquid Glass Small, like the theme button) */
 #landing .lbgsw{display:inline-flex;align-items:center;gap:2px;height:var(--sizing-control-xl);padding:4px;border-radius:var(--radius-border_radius_round);margin-right:4px}
 #landing .lbgsw button{min-width:36px;height:36px;border:0;padding:0 12px;border-radius:var(--radius-border_radius_round);background:none;color:var(--ink-2);font:600 14px/1 var(--font);cursor:pointer;transition:background-color .15s ease,color .15s ease}
 #landing .lbgsw button[aria-pressed=true]{background:var(--pill);color:var(--pill-ink);cursor:default}
 @media (hover:hover) and (pointer:fine){#landing .lbgsw button[aria-pressed=false]:hover{color:var(--ink)}}
 #landing .lbgsw button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-@media (max-width:640px){#landing .lbgsw{height:40px;padding:3px;gap:1px;margin-right:2px}#landing .lbgsw button{min-width:32px;height:34px;padding:0 9px;font-size:13px}}
+@media (max-width:640px){#landing .lbgsw{height:40px;padding:3px;gap:1px;margin-right:2px}#landing .lbgsw button{min-width:28px;height:34px;padding:0 7px;font-size:12px}}
 </style>
 <script>
 /* v223 / v224 — the landing's ground in two versions (switch 1 / 2 in the landing header, keys 1 / 2, ?bg=1|2, remembered):
@@ -6641,6 +6657,143 @@ function duqGravity(land){
  return{root,start,stop,commit};
 }
 
+function duqStop(land){
+ 'use strict';
+ /* v226 (the user, 11 Nov 2026: «dai versiu 22 «Остановка»», idea 22 of the d_m_o storyboard, seed TxCity): version 3 —
+    every bet is a little person who walks in from the edge and queues at the YES or the NO stop (queue length = share);
+    near the close the event's bus drives in, brakes at NO — «will it stop?» — then stops at the outcome's stop and takes
+    only the right ones; the others turn round and walk off. Canvas 2D in the band under the button; the chip names the event. */
+ const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ /* [event id, question, chance of Yes, the bus's destination board] — the prototype's own markets */
+ const EVS=[['btc','Bitcoin above $150k by New Year?',41,'BTC > $150k'],['ecb','ECB cuts rates in October?',62,'ECB cut · Oct'],['shutdown','Shutdown lasts 30+ days?',62,'Shutdown 30+'],['santa','Santa delivers 7B+ gifts?',71,'Santa 7B'],['dem2028','Newsom wins the 2028 nomination?',31,'Newsom 2028'],['ucl','Chelsea beat Barcelona?',40,'Chelsea · Barça'],['nba','Clippers beat the Raptors?',45,'Clippers · Raptors'],['eth','Ethereum below $1,500 this year?',64,'ETH < $1,500'],['nuclear','Nuclear detonation in 2025?',23,'Nuclear 2025'],['dotamajor','Juggernaut wins the Dota 2 major?',18,'Dota major']];
+ const pic=id=>{try{const e=EVENTS[id];return e&&PIC[e.pic]||''}catch(_){return ''}};
+ const root=document.createElement('div');root.id='stopbg';root.setAttribute('aria-hidden','true');root.hidden=true;
+ root.innerHTML='<canvas></canvas><div class="sb-chip"><img alt="" decoding="async"><span class="sb-t"></span><b class="sb-p"></b></div>';
+ land.insertBefore(root,land.firstChild);
+ const cv=root.querySelector('canvas'),c=cv.getContext('2d'),chip=root.querySelector('.sb-chip'),chipImg=chip.querySelector('img'),chipT=chip.querySelector('.sb-t'),chipP=chip.querySelector('.sb-p');
+ /* motion kit: ease-out «settle», ease-in «accelerate», ease-in-out «inOut» (cubic-bezier, as in the prototype's curves) */
+ const bez=(x1,y1,x2,y2)=>t=>{let a=t;for(let i=0;i<6;i++){const ca=3*x1*a*(1-a)*(1-a)+3*x2*a*a*(1-a)+a*a*a-t,d=3*x1*(1-a)*(1-a)+6*(x2-x1)*a*(1-a)+3*(1-x2)*a*a;if(Math.abs(d)<1e-6)break;a-=ca/d;a=Math.min(1,Math.max(0,a))}return 3*y1*a*(1-a)*(1-a)+3*y2*a*a*(1-a)+a*a*a};
+ const settle=bez(.23,1,.32,1),accel=bez(.5,0,.9,.5),inOut=bez(.77,0,.175,1);
+ const CHECK='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6.5l2.6 2.6L10 3.4"/></svg>';
+ const CROSS='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6"/></svg>';
+ let W=0,H=0,U=1,BASE=0,YX=0,NX=0,SP=16,TOP=0,DPR=1,col={},running=false,raf=0,last=0,ready=false;
+ let people=[],ev=null,evi=-1,phase='bet',pt=0,outcome=true,nextBet=0,rate=4,bus=null,deck=[];
+ const S=()=>({yes:people.filter(p=>p.side==='yes'),no:people.filter(p=>p.side==='no')});
+ function colors(){const cs=getComputedStyle(document.documentElement),g=k=>cs.getPropertyValue(k).trim();const dark=document.documentElement.dataset.theme==='dark';
+  col={yes:g('--yes')||'#1cb785',no:g('--no')||'#f53e3e',ink:g('--ink')||'#0e1117',ink2:g('--ink-2')||'#555',ink3:g('--ink-3')||'#888',line:g('--hairline')||'rgba(0,0,0,.08)',line2:g('--hairline-2')||'rgba(0,0,0,.16)',bg:g('--bg')||'#f0f0f5',card:g('--card')||'#fff',dark,
+   body:dark?'#283043':'#ffffff',edge:dark?'#5a6480':'#bfc5cf',win:dark?'#0b0f17':'#e2e6ec',road:dark?'rgba(255,255,255,.025)':'rgba(8,11,15,.035)',wheel:dark?'#0b0e15':'#3b424d',rim:dark?'#6b7488':'#8a919c'}}
+ function layout(){W=window.innerWidth;H=window.innerHeight;const phone=W<=640;U=Math.max(.9,Math.min(1.45,Math.min(W/1200,H/800)));
+  BASE=Math.round(H-56*U-Math.max(0,H*.04));YX=Math.round(W/2-67*U);NX=Math.round(W/2+67*U);SP=13*U;rate=phone?2:4;
+  TOP=Math.round(BASE-60*U);DPR=Math.min(2,window.devicePixelRatio||1);
+  cv.style.top=TOP+'px';cv.style.height=(H-TOP)+'px';cv.width=Math.round(W*DPR);cv.height=Math.round((H-TOP)*DPR);
+  chip.style.top=Math.round(BASE-76*U)+'px';colors()}
+ const slot=(side,i)=>side==='yes'?YX-11*U-i*SP:NX+11*U+i*SP;
+ const doorAt=x=>x-32*U;
+ /* ---- events ---- */
+ function nextEvent(){const first=!ev;if(!deck.length)deck=EVS.map((_,i)=>i).sort(()=>Math.random()-.5);evi=deck.pop();ev=EVS[evi];outcome=Math.random()*100<ev[2];
+  const e=ev,apply=()=>{chipImg.src=pic(e[0])||'';chipT.textContent=e[1];chipP.className='sb-p';chipP.textContent=e[2]+'% Yes'};
+  if(first||reduced)apply();else{chip.classList.add('swap');setTimeout(()=>{apply();chip.classList.remove('swap')},250)}
+  phase='bet';pt=0;nextBet=.3;bus=null}
+ const size=()=>.86+.42*Math.pow(Math.random(),3);
+ function addPerson(side,you){const s=size();people.push({side,x:side==='yes'?-14*U:W+14*U,s,ph:Math.random()*6,dir:side==='yes'?1:-1,mode:'walk',you:!!you,v:(you?92:46)*U*(.9+Math.random()*.2),a:1,fade:0,delay:0})}
+ /* ---- the bus: a small kinematic script ---- */
+ function startBus(){const nx=doorAt(NX),yx=doorAt(YX);bus={x:W+40*U,mode:'cruise',t:0,from:0,to:0,dur:0,brake:false,door:0,pax:0,need:0,wheel:0,x0:0};
+  bus.brakeAt=nx+200*U;bus.stopX=outcome?yx:nx;bus.nx=nx}
+ function busStep(dt){const b=bus;if(!b)return;const px=b.x;b.t+=dt;
+  if(b.mode==='cruise'){b.x-=900*U*dt;if(b.x<=b.brakeAt){b.x=b.brakeAt;b.mode='brake';b.t=0;b.from=b.x;b.to=outcome?b.nx-26*U:b.nx;b.dur=.7;b.brake=true}}
+  else if(b.mode==='brake'){const k=Math.min(1,b.t/b.dur);b.x=b.from+(b.to-b.from)*settle(k);if(k>=1){if(outcome){b.mode='crawl';b.t=0}else{b.mode='open';b.t=0;arrive()}}}
+  else if(b.mode==='crawl'){b.x-=60*U*dt;if(b.t>=.45){b.mode='go';b.t=0;b.from=b.x;b.to=b.stopX;b.dur=1.1;b.brake=false}}
+  else if(b.mode==='go'){const k=Math.min(1,b.t/b.dur);b.x=b.from+(b.to-b.from)*inOut(k);b.brake=k>.55;if(k>=1){b.mode='open';b.t=0;arrive()}}
+  else if(b.mode==='open'){b.door=Math.min(1,b.t/.12);if(b.t>=.12){b.mode='board';b.t=0;board()}}
+  else if(b.mode==='board'){const left=people.filter(p=>p.side===(outcome?'yes':'no')&&p.mode!=='gone').length;if(!left||b.t>2.6){b.mode='close';b.t=0}}
+  else if(b.mode==='close'){b.door=Math.max(0,1-b.t/.12);if(b.t>=.25){b.mode='leave';b.t=0;b.from=b.x;b.brake=false;leaveLosers()}}
+  else if(b.mode==='leave'){const k=Math.min(1,b.t/.9);b.x=b.from-(b.from+200*U)*accel(k);if(k>=1){b.mode='gone';b.t=0}}
+  b.wheel+=(px-b.x)/(6.3*U)}
+ function arrive(){const yes=outcome;chipP.className='sb-p res '+(yes?'yes':'no');chipP.innerHTML=(yes?'YES':'NO')+(yes?CHECK:CROSS);bus.brake=true}
+ function board(){const win=outcome?'yes':'no',door=bus.stopX+32*U;let i=0;
+  const q=people.filter(p=>p.side===win).sort((a,b)=>Math.abs(a.x-door)-Math.abs(b.x-door));bus.need=q.length;
+  const far=q.length?Math.abs(q[q.length-1].x-door):0,vb=Math.max(110*U,far/1.15);
+  for(const p of q){p.mode='board';p.delay=i++*.04;p.vb=vb;p.door=door}}
+ function leaveLosers(){const lose=outcome?'no':'yes';let i=0;
+  for(const p of people)if(p.side===lose||p.mode==='walk'||p.mode==='queue'){if(p.mode==='board'||p.mode==='gone')continue;p.mode='leave';p.delay=i++*.03;p.dir=p.side==='yes'?-1:1;p.turn=.12;p.fade=0}}
+ /* ---- people ---- */
+ function stepPeople(dt){const qi={yes:0,no:0};
+  for(const p of people){
+   if(p.mode==='walk'||p.mode==='queue'){const i=qi[p.side]++;const tx=slot(p.side,i);const d=tx-p.x;
+    if(Math.abs(d)>.6){const st=Math.min(Math.abs(d),p.v*dt);p.x+=Math.sign(d)*st;p.ph+=dt*2.2*Math.PI*2*(p.v/(46*U))*.9;p.dir=Math.sign(d)||p.dir;p.mode=Math.abs(d)>SP*.6?'walk':p.mode;p.moving=true}
+    else{p.x=tx;p.mode='queue';p.moving=false;p.dir=p.side==='yes'?1:-1}}
+   else if(p.mode==='board'){if(p.delay>0){p.delay-=dt;p.moving=false;continue}const d=p.door-p.x;p.dir=Math.sign(d)||p.dir;
+    if(Math.abs(d)>2){p.x+=Math.sign(d)*Math.min(Math.abs(d),p.vb*dt);p.ph+=dt*2.2*Math.PI*2*Math.min(2.4,p.vb/(46*U))*.8;p.moving=true}
+    else{p.mode='in';p.fade=0;p.moving=false}}
+   else if(p.mode==='in'){p.fade+=dt/.15;p.a=Math.max(0,1-p.fade);p.sq=1-.04*Math.min(1,p.fade);if(p.fade>=1){p.mode='gone';if(bus)bus.pax++}}
+   else if(p.mode==='leave'){if(p.delay>0){p.delay-=dt;continue}p.fade+=dt/.9;p.x+=p.dir*60*U*dt;p.ph+=dt*2.2*Math.PI*2;p.moving=true;p.a=Math.max(0,1-p.fade);if(p.fade>=1)p.mode='gone'}}
+  people=people.filter(p=>p.mode!=='gone'||false);
+  /* keep it bounded: queues longer than the street are simply not drawn past the edge */
+  for(const side of ['yes','no']){const q=people.filter(p=>p.side===side&&(p.mode==='queue'||p.mode==='walk'));if(q.length>140)for(const p of q.slice(140))p.mode='gone'}}
+ function director(dt){pt+=dt;
+  if(phase==='bet'){nextBet-=dt;while(nextBet<=0){addPerson(Math.random()*100<ev[2]?'yes':'no');nextBet+=-Math.log(1-Math.random())/rate}
+   if(pt>10.5){phase='bus';pt=0;startBus()}}
+  else if(phase==='bus'){busStep(dt);if(bus.mode==='gone'){phase='quiet';pt=0}}
+  else if(phase==='quiet'){if(pt>.6&&!people.some(p=>p.mode==='leave'))nextEvent()}}
+ /* ---- drawing ---- */
+ function rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+ function person(p){const s=p.s*1.2*U,x=p.x,b=BASE-TOP,mv=p.moving,ph=p.ph,col1=p.side==='yes'?col.yes:col.no;
+  if(x<-20*U||x>W+20*U)return;
+  c.save();c.globalAlpha=p.a;c.fillStyle=col1;c.strokeStyle=col1;c.lineCap='round';
+  const bob=mv?Math.abs(Math.sin(ph))*1.5*U:0,sw=mv?Math.sin(ph)*2.6*s:0,lean=mv?p.dir*1.2*s:0,k=p.sq||1;
+  c.translate(x,b);c.scale(k,k);
+  c.lineWidth=2.1*s;c.beginPath();c.moveTo(-.95*s+lean*.3,-5.4*s-bob*.4);c.lineTo(-.95*s+sw,-.8);c.moveTo(.95*s+lean*.3,-5.4*s-bob*.4);c.lineTo(.95*s-sw,-.8);c.stroke();
+  rr(-3.3*s+lean*.6,-14.6*s-bob,6.6*s,9.8*s,3*s);c.fill();if(p.you){c.lineWidth=1.4;c.strokeStyle=col.ink;c.stroke()}
+  c.beginPath();c.arc(lean,-18.5*s-bob,3.15*s,0,7);c.fill();if(p.you){c.lineWidth=1.4;c.strokeStyle=col.ink;c.stroke()}
+  c.restore()}
+ function street(){const b=BASE-TOP;c.fillStyle=col.road;c.fillRect(0,b+5*U,W,40*U);
+  c.strokeStyle=col.line2;c.lineWidth=1.5;c.beginPath();c.moveTo(0,b+.5);c.lineTo(W,b+.5);c.stroke();
+  c.setLineDash([10*U,12*U]);c.strokeStyle=col.line;c.lineWidth=1.2;c.beginPath();c.moveTo(0,b+44*U);c.lineTo(W,b+44*U);c.stroke();c.setLineDash([])}
+ function stop(x,lab,cl){const b=BASE-TOP;c.strokeStyle=col.line2;c.lineWidth=2;c.beginPath();c.moveTo(x,b);c.lineTo(x,b-34*U);c.stroke();
+  rr(x-17*U,b-51*U,34*U,17*U,4*U);c.fillStyle=cl;c.fill();c.fillStyle='#fff';c.font=`800 ${Math.round(10*U)}px Onest, ${getComputedStyle(document.body).fontFamily}`;c.textAlign='center';c.textBaseline='middle';c.fillText(lab,x,b-42.3*U);c.textAlign='left';c.textBaseline='alphabetic'}
+ function drawBus(){const b=bus;if(!b||b.mode==='gone')return;const x=b.x,y=BASE-TOP+7*U,w=178*U,h=37*U;
+  c.save();c.fillStyle=col.dark?'rgba(0,0,0,.4)':'rgba(8,11,15,.09)';rr(x+4*U,y+h-3*U,w-8*U,8*U,4*U);c.fill();
+  rr(x,y,w,h,10*U);c.fillStyle=col.body;c.fill();c.lineWidth=1.4;c.strokeStyle=col.edge;c.stroke();
+  rr(x+5*U,y+6*U,17*U,17*U,4*U);c.fillStyle=col.win;c.fill();
+  /* the door slides open */
+  rr(x+26*U,y+6*U,12*U,27*U,2*U);c.fillStyle=col.win;c.fill();if(b.door<1){rr(x+26*U+12*U*b.door*.5,y+6*U,12*U*(1-b.door),27*U,2*U);c.fillStyle=col.dark?'#3b455c':'#f4f6f9';c.fill()}
+  c.strokeStyle=col.edge;c.lineWidth=1;rr(x+26*U,y+6*U,12*U,27*U,2*U);c.stroke();
+  const fill=b.need?Math.min(7,Math.ceil(7*b.pax/Math.max(1,b.need))):0,oc=outcome?col.yes:col.no;
+  for(let i=0;i<7;i++){const wx=x+43*U+i*18.5*U;rr(wx,y+6*U,15*U,13*U,3*U);c.fillStyle=col.win;c.fill();
+   if(i<fill){c.save();rr(wx,y+6*U,15*U,13*U,3*U);c.clip();c.fillStyle=oc;for(const k of [0,1]){c.beginPath();c.arc(wx+4.2*U+k*6.6*U,y+12.5*U+(k?U:0),2.5*U,0,7);c.fill();c.fillRect(wx+1.8*U+k*6.6*U,y+15*U+(k?U:0),5*U,6*U)}c.restore()}}
+  c.font=`700 ${Math.max(8,8.5*U).toFixed(1)}px Onest, ${getComputedStyle(document.body).fontFamily}`;c.fillStyle=col.ink2;c.fillText(ev?ev[3]:'',x+44*U,y+31*U);
+  for(const wx of [x+38*U,x+146*U]){c.beginPath();c.arc(wx,y+h,6.3*U,0,7);c.fillStyle=col.wheel;c.fill();c.lineWidth=2;c.strokeStyle=col.rim;c.stroke();
+   c.beginPath();c.moveTo(wx,y+h);c.lineTo(wx+Math.cos(b.wheel)*4.6*U,y+h+Math.sin(b.wheel)*4.6*U);c.lineWidth=1.4;c.stroke()}
+  c.fillStyle='rgba(255,236,170,.9)';rr(x+1.5*U,y+26*U,4*U,6*U,1.5*U);c.fill();
+  if(b.brake){const gx=x+w-2*U,gy=y+28*U,g=c.createRadialGradient(gx,gy,0,gx,gy,16*U);g.addColorStop(0,'rgba(255,80,80,.9)');g.addColorStop(1,'rgba(255,80,80,0)');c.fillStyle=g;c.beginPath();c.arc(gx,gy,16*U,0,7);c.fill();c.fillStyle='#ff6b6b';rr(x+w-5*U,y+24*U,4*U,8*U,1.5*U);c.fill()}
+  if(b.mode==='cruise'||b.mode==='leave'){c.strokeStyle=col.dark?'rgba(255,255,255,.18)':'rgba(8,11,15,.14)';c.lineWidth=1.6;c.lineCap='round';const dir=b.mode==='cruise'?1:1;
+   for(const[dy,l]of[[10,46],[20,64],[30,38]]){c.beginPath();c.moveTo(x+w+8*U,y+dy*U);c.lineTo(x+w+8*U+l*U,y+dy*U);c.stroke()}}
+  c.restore()}
+ function paint(){c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H-TOP);street();stop(YX,'YES',col.yes);stop(NX,'NO',col.no);
+  const order=people.slice().sort((a,b)=>(a.mode==='board'||a.mode==='in')-(b.mode==='board'||b.mode==='in'));
+  for(const p of order)if(p.mode!=='board'&&p.mode!=='in')person(p);
+  drawBus();
+  for(const p of order)if(p.mode==='board'||p.mode==='in')person(p)}
+ /* ---- a still for reduced motion: the queues by the event's odds, the bus at the outcome's stop ---- */
+ function still(){people=[];const cap=Math.floor((W/2-80*U)/SP),n=Math.min(cap*2,Math.round(cap*1.1));const y=Math.round(n*ev[2]/100);
+  for(let i=0;i<n;i++){const side=i<y?'yes':'no';const p={side,x:0,s:size(),ph:0,dir:side==='yes'?1:-1,mode:'queue',a:1};people.push(p)}
+  const qi={yes:0,no:0};for(const p of people)p.x=slot(p.side,qi[p.side]++);
+  startBus();bus.x=bus.stopX;bus.mode='park';bus.brake=false;arrive();paint()}
+ function frame(t){if(!running){raf=0;return}const dt=Math.min(.05,last?(t-last)/1000:0);last=t;director(dt);stepPeople(dt);paint();raf=requestAnimationFrame(frame)}
+ function prepare(){if(ready)return;ready=true;layout();nextEvent();if(reduced){setTimeout(still,0);return}
+  /* a warm start: the street already has its first bets walking in */
+  for(let i=0;i<70;i++){director(1/30);stepPeople(1/30)}}
+ function start(){prepare();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
+ function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0}
+ function commit(yes){if(!ready||reduced)return;addPerson(yes?'yes':'no',true)}
+ /* the words «yes» and «no» in the headline send your own person (as y / n do) */
+ document.addEventListener('click',e=>{if(root.hidden||!running)return;const w=e.target.closest&&e.target.closest('#landing .headline .w');if(!w)return;commit(w.classList.contains('yes'))});
+ let rt=0;window.addEventListener('resize',()=>{if(!ready)return;clearTimeout(rt);rt=setTimeout(()=>{layout();if(!running)paint()},120)});
+ new MutationObserver(()=>{if(!ready)return;colors();if(!running)paint()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(ready&&!running)paint()});
+ return{root,start,stop,commit};
+}
+
 (function(){
  const land=document.getElementById('landing');if(!land)return;
  const cv=document.getElementById('field');if(cv)cv.style.display='none';   /* shown again when Default is picked */
@@ -6648,9 +6801,9 @@ function duqGravity(land){
  let dots=null;
  const duqDots=()=>({root:null,show(on){if(cv)cv.style.display=on?'':'none';if(!on){if(dots)dots.stop();land.querySelectorAll('.headline .w,.headline .v,.headline .q').forEach(e=>{e.style.transform='';e.style.color='';e.style.fontVariationSettings=''})}},
   start(){if(!dots){if(window.duqDotsBoot)window.duqDotsBoot();return}dots.repaint&&dots.repaint();dots.start()},stop(){if(dots)dots.stop()},commit(y){if(dots)dots.commit(y)}});
- const makers={dots:duqDots,river:duqRiver,gravity:duqGravity},inst={};let cur=null;
+ const makers={dots:duqDots,river:duqRiver,gravity:duqGravity,stop:duqStop},inst={};let cur=null;
  window.duqBgRegister=a=>{dots=a;if(document.documentElement.dataset.theme==='dark')a.setTheme(true);if(cur==='dots'&&live())a.start()};
- const pick=()=>{const q=new URLSearchParams(location.search).get('bg');if(q==='0'||q==='default'||q==='dots')return'dots';if(q==='1'||q==='river')return'river';if(q==='2'||q==='gravity')return'gravity';try{const v=localStorage.getItem('duq-lbg-v3');if(makers[v])return v}catch(e){}return'dots'};
+ const pick=()=>{const q=new URLSearchParams(location.search).get('bg');if(q==='0'||q==='default'||q==='dots')return'dots';if(q==='1'||q==='river')return'river';if(q==='2'||q==='gravity')return'gravity';if(q==='3'||q==='stop')return'stop';try{const v=localStorage.getItem('duq-lbg-v3');if(makers[v])return v}catch(e){}return'dots'};
  const live=()=>!window.duqLive||window.duqLive();
  function show(k,on){const i=inst[k];if(!i)return;if(i.show)i.show(on);else{i.root.hidden=!on;if(!on)i.stop()}}
  function use(k,save){if(!makers[k]||cur===k)return;if(cur){inst[cur].stop();show(cur,false)}
@@ -6661,7 +6814,7 @@ function duqGravity(land){
  window.duqField={start(){if(cur)inst[cur].start()},stop(){if(cur)inst[cur].stop()},commit(y){if(cur)inst[cur].commit(y)},setTheme(d){if(dots)dots.setTheme(d)}};
  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#landing .lbgsw [data-lbg]');if(b)use(b.dataset.lbg,true)});
  document.addEventListener('keydown',e=>{if(!document.body.classList.contains('is-landing')||e.metaKey||e.ctrlKey||e.altKey)return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
-  if(e.key==='0')use('dots',true);else if(e.key==='1')use('river',true);else if(e.key==='2')use('gravity',true)});
+  if(e.key==='0')use('dots',true);else if(e.key==='1')use('river',true);else if(e.key==='2')use('gravity',true);else if(e.key==='3')use('stop',true)});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)window.duqField.stop();else if(live())window.duqField.start()});
  use(pick(),false);
 })();
