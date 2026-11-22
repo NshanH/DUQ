@@ -6423,7 +6423,10 @@ html[data-theme=dark] #grav .gv-in{box-shadow:0 1px 0 rgba(255,255,255,.05) inse
 
 /* v226 (the user, 11 Nov 2026: «dai versiu 22 «Остановка»»): version 3 — idea 22 «Остановка» (d_m_o storyboard, seed TxCity) */
 #stopbg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:strict}
-#stopbg canvas{position:absolute;left:0;width:100%;display:block}
+#stopbg>canvas{position:absolute;left:0;width:100%;display:block}
+#stopbg .sb-body{position:absolute;border-radius:50%;pointer-events:none;background-repeat:no-repeat}   /* v235: the globe's ground — the page's own ground laid in it, so it looks as FreedX's open ball and the Default field's crowds pass behind it */
+#stopbg .sb-gbox{position:absolute;left:0;pointer-events:auto;isolation:isolate;--sbg-land:#491DBA;--sbg-ocean:rgba(102,53,242,.2);--sbg-hot:#6434E0;--sbg-h0:#6434E0;--sbg-h1:#491DBA;--sbg-h2:#9075FF;--sbg-h3:#6635F2;--sbg-rim:#9075FF}   /* v235: the FreedX globe (rf-globe.js) — it takes the pointer: the warm spot follows the cursor, a drag turns it; light: FreedX's light-theme colours (v562) */
+html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,255,255,.24);--sbg-hot:#BBB3FF;--sbg-h0:#BBB3FF;--sbg-h1:#8170FF}   /* dark: FreedX's own */
 #stopbg .sb-chip{position:absolute;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 4px;border-radius:var(--radius-border_radius_round);background:linear-gradient(var(--card),var(--card)),var(--bg);border:1px solid var(--hairline);color:var(--ink);font:600 13px/1 var(--font);white-space:nowrap;box-shadow:0 2px 10px rgba(8,11,15,.06);transition:opacity .25s cubic-bezier(.23,1,.32,1)}
 #stopbg .sb-chip.swap{opacity:0}
 #stopbg .sb-drop{position:absolute;left:0;top:0;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:currentColor;will-change:transform;pointer-events:none}   /* v230: a bet falling out of a Default crowd */
@@ -6443,6 +6446,1288 @@ html[data-theme=dark] #grav .gv-in{box-shadow:0 1px 0 rgba(255,255,255,.05) inse
 #landing .lbgsw button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 @media (max-width:640px){#landing .lbgsw{height:40px;padding:3px;gap:0;margin-right:0}#landing .lbgsw button{min-width:26px;height:34px;padding:0 6px;font-size:12px}}
 </style>
+<script>/*rf-globe:start — v235: the FreedX landing's dot globe, src/rf-globe.js as it is (DUQ marks its few changes) */
+/* rf-globe.js — the dot globe of the Refer section (#cash), V2 Banco: versions "Route" (spec-7-route.md) and "Receipt"
+   (spec-9-receipt.md). One file, no libraries, raw WebGL 1 with a Canvas 2D fallback. Behaviour after the
+   3ddotglobemap.framer.website example, written anew (none of its code): land as dots from a land mask, the ocean as faint
+   small dots, a glow behind, a warm spot round the cursor (dots part, swell, turn violet, a light wave runs through them),
+   drag to turn with inertia, vertical drag tilts (±60°, not on touch), arrow keys, HTML pins projected every frame and faded
+   on the far side; it draws only while it is on screen, the tab is visible and something moves.
+
+   RFGlobe.create(box, options) → globe
+     pins: [{ lat, lng, el?, state?, lift?, bend? }]   up to 11 light the dots under them; state: off | next | active | latest | preview;
+                                          lift / bend (v415): this pin's arc — its height over the surface and its sideways bow, shares of R;
+                                          gain (v415): its arc's strength (two friends on one line share it);
+                                          path (v416): [[x, y, z] × 32] — the arc as a curve through these points, evenly spaced along
+                                          it, from You to the pin (the globe's own coordinates, its radius 1; keep them outside
+                                          the ball: what is under its surface is hidden), instead of lift / bend
+     you: { lat, lng, el? }              where every arc starts
+     radiusPx: px | (boxW, boxH) => px   sphere radius (spec: 256 desktop, 204 at 940–1199, 200 stacked, 140 phone);
+                                          without it: radius × half the box's short side (radius default 0.8)
+     center: [0.5, 0.5]                   sphere centre in the box, as shares of its width and height
+     bleed: 0                             px the canvas reaches past the box, so high arcs are not cut (≈ 0.2 × R); the module
+                                          clips at box + bleed; with bleed 0 it never widens the page, with more the ancestor
+                                          clips (as .rf does: overflow hidden)
+     view: { lat, lng }                   the start view (default: You in the centre)
+     idle: 'spin' | 'sway' | 'still'      what it does untouched (default 'spin'); see setIdle. autoRotate: spin speed, °/s
+     engaged: true                        false: arcs and pools of light grey, no flowing light (next keeps its pulse)
+     intro: true · keyboard: false · flow: true · colors: { … CSS colours or DS variable names } · reducedMotion: bool?
+     maxDpr: 2 · ticker: { add(fn), remove(fn) } (e.g. gsap.ticker, instead of the module's own rAF)
+     rim: { src, w, h, cx, cy, r }        v410: a picture of the glass's ring (premultiplied on black) laid over the dots with a
+                                          screen blend, its sphere (cx, cy, r in its own px of w × h) on this one; with it the CSS
+                                          shine and the lit edges of the glass body and the glow step aside
+     over: [{ src, w, h, cx, cy, r, shift?() }]   v415: pictures laid over the dots and the rim's (screen blend), each on its own sphere
+                                          (cx, cy, r in its px of w × h); shift() → [dx, dy] in R moves it (asked at every layout)
+     pinLift: px | (i) => px               v415: the pins' elements stand this far over their spots (× the pin's scale), so the pool
+                                          of light under a pin shows; hit testing follows the element (You stays on its spot)
+     fall: bool | () => bool               v415: the look's fall-off of the dots' light toward the view's left (LOOK.fall) is on
+     sight: [8 numbers] | (i) => […]       v418: where a point of the box is in sight — two rectangles in the box's px, [x0, y0, x1, y1]
+                                          of the outer one (out of sight at it and beyond) then of the inner one (in full sight
+                                          inside it): the page's fades, its header, the window's edge; asked for You (i = −1) and for
+                                          each pin (its index), whose layers may fade differently. Without it: the box, 24 px in.
+                                          An arc is drawn only while You or its pin is in sight
+     onPinEnter(i, pin) · onPinLeave(i, pin) · onPinClick(i, pin) — click/tap only, never after a drag (4 px)
+     onGlobeClick({ lat, lng } | null) — a tap on the sphere off the pins (null outside the disc), never after a drag
+     onDragStart() · onSettle() — the throw after a drag has died down · onReady() — built (async, after create returns)
+     onError(err) — no WebGL and no 2D canvas, or the GL context could not be rebuilt · onFocusEnd(ok) — a turn ended
+   Methods
+     setPinState(i, state) · setPinStates([states]) · getPinState(i)
+     arc(i, on, { style: 'solid' | 'strong' | 'dashed' }) → Promise<boolean>
+         the arc from You to pin i draws out (revealLine, entrance) or pulls back (× 0.6, out). solid 2 px
+         --outline-primary-med-em (active), strong 2.5 px --outline-primary-high-em, brighter (latest), dashed 2 px
+         --outline-primary-high-em (preview). On a lit arc a new style is taken in place (≈ 200 ms), no redraw.
+     isArcOn(i) · flash() — light runs out along every lit arc (a milestone) · setEngaged(bool)
+     focus(i | { lat, lng }, { withYou }) → Promise<boolean> — pin i to the centre; withYou: the arc's middle to the centre
+     (opts.spring 'gentle' | 'snappy' | 'slow' — slow ≈ 1.8 s; create's opts.arcMs: how long an arc draws out, default 900)
+     home() → Promise<boolean> — You to the centre. Both resolve when the turn ends (false if something cut it short).
+     setIdle('still' | 'sway' | 'spin') — spin: turns slowly; sway: swings ±9° about where it rests (after home(): about
+         home, so every pin stays in front). Stops while the pointer is over the sphere, picks up again 1.8 s after it
+         leaves or after a drag. No return home by itself — the page calls home().
+     setAutoRotate(°/s) · setView(lat, lng) · setReducedMotion(true | false | null)
+     isMoving() — true while dragged, throwing or turning by focus/home (idle motion does not count)
+     pinAt(clientX, clientY) → i | -1 — a front pin within half its element's width (≥ 22 px; nearest centre wins)
+     project(i) · project(-1) / projectYou() · project(lat, lng) → { x, y, z, front } in box px
+     pause() · resume() · resize() · destroy() · stats()
+   Events, also as CustomEvents bubbling from the box: rfglobe:pinenter · pinleave · pinclick · globetap · dragstart ·
+     settle · focusend · ready · error (detail: { index } where it has one).
+   Pins: the module owns each pin element's position, transform, opacity, visibility, z-index and pointer-events — it
+     centres the element on its spot (position:absolute, left/top 0, translate). Animate the pin's children, not the pin.
+     It writes data-state, data-side="front|back" and data-hover. Elements without a parent go into the module's layer.
+     Hit testing is the module's (the page sizes the zone with the element: 48 / next 56 / phone 44), pins never block a drag.
+   No queue: a call mid-animation wins at once — the previous promise resolves false and the motion goes on from where it
+     is to the newest state. Repeating a call (preview on every pointermove) costs nothing: same state, same promise.
+   Reduced motion: no idle motion, no inertia, focus/home jump, arcs fade in place (no draw), no waves, rings or flowing
+     light, flash a still brightening, the next ring still.
+   Kit rules kept: numbers from the motion tokens (DUR / EASE / SPRING) and one LOOK object; every step scaled by dt
+     (≤ 0.1 s); ≤ 60 draws a second on desktop (12.5 ms gate), every tick on phones; DPR ≤ 2 (the kit's 1.5 is for
+     full-screen scenes — this is one box of thin dots); context loss caught, rebuilt on a fresh canvas (3 tries).
+   Land: Natural Earth 110m land (public domain, naturalearthdata.com) since v362 — 127 rings, holes as water, quarter-degree
+     encoding; encoder: variants/v2-refer-globe/globe-land.py --ne <ne_110m_land.geojson> rewrites the string below (without
+     --ne it writes the older hand-traced outlines, ≈ 1–2° accurate). */
+/* DUQ v235 (the user, 22 Nov 2026: «perenesti zdes globus top toch kak est», «tolko globus kak est»): this is the FreedX
+   landing's own src/rf-globe.js (16 Nov 2026), as it is. The only changes are marked «DUQ v235»: the dot shader colours the land
+   by the halves of version 3 of the landing's background (YES green left of a line, NO red right of it, each lit as people join;
+   the winner's flood at the outcome), dots off the canvas are skipped (a sphere far wider than the screen), the pin loop stops at
+   the pins there are, the warm spot keeps the FreedX landing's size on a bigger sphere (opts.heatR), the theme switch refreshes the
+   warm spot's palette too, and the dot cache keeps one size. */
+(function (root) {
+  'use strict';
+  if (root.RFGlobe) return;
+  var doc = root.document;
+  var PI = Math.PI, D2R = PI / 180, R2D = 180 / PI;
+
+  /* ---- motion tokens (kit/tokens/motion-tokens.css — the numbers live only here) ---- */
+  var DUR = { fast: 150, normal: 250, reveal: 700, revealLine: 900, scene: 1200, cinematic: 1600 };
+  var EASE = { out: [0.23, 1, 0.32, 1], move: [0.77, 0, 0.175, 1], entrance: [0.2, 0, 0, 1], settle: [0.16, 1, 0.3, 1] };
+  var SPRING = { gentle: [120, 26], snappy: [400, 40], slow: [10, 6.6] };   // slow (v357 review, "ochen bistro"): a turn of ≈ 1.8 s   // tension / friction, mass 1
+  var EXIT_RATIO = 0.6;                                    // an exit runs at 60 % of its entrance (principles §3)
+  var MAX_DT = 0.1, DRAW_GATE_MS = 12.5;                   // kit/webgl/render-gate.ts
+
+  /* ---- the look: every visual number in one place (a re-skin changes this object, never the shaders) ---- */
+  // v415 ("a teper sdelai orbitu, mne nujno chtob bil 100% poxoj na kartinku" — look 3 «Орбиты» of variants/v2-refer-globe-hf,
+  // measured on 3-orbits.png: its sphere R 1053.7 px, so 1 px = .4726 css at R 498): no glass — a dark ball of plain dots, the
+  // rows 26 px apart at its centre (R × .0262 here: a true sphere's rows close up toward the limb, the picture's hardly do — the same
+  // count of dots in sight), dots 2.7 css across (.34 of the pitch as the shader shrinks them), near white (primary-50), the ocean's at
+  // 48 %, no light behind and no body (the picture's ground inside is 5/5/22, outside 2/3/19); the thin violet edge line and the two
+  // orbit rings are pictures (opts.rim, opts.over — Higgsfield's clean layers of the concept); arcs a white line 2.4 px in a violet
+  // glow (.62, σ ≈ 6 px: the picture's cross-section), each on the picture's own curve (a pin's lift / bend), with a train of white dashes running to You (flowLen .42 of the arc, dashes 11 + 6 px, 3.4 px wide); a pool of light on
+  // the dots under each coin, the coin standing over it (opts.pinLift). The Crystal look (v410–v413: pitch ≤ 9.6, dots .32,
+  // primary-100, ocean 6 %, glass primary-950 .45, comets) is kept in src/rf-globe.js.bak-v413
+  var LOOK = {
+    radius: 0.8,          // sphere radius without radiusPx, share of half the box's short side
+    pitch: 0.0262, spacing: 13.5, spacingMin: 6,   // px between dot rows: R × pitch within these (a small sphere keeps its detail)
+    rowsMin: 56, rowsMax: 240,     // rows = π·R / spacing (150 since the Route review: a big sphere keeps its coastlines)
+    landDot: 0.34,        // land dot diameter, share of the row pitch (≈ 2.7 px at R 256, 2.2 px at R 140); v423: 0.34 (was .3)
+    coastDot: 0.9,       // coast dots, share of a land dot
+    oceanDot: 0.72,       // ocean dots, share of a land dot; v423: 0.72 (was .93 — they read as land)
+    minDot: 1.6,          // device px; smaller dots dim instead of shrinking
+    // v399 ("1i variant" — the Crystal globe of variants/v2-refer-globe-hf): a glass ball — the limb lit, not dimmed (Fresnel),
+    // violet toward it, a stronger light behind and round it, a glass body and a white shine on the near limb (LOOK.glass); the
+    // arcs thin glowing tubes with a bloom, a light comet running from each friend to You (v352–v398: limb .4, rimTint .6,
+    // glowAlpha .3, atmo .16, arcHalf 10, arcStyle solid [2, .45] / strong [2.5, .8], flowAmp 1.1)
+    limb: 0.85,           // brightness at the limb against the centre
+    rimTint: 0.45,         // violet toward the limb
+    key: 0.3, keyDir: [-0.5, 0.62, 0.6],   // a soft light from the upper left
+    fall: [-0.5, 0.08, 0.12],   // v415 (opts.fall): the dots dim toward the view's left — full from x = .08 R right of the centre, 12 % at −.5 R (the picture's light)
+    fallArc: [-0.5, 0.0, 0.22],   // v415: the arcs' share of that fall-off — full from the centre, 22 % at −.5 R
+    dotSoft: 0.3,         // v415: a dot's edge fades from this share of its radius (a soft bead; 0.9 = a hard disc)
+    back: 0,              // alpha of the far side's dots (0 = an opaque globe)
+    glowAlpha: 0,      // the light behind the sphere (--color-primary-700 at 62 %)
+    atmo: 0,           // the thin rim of light round the limb (--color-primary-500)
+    // the glass body (CSS, under the dots): clear in the middle, violet toward the limb, lit at it; the shine (CSS, over the dots):
+    // a thin white line and a soft glow just inside the limb on the side that shows, `at` ° from the way the sphere faces the box
+    glass: { fill: 0, edge: 0, shine: 0, at: -38, span: 34, halo: 0 },
+    heatRadius: 0.26,     // the cursor's warm spot, share of R
+    shove: 0.028,         // how far dots part round it, share of R
+    swell: 0.85,          // dots grow up to +85 % under it
+    wave: 0.6,            // the light wave through the warm spot
+    // v431 ("kogda hover na globuse tochki nemnogo sirenovi stanut, ya xochu chto on izmenyal cveta bil cvetnim"): the warm spot is
+    // many-coloured — COLORS.hue0…hue5 round the palette — and its colours run: [palette turns from the centre out per heatRadius,
+    // turns round the cursor, turns a second (× 1000 a whole number: the clock wraps at 1000 s), how fast a dot takes its colour
+    // (× the spot's own bell; 1 = as the single colour did, only its middle full)]; null = the single colour (COLORS.hot), as v416–v430
+    heatHue: [0.5, 1, 0.16, 1.8],
+    // pools of light under pins: [strength, radius (chord), swell]
+    pinGlow: { off: [0, 0.05, 0], next: [0.3, 0.05, 0.15], active: [1, 0.05, 0.45], latest: [1, 0.08, 0.7], preview: [0.78, 0.09, 0.45], you: [0.9, 0.075, 0.6] },
+    ringMax: 0.15,        // the pulse round a "next" pin, chord (≈ 8.6°)
+    landRing: 0.2,        // the ring when an arc lands
+    arcLift: 0.16, arcLiftMax: 0.22, // arc height over the surface: per radian of length, capped (share of R)
+    arcBend: 0.14, arcBendMax: 0.2,  // a sideways bow off the great circle (per radian, capped): arcs through the centre
+                                     // would otherwise project as straight lines; it is fixed to the arc, so it holds as it turns
+    arcHalf: 18,          // px, half the arc strip (room for its glow)
+    arcStyle: { solid: [2.4, 0.62, 0], strong: [2, 1.45, 0], dashed: [2, 0, 1] },   // [line px, glow, dashed]
+    dash: [11, 6],        // px, dash and gap (the dashed style, and the dashes of the train that runs to You)
+    flowAmp: 1, flowLen: 0.42, flowGap: 1, flowW: 3.4,   // the trains of white dashes running from a friend to You along a lit arc: their strength, a train's length and the gap to the next (R — v416; a share of the arc in v415, so a long arc's train was long and fast), a dash's width px
+    hit: 22,              // px, the least pin hit radius (a 44 px target)
+    spin: 3.5,            // °/s
+    swayAmp: 9, swayPeriod: 12800,   // °, ms (8 × cinematic)
+    idleDelay: 1800,      // ms after the last touch (or the pointer leaving the sphere) before the idle motion picks up
+    friction: 2.6,        // 1/s, how fast a throw dies down
+    flingMax: 240,        // °/s
+    flingStop: 1.5,       // °/s: below this a throw is over (≈ 0.1 px a frame at R 256) — settle fires, isMoving() turns false
+    tiltMax: 60,
+    dragSlop: 4,          // px before a press becomes a drag
+    maxDpr: 2,
+    pinScale: [0.82, 1]   // pin scale at the limb / at the centre
+  };
+
+  // v547 ("10. kak naznachil tak i sdelai, no esli vidd ne menyaeca"): the palette on the DS's semantic twins of its primitives
+  // (dark theme, the same colours); primary-100 (pool) has none and stays
+  var COLORS = {
+    land: ['--rf-land', '#FFFFFF'],   /* v562: by theme (src/body.html .rf__gbox) */   /* v423 ("chtob kontinenti vidneeye bili": the continents over the ocean): 100 % (v415–v422: 88 %) */   // v402: violet, full (was white 64 %)
+    ocean: ['--rf-ocean', 'rgba(255,255,255,.24)'],   /* v423 ("ostalnie nemnogo dai opacity"): 24 % (v415–v422: 48 %) */   // v399: 6 % (was 12): the glass body shapes the sphere now, the land reads
+    hot: ['--outline-primary-high-em', '#BBB3FF'],
+    // the warm spot's palette, a cycle (hue5 runs back into hue0). v433 ("ne ostav tolko sirenovi"): only the DS lilacs, the pale and
+    // the deep running through the spot — primary-300 → 400 → 500 → 600 → 500 → 400 (primary-200 reads as white on the ball: tried);
+    // v431–v432: round the colour wheel (primary-500, blue-400, green-500, yellow-400, secondary-400, red-400)
+    hue0: ['--outline-primary-high-em', '#BBB3FF'], hue1: ['--surface-primary-high-em', '#8170FF'], hue2: ['--outline-primary-med-em', '#9075FF'],
+    hue3: ['--surface-primary-med-em', '#6635F2'], hue4: ['--outline-primary-med-em', '#9075FF'], hue5: ['--surface-primary-high-em', '#8170FF'],
+    pool: ['--surface-primary-high-em', '#8170FF'],   /* v551 ("10. surface primary high"): the DS's surface-primary-high-em (primary-100 #EAE8FF before, no twin) */   /* v416: the pools under the coins near white, a colour of their own — the cursor's warm spot is violet again (in v415 it shared the white: a patch of big white dots under the pointer) */
+    rim: ['--outline-primary-med-em', '#9075FF'],
+    glow: ['--outline-primary-low-em', '#6434E0'],
+    glassIn: ['--rf-glass', '#190B3F'], glassMid: ['--rf-glass', '#190B3F'], glassEdge: ['--surface-primary-med-em', '#6635F2'],   // v402: the glass body
+    shine: ['--rf-shine', '#FFFFFF'],   // v399: the glass's shine (its white; the alpha is LOOK.glass.shine)
+    arcSolid: ['--outline-primary-med-em', '#9075FF'],
+    arcStrong: ['--outline-primary-high-em', '#BBB3FF'],
+    arcDashed: ['--outline-primary-high-em', '#BBB3FF'],
+    idle: ['--surface-disabled-high-em', 'rgba(255,255,255,.32)']   // the grey before engagement
+  };
+  var ARC_COLOR = { solid: 'arcSolid', strong: 'arcStrong', dashed: 'arcDashed' };
+
+  /* ---- land: own outlines, (lng, lat) in quarter degrees, 4 chars a vertex; "!" rings are water ---- */
+  var LAND = /*LAND*/"7YAe7XAg7VAi7NAh7EAi79Ag77Af7GAf7OAg7RAe7UAd 1JAc1BAd16Ab14Aa14AZ11AY14AX1BAY1FAZ1IAa 8RAW8WAY8YAa8ZAc8ZAe8SAf8MAg8EAh86Ai7zAi7tAh7uAf81Ae84Ac87Ab88AZ8BAY8DAW8FAW8LAV 3hAE3mAF3rAE3pAF3lAG3gAG3cAF3cAD 3QAE3WAF3UAF3OAF3JAE3MAD 54A858A85DA85FAA5CAA57AA52AA4zAA4vA94tA84vA74-A7 6-A46_A66-A76zA96uA96qAA6kAA6mA86iA96dA96aA86aA76eA56hA56mA56nA36nA16n9-6p9y6t9y6v9z6w9-6yA06zA2 7c9f7a9f7X9f7U9f7R9g7O9h7M9i7L9k7M9l7O9n7L9o7H9o7F9p7C9r7A9s799u7B9v7D9x7G9y7J9z7L9-7MA07NA27PA37QA47QA87SAA7SAB7TAD7TAF7QAG7OAI7JAI7HAK7FAL79AN73AN6-AO6vAP6sAR6lAR6eAR6YAR6RAR6SAS6YAT6dAU6fAW6bAX6UAW6OAY6OAZ6OAb6TAc6TAe6ZAf6hAg6oAh6uAi6_Aj79Ak7JAl7QAm7XAo7bAp7dAr7iAp7pAo7wAn82Am89Al8JAl8TAl8bAm8dAl8jAj8tAj8_Ai96Ai9FAh9OAg9UAf9RAe9PAd9PAb9IAb99Ac91Ac90Aa91AX93AW98AW9FAV9KAT9PAS9SAR9YAQ9dAP9gAP9mAP9sAO9xAOA0ANA4AMAAALADAJAHAIAIAGAEAFAGAEAIADAMACARABAVAAAYA8AaA6AdA5AiA5AkA7AoA7AoA5ArA4AvA4AwA6A_A6B4A5B9A5BDA5BFA7BJA5BOA5BSA4BXA3BbA2BfA2BjA1BlA0BoA1BsA0BvA2BxA3C0A3C2A1C6A0CBA0CDA2CGA0CKA0CP9_CTA0CYA0CcA0CeA2CgA3ClA2CpA2CuA2CyA2D0A1D5A1D8A0DC9_DG9_DJ9-DL9xDN9wDS9xDT9yDX9zDb9zDe9-Dh9_Dl9-Dm9yDq9yDu9wDy9wE09vE49uE79tEA9sEE9tEH9rEK9qEO9qER9qES9oEV9nEY9mEc9mEg9lEk9mEn9mEr9nEr9pEv9qEx9rF09sF29tF69uFA9uFD9tFG9sFK9sFO9tFS9tFW9uFa9uFd9yFd9zFc9_FYA0FVA1FWA3FaA3FaA4FYA6FWA7FZA9FdA9FiA8FkA7FmA5FoA4FqA3FrA1Ft9_Fw9_F_9_G39-G79-G99yGA9xGC9vGG9uGK9uGM9sGO9rGR9rGV9rGZ9rGd9qGh9rGk9qGm9nGn9oGp9qGt9rGx9rG-9qH29rH69rH99qHC9rHF9sHJ9rHN9rHR9qHV9rHY9qHa9oHc9nHh9kHk9lHn9mHq9nHv9qHz9qI09qI59pI99pIC9oIF9nIJ9mIM9mIQ9mIS9oIU9pIZ9pIc9qIg9rIl9rIp9rIt9qIv9oIz9oJ09oJ59pJ89oJC9oJG9pJJ9pJN9oJR9oJV9oJa9oJd9nJh9nJi9lJi9jJl9kJl9mJn9oJo9pJs9qJw9qK09qK39pK89pKC9pKH9pKM9qKP9rKO9sKR9uKV9vKZ9wKf9wKk9xKo9xKt9yKv9wKz9xL09zL39-L89-LD9-LFA0LJA1LMA2LRA3LVA3LaA3LeA3LjA3LoA4LsA5LwA6LzA7LyA8LwAALuACLtADLrAFLmAFLkAHLeAILdAJLaALLXAMLVANLUAPLUARLUASLWAULXAVLZAXLgAXLiAZLbAaLVAaLNAbLKAdLJAfLHAgLFAiLKAjLNAlLQAmLVAoLaApLgAqLqArLsAtM1AuM2AuM5AwMGAvMPAwMWAxMWBG00BG00Ax04Av0BAw0DAv0EAv0FAv0GAu0HAu0MAw0SAu0eAu0iAu0kAv0qAw0_Ax18Az1OAz1ZAy1qAz1-A-28Az2KAy2KAw25Aw1uAv1qAu1gAt1gAr1iAp1jAo1jAm1cAl1ZAk1TAi1cAj1mAi1rAj1zAi23Ah26Af25Ae20Ad1wAb1oAb1gAb1ZAa1WAZ1RAY1OAW1NAS1OAS1SAT1ZAT1fAS1iAU1pAU1uAT1zAS22AQ28AQ27AO26AN27AM2CAL2FAM2LAL2PAK2VAK2bAK2gAJ2kAI2pAH2sAH2vAI2_AH34AI3AAI3FAH3KAI3QAI3WAI3cAI3iAI3nAI3rAH3wAG3_AH44AG48AF4BAG4CAI4FAJ4JAI4OAJ4TAK4YAL4dAL4iAK4pAK4uAL4zAL50AJ4zAI4xAH4sAG4qAF4pAD4nAA4qAB4wAB4_AB53AC58AD59AE5FAE5KAE5PAD5UAD5YAE5eAD5hAA5kAC5pAD5uAC5xAE60AE65AF6AAF6DAE6FAD6JAE6OAE6SAF6VAG6aAF6fAF6jAE6oAD6tAD6yAC70AB73AA73A873A772A570A36_A26-A06-9_6-9z709y729w729v729t719r739q759o789n7B9m7E9k7F9j7H9i7K9h7O9g7Q9f7T9e7W9e7Z9d7c9c7f9b7h9c7g9d 718_76927C937A957695749473956_966x966u956q946l926h906b8x6f8y6k8_6q906s8-6t8y6x8w6z8x6_8y 7c8q7f8s7e8u7Y8v7X8t7T8v7R8t7W8r7Z8s Ff8lFZ8lFZ8jFZ8hFa8gFc8iFg8iFg8j KM8BKP8DKS8CKV8BKX8CKX8GKW8IKW8LKU8KKR8NKR8MKO8MKM8JKL8GKJ8DKJ8B M48CM58DM88CM98DM98FM88HM58KM38LM48NM18NL-8PLz8SLw8WLt8XLr8ZLo8YLl8XLh8XLg8VLi8SLn8OLq8OLt8MLw8KLz8IL-8FM08EM08CM38A MA7vMD7zMD7wMF7xMG7-MJ80MM80MO7-MQ7_MP82MO85ML85MK86MK88MI8AMG8DMD8FMC8EMB8DMD8AMC88M786M785MA83MB80MB7-M97xM97wM77uM47rM37oM47oM67qM97r Li71Lh72Lf71Lc6_LZ6zLX6wLW6uLY6uLa6wLc6xLd6yLg6_ MP6jMR6lMQ6nMO6nMM6nML6lMN6kMP6k MT6hMR6iMQ6hMS6gMU6gMW6eMW6g 006g006e016e Ll6gLk6gLj6fLj6e Li6aLj6dLi6cLh6dLh6cLh6Z EO6UEP6ZEQ6bEQ6dEP6eEN6cEN6dEN6gEN6iEM6iEM6mEK6qEI6wEG72EE77EC7CE97DE67EE37DE07CD_7AD_76Dz73Dz70D-6zE06zE06xE16uE26sE16qE06nE06kE16hE26fE46fE66eE76dE96dEC6bEF6YEG6WEF6VEH6VEJ6SEJ6QEL6OEM6QEN6S KE6VKG6YKI6XKK6YKL6aKL6cKM6fKN6hKO6iKP6lKO6nKQ6qKU6sKX6uKZ6wKZ6xKb6zKd71Ke70Kg72Kh72Ki76Kk78Km7AKp7DKr7GKr7JKq7LKs7OKs7SKr7UKq7XKq7aKq7dKo7gKl7iKj7lKi7nKh7rKf7tKe7wKe7yKe7-Kc7_KX7_KU81KS82KP84KM82KK82KK80KI80KE83KB82K982K681K380K07-J_7xJ-7vJy7tJu7sJw7rJv7oJt7qJp7rJr7pJs7nJu7lJt7iJq7lJn7mJm7qJj7oJj7mJg7jJe7hJf7gJa7eJX7eJT7cJM7cJH7eJC7fJ97fJ47hJ17iJ07kI_7mIx7mIv7mIr7lIo7mIm7mIj7oIi7oIg7pIe7qIb7qIZ7qIU7oIS7nIS7kIU7kIV7jIV7iIV7fIV7cIT7YIS7WIS7UIR7RIQ7QIP7OIO7LIM7IIL7GIN7IIM7EIO7GIP7HIP7FIN7CIN7BIM7AIM77IN76IN74IN72IP6_IP72IR6_IU6-IW6yIZ6xIb6wIc6xIf6vIh6vIi6uIj6uIl6uIp6tIs6rIt6pIv6nIv6lIv6jIy6gI-6jI_6iI-6gI_6eJ16fJ26cJ46aJ56ZJ76YJ76XJ96XJ96WJA6WJC6VJF6XJH6ZJK6aJM6aJM6YJO6UJP6TJP6SJQ6QJT6PJV6PJY6OJY6MJV6LJX6LJa6MJc6NJg6OJh6OJj6PJm6OJn6OJo6NJq6PJp6SJn6TJm6TJm6VJl6XJk6ZJk6aJn6cJq6dJs6fJv6hJw6hJy6iJz6jK16lK46jK46hK56gK66dK76aK66YK76XK66VK76SK76RK76QK86OK86LK96KKA6JKB6LKB6NKC6OKD6PKE6RKE6U LO6ILQ6JLN6JLL6H Ip6HIn6HIi6EIm6DIo6FIp6G LJ6FLI6GLF6FLF6DLH6ELJ6E LN6ELM6FLJ6CLI69LK69LL6C J26HI-6HI-6GJ06DJ46CJ46BJ86AJB6AJC69JD6AJC6BJ86CJ46E Ie68If69Ii69Ij6BIe6CIb6CIZ6CIa6AId6A Iy68Ix6BIr6CIm6BIm6AIp69Ir6AIu6A LG69LG6ALD68LA67L966L965LB66LF68 L665L566L465L263L262L564 I263IA64IB62II64IK66IQ67IV69IQ6BIM69II6AIE69IA68I667I367I167Hw65Hv64Hr63Hu60Hz60I061I262 Jh61Jf64Je61Jf5_Jg5-Jh5_ L063K-64Kz62Kx60Kw5zKx5yKx5zKy5-K-61L062 Km5-Kk5-Kj5_Kh60Kf61Kd61Ka60KX5_KY5-Kb5-Kd5-Ke5yKf5yKf5-Kh5-Ki5yKl5xKk5vKn5vKn5x JD5sJB5tJ95sJ85rJC5r JQ5qJR5tJO5sJL5rJI5sJG5sJH5pJL5p Kr5wKp5xKp5vKo5tKm5sKk5qKh5pKi5oKk5pKl5qKn5rKp5tKq5u Jf5jJg5pJk5rJn5nJs5lJv5lJz5mK05oK45oKB5rKI5tKL5vKN5yKO5-KV60KW62KS63KT66KW68KZ6CKb6CKb6EKe6FKd6FKh6HKh6IKe6JKd6IKa6HKW6HKT6EKQ6CKO68KJ67KG68KD69KE6CKB6DK86DK46CK169Jz68Jy6AJs6AJu66Jx65Jw61Ju5-Jm5wJj5wJd5sJb5uJa5uJZ5tJZ5rJW5pJa5oJd5oJd5nJX5nJV5kJS5kJQ5iJV5hJY5fJe5h J55YJ25cI_5dIx5cIq5cIn5dIm5gIq5kIs5iIz5gIz5iIx5iIw5kIs5mIw5rIv5sIz5xIz5zIx5_Iv5zIx5wIt5xIs5wIs5vIq5sIq5pIn5qIo5uIo5-Il5_Ij5-Il5wIk5sIi5sIh5pIj5nIj5jIl5dIm5cIq5ZIt5aIy5aJ05aJ45X JJ5ZJJ5dJG5dJG5fJI5hJG5iJF5fJE5aJE5XJG5VJG5XJI5Y Ht5_Hp5_Hl5yHg5vHf5sHc5pHa5mHX5hHT5dHS5aHQ5XHN5UHL5RHI5PHE5KHD5IHG5IHM5JHP5NHT5QHV5RHZ5WHd5WHg5YHi5cHl5eHk5hHm5iHn5iHo5lHq5nHs5oHu5qHt5v Ie5XIi5aId5bIc5eIc5hIY5kIY5oIX5uIW5tIR5uIQ5sIN5sIL5qIG5sIF5qIC5qI95qI85kI65jI45gI45cI45ZI75WIA5XID5XID5TIF5SIK5SIN5OIP5MIQ5KIU5IIX5FIZ5CIb5CId5EId5GIf5HIj5IIi5KIg5KIg5MIe5NIb5RIe5V JA56JA59JA5BJ95FJ75BJ55DJ75GJ65IJ15FJ05CJ15BI-59Iz5AIx5AIu5CIu5BIv58Iy57I-55I_57J256J354J654J651J953J955 GL5FGH5GGF5DGF57GH51GJ53GL56GN5AGN5E 7S507P507O507P4_7P4z7S4y7S4z J04_I-50Iz53Iy54Iw51Iw50Ix4_Iy4yI-4yIz4_J04x Ig53Ib57Id54Ig51Ii4-Ik4xIl4-Ii50 Iu4uIw4wIy4wIy4xIx4zIu4-Iu4yIu4w J64tJ74yJ44xJ44yJ54_J34_J34zJ24yJ14wJ44wJ44vJ14sJ54s Is4qIr4tIp4rIn4oIr4o Ir4UIu4VIv4UIv4VIv4XIw4aIv4dIt4eIs4iIt4lIv4lIx4lJ04nI_4pJ14qJ04sIz4qIy4oIx4pIu4nIr4nIp4nIp4lIq4kIp4jIo4kIm4iIm4gIm4dIn4eIo4YIp4U 7A4V794W764W734W734V744U774U794U 6S4X6R4X6P4X6N4V6N4U6P4U6Q4U6S4U6V4V6V4W 6k4P6n4P6o4O6r4O6t4Q6u4P6v4R6x4R6x4S6z4S6_4U6z4V6x4U6w4U6u4U6t4V6s4V6r4U6q4V6o4Y6n4X6n4W6l4V6j4V6g4V6e4W6c4V6d4T6g4U6j4U6l4T6j4S6j4Q6g4P6h4O I94TI64VI34UI34RI44PI94OIB4OIC4PIA4R 1Y4S1X4S1W4S1W4R1W4P1X4O1W4N1X4N1Y4O1Z4O1a4P1b4Q1Z4R 1W4L1U4M1U4L1T4L1T4K1U4K1V4K 1T4J1T4K1R4K1R4J 1P4J1N4J1N4I1O4H 1J4G1I4G1H4G1H4F1I4F1J4F 6H4D6J4E6N4E6O4F6R4H6U4J6V4J6Y4K6X4L6a4L6d4N6d4O6a4O6X4P6V4O6P4P6S4M6Q4L6N4L6M4K6L4I6J4I6F4H6E4G694F674E694D654D624F604F604G5-4H5y4G5-4F5_4E614D634C664C674B6A4C6E4C 6Q496P496O476M466N436O436Q47 Ir4DIp4GIn4DIm4AIp46Is43Iu44It46 6P3-6K3-6K3z6M3z6P3z 6S3-6R406R3-6P3y Jh3VJh3XJf3ZJd3YJb3ZJa3bJX3aJX3YJa3WJc3WJe3V DQ3PDO3RDO3SDK3UDI3TDH3SDJ3RDK3QDN3R Cl3PCn3RCq3QCt3RCv3RCv3SCp3SCk3R CE3FCD3ICD3JCC3MC93KC73KC23IC23FC73GCB3F Br33Bt36Bt3BBr3BBp3CBo3BBo36Bn34Bp34 K43JK23NK33PK13RJy3TJr3UJl3YJi3XJi3UJb3UJX3WJS3WJW3ZJT3gJR3iJP3gJQ3dJN3cJM3ZJP3YJS3VJW3TJY3QJg3PJl3QJp3JJs3LJx3HJ-3FK03AK036K133K532K838K83BK43F Bs2_Br32Bp32Bo2_Bp2zBs2y KG2tKI2uKL2sKM2xKG2yKD30K62zK432K032J_2-K12xK62wK72rK82oKD2s 7H2k7K2k7O2k7M2m7L2m7F2k7E2j7G2i 7P2a7N2a7I2Y7E2X7F2W7L2X7P2Z 3Y2c3W2d3P2b3O2Z3L2Y3K2X3G2W3E2U3F2T3J2U3L2U3P2V3Q2W3S2Y3W2a 7l2T7j2X7l2V7o2W7n2Y7q2Z7s2Y7w2Z7v2c7y2b7y2d7z2g7y2j7w2k7t2j7u2f7t2f7o2i7m2i7p2g7l2f7h2g7Z2g7Y2e7b2d7Z2c7c2Z7h2T7j2R7n2P7o2Q7o2R 2z2G312G302K332N322N2_2L2-2K2y2I2x2H2x2F KF2TKJ2aKD2ZKA2fKE2jKE2lKB2jK82mK82jK82fK82bK92YK92SK62OK72JKA2HK92FKB2FKC2HKD2LKD2P Ar2NAk2PAe2PAh2LAf2GAl2DAo2BAr2BAv2EAt2HAu2J C32AC02DBy2BBy29C128 1i241e251c241b221f211h201k201l22 B41zB022B421B821B725B428B828BC2EBE2EBH2JBI2KBN2LBM2OBK2PBM2RBI2TBD2TB62UB42TB22VA-2VAx2WAv2VA_2RB22QAy2QAx2OA_2NAz2LA-2IB42IB42GB12EAz2DAy2CAz2AAy29Aw2BAv27At25Av21Ay1zA_1- 0w1u0t1v0r1u0o1t0s1s0v1t 6J1l6H1n6G1n6F1m6G1k6I1l 681j641l611l601k631i681i 0X1f0a1g0c1f0f1g0j1h0g1i0d1h0b1g0Y1h0X1g 5x1X5y1Z5-1Z601a651b691c6A1e6D1e6G1f6C1g661f641e601g5w1i5v1f5p1g5t1e5t1b5u1X AM1UAL1XAQ1ZAK1dA91fA51gA01f9r1e9v1c9m1a9t1a9t1Y9l1Y9n1V9t1U9-1XA41VA91WAF1U 6X1R6S1S6R1Q6T1N6W1N6a1O6a1Q6Z1Q 0K1U0N1V0M1S0X1S0e1W0a1Y0U1Y0U1c0S1d0O1d0L1b0G1a0F1Z0B1Y071Y041X051W001X021Y001a001K0A1N0K1R 5H1K5F1L5A1K561K511I541H571F5B1H5E1H5F1I MW1DMS1DMR1CMW1A 051C001D001A011A041A0A1B091B 5c1I5c1M5h1J5m1M5l1P5p1R5t1O5w1L5w1G601H661H6B1J6B1L681N6B1Q6A1S631U5z1V5v1U5u1W5q1Z5p1b5k1e5e1e5b1g5b1i5W1j5R1m5N1q5L1u5L1y5R1z5T215V245a235i255m265p285u295y2B632B672B662F682J6A2N6G2R6J2Q6M2M6K2F6H2D6N2B6S296U266U236R206M1z6R1v6P1r6O1l6Q1k6X1l6b1l6f1k6i1m6n1o6p1p6w1q6w1t6x1y6_1z711_771z7B1v7E1t7H1w7M1_7Q247P277U297Y2B7e2C7h2D7i2H7l2H7n2J7n2N7k2P7h2Q7b2S7W2V7P2W7H2V7B2V762V732Y6-2a6u2f6q2j6t2i6z2d762Z7C2Z7F2b7C2e7D2i7E2l7J2n7Q2m7U2i7U2l7X2m7S2p7J2r7F2t7B2w782w772s7E2p782p732p742r702t6y2u6u2v6r2y6r2z6r2_6s316u316t2_6u306u316r326q326n336l336i336f346l346m346h356e356d366e366d396a3C6a3B6Z3B6Y3A6Z3C6a3D6a3E6Y3G6W3J6X3G6V3F6V3B6U3D6V3G6S3F6V3G6V3K6W3K6X3M6X3Q6V3T6Q3U6O3W6M3X6K3Y6J3Z6F3c6D3e6B3g6A3j6B3m6C3p6E3s6E3u6G3y6G3_6F416E436D446B436B416941673z653w653u653s643q613m603m5y3n5x3n5v3l5s3k5o3l5k3k5h3l5g3l5g3m5g3o5h3p5g3p5f3p5d3q5a3p5X3n5U3o5R3n5P3n5L3o5I3r5E3t5B3v5B3w5A3z5B3_5B415A445947594C594E594G5A4I5B4L5E4O5F4R5G4T5L4U5M4V5Q4U5T4U5W4T5Y4S5b4R5c4P5c4L5d4K5g4J5k4I5n4I5q4I5r4J5r4L5o4N5o4P5o4Q5o4S5n4V5m4U5l4U5l4V5m4V5m4W5l4X5l4Y5l4Z5l4a5l4c5k4d5j4d5i4e5k4f5l4f5m4f5o4e5o4f5p4f5q4f5s4f5u4e5v4e5w4e5x4e5y4e5-4f5_4f604f614g624h634i634j634l624m624o624p624r624s614t614u614v614x614y624-645066526753675469546A556C556E546G536I526K526M526O536P546R556T556W536X526X516Y4-6a4y6d4y6d4x6g4x6j4v6l4u6n4s6o4s6p4u6p4v6p4w6m4w6o4y6n4-6m516n546p536q516p4_6o4y6t4w6t4v6u4t6w4w6y4w6_4y6_4-734-774z794_7C507F4-7F4z7K4z7O4z7L4-7M507Q517T527T567V567X577a587c5B7c5D7e5D7g5F7h5G7m5H7n5G7q5G7u5H7w5H7y5I815M815N835N845P865W885X885a855d865e8E5f8E5j8H5g8M5i8S5k8U5n8U5p8Y5o8g5q8m5p8s5t8x5x8-5y925z935-94639565936C916F8y6K8v6P8s6S8r6S8q6V8q6d8p6j8p6l8o6n8n6s8j6y8i708f718e748a748T758R778M788H7C8E7G8D7I8E7L8D7P8C7R8A7T857a827d7_7f7z7j7x7l7v7o7q7q7n7p7l7p7h7o7f7o7c7m7c7o7h7r7h7u7j7w7j7y7f817Z837R847N837N867N897N8B7L8C7H8D7D8B7C8C7C8G7F8H7H8G7I8I7E8J7B8M7B8Q7A8S768S738U728X768a798b788f738h718l6z8n6x8p6z8t6_8v6-8v6w8v6u8w6r8y6q8_6o8_6k8-6f8x6a8v6Z8t6a8q6Y8o6Y8h6Z8d6d8a6X8Z6b8V6d8O6h8Q6j8I6g8G6f8L6d8L6e8F6f886h856g816g7z6h7y6k7s6n7m6o7g6n7a6p7W6o7R6q7N6r7F6s776u6-6t6t6t6n6o6l6o6j6g6f6Z6b6W6Z6U6V6V6U6S6P6O6I6K6A6I686H656E626B616C5_6A5x6C5u6F5s6H5p6G5n6F5p6C5n6D5m6C5i6E5i6E5f6G5d6G5b6I5a6L5Y6K5X6M5X6L5V6M5T6O5T6Q5R6R5P6Q5O6R5L6Q5I6R5H6Q5D6O5B6N5A6M586N576M566M556K546I546H566F576E576E586G5A6F5A6E5B6C5B6C596B596A59695867576657655765586457625661556255615460535_525z525z505y505y515y525x515v505v4_5v4-5v4z5u4y5v4y5u4w5s4v5r4t5p4s5n4q5o4q5p4q5o4p5n4o5m4p5k4p5j4p5h4o5f4o5e4n5c4m5Z4m5X4l5V4k5R4g5O4e5L4d5J4d5G4f5E4f5B4e584e544c514b4z4Z4v4X4u4W4s4W4o4V4m4T4i4R4g4O4f4M4g4M4g4L4h4K4h4I4g4H4f4F4e4D4a494W464U434R424Q414R3-4P3z4M3x4L3v4J3u4H3s4F3q4F3p4D3m4B3j4B3h493g473g453f443g453i453l473n4A3q4A3r4B3r4B3s4C3s4D3v4E3w4F3x4I3z4J414K434L454L474N474P494Q4B4P4D4O4D4N4A4K484H464F454F424F404D3_4A3z493y463x443v463v473u473s443p423o403l3_3j3z3f3x3c3x3a3u3Y3s3X3s3W3q3W3o3V3l3U3k3U3j3R3f3N3c3I3c3H3a3G3X3C3X393U373V333V303U2z3V2v3W2o3W2j3U2f3T2d3U2c3a2e3c2i3d2h3c2d3b2a3a2a3S2W3Q2U3I2T3G2P3H2N3B2L3B2I362F362D342B302A2_272w232u202q1_2j1_2f1-2X1w2T1v2M1u2G1u281s241q1_1r201u1-1u1v1v1s1x1n1x1n1v1o1r1t1q1s1p1m1r1k1u1e1x1h1z1d1_1Z211V221U241O261M281I2A1F291B2B172C142D0z2E0y2E112C152B19281E281G261L241M231P221Q1_1S1y1N1-1M1z1K1-1H1y1G1-1F1y1B1z181z181x191v161u111v0z1t0x1s0x1q0u1o0v1m0y1j0-1h111h141i171g1A1g1D1f1C1d1A1c1D1b1A1b161c151d121c0y1c0s1b0r1a0m1X0r1W0-1U111U111W191W161T111S0-1Q0w1O0r1N0t1K0-1K131J141H181F1C1E1K1C1O1D1U1B1a1B1d1D1e1C1l1D1l1E1r1E1v1E221F291G2C1G2I1F2O1H2S1H2a1I2g1K2k1K2n1J2s1H2y1I321G391F3C1H3F1G3F1E3I1E3P1I3U1F3V1I3a1I3b1H3g1H3m1I3w1K3_1L431K481M431O4A1P4L1P4O1O4S1Q4X1O4T1N4V1L4a1L4d1L4h1M4l1O4p1O4w1P501P561P561M591M5G1N5F1R5I1O5L1O5N1K5J1H5E1G5E1B5J185O195S1B5Y1F5U1H 471445154E144K164O144S154V194X184U144Y134c144g154j194k1C4r1E4y1G4y1I4r1I4u1K4s1L4l1K4e1J4a1K4S1L4G1M4B1M491K431J401J3x1G3z1G431F491F4E1F471E3-1E3u1E3s1C401B3v1B3o1A3s173v154313 4k124g154a124c124h11 6V146V156R156M146I156H156C136D116F116O11 5s135v165z1367116E156D186L176P156Y176d196e1B6l1A6p1C6z1E701G741J6z1L761O7D1P7I1S7P1T7N1V7G1a7B1Y751U701V6_1X741a791b7B1c7D1g7C1j771i6z1f731i771l771m6y1l6q1i6l1g6m1f6g1d6b1b6b1c6P1d6M1c6O1Z6W1Z6e1Y6d1X6e1V6j1R6i1P6h1O6b1M6T1K6V1J6R1H6N1H6K1F6I1H6B1H5y1G5q1F5j1E5g1D5k1B5e1B5d175g135k125v11 4_1153115A115C1258145E165D19571B531B50194s164s154-154w13 KE13K813K013J_13K311K811KE12 5R155N185I185G145G125I115M0_5U105c115W14 3k1A3a1C3Y1B3O193Q173T143W113S0_3g0-3m0_3w0_3-1042123z133p163k19 Kh0yKc0zKW0zKO0xKP0wKX0x 5Q0y5N0-5I0z5D0y5F0w5L0v5O0x KK0wKH0zK20zJy0-Jq0xJs0uJx0tK60u 560r590t590v570y510y4y0y4z0v4s0w4s0t4w0t500r560s 4V0t4X0v4a0u4e0u4f0w4d0y4P0z4F0-490-490z4H0x3_0y3v0x3_0t420s4E0t4L0w4S0w4M0s4Q0r4U0r Es1DEq1DEd1DEc1BEU1AEU18EY17EY15Eg11Ec11Em0zEl0yEt0wF50tFI0sFP0rFX0qFZ0sFX0tFJ0vF60xEw0_Eq13Ek17Ek1A 5L0q5Q0r5Y0r5b0s5a0u5f0v5h0w5n0w5s0w5z0v650v6B0v6G0x6H0y6E0z680-630-5u0-5l0-5f0-5U0z5T0w5S0u5O0t5G0s5C0r5D0p 3_0n3_0q3y0s3u0s3m0u3g0u3b0u3h0r3q0o3w0o Hy0qHz0sI10rIC0rIL0tIP0vIO0xIJ0yI90-I60_IB10IG11IK10IM13IO12IU11Ih12Ii14Iz14Iz11J612JC12JI14JK16JI18JN1BJT1DJX19Jd1AJk19Js1BJv19J_1AJz16K215Kc17Kf1AKq1DL41CLC1DLF1ELF1HLK1ILP1HLW1HLe1ILl1ILs1LLx1KLu1HLw1GM71HMF1GMQ1IMW1KMW1aMR1cMM1cMP1eMS1hMT1iMU1kMT1lML1kMA1nM71nM11qLx1tLv1uLq1sLf1vLd1tLa1vLU1vLT1xLO1_LO21LT22LS27LP28LN2BLO2DLH2FLG2JLA2KL92OL32SL22PL02JK-2AL025L323L321L920LH1xLN1tLV1pLY1kLT1kLR1nLG1sLD1nL31oKv1vKy1xKp1yKj1zKj1wKd1vKY1xKM1xK91yJy24Jj2DJp2EJr2GJv2HJx2FK02FK52KK62NK22RK22WK02cJw2iJv2lJp2pJk2uJh2wJc2zJa2zJX2xJS2-JR2_JQ2_JO30JN32JN34JL35JK36JJ37JG38JE39JE3BJF3CJH3EJL3IJM3LJM3PJK3SJH3SJE3UJA3UJ93SJA3PJ83LJB3KJ93HJ73GJ63HJ53HJ43GJ33GJ43EJ53DJ63AJ53AJ339J138Ix39Iv3BIq3CIs3BIs39Iv36It34Ip36Il38Ii3BIe3BIc3DIe3GIi3GIi3IIl3JIp3HIt3IIv3IIw3KIq3LIp3OIl3QIj3SIn3VIo3YIr3cIu3fIu3iIr3jIs3lIu3nIu3qIt3tIr3tIo3yIk41Ih46Ib4AIW4DIR4DIP4FIN4EIL4GIF4IIB4IIA4NI84NI74KI74II24HI04IHx4LHu4PHt4SHw4WHz4bI14eI44hI54oI54vI14yHz4_Hw52Hr56Hp53Hq50Hn4-Hk4zHi4xHg4tHd4rHZ4rHa4oHW4oHW4tHU4zHT50HT53HV53HX57HY5AHa5DHc5DHf5FHi5IHk5LHk5NHj5PHk5QHk5THl5UHn5XHn5ZHk5ZHg5WHc5THb5RHZ5OHY5LHX5JHX5GHW5EHV5DHU5BHS58HQ56HP59HP57HP54HQ50HQ4zHR4wHQ4uHQ4qHO4nHN4jHM4eHL4aHI4cHD4fHB4fH94eHA4ZH94VH64RH74PH44PH14LH04JH04HG_4FG-4DGw4DGw4EGv4HGt4GGt4HGs4GGq4GGq4HGn4HGi4IGi4LGg4NGa4QGW4VGT4XGP4aGP4cGN4dGJ4eGH4eGG4hGH4nGH4qGF4uGF4_GD4_GC52GD53G954G857G658G254G14_F_4xF-4vFx4rFw4mFw4kFs4eFq4WFp4RFp4MFp4JFj4LFg4KFb4GFd4EFb4DFX49FU48FT45FP42FI43FC43F644E-42Ew42Es41Eq3yEo3xEl3yEh3-Ec3zEY3wEU3vER3rEO3lEM3mEK3lEI3mEG3mEH3oEG3pEI3sEJ3vEL3wEM3yEP3zEP3_EO40EP42EQ43ER44ER45ER42ES40ET40EU41EU43EU45EU47EV47EV48EY47Ec47Ee48Eh45Ek42Em40En3-Eo3_Eo40En41Eo44Ep47Es48Ev49Ex4AEz4CE-4DE_4EE_4FE-4HEz4IEx4KEw4MEu4MEt4NEt4PEt4SEr4SEo4UEo4WEn4WEl4WEj4XEj4ZEh4aEf4aEc4bEa4bEY4cEX4eEX4gET4hEM4jEJ4mEH4mEG4mED4oEB4oE84pE74pE64qE54qE44rE24rE14sD-4rDz4pDz4nDy4mDy4jDw4hDx4hDx4fDx4eDx4dDx4bDv4aDv4YDt4XDr4TDq4QDn4NDl4NDj4JDi4GDi4EDg49De48Dc47Db45Db44Da42DZ41DX3-DV3wDT3uDR3uDR3sDR3qDS3pDS3oDR3qDQ3tDP3vDO3vDM3uDL3sDI3nDH3nDJ3rDL3vDO3_DQ42DR44DV48DU49DU4CDZ4FDZ4GDb4KDa4LDa4PDc4UDd4VDg4WDi4bDj4eDl4gDr4kDt4mDv4pDw4qDy4rDz4sDz4uDx4vDz4wD-4xD_4zE04-E24-E64zEB4zEE4xEG4xEI4wEK4wEL4wEN4wEP4vER4uES4uET4vES4xES4zER4_EQ53EO58EM5DEI5JEF5NEA5TE65WE05aDz5dDu5iDt5kDs5lDq5mDp5oDn5oDm5rDl5tDk5vDj5xDh60Dh62Dk63Dk64Dj67Dj68Dj6ADk6CDm6GDn6HDo6JDo6NDo6RDo6XDp6ZDo6cDm6eDk6hDg6iDc6kDX6pDW6pDT6sDR6tDR6wDT6zDT6_DU71DU70DU74DT76DU77DU78DS7ADP7BDK7DDI7FDJ7HDK7HDJ7JDI7MDI7PDH7RDE7TDD7UDC7WDA7YD87bD47fD17hC-7jCw7kCu7lCt7mCr7lCp7mCk7lCi7mCg7lCc7nCZ7oCW7pCU7pCT7oCR7oCQ7mCQ7nCP7lCP7jCO7gCP7gCP7dCM7ZCK7WCH7QCE7NCD7KCC7GCB7ECA77CA73C970C76_C56xC36tC26qB_6mB_6jB_6hB_6dC06aC16YC26UC36TC56QC76OC76LC76JC66HC46FC46DC46CC56AC466C364C161C160C15_C05yBy5uBu5qBs5nBp5iBp5hBq5gBr5dBs5aBr5ZBt5VBt5SBs5PBq5OBp5NBo5MBo5LBk5MBi5MBh5NBe5NBb5KBa5IBX5FBU5FBR5FBN5FBK5GBE5JBC5KB85LB55KB35KB05JAz5JAv5KAs5LAo5NAn5NAm5NAi5LAe5IAb5FAY5DAX5DAU5BAS59AS57AR54AP52AO50AN50AM4_AL4zAL4yAJ4yAH4wAG4wAF4vAF4uAE4tAD4sAD4pAD4oAB4lAA4jAB4iAD4gAE4dAE4bAF4ZAF4WAF4SAE4QAF4OAE4MAC4KAC4IAC4GAE4FAF4DAF4CAG49AI47AK46AL44AL41AM3_AP3-AR3vAU3uAX3tAa3rAc3qAg3mAf3hAg3eAh3cAj3ZAn3XAq3WAt3RAu3PAx3PA-3RB13QB63RB73RBB3PBF3OBI3NBM3MBT3LBZ3LBb3LBf3KBj3KBl3KBo3KBs3JBv3JBv3LBy3KBw3MBw3OBy3PBx3TBv3VBv3XBx3XBy3ZB-3ZC33bC43aC83bCD3dCF3gCI3hCO3jCS3lCU3kCW3iCV3fCX3dCZ3bCc3bCi3bCj3dCk3dCm3eCq3eCr3gCw3gC-3hD23iD43jD73hD83gDC3gDF3gDG3iDH3hDK3iDN3iDP3hDQ3gDR3eDS3bDS3aDT3aDU3WDW3UDW3TDW3QDX3PDV3NDX3LDU3MDR3LDO3NDI3ODF3LDA3LDA3ND73ND33LC_3LCy3HCv3FCx3CCv3ACz36D336D533DD34DH31DM30DT30Da33Df34Dk34Dn34Ds32Dt30Ds2zDq2yDn2xDm2wDh2tDc2rDZ2pDc2oDf2lDd2jDj2iDi2hDf2iDc2iDZ2jDV2jDS2lDS2nDU2oDY2oDX2qDT2qDO2tDL2sDM2qDI2pDJ2oDM2nDL2mDF2lDF2jDB2kDA2mD62pD72qD52rD32qD22vD02xC_2-D030D032D433D334C-34Cz35Cv37Cu36Cu35Cs35Cq34Cl35Co37Cm38Cj38Ch36Ch37Ch39Cj3BCi3CCk3ECm3FCm3HCi3GCk3ICh3JCj3MCg3MCd3LCb3HCa3FCZ3DCX3BCX39CW39CW38CU37CT35CU32CU31CT30CS2_CQ2-CM2zCK2xCG2wCD2tCE2tCC2rCC2qC92pC82rC72pC72oC82oC52nC12oC22qC12sC22uC62wC82zCD30CG30CH31CG32CJ33CM34CQ37CP39CN37CJ36CI39CL3ACK3CCJ3DCG3GCF3GCF3FCG3DCG3CCF3ACE38CC37CB36C835C733C433C031Bz2_Bw2yBv2uBt2uBq2tBo2tBl2vBk2vBg2xBY2wBS2yBS2-BS30BO33BJ34BJ35BG38BF3BBG3DBE3FBD3HBA3IB73LB23LA_3LAy3NAw3OAv3OAt3NAs3KAo3KAn3LAk3KAi3LAj3HAj3FAh3FAg3DAg3AAi39Ai37Aj35Aj33Ai32Ai30Ai2-Ag2yAm2vAr2wAw2wA_2wB22wB82wBA2uBB2mB72iB42gA-2eA-2bB32aBA2bB82XBC2ZBL2VBN2SBQ2RBT2RBV2QBZ2KBe2IBi2IBi2HBm2HBm2IBp2GBo2EBo2CBm2ABm26Bn25Bo24Bs23Bt22Bw21Bw23Bv24Bv26By26Bx28Bv27Bt2ABu2CBu2EBy2FBy2GC02FC22EC72GC82HCB2GCH2ECM2DCQ2DCR2ECV2ECW2DCb2BCa28Ca25Cc22Cg21Cj24Cm24Cn21Co1-Cm1_Ck1-Cj1xCo1wCt1wCy1wD01wD41uD01sCv1sCo1uCh1vCf1sCb1rCc1nCa1kCc1hCg1fCp1aCs1aCr1YCm1WCf1XCb1aCb1cCV1gCN1jCK1pCN1rCR1uCN1yCJ1zCI24CG28CB27C82AC42BC327B_22By1zBv1wBo1_Bi20Bd1-Bb1vBa1mBe1kBo1gBw1cC11WCB1PCI1MCT1HCc1FCi1FCo1CCv1CD11BDD1ED81FDC1IDH1GDN1JDY1KDn1ODq1QDr1TDm1VDg1WDO1TDL1TDR1WDS1cDX1eDa1fDb1dDY1bDb1ZDk1cDo1bDl1YDu1UDy1UE01WE21TD_1RE11OD-1ME91NEB1PE61QE61SE91TEG1SEH1QEP1OEd1LEg1LEc1NEh1OEk1MEr1MEx1KF01NF41KF01IF21HFE1IFK1JFY1OFb1MFX1JFS1IFT1GFR1DFR1CFY18Fb15Fe14Fo15Fp17Fl1AFo1CFp1EFo1KFt1MFr1PFj1VFo1VFp1UFu1TFv1RFy1PFw1NFy1KFt1KFs1HFw1DFq1AFy18Fx15Fz15F_17Fz1BG11BG019G617GF17GM19GI16GI11GP11GZ11Gh10Ge0-Gj0yGn0xGv0vH40vH50uHF0tHJ0uHS0sHZ0sHa0rHe0pHn0nHu0pHp0p 5P0o5N0o5F0o5E0n5M0n5P0n 4N0n4G0o4A0n4D0m4J0l4P0m Cp0nCg0oCZ0nCc0mCZ0lCi0kCj0m 4P0k4K0k4E0k4I0j4K0j 5H0m5B0n580m560k550j5B0j5D0j5I0k 500l510m4x0m4q0l4h0k4l0j4g0i4g0h4o0h4z0j Hq0lHU0mHb0hHe0hHh0hHr0j CP0fCc0iCS0kCQ0nCM0nCK0rCG0rC70oCB0nC50mBz0jBw0fC50eC70fCD0fCE0eCK0e Cs0cC-0eCu0gCi0gCW0gCW0fCQ0fCL0dCY0cCe0dCi0b ET0cEN0cEK0dEJ0dEE0eEA0dEC0cE30cEB0bEH0bEI0cEK0bEO0aEU0b HW0iHN0jHC0iH50gH20dGz0dH70aHG0ZHO0bHX0f 5q0f5v0h5p0i5i0l5b0l5S0l5O0j5O0i5R0g5K0h5G0f5D0d5G0c5J0a5N0a5L0Z5U0Z5Z0b5g0c5n0d 6-0S790S7H0S7P0T7O0V7F0W750X710Y7A0Y710a6w0c6p0f6h0f6e0g6S0h6Y0h6V0i6Y0k6V0l6O0m6N0o6H0p6I0q6O0q6O0r6E0t630s5u0t5o0s5g0s5g0q5n0p5l0m5n0m5y0o5t0l5m0l5p0j5w0i5y0h5s0f5q0d5_0d620e690c600c5o0c5h0b5d0Z5Z0Y5Y0W5e0W5i0W5q0V5w0T5_0U630V660T6C0S6J0R6V0R6X0S6j0R6r0R 9a0Q9z0T9r0V9c0V9G0V9I0W9X0V9j0X9q0W9u0X9p0Z9-0YAH0WAT0XAV0ZAF0cAD0dA00dA90dA40gA10jA10nA60qA00q9v0rA10uA20x9z0xA30_9w0_9-119z129t139o139t159t179l169j179o189t1A9v1D9o1E9l1D9g1A9h1D9d1F9n1F9t1F9i1J9X1M9L1N9H1O9D1P971T8_1W8y1W8s1X8n1Y8j1b8j1d8h1g8b1j8c1m8b1q8Y1u8T1u8N1r8F1r8B1o881k811f7_1d7_1Z7v1W7x1T7u1R7y1N821L841J851G801I7-1I7w1J7r1I7r1F7t1D7w1D821E7y1B7u1A7q1A7n197r167p147m117h0z7c0y7c0w7R0u7I0t780t6-0u6v0s6o0q6z0p750o6q0n6h0m6h0k6x0i790g7B0f700e730c7H0Z7N0Z7L0X7V0W7h0V7t0V7y0W860U8G0W8M0W8U0X8K0V8L0T8Y0R8m0R8s0Q940P !EK33EM36EO36EQ37EM37EM3AEL3CEJ3DEK3FEL3IEP3JER3LEX3LEd3KEe3JEd3GEe3CEa3BEb38EZ38Ea34Ed35Eh34Ee32Ed30Ea31EZ33EY31EY30EZ2-EY2zET2xES2uEP2tEP2sET2sET2pEX2oEa2pEb2lEa2jEW2jET2iEO2kEK2kEJ2nEF2nEB2sEE2vEE2yEI31"/*/LAND*/;
+  var ALPHA = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_';
+
+  /* ---- small helpers ---- */
+  function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
+  function damp(x, t, lambda, dt) { return x + (t - x) * (1 - Math.exp(-lambda * dt)); }
+  function wrap180(d) { return ((d + 180) % 360 + 360) % 360 - 180; }
+  function now() { return root.performance && performance.now ? performance.now() : Date.now(); }
+  function bezier(c) {
+    var cx = 3 * c[0], bx = 3 * (c[2] - c[0]) - cx, ax = 1 - cx - bx;
+    var cy = 3 * c[1], by = 3 * (c[3] - c[1]) - cy, ay = 1 - cy - by;
+    function sx(t) { return ((ax * t + bx) * t + cx) * t; }
+    function sy(t) { return ((ay * t + by) * t + cy) * t; }
+    function dx(t) { return (3 * ax * t + 2 * bx) * t + cx; }
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      var t = x, i, s, d;
+      for (i = 0; i < 8; i++) { s = sx(t) - x; if (Math.abs(s) < 1e-5) return sy(t); d = dx(t); if (Math.abs(d) < 1e-6) break; t -= s / d; }
+      var lo = 0, hi = 1; t = x;
+      for (i = 0; i < 30; i++) { s = sx(t); if (Math.abs(s - x) < 1e-5) break; if (s < x) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  var ease = { out: bezier(EASE.out), move: bezier(EASE.move), entrance: bezier(EASE.entrance), settle: bezier(EASE.settle) };
+  function tween(from, to, ms, fn, t0) { return { from: from, to: to, ms: Math.max(1, ms), fn: fn, t0: t0 }; }
+  function tweenAt(tw, t) { var p = clamp((t - tw.t0) / tw.ms, 0, 1); return { v: tw.from + (tw.to - tw.from) * tw.fn(p), done: p >= 1 }; }
+  function unit(lat, lng, out) {
+    var a = lat * D2R, b = lng * D2R, c = Math.cos(a);
+    out = out || [0, 0, 0]; out[0] = c * Math.sin(b); out[1] = Math.sin(a); out[2] = c * Math.cos(b); return out;
+  }
+  function toLatLng(p) { return { lat: Math.asin(clamp(p[1], -1, 1)) * R2D, lng: Math.atan2(p[0], p[2]) * R2D }; }
+  // view matrix M = Rx(lat) · Ry(-lng): the point (lat, lng) faces the viewer (+z). Column-major for GL.
+  function viewMatrix(lat, lng, m) {
+    var a = lat * D2R, b = -lng * D2R, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
+    m[0] = cb; m[1] = sa * sb; m[2] = -ca * sb; m[3] = 0; m[4] = ca; m[5] = sa; m[6] = sb; m[7] = -sa * cb; m[8] = ca * cb;
+    return m;
+  }
+  function mul(m, p, out) {
+    out[0] = m[0] * p[0] + m[3] * p[1] + m[6] * p[2];
+    out[1] = m[1] * p[0] + m[4] * p[1] + m[7] * p[2];
+    out[2] = m[2] * p[0] + m[5] * p[1] + m[8] * p[2];
+    return out;
+  }
+  function mulT(m, p, out) {   // the inverse rotation
+    out[0] = m[0] * p[0] + m[1] * p[1] + m[2] * p[2];
+    out[1] = m[3] * p[0] + m[4] * p[1] + m[5] * p[2];
+    out[2] = m[6] * p[0] + m[7] * p[1] + m[8] * p[2];
+    return out;
+  }
+  // the arc You → b: its plane's normal (the bow's direction), its length, lift and bow
+  function arcGeom(a, b, out, d) {   // d: the pin's own data — lift / bend (share of R) set there win over the look's (v415)
+    var nx = a[1] * b[2] - a[2] * b[1], ny = a[2] * b[0] - a[0] * b[2], nz = a[0] * b[1] - a[1] * b[0], l = Math.hypot(nx, ny, nz);
+    if (l < 1e-6) { nx = 0; ny = 1; nz = 0; l = 1; }
+    var om = Math.acos(clamp(a[0] * b[0] + a[1] * b[1] + a[2] * b[2], -1, 1));
+    out.n[0] = nx / l; out.n[1] = ny / l; out.n[2] = nz / l; out.om = om;
+    out.lift = d && d.lift != null ? +d.lift : Math.min(LOOK.arcLiftMax, LOOK.arcLift * om); out.bend = d && d.bend != null ? +d.bend : Math.min(LOOK.arcBendMax, LOOK.arcBend * om);
+    // v416: a pin with path — the arc runs through its points (a Catmull-Rom spline; another count is brought to PATH_N); len: its length in R
+    out.path = d && d.path && d.path.length >= 4 ? d.path : null; out.flat = null; out.len = om;
+    if (out.path) {
+      if (d._flat == null) { var pa = d.path, n1 = pa.length - 1, sum = 0, k, fl = new Float32Array(PATH_N * 3);
+        for (k = 1; k <= n1; k++) sum += Math.hypot(pa[k][0] - pa[k - 1][0], pa[k][1] - pa[k - 1][1], pa[k][2] - pa[k - 1][2]);
+        for (k = 0; k < PATH_N; k++) { var f = k / (PATH_N - 1) * n1, i0 = Math.min(n1 - 1, Math.floor(f)), u = f - i0; for (var c = 0; c < 3; c++) fl[k * 3 + c] = pa[i0][c] + (pa[i0 + 1][c] - pa[i0][c]) * u; }
+        d._len = sum; d._flat = fl; }
+      out.len = d._len; out.flat = d._flat; }
+    return out;
+  }
+  var PATH_N = 32;
+  function pathPoint(fl, t, out) {
+    var f = clamp(t, 0, 1) * (PATH_N - 1), i = Math.min(PATH_N - 2, Math.floor(f)), u = f - i, u2 = u * u, u3 = u2 * u;
+    var a = Math.max(i - 1, 0) * 3, b = i * 3, c = (i + 1) * 3, d = Math.min(i + 2, PATH_N - 1) * 3;
+    for (var k = 0; k < 3; k++) { var p0 = fl[a + k], p1 = fl[b + k], p2 = fl[c + k], p3 = fl[d + k];
+      out[k] = 0.5 * (2 * p1 + (p2 - p0) * u + (2 * p0 - 5 * p1 + 4 * p2 - p3) * u2 + (3 * p1 - p0 - 3 * p2 + p3) * u3); }
+    return out;
+  }
+  // a point of that arc at t (0 … 1), as the shader draws it; surface: without the lift
+  function arcPoint(a, b, g, t, surface, out) {
+    if (g.path) { pathPoint(g.flat, t, out); if (surface) { var ls = Math.hypot(out[0], out[1], out[2]) || 1; out[0] /= ls; out[1] /= ls; out[2] /= ls; } return out; }
+    var s = Math.sin(g.om) || 1, h = Math.sin(PI * t), i;
+    for (i = 0; i < 3; i++) out[i] = g.om < 1e-3 ? a[i] : (Math.sin((1 - t) * g.om) * a[i] + Math.sin(t * g.om) * b[i]) / s;
+    var l = Math.hypot(out[0], out[1], out[2]) || 1;
+    for (i = 0; i < 3; i++) out[i] = out[i] / l + g.n[i] * g.bend * h;
+    l = Math.hypot(out[0], out[1], out[2]) || 1; var r = (surface ? 1 : 1 + g.lift * h) / l;
+    out[0] *= r; out[1] *= r; out[2] *= r;
+    return out;
+  }
+
+  /* ---- colours: CSS strings or DS variables → [r, g, b, a] 0…1 ---- */
+  var probe2d = null;
+  function parseColor(str, fallback) {
+    if (!probe2d) { var c = doc.createElement('canvas'); c.width = c.height = 1; probe2d = c.getContext('2d'); }
+    var out = null;
+    if (str && probe2d) {
+      probe2d.fillStyle = '#010203'; probe2d.fillStyle = str;
+      var v = String(probe2d.fillStyle), m;
+      if (v.charAt(0) === '#' && !(v === '#010203' && str.replace(/\s/g, '') !== '#010203')) {
+        out = [parseInt(v.substr(1, 2), 16) / 255, parseInt(v.substr(3, 2), 16) / 255, parseInt(v.substr(5, 2), 16) / 255, 1];
+      } else if ((m = v.match(/rgba?\(([^)]+)\)/))) {
+        var p = m[1].split(/[\s,/]+/).filter(Boolean).map(parseFloat);
+        out = [p[0] / 255, p[1] / 255, p[2] / 255, p.length > 3 ? p[3] : 1];
+      } else if ((m = v.match(/color\(srgb\s+([^)]+)\)/))) {
+        var q = m[1].split(/[\s/]+/).filter(Boolean).map(parseFloat);
+        out = [q[0], q[1], q[2], q.length > 3 ? q[3] : 1];
+      }
+    }
+    return out || (fallback ? parseColor(fallback) : [1, 1, 1, 1]);
+  }
+  function resolveColors(host, user) {
+    var cs = root.getComputedStyle(host), out = {};
+    Object.keys(COLORS).forEach(function (k) {
+      var want = user && user[k] != null ? String(user[k]) : COLORS[k][0];
+      var str = want.indexOf('--') === 0 ? cs.getPropertyValue(want).trim() : want;
+      out[k] = parseColor(str, COLORS[k][1]);
+    });
+    return out;
+  }
+  function rgbCss(c, a) { return 'rgba(' + Math.round(c[0] * 255) + ',' + Math.round(c[1] * 255) + ',' + Math.round(c[2] * 255) + ',' + (+a).toFixed(3) + ')'; }
+
+  /* ---- the land mask (built once, shared by every globe on the page) ---- */
+  var MASK = null;
+  function landMask() {
+    if (MASK) return MASK;
+    var w = 720, h = 360, c = doc.createElement('canvas'); c.width = w; c.height = h;
+    var g = c.getContext('2d', { willReadFrequently: true });
+    var idx = {}; for (var k = 0; k < ALPHA.length; k++) idx[ALPHA.charAt(k)] = k;
+    g.fillStyle = '#fff';
+    LAND.split(' ').forEach(function (ring) {
+      if (!ring) return;
+      var water = ring.charAt(0) === '!', s = water ? ring.slice(1) : ring;
+      g.globalCompositeOperation = water ? 'destination-out' : 'source-over';
+      g.beginPath();
+      for (var i = 0; i + 3 < s.length; i += 4) {
+        var x = ((idx[s.charAt(i)] << 6) | idx[s.charAt(i + 1)]) / 1440 * w, y = ((idx[s.charAt(i + 2)] << 6) | idx[s.charAt(i + 3)]) / 720 * h;
+        if (i) g.lineTo(x, y); else g.moveTo(x, y);
+      }
+      g.closePath(); g.fill();
+    });
+    var d = g.getImageData(0, 0, w, h).data, a = new Uint8Array(w * h);
+    for (var j = 0; j < a.length; j++) a[j] = d[j * 4 + 3];
+    MASK = { w: w, h: h, a: a };
+    return MASK;
+  }
+  function sampleMask(m, lat, lng) {
+    var x = (lng + 180) / 360 * m.w - 0.5, y = (90 - lat) / 180 * m.h - 0.5;
+    var x0 = Math.floor(x), y0 = Math.floor(y), fx = x - x0, fy = y - y0;
+    function at(xx, yy) { xx = ((xx % m.w) + m.w) % m.w; yy = yy < 0 ? 0 : yy >= m.h ? m.h - 1 : yy; return m.a[yy * m.w + xx]; }
+    return ((at(x0, y0) * (1 - fx) + at(x0 + 1, y0) * fx) * (1 - fy) + (at(x0, y0 + 1) * (1 - fx) + at(x0 + 1, y0 + 1) * fx) * fy) / 255;
+  }
+  var DOTS = {};   // rows → { pos, info, count }
+  function buildDots(rows) {
+    if (DOTS[rows]) return DOTS[rows];
+    DOTS = {};   // DUQ v235: one size kept — at R ≈ 1900 a set of dots is ≈ 7 MB, and every resize would keep another
+    var m = landMask(), max = 2 * rows * rows, pos = new Float32Array(max * 3), info = new Float32Array(max * 2), n = 0;
+    var dLat = 180 / rows, wts = [1, 2, 1];
+    for (var i = 0; i < rows; i++) {
+      var lat = 90 - (i + 0.5) * dLat, cl = Math.cos(lat * D2R), sl = Math.sin(lat * D2R);
+      var cnt = Math.max(1, Math.round(2 * rows * cl)), dLng = 360 / cnt, off = (i & 1) ? 0.5 : 0;
+      for (var j = 0; j < cnt; j++) {
+        var lng = -180 + (j + off) * dLng, cov = 0;
+        for (var a = -1; a <= 1; a++) for (var b = -1; b <= 1; b++) cov += wts[a + 1] * wts[b + 1] * sampleMask(m, lat + a * dLat * 0.36, lng + b * dLng * 0.36);
+        cov /= 16;
+        var rad = lng * D2R;
+        pos[n * 3] = cl * Math.sin(rad); pos[n * 3 + 1] = sl; pos[n * 3 + 2] = cl * Math.cos(rad);
+        info[n * 2] = cov >= 0.5 ? cov : 0;
+        var hsh = Math.sin(i * 12.9898 + j * 78.233) * 43758.5453; info[n * 2 + 1] = hsh - Math.floor(hsh);
+        n++;
+      }
+    }
+    return (DOTS[rows] = { pos: pos.subarray(0, n * 3), info: info.subarray(0, n * 2), count: n });
+  }
+
+  /* ---- shaders ---- */
+  var DOT_VS = [
+    'precision highp float;',
+    'attribute vec3 aPos; attribute vec2 aInfo;',
+    'uniform mat3 uRot; uniform vec4 uFrame; uniform vec2 uView;',
+    'uniform vec4 uLand; uniform vec4 uOcean; uniform vec4 uHot; uniform vec4 uPool; uniform vec4 uRim;',
+    'uniform vec4 uSize; uniform vec4 uShade; uniform vec3 uKey; uniform vec3 uFall;',
+    'uniform vec4 uMouse; uniform vec4 uHeat; uniform float uReveal;',
+    'uniform vec4 uPin[12]; uniform vec4 uRing[12];',
+    'uniform float uPinN; uniform vec4 uSide; uniform vec4 uSideL; uniform vec3 uYes; uniform vec3 uNo; uniform float uLift;',   // DUQ v235: the pins there are; the halves (uSide: line x px, its wave, the wave's half-width px, on; uSideL: YES light, NO light, calm, ±winner × glow)
+    'uniform vec3 uHue[6]; uniform vec4 uTint;',   // v431: the warm spot's palette; uTint = LOOK.heatHue with the clock in z (w 0 = the single colour)
+    'varying vec4 vCol; varying float vPx;',
+    'vec3 hueAt(float h) { float f = fract(h) * 6.0; float i = min(floor(f), 5.0); float u = f - i; u = u * u * (3.0 - 2.0 * u);',
+    '  return mix(uHue[int(i)], uHue[int(mod(i + 1.0, 6.0))], u); }',
+    'void main() {',
+    '  vec3 p = uRot * aPos; float z = p.z;',
+    '  vec2 s0 = uFrame.xy + vec2(p.x, -p.y) * uFrame.z; float cm = uHeat.y + 16.0;',   // DUQ v235: where the dot lands before the warm spot moves it
+    '  if (s0.x < -cm || s0.y < -cm || s0.x > uView.x + cm || s0.y > uView.y + cm) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); gl_PointSize = 0.0; vCol = vec4(0.0); vPx = 1.0; return; }',   // DUQ v235: off the canvas — skipped
+    '  float front = smoothstep(-0.05, 0.1, z);',
+    '  float vis = mix(uShade.w, 1.0, front);',
+    '  float rv = clamp((uReveal * 1.4 - length(p.xy)) / 0.4, 0.0, 1.0);',
+    '  vis *= rv;',
+    '  if (vis < 0.002) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); gl_PointSize = 0.0; vCol = vec4(0.0); vPx = 1.0; return; }',
+    '  float land = aInfo.x; float isLand = step(0.5, land);',
+    '  float size = mix(uSize.y, uSize.x * mix(uSize.z, 1.0, smoothstep(0.5, 0.95, land)), isLand);',
+    '  vec4 col = mix(uOcean, uLand, isLand);',
+    '  float sk = step(uSide.x, s0.x); float lit = mix(uSideL.x, uSideL.y, sk);',   // DUQ v235: YES left of the line, NO right; lit as people join that half
+    '  float wv = uSide.y * (1.0 - smoothstep(0.0, uSide.z, abs(s0.x - uSide.x)));',   // the light riding the line as the winner floods
+    '  float lose = (uSideL.w > 0.0 ? sk : 1.0 - sk) * abs(uSideL.w);',
+    '  vec4 sc = vec4(mix(mix(uYes, uNo, sk), vec3(1.0), max(uLift * lit, 0.45 * wv)), uLand.a * (uSideL.z + (1.0 - uSideL.z) * lit) * (1.0 - 0.55 * lose) * (1.0 + 1.4 * wv));',
+    '  col = mix(col, sc, isLand * uSide.w); size *= 1.0 + isLand * uSide.w * (0.22 * lit + 0.6 * wv);',
+    '  float facing = clamp(z, 0.0, 1.0);',
+    '  col.a *= mix(uShade.x, 1.0, facing) * (1.0 + uShade.z * dot(p, uKey)) * mix(uFall.z, 1.0, smoothstep(uFall.x, uFall.y, p.x));',
+    '  col.rgb = mix(col.rgb, uRim.rgb, uShade.y * (1.0 - facing) * (1.0 - facing) * (1.0 - facing));',
+    // pools of light under pins (pool colour: grey before engagement) and their rings (+ violet "next", − pool colour)
+    '  float pg = 0.0; float rh = 0.0; float rp = 0.0; float sw = 0.0;',
+    '  for (int i = 0; i < 12; i++) {',
+    '    if (float(i) >= uPinN) break;',   // DUQ v235
+    '    vec4 P = uPin[i]; vec4 Q = uRing[i];',
+    '    float d = distance(aPos, P.xyz);',
+    '    float pool = P.w * exp(-(d * d) / (Q.z * Q.z));',
+    '    float e = (d - Q.x) / 0.022;',
+    '    float ring = abs(Q.y) * exp(-e * e);',
+    '    pg = max(pg, pool); rh = max(rh, ring * step(0.0, Q.y)); rp = max(rp, ring * step(Q.y, 0.0));',
+    '    sw += pool * Q.w + ring * 0.7;',
+    '  }',
+    '  float pk = clamp(max(pg, rp), 0.0, 1.0);',
+    '  col.rgb = mix(col.rgb, uPool.rgb, pk); col.a = mix(col.a, max(col.a, uPool.a), pk);',
+    // the cursor's warm spot: dots part (a lens), grow, take colour (v431: the palette, running; violet before); a light wave runs out through them
+    '  vec2 s = uFrame.xy + vec2(p.x, -p.y) * uFrame.z;',
+    '  vec2 dm = s - uMouse.xy; float dist = length(dm);',
+    '  float k = dist / uHeat.x;',
+    '  float f = uMouse.z * front * exp(-k * k);',
+    '  float wave = uHeat.w * f * sin(k * 18.0 - uMouse.w * 4.0);',
+    '  s += (dm / max(dist, 0.001)) * uHeat.y * 1.4142 * k * exp(0.5 - k * k) * uMouse.z * front;',
+    '  float hot = clamp(max(f, rh), 0.0, 1.0);',
+    '  vec3 hc = uHot.rgb;',
+    '  if (uTint.w > 0.0 && f > rh) { hc = hueAt(k * uTint.x + atan(dm.y, dm.x + 0.0001) * 0.15915494 * uTint.y - uTint.z); hot = clamp(max(f * uTint.w, rh), 0.0, 1.0); }',
+    '  col.rgb = mix(col.rgb, hc, hot); col.a = mix(col.a, max(col.a, uHot.a), hot);',
+    '  size *= (1.0 + uHeat.z * f + 0.22 * wave + sw) * (0.7 + 0.3 * facing) * (0.55 + 0.45 * rv);',
+    '  col.a *= vis * clamp(1.0 + 0.3 * wave, 0.0, 2.0);',
+    '  float px = max(size, uSize.w);',
+    '  col.a *= min(1.0, size / uSize.w);',
+    '  gl_PointSize = px; vPx = px; vCol = col;',
+    '  gl_Position = vec4(s.x / uView.x * 2.0 - 1.0, 1.0 - s.y / uView.y * 2.0, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+  var DOT_FS = [
+    'precision mediump float;',
+    'varying vec4 vCol; varying float vPx; uniform float uSoft;',
+    'void main() {',
+    '  vec2 c = gl_PointCoord * 2.0 - 1.0; float d = length(c);',
+    '  float aa = clamp(2.0 / vPx, 0.1, 0.9);',
+    '  float a = clamp(vCol.a, 0.0, 1.0) * (1.0 - smoothstep(min(uSoft, 1.0 - aa), 1.0, d));',
+    '  if (a < 0.003) discard;',
+    '  gl_FragColor = vec4(vCol.rgb * a, a);',
+    '}'
+  ].join('\n');
+  var ARC_VS = [
+    'precision highp float;',
+    'attribute vec2 aArc;',
+    'uniform mat3 uRot; uniform vec4 uFrame; uniform vec2 uView;',
+    'uniform vec3 uA; uniform vec3 uB; uniform vec3 uN; uniform vec4 uArc; uniform vec3 uFallA; uniform vec3 uPath[32]; uniform float uUsePath;',
+    'varying float vT; varying float vSide; varying float vVis;',
+    'vec3 arcAt(float t) {',
+    '  if (uUsePath > 0.5) { float f = clamp(t, 0.0, 1.0) * 31.0; float i = min(floor(f), 30.0); float u = f - i; float u2 = u * u; float u3 = u2 * u;',   // v416: a pin's own path (pins[].path)
+    '    vec3 p0 = uPath[int(max(i - 1.0, 0.0))]; vec3 p1 = uPath[int(i)]; vec3 p2 = uPath[int(i) + 1]; vec3 p3 = uPath[int(min(i + 2.0, 31.0))];',
+    '    return 0.5 * (2.0 * p1 + (p2 - p0) * u + (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * u2 + (3.0 * p1 - p0 - 3.0 * p2 + p3) * u3); }',
+    '  vec3 q = uArc.x < 0.001 ? uA : (sin((1.0 - t) * uArc.x) * uA + sin(t * uArc.x) * uB) / sin(uArc.x);',
+    '  float h = sin(3.14159265 * t);',
+    '  return normalize(normalize(q) + uN * (uArc.w * h)) * (1.0 + uArc.y * h);',
+    '}',
+    'vec2 scr(vec3 p) { return uFrame.xy + vec2(p.x, -p.y) * uFrame.z; }',
+    'vec2 bendOf(vec2 a, vec2 b) {',   // two segments on screen, one after the other → (the cosine of the turn between them, the bend's radius px)
+    '  float la = length(a); float lb = length(b); if (la < 0.0001 || lb < 0.0001) return vec2(1.0, 1.0e6);',
+    '  float kl = length(b / lb - a / la); return vec2(dot(a, b) / (la * lb), kl > 0.0001 ? 0.5 * (la + lb) / kl : 1.0e6);',
+    '}',
+    'void main() {',
+    '  float t = aArc.x;',
+    '  vec3 P = uRot * arcAt(t);',
+    // v416 ("est bugi po orbite"): the ribbon is laid out across the arc's direction on screen, so where that direction turns about
+    // within a segment or two — an arc's hook seen along itself, an arc passing the limb — it folded into a burst of rays (the dashes
+    // fanned out round the bend). Here: the arc one and two segments (1/96) before and after this point; the bend on screen at this
+    // point and at its two neighbours (bendOf → the cosine of the turn, the bend's radius in px); fs, how side-on the arc is seen
+    // (1 … 0 end-on). The ribbon is no wider, either side, than .9 of the tightest of the three bends, and it fades where it is seen
+    // end-on, where it turns by more than ~40° a segment, and where the bend is tighter than half the ribbon's half-width
+    '  vec3 Pa = uRot * arcAt(min(t + 0.0104, 1.0)); vec3 Pb = uRot * arcAt(max(t - 0.0104, 0.0));',
+    '  vec2 s0 = scr(P); vec2 sa = scr(Pa); vec2 sb = scr(Pb); vec2 da = sa - s0; vec2 db = s0 - sb; vec2 dir = da + db;',
+    '  vec2 b0 = bendOf(db, da);',
+    '  vec2 b1 = bendOf(sb - scr(uRot * arcAt(max(t - 0.0208, 0.0))), db);',
+    '  vec2 b2 = bendOf(da, scr(uRot * arcAt(min(t + 0.0208, 1.0))) - sa);',
+    '  float turn = min(b0.x, min(b1.x, b2.x)); float rad = min(b0.y, min(b1.y, b2.y));',
+    '  float L = length(dir); float fs = (length(da) + length(db)) / max((length(Pa - P) + length(P - Pb)) * uFrame.z, 0.0001); dir = L > 0.0001 ? dir / L : vec2(1.0, 0.0);',
+    '  float wd = min(uArc.z, rad * 0.9);',
+    '  vec2 s = s0 + vec2(-dir.y, dir.x) * aArc.y * wd;',
+    // v416: hidden where the ball is in front of the point — inside its silhouette and under its near surface there (till v415: inside
+    // it and behind its middle plane, so an arc cutting through the ball showed across its face)
+    '  float rr = dot(P.xy, P.xy); float zs = sqrt(max(1.0 - rr, 0.0));',
+    '  float inside = 1.0 - smoothstep(0.985, 1.012, sqrt(rr));',
+    '  float behind = 1.0 - smoothstep(zs - 0.09, zs - 0.03, P.z);',
+    '  vVis = (1.0 - inside * behind) * smoothstep(0.1, 0.32, fs) * smoothstep(0.2, 0.75, turn) * smoothstep(0.25, 0.6, rad / uArc.z) * mix(uFallA.z, 1.0, smoothstep(uFallA.x, uFallA.y, P.x)); vT = t; vSide = aArc.y * wd / uArc.z;',   // v415: the arcs fade toward the view's left too (the picture's lines do)
+    '  gl_Position = vec4(s.x / uView.x * 2.0 - 1.0, 1.0 - s.y / uView.y * 2.0, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+  var ARC_FS = [
+    'precision mediump float;',
+    'varying float vT; varying float vSide; varying float vVis;',
+    'uniform vec4 uCol; uniform vec4 uDraw; uniform vec4 uPulse; uniform vec4 uLine; uniform vec2 uDash; uniform vec4 uTrain; uniform vec2 uFlow;',
+    'void main() {',
+    '  float head = uDraw.x * 1.03;',
+    '  float m = 1.0 - smoothstep(head - 0.03, head, vT);',
+    '  float xp = abs(vSide) * uLine.y;',
+    '  float core = 1.0 - smoothstep(uLine.x - 0.75, uLine.x + 0.75, xp);',
+    '  float gs = uLine.y * 0.34; float glow = exp(-(xp * xp) / (gs * gs)) * uLine.z;',   // v410: .34 of a wider strip (arcHalf 18, was .42 of 12) — the picture's violet bloom round the line, room for the comet's head
+    '  float ph = fract(vT * uDash.x);',
+    '  float dash = mix(1.0, smoothstep(0.0, 0.08, ph) * (1.0 - smoothstep(uDash.y - 0.08, uDash.y, ph)), uLine.w);',
+    '  float c1 = (uDraw.x - vT) / 0.05; float comet = uDraw.z * exp(-c1 * c1) * step(vT, uDraw.x + 0.01);',
+    // v415: the comet is a train of white dashes — a window uTrain.x long behind its head (which runs to You, t → 0), the dashes
+    // travelling with it (uTrain.y periods along the arc, uTrain.z of a period lit), each uTrain.w px half wide, white through
+    '  float f1 = mod(vT - uPulse.x, uFlow.x);',   // v416: trains one after another, uFlow.x apart, each uFlow.y long (shares of this arc)
+    '  float win = smoothstep(0.0, uFlow.y * 0.04, f1) * (1.0 - smoothstep(uFlow.y * 0.86, uFlow.y, f1));',
+    '  float ph2 = fract(f1 * uTrain.y);',
+    '  float dsh = smoothstep(0.0, 0.1, ph2) * (1.0 - smoothstep(uTrain.z - 0.1, uTrain.z, ph2));',
+    '  float train = uPulse.y * win * dsh;',
+    '  float tcore = train * (1.0 - smoothstep(uTrain.w - 0.75, uTrain.w + 0.75, xp));',
+    '  float f2 = (vT - uPulse.z) / 0.07; float flash = uPulse.w * exp(-f2 * f2);',
+    '  float boost = comet + flash + uDraw.w;',
+    '  float a = (core * (0.92 + 0.6 * boost) * dash + glow * (1.0 + 1.4 * boost + 0.9 * uPulse.y * win)) * m * vVis * uDraw.y * uCol.a;',
+    '  a = clamp(max(a, tcore * m * vVis * uDraw.y), 0.0, 1.0);',
+    '  if (a < 0.003) discard;',
+    '  float inner = 1.0 - smoothstep(0.0, max(uLine.x * 0.9, 0.8), xp);',
+    '  vec3 rgb = mix(uCol.rgb, vec3(1.0), clamp(boost * 0.4 + inner * 0.82, 0.0, 0.92) * core);',   // v415: the line's middle white (the picture's arcs), its glow the arc's violet
+    '  rgb = mix(rgb, vec3(1.0), clamp(tcore, 0.0, 1.0));',
+    '  gl_FragColor = vec4(rgb * a, a);',
+    '}'
+  ].join('\n');
+  var ARC_SEG = 96;
+
+  function compile(gl, type, src) {
+    var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS) && !gl.isContextLost()) throw new Error('RFGlobe shader: ' + gl.getShaderInfoLog(s));
+    return s;
+  }
+  function program(gl, vs, fs, attribs) {
+    var p = gl.createProgram();
+    gl.attachShader(p, compile(gl, gl.VERTEX_SHADER, vs)); gl.attachShader(p, compile(gl, gl.FRAGMENT_SHADER, fs));
+    attribs.forEach(function (a, i) { gl.bindAttribLocation(p, i, a); });
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS) && !gl.isContextLost()) throw new Error('RFGlobe link: ' + gl.getProgramInfoLog(p));
+    var u = {}, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS) || 0;
+    for (var i = 0; i < n; i++) { var info = gl.getActiveUniform(p, i), name = info.name.replace(/\[0\]$/, ''); u[name] = gl.getUniformLocation(p, name); }
+    return { p: p, u: u };
+  }
+
+  var STATES = { off: 1, next: 1, active: 1, latest: 1, preview: 1 };
+  var IDLE = { still: 1, sway: 1, spin: 1 };
+  var mqReduce = root.matchMedia ? root.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var mqCoarse = root.matchMedia ? root.matchMedia('(hover: none) and (pointer: coarse)') : null;
+
+  /* ================================================================================================================ */
+  function create(host, opts) {
+    if (!host || !host.appendChild) throw new Error('RFGlobe.create: a container element is required');
+    opts = opts || {};
+    var L = LOOK;
+    var alive = true, paused = false, inView = false, lost = false;
+    var userReduced = typeof opts.reducedMotion === 'boolean' ? opts.reducedMotion : null;
+    var reduced = userReduced != null ? userReduced : !!(mqReduce && mqReduce.matches);
+    var spinSpeed = opts.autoRotate != null ? Math.max(0, +opts.autoRotate) : L.spin;
+    var idleMode = IDLE[opts.idle] ? opts.idle : (spinSpeed > 0 ? 'spin' : 'still');
+    var flowOn = opts.flow !== false;
+    var radiusK = opts.radius || L.radius, center = opts.center || [0.5, 0.5], bleed = Math.max(0, +opts.bleed || 0);
+    var arcMs = +opts.arcMs > 0 ? +opts.arcMs : DUR.revealLine;   // how long an arc takes to draw out (opts.arcMs, ms)
+    var t0 = now();
+
+    /* -- DOM: glow (CSS, free per frame) · canvas · pin layer -- */
+    var restore = { position: host.style.position, touchAction: host.style.touchAction, userSelect: host.style.userSelect, webkitUserSelect: host.style.webkitUserSelect, cursor: host.style.cursor, tabIndex: host.getAttribute('tabindex') };
+    if (root.getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    host.style.touchAction = 'pan-y'; host.style.userSelect = 'none'; host.style.webkitUserSelect = 'none'; host.style.cursor = 'grab';
+    // the stage: the box plus the bleed, clipped — the glow and the canvas never make the page scroll sideways
+    var stage = doc.createElement('div'); stage.setAttribute('aria-hidden', 'true');
+    stage.style.cssText = 'position:absolute;pointer-events:none;overflow:hidden;left:' + (-bleed) + 'px;top:' + (-bleed) + 'px;right:' + (-bleed) + 'px;bottom:' + (-bleed) + 'px';
+    var glowEl = doc.createElement('div');
+    glowEl.style.cssText = 'position:absolute;pointer-events:none;border-radius:50%';
+    var canvas = doc.createElement('canvas');
+    var layer = doc.createElement('div'); layer.style.cssText = 'position:absolute;inset:0;pointer-events:none';
+    function styleCanvas(c) { c.style.cssText = 'position:absolute;display:block;pointer-events:none;left:0;top:0;width:100%;height:100%'; }
+    styleCanvas(canvas);
+    var glassEl = doc.createElement('div'), shineEl = doc.createElement('div');   // v399
+    glassEl.style.cssText = shineEl.style.cssText = 'position:absolute;pointer-events:none;border-radius:50%';
+    stage.appendChild(glowEl); stage.appendChild(glassEl); stage.appendChild(canvas); stage.appendChild(shineEl);
+    // v410 ("kristal sdelai, ispolzui higgsfield dlya 100% kachestva"): opts.rim — the Crystal picture's glass ring (its lit edge, the
+    // reflections along it, the first of its halo) over the dots, screen-blended; the CSS shine then steps aside
+    var rim = opts.rim && opts.rim.src && opts.rim.r > 0 ? opts.rim : null, rimEl = null;
+    if (rim) { rimEl = doc.createElement('div'); rimEl.className = 'rfg-rim'; rimEl.style.cssText = 'position:absolute;pointer-events:none;mix-blend-mode:screen;background:url("' + rim.src + '") 0 0/100% 100% no-repeat'; stage.insertBefore(rimEl, shineEl); shineEl.style.display = 'none'; }
+    // v415: opts.over — more pictures over the dots and the rim's (the Orbits look's two rings), screen-blended
+    var overs = (opts.over || []).filter(function (o) { return o && o.src && o.r > 0; }).map(function (o) {
+      var el = doc.createElement('div'); el.className = 'rfg-over';
+      el.style.cssText = 'position:absolute;pointer-events:none;mix-blend-mode:screen;background:url("' + o.src + '") 0 0/100% 100% no-repeat';
+      stage.appendChild(el); return { o: o, el: el }; });
+    host.insertBefore(stage, host.firstChild); host.appendChild(layer);
+    if (opts.keyboard) host.setAttribute('tabindex', '0');
+
+    var colors = resolveColors(host, opts.colors);
+    root.addEventListener('ds-theme', function () { colors = resolveColors(host, opts.colors); for (var hk = 0; hk < 18; hk++) uHueC[hk] = colors['hue' + (hk / 3 | 0)][hk % 3]; W = 0; measure(); invalidate(); });   // DUQ v235: the warm spot's palette too   // v555: the theme switch
+    var engaged = opts.engaged !== false, engageV = engaged ? 1 : 0, engageTw = null;
+
+    /* -- pins (slots 0…10 light the dots) and You (slot 11) -- */
+    var pins = (opts.pins || []).map(function (p, i) { return makePin(p, i, p.state && STATES[p.state] ? p.state : 'off'); });
+    var you = opts.you ? makePin(opts.you, -1, 'you') : null;
+    function makePin(p, i, state) {
+      var pin = { i: i, lat: +p.lat, lng: +p.lng, el: p.el || null, data: p, state: state, local: unit(+p.lat, +p.lng),
+        glow: 0, rad: L.pinGlow.off[1], sw: 0, pulse0: now(), land0: -1, sx: 0, sy: 0, sz: -1, op: -1, tf: '', zi: '', side: '', hitR: 0 };
+      if (pin.el) {
+        if (!pin.el.parentNode) layer.appendChild(pin.el);
+        pin.el.style.position = 'absolute'; pin.el.style.left = '0'; pin.el.style.top = '0'; pin.el.style.pointerEvents = 'none';
+        pin.el.style.willChange = 'transform, opacity';
+        pin.el.style.opacity = '0'; pin.el.style.visibility = 'hidden';   // until placed — never a frame in the box's corner
+        pin.el.setAttribute('data-state', state);
+      }
+      return pin;
+    }
+
+    /* -- arcs, one per pin -- */
+    var arcs = pins.map(function (p, i) {
+      return { on: false, head: 0, tw: null, alpha: 1, atw: null, landed: false, land0: -1, phase: (i * 0.618) % 1, style: 'solid',
+        w: L.arcStyle.solid[0], glow: L.arcStyle.solid[1], dash: 0, col: colors.arcSolid.slice(), promise: Promise.resolve(true), resolve: null };
+    });
+    var flash0 = -1;
+    var side = { on: 0, x: 0, wave: 0, waveW: 100, hy: 0, hn: 0, calm: 0.6, win: 0, yes: [0.11, 0.72, 0.52], no: [0.96, 0.24, 0.24], lift: 0.3 };   // DUQ v235: the halves (setSide)
+
+    /* -- view: what faces the viewer; a throw; idle motion; a spring target -- */
+    var v0 = opts.view || (you ? { lat: you.lat, lng: you.lng } : { lat: 20, lng: 10 });
+    var view = { lat: clamp(+v0.lat, -L.tiltMax, L.tiltMax), lng: wrap180(+v0.lng) };
+    var fling = { lat: 0, lng: 0 }, idleV = 0, sway = null, idleTimer = 0, settlePending = false;
+    var spring = null;            // { lat, lng, vLat, vLng, k, c, resolve }
+    var rot = new Float32Array(9);
+    var lastTouch = -1e9, overSphere = false;
+
+    /* -- pointer -- */
+    var ptr = { in: false, x: 0, y: 0, mx: 0, my: 0, heat: 0, type: 'mouse', down: false, drag: false, id: -1, sx: 0, sy: 0, lx: 0, ly: 0, samples: [] };
+    var hovered = -1;
+
+    /* -- sizes (box px) -- */
+    var W = 0, H = 0, dpr = 1, R = 0, CX = 0, CY = 0, rows = 0, dots = null;
+
+    /* -- GL -- */
+    var gl = null, ctx2d = null, P1 = null, P2 = null, bufPos = null, bufInfo = null, bufArc = null, rebuilds = 0, lostAt = -1, glError = '';
+    var uPin = new Float32Array(48), uRing = new Float32Array(48), uPoolC = new Float32Array(4), uArcC = new Float32Array(4), uHueC = new Float32Array(18);
+    for (var hi = 0; hi < 18; hi++) uHueC[hi] = colors['hue' + (hi / 3 | 0)][hi % 3];   // v431: the warm spot's palette, rgb × 6
+    function initGL() {
+      gl = null; ctx2d = null;
+      var attrs = { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false };
+      try { gl = canvas.getContext('webgl', attrs) || canvas.getContext('experimental-webgl', attrs); } catch (e) { gl = null; }
+      if (gl) {
+        try {
+          P1 = program(gl, DOT_VS, DOT_FS, ['aPos', 'aInfo']);
+          P2 = program(gl, ARC_VS, ARC_FS, ['aArc']);
+          bufPos = gl.createBuffer(); bufInfo = gl.createBuffer(); bufArc = gl.createBuffer();
+          var g = new Float32Array((ARC_SEG + 1) * 4);
+          for (var k = 0; k <= ARC_SEG; k++) { g[k * 4] = k / ARC_SEG; g[k * 4 + 1] = -1; g[k * 4 + 2] = k / ARC_SEG; g[k * 4 + 3] = 1; }
+          gl.bindBuffer(gl.ARRAY_BUFFER, bufArc); gl.bufferData(gl.ARRAY_BUFFER, g, gl.STATIC_DRAW);
+          gl.disable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+          rows = 0; dots = null;
+        } catch (e) { glError = e.message; gl = null; }
+      }
+      if (!gl) { try { ctx2d = canvas.getContext('2d'); } catch (e) { ctx2d = null; } }
+    }
+    function onLost(e) { e.preventDefault(); lost = true; lostAt = now(); request(); }   // the loop polls, then rebuilds after 1 s
+    function onRestored() { lost = false; initGL(); W = 0; measure(); invalidate(); }
+    canvas.addEventListener('webglcontextlost', onLost, false);
+    canvas.addEventListener('webglcontextrestored', onRestored, false);
+    initGL();
+    function freshCanvas() {   // WebKit sometimes never restores: build on a new canvas (≥ 1 s apart, 3 tries)
+      if (rebuilds >= 3) { if (rebuilds++ === 3) fail(new Error('RFGlobe: the WebGL context was lost and could not be rebuilt')); return; }
+      rebuilds++;
+      canvas.removeEventListener('webglcontextlost', onLost); canvas.removeEventListener('webglcontextrestored', onRestored);
+      var c = doc.createElement('canvas'); styleCanvas(c); stage.replaceChild(c, canvas); canvas = c;
+      canvas.addEventListener('webglcontextlost', onLost, false); canvas.addEventListener('webglcontextrestored', onRestored, false);
+      lost = false; initGL(); W = 0; measure(); invalidate();
+    }
+
+    function measure() {
+      var w = host.clientWidth, h = host.clientHeight, nd = Math.min(root.devicePixelRatio || 1, opts.maxDpr || L.maxDpr);
+      var rp = typeof opts.radiusPx === 'function' ? +opts.radiusPx(w, h) : +opts.radiusPx;
+      var nr = rp > 0 ? rp : radiusK * Math.min(w, h) / 2;
+      if (w === W && h === H && nd === dpr && nr === R && dots) return false;
+      W = w; H = h; dpr = nd; R = nr; CX = W * center[0]; CY = H * center[1];
+      canvas.width = Math.max(1, Math.round((W + 2 * bleed) * dpr)); canvas.height = Math.max(1, Math.round((H + 2 * bleed) * dpr));
+      var want = clamp(Math.round(PI * R / clamp(R * L.pitch, L.spacingMin, L.spacing)), L.rowsMin, L.rowsMax);
+      if (!dots || Math.abs(want - rows) >= 4) {
+        rows = want; dots = buildDots(rows);
+        if (gl) {
+          gl.bindBuffer(gl.ARRAY_BUFFER, bufPos); gl.bufferData(gl.ARRAY_BUFFER, dots.pos, gl.STATIC_DRAW);
+          gl.bindBuffer(gl.ARRAY_BUFFER, bufInfo); gl.bufferData(gl.ARRAY_BUFFER, dots.info, gl.STATIC_DRAW);
+        }
+      }
+      // the glow behind and the rim of light: a CSS layer that fades out inside the stage (no hard edge at its clip)
+      var room = Math.min(CX, W - CX, CY, H - CY) + bleed;
+      var e = Math.max(R + 30, Math.min(R * 1.6, rimEl ? R * 1.4 : room)), a = L.glowAlpha,   /* v410: with the ring's picture the halo keeps its R + 130 (a sphere at the box's edge left it R + 30) */ at = rimEl ? L.atmo * 0.3 : L.atmo,   /* v410: the ring's picture lights the limb */ gc = colors.glow, rc = colors.rim, pc = function (x) { return (Math.min(x, e) / e * 100).toFixed(2) + '%'; };
+      glowEl.style.left = (CX + bleed - e).toFixed(1) + 'px'; glowEl.style.top = (CY + bleed - e).toFixed(1) + 'px';
+      glowEl.style.width = glowEl.style.height = (2 * e).toFixed(1) + 'px';
+      glowEl.style.background =
+        'radial-gradient(closest-side, ' + rgbCss(rc, 0) + ' ' + pc(R - 8) + ', ' + rgbCss(rc, at * 0.55) + ' ' + pc(R - 1) + ', ' + rgbCss(rc, at) + ' ' + pc(R + 1) + ', ' + rgbCss(colors.glassEdge, L.glass.halo * 0.62) + ' ' + pc(R + 10) + ', ' + rgbCss(colors.glassEdge, L.glass.halo * 0.26) + ' ' + pc(R + 44) + ', ' + rgbCss(colors.glassEdge, L.glass.halo * 0.08) + ' ' + pc(R + 90) + ', ' + rgbCss(colors.glassEdge, 0) + ' ' + pc(R + 130) + '),' +   // v402: a saturated violet halo out to R + 130 (v399: rim colour to R + 72)
+        '' +
+        'radial-gradient(closest-side, ' + rgbCss(gc, a) + ' 0%, ' + rgbCss(gc, a * 0.55) + ' ' + pc(e * 0.375) + ', ' + rgbCss(gc, a * 0.22) + ' ' + pc(e * 0.625) + ', ' + rgbCss(gc, 0) + ' 100%)';
+      // v399: the glass body and its shine, on the sphere itself
+      var G = L.glass, sc = colors.shine, hc = colors.hot, gpos = function (el) { el.style.left = (CX + bleed - R).toFixed(1) + 'px'; el.style.top = (CY + bleed - R).toFixed(1) + 'px'; el.style.width = el.style.height = (2 * R).toFixed(1) + 'px'; };
+      gpos(glassEl); gpos(shineEl);
+      if (rimEl) { var rs = R / rim.r; rimEl.style.left = (CX + bleed - rim.cx * rs).toFixed(1) + 'px'; rimEl.style.top = (CY + bleed - rim.cy * rs).toFixed(1) + 'px'; rimEl.style.width = (rim.w * rs).toFixed(1) + 'px'; rimEl.style.height = (rim.h * rs).toFixed(1) + 'px'; }
+      overs.forEach(function (x) { var o = x.o, k = R / o.r, sh = typeof o.shift === 'function' ? o.shift() : o.shift, dx = sh ? sh[0] * R : 0, dy = sh ? sh[1] * R : 0;
+        x.el.style.left = (CX + bleed - o.cx * k + dx).toFixed(1) + 'px'; x.el.style.top = (CY + bleed - o.cy * k + dy).toFixed(1) + 'px';
+        x.el.style.width = (o.w * k).toFixed(1) + 'px'; x.el.style.height = (o.h * k).toFixed(1) + 'px'; });
+      var ci = colors.glassIn, cm = colors.glassMid, ce = colors.glassEdge;   // v402: a deep violet body, saturated toward the limb, the rim lit
+      glassEl.style.background = 'radial-gradient(closest-side, ' + rgbCss(ci, G.fill * 1.7) + ' 0%, ' + rgbCss(ci, G.fill * 1.7) + ' 46%, ' + rgbCss(cm, G.fill * 1.25) + ' 76%, ' + rgbCss(ce, G.edge * 0.8) + ' 93%, ' + rgbCss(rc, G.edge) + ' 98.2%, ' + rgbCss(hc, G.edge) + ' 99.4%, ' + rgbCss(hc, 0) + ' 100%)';   // (a crisp lit line at the very edge)
+      if (rimEl) glassEl.style.background = 'radial-gradient(closest-side, ' + rgbCss(ci, G.fill * 1.7) + ' 0%, ' + rgbCss(ci, G.fill * 1.7) + ' 46%, ' + rgbCss(cm, G.fill * 1.25) + ' 76%, ' + rgbCss(ce, G.edge * 0.8) + ' 93%, ' + rgbCss(ce, G.edge * 0.55) + ' 99.3%, ' + rgbCss(ce, 0) + ' 100%)';   // v410: no lit lines (the ring's picture)
+      var face = Math.atan2(H / 2 - CY, W / 2 - CX) * 180 / PI, cone = face + G.at + 90 - G.span / 2;   // conic 0° is up
+      shineEl.style.boxShadow = 'inset 0 0 0 1.5px ' + rgbCss(sc, G.shine) + ', inset 0 0 36px 3px ' + rgbCss(hc, G.shine * 0.45);
+      var mk = 'conic-gradient(from ' + cone.toFixed(1) + 'deg, transparent 0deg, #000 ' + (G.span * 0.32).toFixed(1) + 'deg, #000 ' + (G.span * 0.6).toFixed(1) + 'deg, transparent ' + G.span.toFixed(1) + 'deg, transparent 360deg)';
+      shineEl.style.webkitMaskImage = mk; shineEl.style.maskImage = mk;
+      pins.forEach(function (p) { p.hitR = 0; });
+      gate = DRAW_GATE_MS; // draw on the next tick
+      if (rot[8] || rot[0]) placePins();   // pins follow the new size in this same frame, before the first draw
+      return true;
+    }
+
+    /* -- the loop: own rAF or a shared ticker; only while on screen, visible and moving -- */
+    var raf = 0, ticking = false, dirty = true, lastT = -1, gate = DRAW_GATE_MS;
+    var introTw = null, revealV = opts.intro === false ? 1 : 0, introDone = opts.intro === false;
+    var stat = { ticks: 0, draws: 0, cpu: 0 }, queued = [];
+    function later(name, arg) { queued.push([name, arg]); }   // events raised inside a step go out after the frame
+    function flush() { while (queued.length) { var e = queued.shift(); emitPlain(e[0], e[1]); } }
+    function running() { return alive && !paused && inView && !doc.hidden && W > 0 && H > 0; }
+    function tick() { frame(now()); }
+    function request() {
+      if (!running()) return;
+      if (opts.ticker) { if (!ticking) { ticking = true; opts.ticker.add(tick); } }
+      else if (!raf) raf = root.requestAnimationFrame(function (t) { raf = 0; frame(t); });
+    }
+    function stopLoop() {
+      if (raf) { root.cancelAnimationFrame(raf); raf = 0; }
+      if (ticking) { ticking = false; opts.ticker.remove(tick); }
+      lastT = -1;
+    }
+    function invalidate() { dirty = true; request(); }
+    function cssEase(c) { return 'cubic-bezier(' + c.join(',') + ')'; }
+    if (!introDone) glowEl.style.opacity = glassEl.style.opacity = shineEl.style.opacity = '0';
+    if (!introDone && rimEl) rimEl.style.opacity = '0';
+    if (!introDone) overs.forEach(function (x) { x.el.style.opacity = '0'; });   // the glow, its rim and the glass come in with the dots
+    function update() {
+      if (running()) {
+        if (!introDone && !introTw) {
+          introTw = tween(0, 1, reduced ? DUR.fast : DUR.scene, ease.settle, now());
+          [glowEl, glassEl, shineEl].concat(rimEl ? [rimEl] : []).concat(overs.map(function (x) { return x.el; })).forEach(function (el) { el.style.transition = 'opacity ' + (reduced ? DUR.fast : DUR.scene) + 'ms ' + cssEase(EASE.settle); el.style.opacity = '1'; });
+        }
+        lastT = -1; invalidate();
+      } else stopLoop();
+    }
+
+    function frame(t) {
+      if (!running()) { stopLoop(); return; }
+      if (lost) { if (now() - lostAt > 1000) freshCanvas(); else request(); return; }
+      var dt = lastT < 0 ? 0 : Math.min(MAX_DT, (t - lastT) / 1000); lastT = t;
+      stat.ticks++;
+      var busy = step(dt, now());
+      gate += dt * 1000;
+      var phone = (mqCoarse && mqCoarse.matches) || root.innerWidth < 768;
+      if (dirty || phone || gate >= DRAW_GATE_MS - 0.5) { gate = 0; var c0 = now(); draw(); placePins(); stat.cpu += now() - c0; stat.draws++; dirty = false; }
+      if (busy || dirty) { if (!opts.ticker) request(); }
+      else if (ticking) { ticking = false; opts.ticker.remove(tick); lastT = -1; }
+      flush();
+    }
+
+    /* -- one step of everything; returns true while anything still moves -- */
+    function step(dt, t) {
+      var busy = false, i;
+      if (introTw) { var iv = tweenAt(introTw, t); revealV = iv.v; if (iv.done) { introTw = null; introDone = true; } busy = true; }
+      if (engageTw) { var ev = tweenAt(engageTw, t); engageV = ev.v; if (ev.done) engageTw = null; busy = true; }
+
+      // the view: a drag (in the pointer handlers), a spring (focus/home), or a throw plus the idle motion
+      if (ptr.drag) { busy = true; idleV = 0; sway = null; }
+      else if (spring) {
+        var h = 1 / 240, n = Math.min(40, Math.ceil(dt / h)), k = spring.k, c = spring.c;
+        for (i = 0; i < n; i++) {
+          spring.vLat += (-k * (view.lat - spring.lat) - c * spring.vLat) * h; view.lat += spring.vLat * h;
+          spring.vLng += (-k * (view.lng - spring.lng) - c * spring.vLng) * h; view.lng += spring.vLng * h;
+        }
+        if (Math.abs(view.lat - spring.lat) < 0.03 && Math.abs(view.lng - spring.lng) < 0.03 && Math.abs(spring.vLat) + Math.abs(spring.vLng) < 0.5) {
+          view.lat = spring.lat; view.lng = spring.lng; var r = spring.resolve; spring = null; lastTouch = t; if (r) r(true); later('focusend', true);
+        }
+        idleV = 0; sway = null; busy = true;
+      } else {
+        fling.lng = damp(fling.lng, 0, L.friction, dt); fling.lat = damp(fling.lat, 0, L.friction, dt);
+        var flinging = Math.abs(fling.lng) + Math.abs(fling.lat) >= L.flingStop;
+        if (!flinging) {
+          fling.lng = fling.lat = 0;
+          if (settlePending) { settlePending = false; lastTouch = t; later('settle'); }
+        }
+        var idleWant = idleMode !== 'still' && !reduced && !overSphere && !ptr.down && !flinging && !(idleMode === 'spin' && spinSpeed <= 0);
+        var wait = L.idleDelay - (t - lastTouch), idleOn = idleWant && wait <= 0;
+        if (idleWant && wait > 0 && !idleTimer && Math.abs(idleV) < 0.01) idleTimer = setTimeout(function () { idleTimer = 0; invalidate(); }, wait + 20);
+        if (idleOn && idleMode === 'sway') {
+          if (!sway) sway = { base: view.lng, t0: t, prev: 0 };
+          var st = (t - sway.t0) / (2 * DUR.cinematic), env = clamp(st, 0, 1); env = env * env * (3 - 2 * env);
+          var off = L.swayAmp * env * Math.sin(2 * PI * (t - sway.t0) / L.swayPeriod);
+          view.lng = sway.base + off; idleV = dt > 0 ? (off - sway.prev) / dt : idleV; sway.prev = off;
+        } else {
+          sway = null;
+          var target = idleOn && idleMode === 'spin' ? -spinSpeed : 0;
+          idleV = damp(idleV, target, idleOn ? 1.2 : 4, dt);
+          if (Math.abs(idleV - target) < 0.01) idleV = target;
+          view.lng += idleV * dt;
+        }
+        view.lng += fling.lng * dt; view.lat += fling.lat * dt;
+        if (flinging || idleV !== 0 || sway) busy = true;
+      }
+      if (view.lat > L.tiltMax) { view.lat = L.tiltMax; fling.lat = 0; } else if (view.lat < -L.tiltMax) { view.lat = -L.tiltMax; fling.lat = 0; }
+      var wl = wrap180(view.lng); if (sway) sway.base += wl - view.lng; view.lng = wl;
+      if (spring) spring.lng = view.lng + wrap180(spring.lng - view.lng);
+      viewMatrix(view.lat, view.lng, rot);
+
+      // the warm spot under the pointer (a mouse hovering, a finger pressing)
+      var heatT = ptr.in && (ptr.type !== 'touch' || ptr.down) ? 1 : 0;
+      if (heatT && ptr.heat < 0.01) { ptr.mx = ptr.x; ptr.my = ptr.y; }
+      ptr.heat = damp(ptr.heat, heatT, reduced ? 20 : heatT ? 8 : 4, dt);   // reduced: a fast fade (≈ 150 ms), no lingering
+      ptr.mx = damp(ptr.mx, ptr.x, 14, dt); ptr.my = damp(ptr.my, ptr.y, 14, dt);
+      if (Math.abs(ptr.heat - heatT) > 0.002 || Math.abs(ptr.mx - ptr.x) + Math.abs(ptr.my - ptr.y) > 0.05) busy = true; else ptr.heat = heatT;
+      if (ptr.heat > 0.002 && !reduced) busy = true;   // the wave runs
+
+      // pins: their pools of light and rings
+      var all = you ? pins.concat([you]) : pins;
+      for (i = 0; i < all.length; i++) {
+        var p = all[i], fx = L.pinGlow[p.state] || L.pinGlow.off, boost = p === you && flash0 >= 0 ? Math.max(0, 1 - (t - flash0) / DUR.revealLine) * 0.35 : 0;
+        var lp = reduced ? 20 : 12;   // ≈ normal 250 ms; reduced ≈ fast 150 ms
+        p.glow = damp(p.glow, fx[0] + boost, lp, dt); p.rad = damp(p.rad, fx[1], lp, dt); p.sw = damp(p.sw, fx[2], lp, dt);
+        if (Math.abs(p.glow - fx[0] - boost) > 0.002 || Math.abs(p.rad - fx[1]) > 0.0005) busy = true;
+        if (p.state === 'next' && !reduced) busy = true;
+        if (p.land0 >= 0 && t - p.land0 < DUR.reveal) busy = true;
+      }
+
+      // arcs: draw out / pull back, restyle in place, land
+      for (i = 0; i < arcs.length; i++) {
+        var a = arcs[i], sty = L.arcStyle[a.style], tc = colors[ARC_COLOR[a.style]];
+        if (a.tw) {
+          var av = tweenAt(a.tw, t); a.head = av.v; busy = true;
+          if (av.done) { a.tw = null; if (!a.on) a.head = 0; settleArc(a, true); }
+        }
+        if (a.atw) { var al = tweenAt(a.atw, t); a.alpha = al.v; busy = true; if (al.done) { a.atw = null; if (!a.on) { a.head = 0; a.alpha = 1; } settleArc(a, true); } }
+        var moved = Math.abs(a.w - sty[0]) + Math.abs(a.glow - sty[1]) + Math.abs(a.dash - sty[2]) + Math.abs(a.col[0] - tc[0]) + Math.abs(a.col[1] - tc[1]) + Math.abs(a.col[2] - tc[2]) + Math.abs(a.col[3] - tc[3]);
+        if (moved > 0.002 && a.head > 0) {
+          a.w = damp(a.w, sty[0], 14, dt); a.glow = damp(a.glow, sty[1], 14, dt); a.dash = damp(a.dash, sty[2], 14, dt);
+          for (var j = 0; j < 4; j++) a.col[j] = damp(a.col[j], tc[j], 14, dt);
+          busy = true;
+        } else { a.w = sty[0]; a.glow = sty[1]; a.dash = sty[2]; for (var j2 = 0; j2 < 4; j2++) a.col[j2] = tc[j2]; }
+        if (a.on && !a.landed && a.head >= 0.999 && !a.atw) {
+          a.landed = true; a.land0 = t;
+          pins[i].land0 = reduced || a.style === 'dashed' ? -1 : t;
+        }
+        if (a.landed && flowOn && !reduced && a.style !== 'dashed' && engageV > 0.01) busy = true;
+      }
+      if (flash0 >= 0) { if (t - flash0 < DUR.revealLine + DUR.normal) busy = true; else flash0 = -1; }
+      return busy;
+    }
+    function settleArc(a, ok) { var r = a.resolve; a.resolve = null; if (r) r(ok); }
+
+    // v418 ("globus ne izmenilas" — the recording's last frames again: the ball turned till You is behind it, and one line still
+    // ran across its empty face; v416 had made that line a true path over the surface, but both of its ends were out of sight —
+    // You behind the top, the friend past the bottom fade): an arc is drawn only while one of its ends is in sight. seeOf: how
+    // far a pin or You is in sight, 0 … 1 — its front-ness (the ramps its element's opacity has in placePins) × its place inside
+    // the box's fades (opts.sight). The arc's strength × the greater of its two ends': at rest You is in full sight, so nothing
+    // changes there; with You gone, a friend in sight keeps its line (it comes over the limb to the coin), the others' go
+    var see3 = [0, 0, 0];
+    function liftAt(k) { return typeof opts.pinLift === 'function' ? +opts.pinLift(k) || 0 : +opts.pinLift || 0; }
+    function sightBox(i) { var s = typeof opts.sight === 'function' ? opts.sight(i) : opts.sight; return s && s.length === 8 ? s : [0, 0, W, H, 24, 24, W - 24, H - 24]; }
+    function seeOf(p, lifted, s) {
+      if (!p) return 0; mul(rot, p.local, see3);
+      var front = lifted > 0 ? clamp((see3[2] - 0.03) / 0.2, 0, 1) : clamp((see3[2] + 0.1) / 0.28, 0, 1); if (front <= 0) return 0;
+      var x = CX + see3[0] * R, y = CY - see3[1] * R;
+      var lo = function (d, o, i) { return i > o ? (d - o) / (i - o) : d >= o ? 1 : 0; }, hi = function (d, o, i) { return o > i ? (o - d) / (o - i) : d <= o ? 1 : 0; };
+      return front * clamp(Math.min(lo(x, s[0], s[4]), lo(y, s[1], s[5]), hi(x, s[2], s[6]), hi(y, s[3], s[7])), 0, 1);
+    }
+
+    /* -- draw -- */
+    var geo = { n: [0, 0, 0], om: 0, lift: 0, bend: 0, path: null, flat: null, len: 0 };
+    function draw() {
+      if (!dots) return;
+      if (!gl) { draw2d(); return; }
+      if (gl.isContextLost()) return;
+      var t = now(), i, ox = (CX + bleed) * dpr, oy = (CY + bleed) * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      var u = P1.u;
+      gl.useProgram(P1.p);
+      gl.bindBuffer(gl.ARRAY_BUFFER, bufPos); gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, bufInfo); gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
+      gl.uniformMatrix3fv(u.uRot, false, rot);
+      gl.uniform4f(u.uFrame, ox, oy, R * dpr, dpr);
+      gl.uniform2f(u.uView, canvas.width, canvas.height);
+      gl.uniform4fv(u.uLand, colors.land); gl.uniform4fv(u.uOcean, colors.ocean); gl.uniform4fv(u.uHot, colors.hot); gl.uniform4fv(u.uRim, colors.rim);
+      for (i = 0; i < 4; i++) uPoolC[i] = colors.idle[i] + (colors.pool[i] - colors.idle[i]) * engageV;
+      gl.uniform4fv(u.uPool, uPoolC);
+      var fo = typeof opts.fall === 'function' ? opts.fall() : opts.fall;   // v415: the light's fall-off only where the page asks (its side-by-side layout)
+      gl.uniform3f(u.uFall, L.fall[0], L.fall[1], fo ? L.fall[2] : 1); gl.uniform1f(u.uSoft, L.dotSoft);
+      var land = L.landDot * (PI * R / rows) * dpr;
+      gl.uniform4f(u.uSize, land, land * L.oceanDot, L.coastDot, L.minDot);
+      gl.uniform4f(u.uShade, L.limb, L.rimTint, L.key, L.back);
+      var kd = L.keyDir, kl = Math.hypot(kd[0], kd[1], kd[2]);
+      gl.uniform3f(u.uKey, kd[0] / kl, kd[1] / kl, kd[2] / kl);
+      gl.uniform4f(u.uMouse, (ptr.mx + bleed) * dpr, (ptr.my + bleed) * dpr, ptr.heat, ((t - t0) / 1000) % 1000);
+      var RH = +opts.heatR > 0 ? Math.min(R, +opts.heatR) : R;   // DUQ v235: the warm spot as big as on the FreedX landing (R 500) however big the sphere
+      gl.uniform4f(u.uHeat, L.heatRadius * RH * dpr, reduced ? 0 : L.shove * RH * dpr, L.swell * (reduced ? 0.5 : 1), reduced ? 0 : L.wave);
+      var hh = L.heatHue;   // v431: the warm spot's palette and how it lies; reduced motion — the colours stand still (they still change as the pointer moves)
+      gl.uniform3fv(u.uHue, uHueC);
+      gl.uniform4f(u.uTint, hh ? hh[0] : 0, hh ? hh[1] : 0, hh && !reduced ? hh[2] * (((t - t0) / 1000) % 1000) : 0, hh ? hh[3] : 0);
+      gl.uniform1f(u.uReveal, revealV);
+      fillPinUniforms(t);
+      gl.uniform4fv(u.uPin, uPin); gl.uniform4fv(u.uRing, uRing);
+      gl.uniform1f(u.uPinN, you ? 12 : Math.min(11, pins.length));   // DUQ v235
+      gl.uniform4f(u.uSide, (side.x + bleed) * dpr, side.wave, Math.max(1, side.waveW * dpr), side.on ? 1 : 0); gl.uniform4f(u.uSideL, side.hy, side.hn, side.calm, side.win);
+      gl.uniform3fv(u.uYes, side.yes); gl.uniform3fv(u.uNo, side.no); gl.uniform1f(u.uLift, side.lift);
+      gl.drawArrays(gl.POINTS, 0, dots.count);
+      gl.disableVertexAttribArray(1);
+
+      // arcs over the dots
+      var any = false;
+      for (i = 0; i < arcs.length; i++) if (arcs[i].head > 0.0005 && arcs[i].alpha > 0.001) { any = true; break; }
+      if (any && you) {
+        var v = P2.u;
+        gl.useProgram(P2.p);
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufArc); gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        gl.uniformMatrix3fv(v.uRot, false, rot);
+        gl.uniform4f(v.uFrame, ox, oy, R * dpr, dpr);
+        gl.uniform2f(v.uView, canvas.width, canvas.height);
+        gl.uniform3fv(v.uA, you.local);
+        var seeYou = seeOf(you, 0, sightBox(-1));   // v418: an arc only while one of its ends is in sight
+        for (i = 0; i < arcs.length; i++) {
+          var a = arcs[i]; if (a.head <= 0.0005 || a.alpha <= 0.001) continue;
+          var see = Math.max(seeYou, seeOf(pins[i], liftAt(i), sightBox(i))); if (see <= 0.003) continue;
+          var b = pins[i].local; arcGeom(you.local, b, geo, pins[i].data);
+          gl.uniform3fv(v.uB, b); gl.uniform3fv(v.uN, geo.n);
+          gl.uniform4f(v.uArc, geo.om, geo.lift, L.arcHalf * dpr, geo.bend);
+          gl.uniform1f(v.uUsePath, geo.path ? 1 : 0); if (geo.path) gl.uniform3fv(v.uPath, geo.flat);
+          for (var c = 0; c < 4; c++) uArcC[c] = colors.idle[c] + (a.col[c] - colors.idle[c]) * engageV;
+          gl.uniform4fv(v.uCol, uArcC);
+          var pulse = arcPulse(a, t, geo.len);
+          gl.uniform2f(v.uFlow, (L.flowLen + L.flowGap) / Math.max(geo.len, 0.2), L.flowLen / Math.max(geo.len, 0.2));
+          var pd = pins[i].data, gain = pd && pd.gain != null ? +pd.gain : 1;   // v415: a pin's arc may be dimmed (two friends whose arcs lie on one line)
+          gl.uniform4f(v.uDraw, a.head, a.alpha * gain * see, pulse[4], pulse[5]);
+          var fa = typeof opts.fall === 'function' ? opts.fall() : opts.fall; gl.uniform3f(v.uFallA, L.fallArc[0], L.fallArc[1], fa ? L.fallArc[2] : 1);
+          gl.uniform4f(v.uPulse, pulse[0], pulse[1], pulse[2], pulse[3]);
+          gl.uniform4f(v.uLine, a.w / 2 * dpr, L.arcHalf * dpr, a.glow, a.dash);
+          gl.uniform2f(v.uDash, Math.max(1, R * geo.len / (L.dash[0] + L.dash[1])), L.dash[0] / (L.dash[0] + L.dash[1]));
+          gl.uniform4f(v.uTrain, L.flowLen, Math.max(1, R * geo.len / (L.dash[0] + L.dash[1])), L.dash[0] / (L.dash[0] + L.dash[1]), L.flowW / 2 * dpr);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, (ARC_SEG + 1) * 2);
+        }
+      }
+    }
+    function fillPinUniforms(t) {
+      uPin.fill(0); uRing.fill(0);
+      for (var i = 0; i < 12; i++) {
+        var p = i < 11 ? pins[i] : you;
+        if (!p) { uRing[i * 4 + 2] = 0.05; continue; }
+        uPin[i * 4] = p.local[0]; uPin[i * 4 + 1] = p.local[1]; uPin[i * 4 + 2] = p.local[2]; uPin[i * 4 + 3] = p.glow;
+        var rr = 0, amp = 0;
+        if (p.land0 >= 0 && t - p.land0 < DUR.reveal) {           // the ring when an arc lands, in the pool colour (−)
+          var q = (t - p.land0) / DUR.reveal; rr = ease.settle(q) * L.landRing; amp = -(1 - q) * (1 - q) * 1.2;
+        } else if (p.state === 'next') {                          // the next friend's pulse, violet always (+)
+          if (reduced) { rr = L.ringMax * 0.6; amp = 0.5; }
+          else { var ph = ((t - p.pulse0) % DUR.cinematic) / DUR.cinematic; rr = ease.settle(ph) * L.ringMax; amp = Math.pow(1 - ph, 1.4) * 0.85; }
+        }
+        uRing[i * 4] = rr; uRing[i * 4 + 1] = amp; uRing[i * 4 + 2] = Math.max(0.01, p.rad); uRing[i * 4 + 3] = p.sw;
+      }
+    }
+    // [flowPos, flowAmp, flashPos, flashAmp, comet, base boost]
+    function arcPulse(a, t, len) {
+      var out = [0, 0, 0, 0, 0, 0], live = a.style !== 'dashed';
+      if (live && a.tw && a.on) out[4] = 1;
+      else if (live && a.landed && a.land0 >= 0) out[4] = Math.max(0, 1 - (t - a.land0) / DUR.normal);
+      if (a.landed && live && flowOn && !reduced) {
+        // v416: the trains move a train and a gap (1.42 R) every 3.2 s toward You, whatever the arc's length
+        var cyc = 2 * DUR.cinematic, per = (L.flowLen + L.flowGap) / Math.max(len || 1, 0.2), ph = (((t - a.land0) / cyc + a.phase) % 1 + 1) % 1;
+        out[0] = per * (1 - ph); out[1] = L.flowAmp * engageV;
+      }
+      if (flash0 >= 0 && a.landed) {
+        var f = (t - flash0) / DUR.revealLine;
+        if (reduced) out[5] = Math.max(0, 1 - (t - flash0) / (DUR.fast + DUR.normal)) * 0.8;
+        else if (f < 1) { out[2] = ease.settle(f) * 1.05; out[3] = (1 - f) * 1.6; out[5] = (1 - f) * 0.5; }
+      }
+      if (a.style === 'strong') out[5] += 0.12;   // "latest" a touch brighter
+      return out;
+    }
+    function draw2d() {   // no WebGL: land dots and arcs, no heat
+      var c = ctx2d; if (!c) return;
+      c.setTransform(dpr, 0, 0, dpr, bleed * dpr, bleed * dpr); c.clearRect(-bleed, -bleed, W + 2 * bleed, H + 2 * bleed);
+      var q = [0, 0, 0], o = [0, 0, 0], col = colors.land, i, s = Math.max(1, L.landDot * PI * R / rows);
+      c.fillStyle = rgbCss(col, 1);
+      for (i = 0; i < dots.count; i++) {
+        if (dots.info[i * 2] < 0.5) continue;
+        q[0] = dots.pos[i * 3]; q[1] = dots.pos[i * 3 + 1]; q[2] = dots.pos[i * 3 + 2]; mul(rot, q, o);
+        if (o[2] <= 0.02) continue;
+        c.globalAlpha = col[3] * (L.limb + (1 - L.limb) * o[2]) * revealV;
+        c.fillRect(CX + o[0] * R - s / 2, CY - o[1] * R - s / 2, s, s);
+      }
+      if (!you) return;
+      c.lineCap = 'round';
+      for (i = 0; i < arcs.length; i++) {
+        var a = arcs[i]; if (a.head <= 0.001) continue;
+        var b = pins[i].local; arcGeom(you.local, b, geo, pins[i].data);
+        var ac = [0, 0, 0, 0]; for (var k = 0; k < 4; k++) ac[k] = colors.idle[k] + (a.col[k] - colors.idle[k]) * engageV;
+        c.strokeStyle = rgbCss(ac, 1); c.lineWidth = a.w; c.globalAlpha = a.alpha * ac[3] * Math.max(seeOf(you, 0, sightBox(-1)), seeOf(pins[i], liftAt(i), sightBox(i)));   // v418
+        c.setLineDash(a.style === 'dashed' ? L.dash : []);
+        c.beginPath(); var pen = false;
+        for (var j = 0; j <= 64 * a.head; j++) {
+          arcPoint(you.local, b, geo, j / 64, false, q); mul(rot, q, o);
+          if (o[2] < 0 && Math.hypot(o[0], o[1]) < 1) { pen = false; continue; }
+          if (pen) c.lineTo(CX + o[0] * R, CY - o[1] * R); else { c.moveTo(CX + o[0] * R, CY - o[1] * R); pen = true; }
+        }
+        c.stroke();
+      }
+      c.setLineDash([]); c.globalAlpha = 1;
+    }
+
+    /* -- pins in the DOM: position, fade on the far side, depth order -- */
+    var tmp = [0, 0, 0];
+    function placePins() {
+      var all = you ? pins.concat([you]) : pins, liftOf = function (k) { return typeof opts.pinLift === 'function' ? +opts.pinLift(k) || 0 : +opts.pinLift || 0; };
+      for (var i = 0; i < all.length; i++) {
+        var p = all[i]; mul(rot, p.local, tmp);
+        p.sx = CX + tmp[0] * R; p.sy = CY - tmp[1] * R; p.sz = tmp[2]; p.ey = p.sy;
+        if (!p.el) continue;
+        var lf = p !== you ? liftOf(i) : 0;   // v416: a pin standing over its spot is gone before the spot passes the limb (it hung there half seen, off the sphere's edge)
+        var op = (lf > 0 ? clamp((p.sz - 0.03) / 0.2, 0, 1) : clamp((p.sz + 0.1) / 0.28, 0, 1)) * clamp(revealV * 1.6 - 0.4, 0, 1);
+        var sc = L.pinScale[0] + (L.pinScale[1] - L.pinScale[0]) * clamp(p.sz, 0, 1);
+        if (lf) p.ey = p.sy - lf * sc;   // v415: a pin's element stands over its spot (opts.pinLift), You on it
+        var tf = 'translate3d(' + p.sx.toFixed(2) + 'px,' + p.ey.toFixed(2) + 'px,0) translate(-50%,-50%) scale(' + sc.toFixed(3) + ')';
+        if (tf !== p.tf) { p.el.style.transform = tf; p.tf = tf; }
+        op = Math.round(op * 1000) / 1000;
+        if (op !== p.op) { p.el.style.opacity = String(op); p.el.style.visibility = op > 0 ? '' : 'hidden'; p.op = op; }
+        var side = p.sz > 0.05 ? 'front' : 'back';
+        if (side !== p.side) { p.el.setAttribute('data-side', side); p.side = side; }
+        var zi = String(10 + Math.round(p.sz * 100));
+        if (zi !== p.zi) { p.el.style.zIndex = zi; p.zi = zi; }
+      }
+      if (ptr.in && !ptr.drag) hitTest();
+    }
+
+    /* -- hit testing and hover -- */
+    function hitR(p) { if (!p.hitR) p.hitR = Math.max(L.hit, p.el ? p.el.offsetWidth / 2 : 0); return p.hitR; }
+    function pinIndexAt(x, y) {
+      var best = -1, bd = Infinity;
+      for (var i = 0; i < pins.length; i++) {
+        var p = pins[i]; if (p.sz < 0.12 || p.op === 0) continue;
+        var r = hitR(p), dx = p.sx - x, dy = (p.ey != null ? p.ey : p.sy) - y, d = dx * dx + dy * dy;   // v415: the element's place
+        if (d <= r * r && d < bd) { bd = d; best = i; }
+      }
+      return best;
+    }
+    function hitTest() { setHover(ptr.type === 'touch' && !ptr.down ? -1 : pinIndexAt(ptr.x, ptr.y)); }
+    function setHover(i) {
+      if (i === hovered) return;
+      var old = hovered; hovered = i;
+      if (old >= 0) { var po = pins[old]; if (po.el) po.el.removeAttribute('data-hover'); emit('pinleave', old); }
+      if (i >= 0) { var pn = pins[i]; if (pn.el) pn.el.setAttribute('data-hover', ''); emit('pinenter', i); }
+      host.style.cursor = ptr.drag ? 'grabbing' : i >= 0 ? 'pointer' : 'grab';
+    }
+    var CB = { pinenter: 'onPinEnter', pinleave: 'onPinLeave', pinclick: 'onPinClick', globetap: 'onGlobeClick', dragstart: 'onDragStart', settle: 'onSettle', ready: 'onReady', error: 'onError', focusend: 'onFocusEnd' };
+    function call(name, args) {
+      var fn = opts[CB[name]];
+      if (typeof fn === 'function') { try { fn.apply(null, args); } catch (e) { setTimeout(function () { throw e; }); } }
+    }
+    function dispatch(name, detail) { try { host.dispatchEvent(new CustomEvent('rfglobe:' + name, { bubbles: true, detail: detail })); } catch (e) { /* old browsers */ } }
+    function emit(name, i) { call(name, [i, pins[i].data]); dispatch(name, { index: i, pin: pins[i].data }); }
+    function emitPlain(name, arg) { call(name, arg === undefined ? [] : [arg]); dispatch(name, arg === undefined ? {} : { value: arg }); }
+    function fail(err) { call('error', [err]); dispatch('error', { error: err }); }
+
+    /* -- pointer: drag to turn (inertia), hover heat, click/tap -- */
+    function local(e) { var r = host.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    function sphereHas(x, y) { var dx = x - CX, dy = y - CY; return dx * dx + dy * dy <= (R + 4) * (R + 4); }
+    function onDown(e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      var q = local(e);
+      ptr.type = e.pointerType || 'mouse'; ptr.down = true; ptr.drag = false; ptr.id = e.pointerId;
+      ptr.x = ptr.sx = ptr.lx = q[0]; ptr.y = ptr.sy = ptr.ly = q[1]; ptr.in = true; ptr.samples = [];
+      if (spring) { var r = spring.resolve; spring = null; if (r) r(false); emitPlain('focusend', false); }
+      fling.lat = fling.lng = 0; idleV = 0; sway = null; lastTouch = now();
+      invalidate();
+    }
+    function onMove(e) {
+      var q = local(e);
+      ptr.type = e.pointerType || ptr.type; ptr.x = q[0]; ptr.y = q[1]; ptr.in = true;
+      if (ptr.type !== 'touch') { var was = overSphere; overSphere = sphereHas(ptr.x, ptr.y); if (was && !overSphere) lastTouch = now(); }
+      if (ptr.down && e.pointerId === ptr.id) {
+        if (!ptr.drag && Math.hypot(ptr.x - ptr.sx, ptr.y - ptr.sy) > L.dragSlop) {
+          ptr.drag = true; ptr.lx = ptr.x; ptr.ly = ptr.y; setHover(-1); host.style.cursor = 'grabbing';
+          try { host.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+          settlePending = false; emitPlain('dragstart');
+        }
+        if (ptr.drag) {
+          var dLng = -(ptr.x - ptr.lx) / R * R2D, dLat = ptr.type === 'touch' ? 0 : (ptr.y - ptr.ly) / R * R2D, t = now();
+          view.lng += dLng; view.lat = clamp(view.lat + dLat, -L.tiltMax, L.tiltMax);
+          ptr.lx = ptr.x; ptr.ly = ptr.y; lastTouch = t;
+          ptr.samples.push([t, dLng, dLat]); while (ptr.samples.length && t - ptr.samples[0][0] > 100) ptr.samples.shift();
+        }
+      }
+      if (!ptr.drag) hitTest();
+      invalidate();
+    }
+    function onUp(e) {
+      if (!ptr.down || e.pointerId !== ptr.id) return;
+      var wasDrag = ptr.drag, t = now();
+      ptr.down = false; ptr.drag = false; lastTouch = t;
+      try { host.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+      if (wasDrag) {
+        var s = ptr.samples, sl = 0, sa = 0;
+        if (!reduced && s.length > 1 && t - s[s.length - 1][0] < 60) {
+          for (var i = 1; i < s.length; i++) { sl += s[i][1]; sa += s[i][2]; }
+          var span = Math.max(16, s[s.length - 1][0] - s[0][0]) / 1000;
+          fling.lng = clamp(sl / span, -L.flingMax, L.flingMax); fling.lat = clamp(sa / span, -L.flingMax, L.flingMax);
+        }
+        settlePending = true;
+      } else {
+        var i2 = pinIndexAt(ptr.x, ptr.y);
+        if (i2 >= 0) emit('pinclick', i2);
+        else { var ll = surfaceAt(ptr.x, ptr.y); call('globetap', [ll]); dispatch('globetap', { latlng: ll }); }
+      }
+      if (ptr.type === 'touch') { ptr.in = false; setHover(-1); }
+      host.style.cursor = hovered >= 0 ? 'pointer' : 'grab';
+      if (!ptr.in) setHover(-1); else hitTest();
+      invalidate();
+    }
+    function onCancel(e) {
+      if (e.pointerId === ptr.id) { if (ptr.drag) settlePending = true; ptr.down = false; ptr.drag = false; }
+      if (e.pointerType === 'touch') { ptr.in = false; setHover(-1); }
+      invalidate();
+    }
+    function onEnter(e) { if (e.pointerType !== 'touch') { ptr.in = true; var q = local(e); ptr.x = q[0]; ptr.y = q[1]; overSphere = sphereHas(ptr.x, ptr.y); invalidate(); } }
+    function onLeave() { if (ptr.drag) return; ptr.in = false; if (overSphere) lastTouch = now(); overSphere = false; setHover(-1); invalidate(); }
+    function onKey(e) {
+      var k = e.key, dl = 0, da = 0;
+      if (k === 'ArrowLeft') dl = 20; else if (k === 'ArrowRight') dl = -20; else if (k === 'ArrowUp') da = 15; else if (k === 'ArrowDown') da = -15; else return;
+      e.preventDefault(); lastTouch = now();
+      turnTo((spring ? spring.lat : view.lat) + da, (spring ? spring.lng : view.lng) + dl);
+    }
+    host.addEventListener('pointerdown', onDown);
+    host.addEventListener('pointermove', onMove);
+    host.addEventListener('pointerup', onUp);
+    host.addEventListener('pointercancel', onCancel);
+    host.addEventListener('pointerenter', onEnter);
+    host.addEventListener('pointerleave', onLeave);
+    if (opts.keyboard) host.addEventListener('keydown', onKey);
+
+    function surfaceAt(x, y) {
+      var u = (x - CX) / R, w = -(y - CY) / R, rr = u * u + w * w;
+      if (rr > 1) return null;
+      return toLatLng(mulT(rot, [u, w, Math.sqrt(1 - rr)], [0, 0, 0]));
+    }
+
+    // a turn by spring: from where the view is, at its speed — a new call takes over at once (the old promise → false)
+    function turnTo(lat, lng, name) {
+      lat = clamp(lat, -L.tiltMax, L.tiltMax);
+      var keep = spring ? [spring.vLat, spring.vLng] : [fling.lat, fling.lng + idleV];   // no hitch out of a throw or the idle motion
+      if (spring && spring.resolve) { var r0 = spring.resolve; spring.resolve = null; r0(false); }
+      fling.lat = fling.lng = 0; idleV = 0; sway = null; lastTouch = now();
+      if (reduced) { view.lat = lat; view.lng = wrap180(lng); spring = null; invalidate(); Promise.resolve().then(function () { if (alive) emitPlain('focusend', true); }); return Promise.resolve(true); }
+      var sp = SPRING[name] || SPRING.gentle;
+      return new Promise(function (resolve) {
+        spring = { lat: lat, lng: view.lng + wrap180(lng - view.lng), vLat: keep[0], vLng: keep[1], k: sp[0], c: sp[1], resolve: resolve };
+        invalidate();
+      });
+    }
+
+    /* -- watchers: on screen, tab visible, size, reduced motion -- */
+    var io = null, ro = null;
+    if (root.IntersectionObserver) {
+      io = new IntersectionObserver(function (en) { inView = en[en.length - 1].isIntersecting; update(); }, { rootMargin: '120px 0px' });
+      io.observe(host);
+    } else inView = true;
+    function onVis() { update(); }
+    doc.addEventListener('visibilitychange', onVis);
+    function onResize() { if (measure()) invalidate(); }
+    if (root.ResizeObserver) { ro = new ResizeObserver(onResize); ro.observe(host); }
+    root.addEventListener('resize', onResize);
+    function onReduce() { if (userReduced == null) { reduced = !!mqReduce.matches; invalidate(); } }
+    if (mqReduce) { if (mqReduce.addEventListener) mqReduce.addEventListener('change', onReduce); else if (mqReduce.addListener) mqReduce.addListener(onReduce); }
+
+    viewMatrix(view.lat, view.lng, rot);
+    measure();
+    placePins();
+    update();
+    Promise.resolve().then(function () {   // after create() has returned, so the page holds the globe
+      if (!alive) return;
+      if (!gl && !ctx2d) fail(new Error('RFGlobe: neither WebGL nor a 2D canvas is available' + (glError ? ' (' + glError + ')' : '')));
+      else emitPlain('ready');
+    });
+
+    /* -- the API -- */
+    var api = {
+      el: host,
+      get canvas() { return canvas; },
+      setPinState: function (i, state) {
+        var p = pins[i]; if (!p || !STATES[state] || p.state === state) return api;
+        p.state = state; p.hitR = 0; if (state === 'next') p.pulse0 = now();
+        if (p.el) p.el.setAttribute('data-state', state);
+        invalidate(); return api;
+      },
+      setPinStates: function (list) { (list || []).forEach(function (s, i) { if (s) api.setPinState(i, s); }); return api; },
+      getPinState: function (i) { return pins[i] ? pins[i].state : null; },
+      arc: function (i, on, o) {
+        var a = arcs[i]; if (!a || !you) return Promise.resolve(false);
+        on = on !== false;
+        var style = o && L.arcStyle[o.style] ? o.style : null;
+        if (on && style && style !== a.style) { a.style = style; invalidate(); }   // restyle in place, no redraw
+        if (a.on === on) return a.promise;                                       // there or on its way: same promise
+        settleArc(a, false);
+        if (on && !style && a.head <= 0.0005) a.style = 'solid';
+        a.on = on; a.landed = false; var t = now();
+        if (reduced) { a.tw = null; if (on) { if (!a.atw && a.head <= 0.0005) a.alpha = 0; a.head = 1; } a.atw = tween(a.alpha, on ? 1 : 0, DUR.fast, ease.out, t); }
+        else {
+          if (a.atw) { a.atw = null; if (a.alpha < 1) { a.head *= a.alpha; } } a.alpha = 1;
+          a.tw = on ? tween(a.head, 1, Math.max(DUR.fast, arcMs * (1 - a.head)), ease.entrance, t)
+                    : tween(a.head, 0, Math.max(DUR.fast, DUR.revealLine * EXIT_RATIO * a.head), ease.out, t);
+        }
+        if (on && a.head <= 0.0005) { a.w = L.arcStyle[a.style][0]; a.glow = L.arcStyle[a.style][1]; a.dash = L.arcStyle[a.style][2]; a.col = colors[ARC_COLOR[a.style]].slice(); }
+        a.promise = new Promise(function (resolve) { a.resolve = resolve; });
+        invalidate();
+        return a.promise;
+      },
+      isArcOn: function (i) { return !!(arcs[i] && arcs[i].on); },
+      setSide: function (o) { for (var k in o) side[k] = o[k]; invalidate(); return api; },   // DUQ v235: the halves — { on, x (box px), wave, waveW, hy, hn, calm, win, yes, no, lift }
+      flash: function () { flash0 = now(); invalidate(); return api; },
+      setEngaged: function (v) {
+        v = !!v; if (v === engaged) return api;
+        engaged = v; engageTw = tween(engageV, v ? 1 : 0, reduced ? DUR.fast : DUR.reveal, ease.out, now());
+        invalidate(); return api;
+      },
+      get engaged() { return engaged; },
+      focus: function (target, o) {
+        o = o || {};
+        var lat, lng;
+        if (typeof target === 'number') {
+          var p = pins[target]; if (!p) return Promise.resolve(false);
+          if ((o.withYou || o.pair) && you) {
+            arcGeom(you.local, p.local, geo, p.data);
+            var ll = toLatLng(arcPoint(you.local, p.local, geo, 0.5, true, [0, 0, 0])); lat = ll.lat; lng = ll.lng;
+          } else { lat = p.lat; lng = p.lng; }
+        } else if (target && target.lat != null) { lat = +target.lat; lng = +target.lng; }
+        else return Promise.resolve(false);
+        return turnTo(lat, lng, o.spring);
+      },
+      home: function () { return you ? turnTo(you.lat, you.lng) : Promise.resolve(false); },
+      setIdle: function (mode) { if (IDLE[mode] && mode !== idleMode) { idleMode = mode; sway = null; invalidate(); } return api; },
+      get idle() { return idleMode; },
+      setAutoRotate: function (s) { spinSpeed = Math.max(0, +s || 0); invalidate(); return api; },
+      setView: function (lat, lng) {
+        if (spring) { var r = spring.resolve; spring = null; if (r) r(false); }
+        view.lat = clamp(+lat, -L.tiltMax, L.tiltMax); view.lng = wrap180(+lng); fling.lat = fling.lng = 0; idleV = 0; sway = null; invalidate(); return api;
+      },
+      setReducedMotion: function (v) { userReduced = typeof v === 'boolean' ? v : null; reduced = userReduced != null ? userReduced : !!(mqReduce && mqReduce.matches); invalidate(); return api; },
+      get reducedMotion() { return reduced; },
+      isMoving: function () { return ptr.drag || !!spring || Math.abs(fling.lng) + Math.abs(fling.lat) >= L.flingStop; },
+      project: function (a, b) {
+        var loc;
+        if (b == null) { var p = a === -1 ? you : pins[a]; if (!p) return null; loc = p.local; } else loc = unit(+a, +b);
+        var o = mul(rot, loc, [0, 0, 0]);
+        return { x: CX + o[0] * R, y: CY - o[1] * R, z: o[2], front: o[2] > 0.05 };
+      },
+      projectYou: function () { return api.project(-1); },
+      pinAt: function (cx, cy) { var r = host.getBoundingClientRect(); return pinIndexAt(cx - r.left, cy - r.top); },
+      get view() { return { lat: view.lat, lng: view.lng }; },
+      pause: function () { paused = true; stopLoop(); return api; },
+      resume: function () { paused = false; update(); return api; },
+      resize: function () { W = 0; measure(); invalidate(); return api; },
+      stats: function () { return { ticks: stat.ticks, draws: stat.draws, cpuPerDraw: stat.draws ? stat.cpu / stat.draws : 0, dots: dots ? dots.count : 0, rows: rows, dpr: dpr, buffer: [canvas.width, canvas.height], radius: R, webgl: !!gl, glError: glError, running: running(), reduced: reduced, idle: idleMode, engaged: engaged, moving: api.isMoving(), view: { lat: view.lat, lng: view.lng } }; },
+      destroy: function () {
+        if (!alive) return;
+        alive = false; stopLoop(); if (idleTimer) clearTimeout(idleTimer);
+        if (spring && spring.resolve) spring.resolve(false); spring = null;
+        arcs.forEach(function (a) { settleArc(a, false); });
+        if (io) io.disconnect(); if (ro) ro.disconnect();
+        doc.removeEventListener('visibilitychange', onVis); root.removeEventListener('resize', onResize);
+        if (mqReduce) { if (mqReduce.removeEventListener) mqReduce.removeEventListener('change', onReduce); else if (mqReduce.removeListener) mqReduce.removeListener(onReduce); }
+        host.removeEventListener('pointerdown', onDown); host.removeEventListener('pointermove', onMove); host.removeEventListener('pointerup', onUp);
+        host.removeEventListener('pointercancel', onCancel); host.removeEventListener('pointerenter', onEnter); host.removeEventListener('pointerleave', onLeave);
+        host.removeEventListener('keydown', onKey);
+        canvas.removeEventListener('webglcontextlost', onLost); canvas.removeEventListener('webglcontextrestored', onRestored);
+        if (gl && !gl.isContextLost()) { var ext = gl.getExtension('WEBGL_lose_context'); if (ext) ext.loseContext(); }
+        gl = null;
+        (you ? pins.concat([you]) : pins).forEach(function (p) {
+          if (!p.el) return;
+          ['transform', 'opacity', 'visibility', 'zIndex', 'willChange', 'pointerEvents', 'position', 'left', 'top'].forEach(function (k) { p.el.style[k] = ''; });
+          p.el.removeAttribute('data-side'); p.el.removeAttribute('data-hover');
+        });
+        [stage, layer].forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+        host.style.position = restore.position; host.style.touchAction = restore.touchAction; host.style.userSelect = restore.userSelect;
+        host.style.webkitUserSelect = restore.webkitUserSelect; host.style.cursor = restore.cursor;
+        if (restore.tabIndex == null) host.removeAttribute('tabindex'); else host.setAttribute('tabindex', restore.tabIndex);
+      }
+    };
+    return api;
+  }
+
+  root.RFGlobe = { create: create, version: '1.1.0', LOOK: LOOK, DUR: DUR };
+})(window);
+
+/*rf-globe:end*/</script>
 <script>
 /* v223 / v224 — the landing's ground in two versions (switch 1 / 2 in the landing header, keys 1 / 2, ?bg=1|2, remembered):
    1 = «Река времени» (idea 8), 2 = «Гравитация» (idea 7). Both replace the dot-crowd field: its script stays in the file
@@ -6703,9 +7988,9 @@ function duqStop(land){
  const EVS=[['btc','Bitcoin above $150k by New Year?',41],['ecb','ECB cuts rates in October?',62],['shutdown','Shutdown lasts 30+ days?',62],['santa','Santa delivers 7B+ gifts?',71],['dem2028','Newsom wins the 2028 nomination?',31],['ucl','Chelsea beat Barcelona?',40],['nba','Clippers beat the Raptors?',45],['eth','Ethereum below $1,500 this year?',64],['nuclear','Nuclear detonation in 2025?',23],['dotamajor','Juggernaut wins the Dota 2 major?',18]];
  const pic=id=>{try{const e=EVENTS[id];return e&&PIC[e.pic]||''}catch(_){return ''}};
  const root=document.createElement('div');root.id='stopbg';root.setAttribute('aria-hidden','true');root.hidden=true;
- root.innerHTML='<canvas class="sb-g"></canvas><canvas class="sb-c"></canvas><div class="sb-chip"><img alt="" decoding="async"><span class="sb-t"></span><b class="sb-p"></b></div>';
+ root.innerHTML='<div class="sb-body"></div><div class="sb-gbox"></div><canvas class="sb-c"></canvas><div class="sb-chip"><img alt="" decoding="async"><span class="sb-t"></span><b class="sb-p"></b></div>';
  {const fc=document.getElementById('field');if(fc&&fc.parentNode===land)land.insertBefore(root,fc.nextSibling);else land.insertBefore(root,land.firstChild)}   /* over the field's dots */
- const cv=root.querySelector('.sb-c'),gcv=root.querySelector('.sb-g'),c=cv.getContext('2d'),chip=root.querySelector('.sb-chip'),chipImg=chip.querySelector('img'),chipT=chip.querySelector('.sb-t'),chipP=chip.querySelector('.sb-p');
+ const cv=root.querySelector('.sb-c'),gbox=root.querySelector('.sb-gbox'),gbody=root.querySelector('.sb-body'),c=cv.getContext('2d'),chip=root.querySelector('.sb-chip'),chipImg=chip.querySelector('img'),chipT=chip.querySelector('.sb-t'),chipP=chip.querySelector('.sb-p');
  /* motion kit: ease-out «settle» (cubic-bezier .23,1,.32,1, the prototype's curve) */
  const bez=(x1,y1,x2,y2)=>t=>{let a=t;for(let i=0;i<6;i++){const ca=3*x1*a*(1-a)*(1-a)+3*x2*a*a*(1-a)+a*a*a-t,d=3*x1*(1-a)*(1-a)+6*(x2-x1)*a*(1-a)+3*(1-x2)*a*a;if(Math.abs(d)<1e-6)break;a-=ca/d;a=Math.min(1,Math.max(0,a))}return 3*y1*a*(1-a)*(1-a)+3*y2*a*a*(1-a)+a*a*a};
  const settle=bez(.23,1,.32,1);
@@ -6714,27 +7999,19 @@ function duqStop(land){
  let W=0,H=0,U=1,BASE=0,RAD=4000,YX=0,NX=0,SP=16,TOP=0,DPR=1,col={},running=false,raf=0,last=0,ready=false,phone=false;
  let people=[],ev=null,evi=-1,phase='bet',pt=0,outcome=true,nextBet=0,rate=4,deck=[],T=0;
  let drops=[],dust=[],puffs=[],plus=[],glow=0,fCycle=-1,chipPc=-1;
- /* ---- v232: the globe. FreedX's dotted globe — its land is Natural Earth 110 m as rf-globe.js carries it, here a 0.5° mask
-    of latitude 90 … −10 as run lengths (water, land, water …, two characters a run, a row each) ---- */
- const LANDR='BG,BG,BG,BG,BG,BG,BG,BG,BG,BG,BG,BG,BG,3A0508030t0b6Q,330f0V0o6J,2w0o0A050506040m6M,2n0o081G090A62,2i03040m061c61,2f09040f051c1y0202041K0A2a,2d0H0304040P051b160H0f041N0D2Y,2e0I010U0C1U0x0W240E2W,2L040K0F010J0H1X0y0J2J0C03022R,29010C080503060C020M091e0-0I2W092M,2Q0603060508030M061i100D05032Q0A2M,26050T040C03020F0E1d130906054u,1u080u0H0L1a13062f072L,1s090E020N0B040N0F1Y1B021Y05110C03052A,1q06060705040B0908060i1X2a0D0y0U26,1-0B040707090A060B060h1H2T0C0p0l0l0C19,1z0N0A060305030P0h1D2P0A0r0q0k0G03040_,25080S03030O0k1B2O080r0o0s0B08030z,1l0E1w192L080u0l2C,1m0G0W0504090L050i172L080j110u021C,1l0G0K03080703090406040601080h122O070l1D080A0P0619,1k0D020C02030106060B02060608010A05030h112M080Q060G1X1c,1j0C020K0106070A0203080J03070f0z2Q060Q0805010404031W0L0K0z,1j0A030S0A060303080V0c112L080P080403011g0L0L0y,00040h030_04070R0B010407060b0b0t01062N050M0A031n030d0v01,0e0F140U0E09060c0W01030r03041S0C0m050L0B042f0e02,0a0T0c030O0Q0B0A090b0S0_1P0I190B032i0e,0Y0i0H0D01020402090W040502070D070203030L0P07010t1M0M0202150B022j05030C0E06,0X0p040Z050R070603080A080A0I0X0q1M0W0r090609022-040I01,00020P1e020901040O08010306080B0F0Y0n1O0f0f02030C0508043I,00050M1e0C080C05030D04080B01040E0S0j1T0l09040B05020Q0209023J,00080M1l020f030A0904040G0N0g1V0p0705050m043I,000A0M2b0902060I0K0f1V0s0603050n043J,000A01060I2W0I0N0H0c1W0t070t043K,000J0A04032O0O0C03080I0a0O0409050s0h06060304014G,0001010H062Y01010N0C05050J0U0T0J0r0L040L0B4N,000106080B2W02030D0L06020M0P0Z0I0o0K080J0A4O,0A050C2U0306090P0R0O0Z0I0o0L060L0304034N01,0C020O2I030A0G0H0Q0M0b0F0o0M050O034Q04,0c2D080602040H0E0R0L0g050r0M054u03,0K020901032G0A020Q0801040S0J1Z0M054x02,0U2I0H030N070X0G1Y0N064z01,0T2H0J010601030909050X0F1W0O074S030O07,0S2H0V0B0k0E1V0P084Q030L0B,0T2F0W0E0i0D1V0O094E0604040J0E,0T0R0107031e0Y0G0h0A1W0P084C0901040J0G,0Q02020P0207061b0Y0G0m041X0R0806063z0E0C03030I,0a0I03040H1T0Y0G09022B0Q0K3y0D080U,0a0G05020M1Q0X0H07052A09010F0B3w05070B060Y,0a01040C0U1Q0U0K04072907040C0D3j0Z060Z,0j070Z1N0V0U1o040K04060A0G3f0Z070a,0j0403030b1J0V0U1n0401010S0A0G3d0Y0A0a,0h0404040c1I0W0U1l080N0203090A03023d0Y0D0Y,0f050m1O0P0U1l070L050408093h0Z0E0Y,0d050p1Q0M0U1l070L0603070A3g0a0E0Y,0a060s1S0I0X1k070K04020301030D3e0b0D0a,0Y030z1X080c1e0104070J0402030H3c0d0D0a,0W02111W060i1Y0503070J030F02033d0e0D0a,1Z1W070i1W0605060I050202053p04020W090d,1U02051V060j1U0706060E02014804010Q080e,1U02051V070j1T07030A0A4F02020Q080e,1c1V060k1S06040C064L0Q050h,1e1T060j1T05050C064L0R040h,1e1V030j1U02070C064I01040Q030i,1e2C03021d0B024K03030Q010k,1f2904021c0B024M030418,1d05012305021c04094N030418,1g04011p06020A051l4P030517,1i03021l03030402070A1d4S040517,1j04021h03060B0B1Y4X04021A,1l02021g02080B0C1X4X04021A,1l03011f01090B0D1Y4V05011B,1l1i010A0J0102021b4R06021A,1m1u06010D021c1D030P052h070319,1m1t020301021s100306060M082g08011B,1m201r0_0703050L0A2f1L,1m1-1t0S030V0608010L082h0A011B,1m1o03051x0S050R0A03050J092g0B021A,1m1m04041z0S060Q0K0H072h0B05020115,1l1j08021-0J0605050Q0M0G072e0D0815,1l1i1x0Q0D06070M0P0E082c0C0A15,1l1i1w0P0C010207070L0R0C0A2U03010D0818,1l1i1x0O0B020407080I0R0D092S0J03020219,1l1i1x0N0C020508070H09070B0E0801022O0K021E,1l1f1-0M0M08050J050B080G0B2N0L021D,1l1c210J0G02090803090303040f0729010F0L031D,1l1b220J0G030A030202020A050j0727030D0N041C,1m1Z230I0H030B020706070k0725040303060P041C,1m1Z220J0H020D020705070k0724050107040P041C,1n1X230J0W020706060j0A1_0F060N041D,1o1W240H0X010906050j0A200E070M031E,1p1T260G0R060B05070i0A220E060K041E,1p1T260F0M0106040D03090j082908060H061E,1q1S2B080C0E08010E020A0k022A0A070E091E,1r1S2B020B0K0d010304042g0A070D091F,1r1S2B01090O0o2f0C060D091F,1s1Q2B0Z0P0101030D03042d0E05070F1G,1t1O2C0Y0i02052d0E03080E1I,1v1K2D0Z0o2f0M04020101041M,1x1G2E0a0o2g0K02020401021O,1z1C2E0e0m2g0I081T,1z1B2E0k0E040O2i0H051W,1-192E0n0A070N2j0I021X,1-182F0o090A0J2l0H021X,1_0303102G0q070F0405042m0H011Y,1_04030_2G0t033C1r,2003030l07092G461r,2102040k0C052E1q042G1q,2202030Z08030D042D1M010U052F1q,2302030X0P052B1t052E1q,2303030U0R05291Q010U052D1r,2304030S0S05271S050R052B1s,2305030Q0U05251U050R07271t,2504040O0U05251U050S0704031_1t,2702040O0V04231X050R0C01021z1u,2703030O0W03231Y050Q02010802021y1v,2703050M0X01231Z050T07030808041f1w,2802060L0c021z1a050S06040L1e04021q,2902060K0d011y1c040S020201060L1c04021r,2B01060J2Z1d060d0K1Z05031r,2C01060I2Z1d060f0J1X06031r,2K0H0R081_1f060f0K1T09011s,2K0H0Q0204071x1g050f0K0g020i0E011s,2L0G0Z061u1i040f0K0d060f27,2L0G0G050H041t1i050d0M0Y0A0V04022B,0l011b0H0D070I061q1i050c0S0T0B0T06012B,2L0H0D060K061q1h060a0T0S0C0S07012B,0m021Z0I0C060S061i1h070Z0T0Q0F0Q06042A,0m021a0I0A070T071g1h080Y0U0O0H0P06032B,2O0G08090U081e1i080V0W0N0J0O05032C,2P0V0K03040708031Y1j070U0X0M0K0P0S031q,2T0R0L011v1k070R0Z0L0M0O0S041p,2U0Q2F1l060Q0a0J0O0P0R041p,2X0N2F1l070M0e0I0O05010K0Q041p,2Z0K2G1l070K0g0G0Q03030L0O041q,2d01050J271m060K0g0D0Z0M0N031r,2k0J251o050I0j0C0Z0N0M031r,2l0J231r040D0o0B0a0M0M031r,2m0H251r030C0p0B0a0M0O031p,2q0D251s02090s0B0a0M0O061m,2t010108251t02050v0C0a03020H0M0203021m,2v08251u01030y0A0b03020H0N0104011m,2w070N011k1u0_0A0b03050E0U021j,2x060M0302011h1s0E020n090b03050D0Q0105011j,2y050J0501051g1s08070n090b02070B0R0203021j,2y050G0F080203011T1r030B0o080b0208090M010501010201011k,2y060F07020B020401021T230o070c020A060N0106031m,2z060E07020J1V210q050d020B040N0107021n,300305040408010M1U200q0502020Z020B020O010E011i,3108020a1V1_0q0304020Y040A010O010D041h,3205040c1T1-0s0203040Y030k071h,3503030d1S1-0x040Z030h091h,3601050d1S1y0y050Z020h0103051h,3D0d1T1w0z040a030U020D0301011h,3D0e1T1u0-020c040S040D021j,3D0m1M0M081P1c050Q060D011j,3D0o1M0I0B1N1U0406050O081w,3D0p1M050O1L1V0505060M081x,3D0q1N010R01041E1X0504060L081y,3D0r1v1C1Y0504050K081z,3D0r1v1B1a0503050J091z,3B0u1u1A1c0503040G0C1z,3B0u1u191e0503040E0E1y,3B0v1t171h0702020B0H0J011e,3A0w1t161j0702010A0J0C0105021d,380y1t151k080C0I050806031c,380x1u141m080B0H05010E021d,37101p141n080B0H04011u,371001021m131p070B0H040204010A0106051S,36171j121r080A0F05060G071S,36181i111t070B0D05060K0506011K,36191i0_1u080A0D05050M0404061H,381B1f0y1x09080D05060D010704030B0J010v,381I1Y0y1y080C0102060503010308010205040L1A,371K1Y0x1z070H03070201030L01010L17,361M1Y0v1-070R0202030O0K0F010s,351P1X0u20050R0204010R0I0C010u,351S1V0s22040R0204010T0H0A020u,361S1U0s24010v02060I030507010o,361S1V0r25050q02070J0E010n,371R1V0s240604020s0H0H0101010k,381Q1W0r260D0p0H0K010j,391P1W0r2A0C0l0J0M010g,391P1W0r2G08050207010T03020705040N010e,3A1O1W0r2R04020505040R0606040O010c,3B1M1X0r2f030X0109050N010b,3B1L1Y0s2V0206030j050K010d';
- const D2R=Math.PI/180,TILT=55,LMIN=6;   /* the rim stands on latitude 55°: the window runs from it down to ≈ 22° (≈ 15° on a phone) */
- let SPIN=-18,MASK=null,BX=0,bxA=0,bxB=0,bxT=1,bxD=1,bxFlood=false,wave=0;   /* the window's middle is longitude −SPIN: v234 — the globe stands still over Europe, Africa and the Middle East */
- let gl=null,BP=null,GP=null,qbuf=null,pbuf=null,ibuf=null,DOTN=0,dotRows=0;const BU={},GU={},MAT=new Float32Array(9);
- function mask(){if(MASK)return MASK;const A='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_',ix={};for(let i=0;i<64;i++)ix[A[i]]=i;
-  const m=new Uint8Array(720*200);LANDR.split(',').forEach((r,y)=>{let x=0,v=0;for(let i=0;i+1<r.length;i+=2){const n=ix[r[i]]*64+ix[r[i+1]];if(v)m.fill(1,y*720+x,y*720+x+n);x+=n;v^=1}});return MASK=m}
- function landAt(lat,lng){const m=mask(),x=(lng+180)*2-.5,y=(90-lat)*2-.5,x0=Math.floor(x),y0=Math.floor(y),fx=x-x0,fy=y-y0,
-   at=(a,b)=>b>=200?0:m[Math.max(0,b)*720+(((a%720)+720)%720)];
-  return (at(x0,y0)*(1-fx)+at(x0+1,y0)*fx)*(1-fy)+(at(x0,y0+1)*(1-fx)+at(x0+1,y0+1)*fx)*fy}
- /* the dots as FreedX lays them: rows of latitude, each with dots ∝ its length, every other row offset by half a step; a dot
-    is land when the land covers half its cell (nine samples) */
- function buildDots(rows){const dLat=180/rows,cap=Math.ceil(.62*rows*rows+4*rows),pos=new Float32Array(cap*3),inf=new Float32Array(cap*2),w=[1,2,1];let n=0;
-  for(let i=0;i<rows;i++){const lat=90-(i+.5)*dLat;if(lat<LMIN)break;const cl=Math.cos(lat*D2R),sl=Math.sin(lat*D2R),cnt=Math.max(1,Math.round(2*rows*cl)),dl=360/cnt,off=(i&1)?.5:0;
-   for(let j=0;j<cnt&&n<cap;j++){const lng=-180+(j+off)*dl;let cov=0;for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)cov+=w[a+1]*w[b+1]*landAt(lat+a*dLat*.36,lng+b*dl*.36);
-    const r=lng*D2R,h=Math.sin(i*12.9898+j*78.233)*43758.5453;pos[n*3]=cl*Math.sin(r);pos[n*3+1]=sl;pos[n*3+2]=cl*Math.cos(r);inf[n*2]=cov/16>=.5?1:0;inf[n*2+1]=h-Math.floor(h);n++}}
-  return {pos:pos.subarray(0,n*3),inf:inf.subarray(0,n*2),n}}
- /* turn by SPIN round the poles, then tip the pole back so latitude TILT stands at the top of the rim */
- function spinMatrix(){const f=SPIN*D2R,a=(TILT-90)*D2R,cf=Math.cos(f),sf=Math.sin(f),ca=Math.cos(a),sa=Math.sin(a);
-  MAT[0]=cf;MAT[1]=sa*sf;MAT[2]=-ca*sf;MAT[3]=0;MAT[4]=ca;MAT[5]=sa;MAT[6]=sf;MAT[7]=-sa*cf;MAT[8]=ca*cf;return MAT}
+ /* ---- v235 (the user, 22 Nov 2026: «perenesti zdes globus top toch kak est … setoi reshenie», «mnogo chevo zdes net v
+    glovuse vsyo perenesi zdes», «tolko globus kak est»): the globe is the FreedX landing's own — rf-globe.js as it is
+    (window.RFGlobe, inlined above), no longer a redrawing: its dots (Natural Earth 110 m land, the faint ocean dots, rows
+    ≈ 13.5 px apart as on its big globe), its violet limb light (the light of its RF_LIMB picture, measured off the picture
+    at the FreedX landing's scale — R 500, two picture px a CSS px — and laid along this sphere, so the line is as thin here
+    as there), the warm spot under the cursor (dots part, swell and run through its lilacs, a wave runs through them; as big
+    as there), drag to turn it with inertia, its entrance (the dots come in from the middle). Only the globe: no coins,
+    pins, arcs or orbit rings. Kept from v234: it stands still over Europe, Africa and the Middle East (the rim on
+    latitude 55°), wider than the screen with ≈ 30 % of the height in sight, the people on its rim, its land green under
+    YES and red under NO, lit by each person who joins (the module's dot shader takes the halves: setSide), the winner's
+    colour flooding at the outcome and running along the rim. Under the dots lies the page's own ground: the globe looks
+    open as FreedX's, and the Default field's crowds pass behind it. */
+ const TILT=55;let SPIN=-18,BX=0,bxA=0,bxB=0,bxT=1,bxD=1,bxFlood=false,wave=0;   /* the rim on latitude 55°; the window's middle on longitude −SPIN (18° E) */
  /* the line between the halves: in the middle; at the outcome it runs out to the loser's edge (the winner's colour floods) */
  const inOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
  function bxTo(x,d,flood){bxA=BX;bxB=x;bxT=0;bxD=d;bxFlood=flood}
@@ -6744,59 +8021,30 @@ function duqStop(land){
  function lightUp(side){if(side==='yes')HYt=Math.min(1,HYt+.35);else HNt=Math.min(1,HNt+.35)}
  function stepLight(dt){const dk=Math.exp(-dt/(phase==='resolve'?1.6:.9)),ak=1-Math.exp(-dt/.1);HYt*=dk;HNt*=dk;HY+=(HYt-HY)*ak;HN+=(HNt-HN)*ak}
  function stepBx(dt){if(bxT<1){bxT=Math.min(1,bxT+dt/bxD);BX=bxA+(bxB-bxA)*(bxFlood?inOut(bxT):settle(bxT))}wave=bxFlood&&bxT<1?Math.sin(Math.PI*Math.min(1,bxT*1.08)):0}
- const BVS='attribute vec2 aQ;void main(){gl_Position=vec4(aQ,0.,1.);}';
- /* the body: dark (light) violet from the rim down into the page, a breath of each half's colour, the air lit round the rim, the rim line */
- const BFS=['precision highp float;uniform vec2 uC,uY;uniform float uR,uH,uAw,uLw,uBx,uBw,uTint;uniform vec3 uTop,uBot,uYes,uNo;uniform vec4 uRim,uAtm;',
-  'void main(){vec2 p=vec2(gl_FragCoord.x,uH-gl_FragCoord.y);float d=length(p-uC)-uR;vec4 o;',
-  'if(d<0.){float t=clamp((p.y-uY.x)/(uY.y-uY.x),0.,1.),kb=smoothstep(uBx-uBw*3.,uBx+uBw*3.,p.x);',
-  'vec3 b=mix(uTop,uBot,t);b=mix(b,mix(uYes,uNo,kb),uTint*(1.-.7*t));',
-  'b=mix(b,uAtm.rgb,uAtm.a*.5*exp(d/(uAw*.5)));o=vec4(b,1.);}else{float a=uAtm.a*exp(-d/uAw);o=vec4(uAtm.rgb*a,a);}',
-  'float l=(1.-smoothstep(uLw,uLw+1.2,abs(d)))*uRim.a;gl_FragColor=o*(1.-l)+vec4(uRim.rgb*l,l);}'].join('');
- /* the dots: on the near side only, smaller and fainter toward the rim; each takes its half's colour (land bright, sea dim);
-    while the winner's colour floods, the loser's dots ahead of the line dim and a wave of light rides the line */
- const GVS=['precision highp float;attribute vec3 aP;attribute vec2 aI;uniform mat3 uM;uniform vec2 uC,uV;uniform float uR,uBx,uWin;uniform vec3 uYes,uNo;uniform vec4 uA,uS,uH;varying vec4 vC;',
-  'void main(){vec3 q=uM*aP;vec2 s=vec2(uC.x+q.x*uR,uC.y-q.y*uR);',
-  'if(q.z<=0.||s.y>uV.y+6.||s.x<-6.||s.x>uV.x+6.){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;vC=vec4(0.);return;}',
-  'float k=step(uBx,s.x),lose=uWin>0.?k:1.-k,wv=uA.w*(1.-smoothstep(0.,uS.w,abs(s.x-uBx))),h=mix(uH.x,uH.y,k);',
-  'float a=mix(uA.y,uA.x*(uH.z+(1.-uH.z)*h),aI.x)*smoothstep(0.,.2,q.z)*(1.-.55*uA.z*lose)*(1.+1.4*wv);',
-  'float z=uS.x*mix(uS.y,1.+.22*h,aI.x)*(.42+.58*sqrt(q.z))*(.9+.2*aI.y)*(1.+.6*wv);if(z<1.6){a*=z/1.6;z=1.6;}a=min(a,1.);',
-  'gl_PointSize=z;gl_Position=vec4(s.x/uV.x*2.-1.,1.-s.y/uV.y*2.,0.,1.);vC=vec4(mix(mix(uYes,uNo,k),vec3(1.),max(uS.z*aI.x*h,.45*wv))*a,a);}'].join('');
- const GFS='precision mediump float;varying vec4 vC;void main(){float r=length(gl_PointCoord-.5)*2.;gl_FragColor=vC*(1.-smoothstep(.55,1.,r));}';
- function glInit(){if(gl===false)return false;if(gl)return true;
-  try{gl=gcv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'})}catch(e){gl=null}
-  if(!gl){gl=false;return false}
-  const sh=(t,src)=>{const o=gl.createShader(t);gl.shaderSource(o,src);gl.compileShader(o);return o};
-  const pr=(v,f,at)=>{const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,v));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,f));at.forEach((a,i)=>gl.bindAttribLocation(p,i,a));gl.linkProgram(p);return gl.getProgramParameter(p,gl.LINK_STATUS)?p:null};
-  BP=pr(BVS,BFS,['aQ']);GP=pr(GVS,GFS,['aP','aI']);if(!BP||!GP){gl=false;return false}
-  'uC uY uR uH uAw uLw uBx uBw uTint uTop uBot uYes uNo uRim uAtm'.split(' ').forEach(k=>BU[k]=gl.getUniformLocation(BP,k));
-  'uM uC uV uR uBx uWin uYes uNo uA uS uH'.split(' ').forEach(k=>GU[k]=gl.getUniformLocation(GP,k));
-  qbuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,qbuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);pbuf=gl.createBuffer();ibuf=gl.createBuffer();
-  gcv.addEventListener('webglcontextlost',e=>{e.preventDefault();gl=false;gcv.style.display='none';if(!running&&ready)paint()});   /* the 2D globe (no dots) takes over */
-  return true}
- function uploadDots(){const rows=Math.max(150,Math.min(440,Math.round(Math.PI*RAD/13)));if(DOTN&&Math.abs(rows-dotRows)<rows*.08)return;   /* ≈ 13 px between rows, as FreedX's big globe */
-  dotRows=rows;const d=buildDots(rows);DOTN=d.n;gl.bindBuffer(gl.ARRAY_BUFFER,pbuf);gl.bufferData(gl.ARRAY_BUFFER,d.pos,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,ibuf);gl.bufferData(gl.ARRAY_BUFFER,d.inf,gl.STATIC_DRAW)}
- function globeGL(){if(!gl||!DOTN)return false;const D=DPR,cw=gcv.width,ch=gcv.height,G=col.globe,cx=W/2*D,cy=(BASE+RAD-TOP)*D,R=RAD*D;
-  const rm=glow>0&&phase!=='bet'?.9*glow:0,wc=outcome?col.yesR:col.noR,rim=[0,1,2].map(i=>G.rim[i]+(wc[i]-G.rim[i])*rm);
-  gl.viewport(0,0,cw,ch);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
-  gl.useProgram(BP);gl.bindBuffer(gl.ARRAY_BUFFER,qbuf);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);gl.disableVertexAttribArray(1);
-  gl.uniform2f(BU.uC,cx,cy);gl.uniform2f(BU.uY,(BASE-TOP)*D,ch);gl.uniform1f(BU.uR,R);gl.uniform1f(BU.uH,ch);gl.uniform1f(BU.uAw,24*U*D);gl.uniform1f(BU.uLw,.75*D*(1+.6*rm));
-  gl.uniform1f(BU.uBx,BX*D);gl.uniform1f(BU.uBw,34*U*D);gl.uniform1f(BU.uTint,G.tint);gl.uniform3fv(BU.uTop,G.top);gl.uniform3fv(BU.uBot,G.bot);gl.uniform3fv(BU.uYes,col.yesR);gl.uniform3fv(BU.uNo,col.noR);
-  gl.uniform4f(BU.uRim,rim[0],rim[1],rim[2],G.rimA+(1-G.rimA)*rm);gl.uniform4f(BU.uAtm,G.atm[0],G.atm[1],G.atm[2],G.atmA);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
-  gl.useProgram(GP);gl.bindBuffer(gl.ARRAY_BUFFER,pbuf);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,ibuf);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,2,gl.FLOAT,false,0,0);
-  gl.uniformMatrix3fv(GU.uM,false,spinMatrix());gl.uniform2f(GU.uC,cx,cy);gl.uniform2f(GU.uV,cw,ch);gl.uniform1f(GU.uR,R);gl.uniform1f(GU.uBx,BX*D);gl.uniform1f(GU.uWin,outcome?1:-1);gl.uniform4f(GU.uH,HY,HN,G.calm,0);
-  gl.uniform3fv(GU.uYes,col.yesR);gl.uniform3fv(GU.uNo,col.noR);gl.uniform4f(GU.uA,G.land,G.sea,(phase==='resolve'||phase==='quiet')?glow:0,wave);gl.uniform4f(GU.uS,Math.PI*RAD/dotRows*.4*D,.6,G.lift,100*U*D);
-  gl.drawArrays(gl.POINTS,0,DOTN);return true}
+ /* the limb light of FreedX's RF_LIMB picture across the top of its ring (±25°), in CSS px at the FreedX landing's R 500
+    (inside < 0): [d, alpha] of rgb(123,70,255) — smoothed over the picture's alpha steps */
+ const LIMB=[[-46,0],[-40,.03],[-35,.06],[-30,.09],[-24,.1],[-20,.13],[-16,.16],[-12,.21],[-9,.28],[-6,.36],[-4,.46],[-2,.56],[-1,.62],[0,.68],[1,.6],[2,.36],[3,.27],[5,.19],[7,.15],[9,.11],[12,.08],[15,.045],[20,.026],[25,.015],[30,0]];
+ const GCOL={land:'--sbg-land',ocean:'--sbg-ocean',hot:'--sbg-hot',hue0:'--sbg-h0',hue1:'--sbg-h1',hue2:'--sbg-h2',hue3:'--sbg-h3',hue4:'--sbg-h2',hue5:'--sbg-h1',rim:'--sbg-rim'};   /* FreedX's colours by theme (CSS on .sb-gbox) */
+ const GC=[.5,1],RIM={src:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',w:1,h:1,cx:0,cy:0,r:1};   /* the module's rim layer (its screen blend and entrance) — the light drawn in it at this sphere's size */
+ let G=null,gFail=false,limbCv=null;
+ function drawLimb(){if(!limbCv)return;const w=W,h=H-TOP;limbCv.width=Math.round(w*DPR);limbCv.height=Math.round(h*DPR);const k=limbCv.getContext('2d');k.setTransform(DPR,0,0,DPR,0,0);k.clearRect(0,0,w,h);
+  const cx=W/2,cy=BASE+RAD-TOP,r0=RAD+LIMB[0][0],r1=RAD+LIMB[LIMB.length-1][0],g=k.createRadialGradient(cx,cy,r0,cx,cy,r1);for(const [d,a] of LIMB)g.addColorStop((RAD+d-r0)/(r1-r0),`rgba(123,70,255,${a})`);
+  k.fillStyle=g;k.fillRect(0,0,w,h)}
+ /* the ground under the dots: the page's own background, laid as the page lays it */
+ function ground(){const bs=getComputedStyle(document.body),x=Math.round(W/2-RAD);gbody.style.left=x+'px';gbody.style.top=BASE+'px';gbody.style.width=gbody.style.height=2*RAD+'px';
+  gbody.style.backgroundColor=bs.backgroundColor;gbody.style.backgroundImage=bs.backgroundImage;gbody.style.backgroundSize=W+'px '+H+'px';gbody.style.backgroundPosition=(-x)+'px '+(-BASE)+'px'}
+ function globeLayout(){ground();gbox.style.top=TOP+'px';gbox.style.width=W+'px';gbox.style.height=(H-TOP)+'px';
+  GC[1]=(BASE+RAD-TOP)/(H-TOP);RIM.w=W;RIM.h=H-TOP;RIM.cx=W/2;RIM.cy=BASE+RAD-TOP;RIM.r=RAD;
+  if(G){G.resize();drawLimb();return}if(gFail||!window.RFGlobe)return;
+  try{RFGlobe.LOOK.rowsMax=Math.max(RFGlobe.LOOK.rowsMax,520);   /* rows ≈ 13.5 px apart on this sphere too (FreedX caps them at 240: its R is ≤ 500) */
+   G=RFGlobe.create(gbox,{radiusPx:()=>RAD,center:GC,view:{lat:TILT-90,lng:-SPIN},idle:'still',autoRotate:0,intro:true,keyboard:false,flow:false,fall:false,heatR:500,rim:RIM,colors:GCOL,onError:()=>{gFail=true}});
+   const re=gbox.querySelector('.rfg-rim');if(re){limbCv=document.createElement('canvas');limbCv.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;display:block';re.appendChild(limbCv);drawLimb()}
+  }catch(e){gFail=true;G=null;if(window.console)console.warn('version 3 globe:',e&&e.message||e)}}
+ function syncGlobe(){if(G)G.setSide({on:1,x:BX,wave,waveW:100*U,hy:HY,hn:HN,calm:col.calm,win:(phase==='resolve'||phase==='quiet')?(outcome?1:-1)*glow:0,yes:col.yesR,no:col.noR,lift:col.lift})}
+ /* at the outcome the rim takes the winner's colour (v232) */
+ function rimWin(){if(!(glow>0&&phase!=='bet'))return;const half=Math.asin(Math.min(1,(W/2+20)/RAD));c.save();c.globalAlpha=.85*glow;c.strokeStyle=outcome?col.yes:col.no;c.lineWidth=2;c.beginPath();c.arc(W/2,BASE+RAD-TOP,RAD,Math.PI*1.5-half,Math.PI*1.5+half);c.stroke();c.restore()}
  const rgbOf=cl=>{const k=document.createElement('canvas').getContext('2d');k.fillStyle='#000';k.fillStyle=cl;const v=k.fillStyle;if(v[0]==='#'){const n=parseInt(v.slice(1),16);return [(n>>16)/255,(n>>8&255)/255,(n&255)/255]}const m=v.match(/[\d.]+/g)||[0,0,0];return [m[0]/255,m[1]/255,m[2]/255]};
- const rgba=(v,a)=>`rgba(${Math.round(v[0]*255)},${Math.round(v[1]*255)},${Math.round(v[2]*255)},${a})`;
- function globeColors(){col.yesR=rgbOf(col.yes);col.noR=rgbOf(col.no);const bg=rgbOf(col.bg||(col.dark?'#07090f':'#f0f0f5'));
-  col.globe=col.dark?{top:rgbOf('#1b1640'),bot:bg.map((v,i)=>v*.5+[.047,.039,.1][i]*.5),rim:rgbOf('#a996ff'),rimA:.85,atm:rgbOf('#7b5cff'),atmA:.5,land:1,sea:.12,tint:.07,lift:.3,calm:.6}
-   :{top:rgbOf('#e7e3fb'),bot:bg,rim:rgbOf('#6f5be6'),rimA:.55,atm:rgbOf('#8d78f2'),atmA:.22,land:.95,sea:.15,tint:.06,lift:0,calm:.58}}
- /* without WebGL: the body, its air and the rim in 2D (no dots) */
- function globe2D(){const cx=W/2,cy=BASE+RAD-TOP,G=col.globe,half=Math.asin(Math.min(1,(W/2+20)/RAD));
-  const atm=c.createRadialGradient(cx,cy,RAD-4*U,cx,cy,RAD+64*U);atm.addColorStop(0,rgba(G.atm,G.atmA));atm.addColorStop(.18,rgba(G.atm,G.atmA*.35));atm.addColorStop(1,rgba(G.atm,0));c.fillStyle=atm;c.beginPath();c.arc(cx,cy,RAD+64*U,0,7);c.fill();
-  const body=c.createLinearGradient(0,BASE-TOP,0,H-TOP);body.addColorStop(0,rgba(G.top,1));body.addColorStop(1,rgba(G.bot,1));c.fillStyle=body;c.beginPath();c.arc(cx,cy,RAD,0,7);c.fill();
-  c.save();c.lineWidth=1.6;c.strokeStyle=rgba(G.rim,G.rimA);c.beginPath();c.arc(cx,cy,RAD,Math.PI*1.5-half,Math.PI*1.5+half);c.stroke();
-  if(glow>0&&phase!=='bet'){c.globalAlpha=.9*glow;c.strokeStyle=outcome?col.yes:col.no;c.lineWidth=2.2;c.stroke()}c.restore()}
+ function globeColors(){col.yesR=rgbOf(col.yes);col.noR=rgbOf(col.no);col.calm=col.dark?.6:.58;col.lift=col.dark?.3:0}   /* the land with nobody joining: 60 % (58 % light); lit land whitens 30 % in the dark */
  const F=()=>{try{return window.duqDotsApi&&window.duqDotsApi()}catch(e){return null}};   /* the Default field (its state and crowds) */
  function colors(){const cs=getComputedStyle(document.documentElement),g=k=>cs.getPropertyValue(k).trim();
   col={bg:g('--bg')||'',yes:g('--yes')||'#1cb785',no:g('--no')||'#f53e3e',ink:g('--ink')||'#0e1117',ink2:g('--ink-2')||'#555',line:g('--hairline')||'rgba(0,0,0,.08)',line2:g('--hairline-2')||'rgba(0,0,0,.16)',ff:getComputedStyle(document.body).fontFamily,dark:document.documentElement.dataset.theme==='dark',road:document.documentElement.dataset.theme==='dark'?'rgba(255,255,255,.025)':'rgba(8,11,15,.035)'};globeColors()}
@@ -6805,10 +8053,10 @@ function duqStop(land){
   const cta=land.querySelector('.cta'),cr=cta&&cta.getBoundingClientRect(),cb=cr&&cr.height?cr.bottom:H*.62;
   BASE=Math.round(Math.min(H-92*U,Math.max(H*.7,cb+51*U+22)));RAD=Math.round(Math.max(W*1.08,Math.min(H*1.25,W*1.7)));YX=Math.round(W/2-67*U);NX=Math.round(W/2+67*U);SP=13*U;rate=phone?2:4;
   TOP=Math.round(BASE-130*U);DPR=Math.min(2,window.devicePixelRatio||1);   /* the canvases are the globe's band; a falling dot above it is a light DOM dot */
-  for(const k of [cv,gcv]){k.style.top=TOP+'px';k.style.height=(H-TOP)+'px';k.width=Math.round(W*DPR);k.height=Math.round((H-TOP)*DPR)}
+  for(const k of [cv]){k.style.top=TOP+'px';k.style.height=(H-TOP)+'px';k.width=Math.round(W*DPR);k.height=Math.round((H-TOP)*DPR)}
   chip.style.top=Math.round(BASE+50*U)+'px';colors();
   if(phase==='resolve'||phase==='quiet')BX=bxB=outcome?W+110*U:-110*U;else BX=bxB=W/2;bxT=1;
-  if(glInit())uploadDots()}
+  globeLayout()}
  /* v231 (the user, 22 Nov 2026: «1» of «mojesh predlagat mesto shose drugoe pod ludmi 4 varianta»): the road became a planet's
     horizon — a wide arc; everyone stands on it upright to the ground, tilted along its normal. v232: the arc is the globe's rim
     (radius 1.08 × the width) */
@@ -6907,7 +8155,7 @@ function duqStop(land){
  const clear=cl=>{const k=document.createElement('canvas').getContext('2d');k.fillStyle=cl;const v=k.fillStyle;if(v[0]==='#'){const n=parseInt(v.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},0)`}return v.replace(/rgba?\(([^)]*)\)/,(m,a)=>`rgba(${a.split(',').slice(0,3).join(',')},0)`)};   /* the same colour at 0 alpha: a canvas gradient to «transparent» greys out */
  function drawGlow(){if(glow<=0)return;const win=outcome?'yes':'no',n=qlen(win);if(!n)return;const a=slot(win,0),z=slot(win,n-1),cx=(a+z)/2,hw=Math.abs(z-a)/2+26*U,b=gy(cx)-TOP;
   c.save();c.globalAlpha=.24*glow;const g=c.createRadialGradient(cx,b-12*U,0,cx,b-12*U,hw);const gc=win==='yes'?col.yes:col.no;g.addColorStop(0,gc);g.addColorStop(1,clear(gc));c.fillStyle=g;c.setTransform(DPR,0,0,DPR*.32,0,(b-12*U)*DPR*(1-.32));c.beginPath();c.arc(cx,b-12*U,hw,0,7);c.fill();c.restore()}
- function paint(){c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H-TOP);if(!globeGL())globe2D();dawn();
+ function paint(){c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H-TOP);syncGlobe();rimWin();dawn();
   const res=phase==='resolve'||phase==='quiet';drawStop(YX,'YES',col.yes,res&&!outcome);drawStop(NX,'NO',col.no,res&&outcome);
   drawGlow();queues();for(const p of people)if(!plain(p))person(p);drawFx()}
  /* ---- a still for reduced motion: the crowds over queues by the event's odds, the outcome on the chip ---- */
@@ -6919,13 +8167,13 @@ function duqStop(land){
  function prepare(){if(ready)return;ready=true;layout();nextEvent();if(reduced){setTimeout(still,0);return}
   /* a warm start: the first bets have landed */
   for(let i=0;i<60;i++)tick(1/30)}
- function start(){prepare();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
- function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0}
+ function start(){prepare();if(G&&!root.hidden)G.resume();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
+ function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0;if(G)G.pause()}
  function commit(yes){if(!ready||reduced||phase==='resolve'||phase==='quiet')return;drop(yes?'yes':'no',true)}
  /* the words «yes» and «no» in the headline drop your own dot (as y / n do) */
  document.addEventListener('click',e=>{if(root.hidden||!running)return;const w=e.target.closest&&e.target.closest('#landing .headline .w');if(!w)return;commit(w.classList.contains('yes'))});
  let rt=0;window.addEventListener('resize',()=>{if(!ready)return;clearTimeout(rt);rt=setTimeout(()=>{layout();if(!running)paint()},120)});
- new MutationObserver(()=>{if(!ready)return;colors();if(!running)paint()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+ new MutationObserver(()=>{if(!ready)return;colors();ground();window.dispatchEvent(new Event('ds-theme'));if(!running)paint()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(ready){layout();if(!running)paint()}});
  return{root,start,stop,commit};
 }
