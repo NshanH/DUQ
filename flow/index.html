@@ -6863,8 +6863,10 @@ html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,2
     '  s += (dm / max(dist, 0.001)) * uHeat.y * 1.4142 * k * exp(0.5 - k * k) * uMouse.z * front;',
     '  float hot = clamp(max(f, rh), 0.0, 1.0);',
     '  vec3 hc = mix(col.rgb, uHot.rgb, uHotK);',   // DUQ v236: the dot's own colour toward COLORS.hot by opts.hotMix (FreedX: 1)
+    '  float ha = uHot.a;',
+    '  if (uSide.w > 0.0) { hc = min(mix(uYes, uNo, sk) * 1.22, vec3(1.0)); ha = mix(0.55, 1.0, isLand); }',   // DUQ v238 («kogda hover nenujno beloe a zelyoni ili krasni pust yarche budet»): with the halves on, the warm spot is its half's own colour, brighter — land full, sea half — never white
     '  if (uTint.w > 0.0 && f > rh) { hc = hueAt(k * uTint.x + atan(dm.y, dm.x + 0.0001) * 0.15915494 * uTint.y - uTint.z); hot = clamp(max(f * uTint.w, rh), 0.0, 1.0); }',
-    '  col.rgb = mix(col.rgb, hc, hot); col.a = mix(col.a, max(col.a, uHot.a), hot);',
+    '  col.rgb = mix(col.rgb, hc, hot); col.a = mix(col.a, max(col.a, ha), hot);',
     '  size *= (1.0 + uHeat.z * f + 0.22 * wave + sw) * (0.7 + 0.3 * facing) * (0.55 + 0.45 * rv);',
     '  col.a *= vis * clamp(1.0 + 0.3 * wave, 0.0, 2.0);',
     '  float px = max(size, uSize.w);',
@@ -8012,7 +8014,9 @@ function duqStop(land){
     latitude 55°), wider than the screen with ≈ 30 % of the height in sight, the people on its rim, its land green under
     YES and red under NO, lit by each person who joins (the module's dot shader takes the halves: setSide), the winner's
     colour flooding at the outcome and running along the rim. Under the dots lies the page's own ground: the globe looks
-    open as FreedX's, and the Default field's crowds pass behind it. */
+    open as FreedX's, and the Default field's crowds pass behind it.
+    v238 (the user: «kogda hover nenujno beloe a zelyoni ili krasni pust yarche budet»): under the cursor the dots take their
+    half's own colour, brighter (green on the YES half, red on the NO half; land full, sea half) — never white or the ink. */
  const TILT=55;let SPIN=-18,BX=0,bxA=0,bxB=0,bxT=1,bxD=1,bxFlood=false,wave=0;   /* the rim on latitude 55°; the window's middle on longitude −SPIN (18° E) */
  /* the line between the halves: in the middle; at the outcome it runs out to the loser's edge (the winner's colour floods) */
  const inOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
