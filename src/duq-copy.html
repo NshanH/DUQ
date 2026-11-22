@@ -5890,7 +5890,7 @@ html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,2
     'uniform vec4 uSize; uniform vec4 uShade; uniform vec3 uKey; uniform vec3 uFall;',
     'uniform vec4 uMouse; uniform vec4 uHeat; uniform float uReveal;',
     'uniform vec4 uPin[12]; uniform vec4 uRing[12];',
-    'uniform float uPinN; uniform vec4 uSide; uniform vec4 uSideL; uniform vec3 uYes; uniform vec3 uNo; uniform float uLift; uniform float uHotK;',   // DUQ v235 (uHotK v236): the pins there are; the halves (uSide: line x px, its wave, the wave's half-width px, on; uSideL: YES light, NO light, calm, ±winner × glow)
+    'uniform float uPinN; uniform vec4 uSide; uniform vec4 uSideL; uniform vec3 uYes; uniform vec3 uNo; uniform float uLift; uniform float uHotK; uniform float uEdge;',   // DUQ v235 (uHotK v236, uEdge v240): the pins there are; the halves (uSide: line x px, its wave, the wave's half-width px, on; uSideL: YES light, NO light, calm, ±winner × glow)
     'uniform vec3 uHue[6]; uniform vec4 uTint;',   // v431: the warm spot's palette; uTint = LOOK.heatHue with the clock in z (w 0 = the single colour)
     'varying vec4 vCol; varying float vPx;',
     'vec3 hueAt(float h) { float f = fract(h) * 6.0; float i = min(floor(f), 5.0); float u = f - i; u = u * u * (3.0 - 2.0 * u);',
@@ -5915,6 +5915,7 @@ html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,2
     '  float facing = clamp(z, 0.0, 1.0);',
     '  col.a *= mix(uShade.x, 1.0, facing) * (1.0 + uShade.z * dot(p, uKey)) * mix(uFall.z, 1.0, smoothstep(uFall.x, uFall.y, p.x));',
     '  col.rgb = mix(col.rgb, uRim.rgb, uShade.y * (1.0 - facing) * (1.0 - facing) * (1.0 - facing));',
+    '  col.a *= mix(uEdge, 1.0, smoothstep(0.0, 0.3, facing));',   // DUQ v240: the dots along the rim dimmer by opts.edge (1 = as FreedX) — the rows close up there and the dots run together into a band
     // pools of light under pins (pool colour: grey before engagement) and their rings (+ violet "next", − pool colour)
     '  float pg = 0.0; float rh = 0.0; float rp = 0.0; float sw = 0.0;',
     '  for (int i = 0; i < 12; i++) {',
@@ -6421,7 +6422,7 @@ html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,2
       gl.uniform4fv(u.uPin, uPin); gl.uniform4fv(u.uRing, uRing);
       gl.uniform1f(u.uPinN, you ? 12 : Math.min(11, pins.length));   // DUQ v235
       gl.uniform4f(u.uSide, (side.x + bleed) * dpr, side.wave, Math.max(1, side.waveW * dpr), side.on ? 1 : 0); gl.uniform4f(u.uSideL, side.hy, side.hn, side.calm, side.win);
-      gl.uniform3fv(u.uYes, side.yes); gl.uniform3fv(u.uNo, side.no); gl.uniform1f(u.uLift, side.lift); gl.uniform1f(u.uHotK, opts.hotMix != null ? +opts.hotMix : 1);   // DUQ v236
+      gl.uniform3fv(u.uYes, side.yes); gl.uniform3fv(u.uNo, side.no); gl.uniform1f(u.uLift, side.lift); gl.uniform1f(u.uHotK, opts.hotMix != null ? +opts.hotMix : 1); gl.uniform1f(u.uEdge, opts.edge != null ? +opts.edge : 1);   // DUQ v236 (uEdge v240)
       gl.drawArrays(gl.POINTS, 0, dots.count);
       gl.disableVertexAttribArray(1);
 
@@ -7093,7 +7094,10 @@ function duqStop(land){
     v238 (the user: «kogda hover nenujno beloe a zelyoni ili krasni pust yarche budet»): under the cursor the dots take their
     half's own colour, brighter (green on the YES half, red on the NO half; land full, sea half) — never white or the ink.
     v239 (the user: «krayni belli vid ochen yarki, nemnogo isprav»): the white limb light along the rim a quarter dimmer on the
-    dark page (× .5 → × .375); the ink's on the light page as it was. */
+    dark page (× .5 → × .375); the ink's on the light page as it was. v240: on the dark page the dots along the rim a
+    quarter dimmer too (opts.edge .75, DUQ v240 in the dot shader) — the rows close up toward the rim, so the sea's white dots ran together
+    into a bright band; the fade goes by how much a dot faces the viewer (gone by facing .3, ≈ 100 px inside the rim), so
+    the rest of the globe keeps its light (LOOK.limb would have dimmed the whole cap: in sight it all lies near the rim). */
  const TILT=55;let SPIN=-18,BX=0,bxA=0,bxB=0,bxT=1,bxD=1,bxFlood=false,wave=0;   /* the rim on latitude 55°; the window's middle on longitude −SPIN (18° E) */
  /* the line between the halves: in the middle; at the outcome it runs out to the loser's edge (the winner's colour floods) */
  const inOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
@@ -7111,7 +7115,7 @@ function duqStop(land){
  const LIMB=[[-46,0],[-40,.03],[-35,.06],[-30,.09],[-24,.1],[-20,.13],[-16,.16],[-12,.21],[-9,.28],[-6,.36],[-4,.46],[-2,.56],[-1,.62],[0,.68],[1,.6],[2,.36],[3,.27],[5,.19],[7,.15],[9,.11],[12,.08],[15,.045],[20,.026],[25,.015],[30,0]];
  const GCOL={land:'--sbg-land',ocean:'--sbg-ocean',hot:'--sbg-hot',hue0:'--sbg-hot',hue1:'--sbg-hot',hue2:'--sbg-hot',hue3:'--sbg-hot',hue4:'--sbg-hot',hue5:'--sbg-hot',rim:'--sbg-rim'};   /* the globe's colours by theme (CSS on .sb-gbox); v236: no lilac anywhere */
  const GC=[.5,1],RIM={src:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',w:1,h:1,cx:0,cy:0,r:1};   /* the module's rim layer (its screen blend and entrance) — the light drawn in it at this sphere's size */
- let G=null,gFail=false,limbCv=null;
+ let G=null,GO=null,gFail=false,limbCv=null;   /* GO: the options the globe reads every frame (v240: edge set by theme) */
  function drawLimb(){if(!limbCv)return;const w=W,h=H-TOP;limbCv.width=Math.round(w*DPR);limbCv.height=Math.round(h*DPR);const k=limbCv.getContext('2d');k.setTransform(DPR,0,0,DPR,0,0);k.clearRect(0,0,w,h);
   const cx=W/2,cy=BASE+RAD-TOP,r0=RAD+LIMB[0][0],r1=RAD+LIMB[LIMB.length-1][0],g=k.createRadialGradient(cx,cy,r0,cx,cy,r1),lc=col.dark?[255,255,255,.375]:[14,17,23,.24];for(const [d,a] of LIMB)g.addColorStop((RAD+d-r0)/(r1-r0),`rgba(${lc[0]},${lc[1]},${lc[2]},${(a*lc[3]).toFixed(3)})`);
   k.fillStyle=g;k.fillRect(0,0,w,h)}
@@ -7123,7 +7127,7 @@ function duqStop(land){
   if(G){G.resize();drawLimb();return}if(gFail||!window.RFGlobe)return;
   try{RFGlobe.LOOK.rowsMax=Math.max(RFGlobe.LOOK.rowsMax,520);   /* rows ≈ 13.5 px apart on this sphere too (FreedX caps them at 240: its R is ≤ 500) */
    RFGlobe.LOOK.rimTint=0;RFGlobe.LOOK.heatHue=null;   /* v236: no lilac — the dots keep their colour up to the rim, and under the cursor (hotMix .3: their own colour, a third of the way to white / the ink) */
-   G=RFGlobe.create(gbox,{radiusPx:()=>RAD,center:GC,view:{lat:TILT-90,lng:-SPIN},idle:'still',autoRotate:0,intro:true,keyboard:false,flow:false,fall:false,heatR:500,hotMix:.3,rim:RIM,colors:GCOL,onError:()=>{gFail=true}});
+   G=RFGlobe.create(gbox,GO={radiusPx:()=>RAD,center:GC,view:{lat:TILT-90,lng:-SPIN},idle:'still',autoRotate:0,intro:true,keyboard:false,flow:false,fall:false,heatR:500,hotMix:.3,edge:col.dark?.75:1,rim:RIM,colors:GCOL,onError:()=>{gFail=true}});
    const re=gbox.querySelector('.rfg-rim');if(re){limbCv=document.createElement('canvas');limbCv.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;display:block';re.appendChild(limbCv);drawLimb()}
   }catch(e){gFail=true;G=null;if(window.console)console.warn('version 3 globe:',e&&e.message||e)}}
  /* v237: the headline and its button in the middle between the top of the page and the rim — the hero's bottom padding
@@ -7136,7 +7140,7 @@ function duqStop(land){
  /* at the outcome the rim takes the winner's colour (v232) */
  function rimWin(){if(!(glow>0&&phase!=='bet'))return;const half=Math.asin(Math.min(1,(W/2+20)/RAD));c.save();c.globalAlpha=.85*glow;c.strokeStyle=outcome?col.yes:col.no;c.lineWidth=2;c.beginPath();c.arc(W/2,BASE+RAD-TOP,RAD,Math.PI*1.5-half,Math.PI*1.5+half);c.stroke();c.restore()}
  const rgbOf=cl=>{const k=document.createElement('canvas').getContext('2d');k.fillStyle='#000';k.fillStyle=cl;const v=k.fillStyle;if(v[0]==='#'){const n=parseInt(v.slice(1),16);return [(n>>16)/255,(n>>8&255)/255,(n&255)/255]}const m=v.match(/[\d.]+/g)||[0,0,0];return [m[0]/255,m[1]/255,m[2]/255]};
- function globeColors(){col.yesR=rgbOf(col.yes);col.noR=rgbOf(col.no);col.calm=col.dark?.6:.58;col.lift=col.dark?.3:0}   /* the land with nobody joining: 60 % (58 % light); lit land whitens 30 % in the dark */
+ function globeColors(){col.yesR=rgbOf(col.yes);col.noR=rgbOf(col.no);col.calm=col.dark?.6:.58;col.lift=col.dark?.3:0;if(GO)GO.edge=col.dark?.75:1}   /* v240: the dots along the rim a quarter dimmer on the dark page only (the white ran into a band; the light page's ink as it was) */   /* the land with nobody joining: 60 % (58 % light); lit land whitens 30 % in the dark */
  const F=()=>{try{return window.duqDotsApi&&window.duqDotsApi()}catch(e){return null}};   /* the Default field (its state and crowds) */
  function colors(){const cs=getComputedStyle(document.documentElement),g=k=>cs.getPropertyValue(k).trim();
   col={bg:g('--bg')||'',yes:g('--yes')||'#1cb785',no:g('--no')||'#f53e3e',ink:g('--ink')||'#0e1117',ink2:g('--ink-2')||'#555',line:g('--hairline')||'rgba(0,0,0,.08)',line2:g('--hairline-2')||'rgba(0,0,0,.16)',ff:getComputedStyle(document.body).fontFamily,dark:document.documentElement.dataset.theme==='dark',road:document.documentElement.dataset.theme==='dark'?'rgba(255,255,255,.025)':'rgba(8,11,15,.035)'};globeColors()}
