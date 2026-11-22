@@ -5769,17 +5769,20 @@ function duqStop(land){
  const settle=bez(.23,1,.32,1);
  const CHECK='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6.5l2.6 2.6L10 3.4"/></svg>';
  const CROSS='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6"/></svg>';
- let W=0,H=0,U=1,BASE=0,YX=0,NX=0,SP=16,TOP=0,DPR=1,col={},running=false,raf=0,last=0,ready=false,phone=false;
+ let W=0,H=0,U=1,BASE=0,RAD=4000,YX=0,NX=0,SP=16,TOP=0,DPR=1,col={},running=false,raf=0,last=0,ready=false,phone=false;
  let people=[],ev=null,evi=-1,phase='bet',pt=0,outcome=true,nextBet=0,rate=4,deck=[],T=0;
  let drops=[],dust=[],puffs=[],plus=[],glow=0,fCycle=-1,chipPc=-1;
  const F=()=>{try{return window.duqDotsApi&&window.duqDotsApi()}catch(e){return null}};   /* the Default field (its state and crowds) */
  function colors(){const cs=getComputedStyle(document.documentElement),g=k=>cs.getPropertyValue(k).trim();
-  col={yes:g('--yes')||'#1cb785',no:g('--no')||'#f53e3e',ink:g('--ink')||'#0e1117',ink2:g('--ink-2')||'#555',line:g('--hairline')||'rgba(0,0,0,.08)',line2:g('--hairline-2')||'rgba(0,0,0,.16)',ff:getComputedStyle(document.body).fontFamily,dark:document.documentElement.dataset.theme==='dark',road:document.documentElement.dataset.theme==='dark'?'rgba(255,255,255,.025)':'rgba(8,11,15,.035)'}}
+  col={bg:g('--bg')||'',yes:g('--yes')||'#1cb785',no:g('--no')||'#f53e3e',ink:g('--ink')||'#0e1117',ink2:g('--ink-2')||'#555',line:g('--hairline')||'rgba(0,0,0,.08)',line2:g('--hairline-2')||'rgba(0,0,0,.16)',ff:getComputedStyle(document.body).fontFamily,dark:document.documentElement.dataset.theme==='dark',road:document.documentElement.dataset.theme==='dark'?'rgba(255,255,255,.025)':'rgba(8,11,15,.035)'}}
  function layout(){W=window.innerWidth;H=window.innerHeight;phone=W<=640;U=Math.max(.9,Math.min(1.45,Math.min(W/1200,H/800)));
-  BASE=Math.round(H-56*U-Math.max(0,H*.04));YX=Math.round(W/2-67*U);NX=Math.round(W/2+67*U);SP=13*U;rate=phone?2:4;
+  BASE=Math.round(H-56*U-Math.max(0,H*.04));RAD=Math.max(900,W*2.6);YX=Math.round(W/2-67*U);NX=Math.round(W/2+67*U);SP=13*U;rate=phone?2:4;
   TOP=Math.round(BASE-130*U);DPR=Math.min(2,window.devicePixelRatio||1);   /* the canvas is the street band; a falling dot above it is a light DOM dot */
   cv.style.top=TOP+'px';cv.style.height=(H-TOP)+'px';cv.width=Math.round(W*DPR);cv.height=Math.round((H-TOP)*DPR);
   chip.style.top=Math.round(BASE-76*U)+'px';colors()}
+ /* v231 (the user, 22 Nov 2026: «1» of «mojesh predlagat mesto shose drugoe pod ludmi 4 varianta»): the road became a planet's
+    horizon — a wide arc (radius 2.6 × the width); everyone stands on it upright to the ground, tilted along its normal */
+ const gy=x=>BASE+RAD-Math.sqrt(Math.max(0,RAD*RAD-(x-W/2)*(x-W/2))),ga=x=>Math.asin(Math.max(-1,Math.min(1,(x-W/2)/RAD)));
  const slot=(side,i)=>side==='yes'?YX-11*U-i*SP:NX+11*U+i*SP;
  const qlen=side=>{let n=0;for(const p of people)if(p.side===side&&(p.mode==='queue'||p.mode==='walk'))n++;return n};
  /* ---- a bet: a dot drops out of its crowd and lands as a person at the end of the queue ---- */
@@ -5790,8 +5793,8 @@ function duqStop(land){
   drops.push({el,side,you:!!you,x,y,vy:0,tx:slot(side,qlen(side)+drops.filter(d=>d.side===side).length)+(Math.random()-.5)*SP*.6})}
  function stepDrops(dt){for(const d of drops){d.vy+=(d.you?1900:1150)*U*dt;d.y+=d.vy*dt;d.x+=(d.tx-d.x)*(1-Math.exp(-dt*5));
    d.el.style.transform=`translate3d(${d.x.toFixed(1)}px,${d.y.toFixed(1)}px,0)`;
-   if(d.y>=BASE-22*U){d.done=true;d.el.remove();people.push({side:d.side,x:d.x,s:size(),ph:Math.random()*6,dir:d.side==='yes'?1:-1,mode:'walk',you:d.you,v:Math.max(46*U,W*.05)*(.9+Math.random()*.2),a:1,fade:0,delay:0,m:0});
-    puffs.push({x:d.x,y:BASE-22*U,t:0,side:d.side})}}
+   if(d.y>=gy(d.x)-22*U){d.done=true;d.el.remove();people.push({side:d.side,x:d.x,s:size(),ph:Math.random()*6,dir:d.side==='yes'?1:-1,mode:'walk',you:d.you,v:Math.max(46*U,W*.05)*(.9+Math.random()*.2),a:1,fade:0,delay:0,m:0});
+    puffs.push({x:d.x,y:gy(d.x)-22*U,t:0,side:d.side})}}
   drops=drops.filter(d=>!d.done)}
  const size=()=>.86+.42*Math.pow(Math.random(),3);
  /* ---- dust, puffs, «+$» ---- */
@@ -5809,7 +5812,7 @@ function duqStop(land){
   /* the losers dissolve into dots, the front of the queue first */
   people.filter(p=>p.side===lose&&p.mode!=='gone').sort((a,b)=>Math.abs(a.x-W/2)-Math.abs(b.x-W/2)).forEach((p,i)=>{p.mode='dissolve';p.delay=i*.035;p.fade=0});
   /* «+$» over every third winner, nearest the stop first */
-  people.filter(p=>p.side===win&&(p.mode==='queue'||p.mode==='walk')).sort((a,b)=>Math.abs(a.x-W/2)-Math.abs(b.x-W/2)).forEach((p,i)=>{if(i%3===0&&plus.length<9)plus.push({x:p.x,y:BASE-30*U*p.s,t:-i*.03,side:win})})}
+  people.filter(p=>p.side===win&&(p.mode==='queue'||p.mode==='walk')).sort((a,b)=>Math.abs(a.x-W/2)-Math.abs(b.x-W/2)).forEach((p,i)=>{if(i%3===0&&plus.length<9)plus.push({x:p.x,y:gy(p.x)-30*U*p.s,t:-i*.03,side:win})})}
  function winnersLeave(){let i=0;for(const p of people)if(p.mode==='queue'||p.mode==='walk'){p.mode='leave';p.delay=i++*.02;p.dir=p.side==='yes'?-1:1;p.fade=0}}
  /* ---- people ---- */
  function stepPeople(dt){const qi={yes:0,no:0};
@@ -5818,7 +5821,7 @@ function duqStop(land){
     if(Math.abs(d)>.6){const far=Math.abs(d),boost=1+1.4*Math.min(1,Math.max(0,(far-150*U)/(350*U))),v=p.v*boost;
      const st=Math.min(far,v*dt);p.x+=Math.sign(d)*st;p.ph+=dt*2.2*Math.PI*2*Math.min(2.6,v/(46*U))*.8;p.dir=Math.sign(d)||p.dir;p.mode=Math.abs(d)>SP*.6?'walk':p.mode;p.moving=true}
     else{p.x=tx;p.mode='queue';p.moving=false;p.dir=p.side==='yes'?1:-1}}
-   else if(p.mode==='dissolve'){if(p.delay>0){p.delay-=dt;continue}if(!p.dusted){p.dusted=true;const s=p.s*1.2*U;dustFrom(p.x,BASE-21*s,BASE-2*U,p.side,7)}p.fade+=dt/.16;p.a=Math.max(0,1-p.fade);if(p.fade>=1)p.mode='gone'}
+   else if(p.mode==='dissolve'){if(p.delay>0){p.delay-=dt;continue}if(!p.dusted){p.dusted=true;const s=p.s*1.2*U;dustFrom(p.x,gy(p.x)-21*s,gy(p.x)-2*U,p.side,7)}p.fade+=dt/.16;p.a=Math.max(0,1-p.fade);if(p.fade>=1)p.mode='gone'}
    else if(p.mode==='leave'){if(p.delay>0){p.delay-=dt;continue}p.fade+=dt/.9;p.x+=p.dir*60*U*dt;p.ph+=dt*2.2*Math.PI*2;p.moving=true;p.a=Math.max(0,1-p.fade);if(p.fade>=1)p.mode='gone'}}
   people=people.filter(p=>p.mode!=='gone');
   for(const side of ['yes','no']){const q=people.filter(p=>p.side===side&&(p.mode==='queue'||p.mode==='walk'));if(q.length>140)for(const p of q.slice(140))p.mode='gone'}}
@@ -5839,11 +5842,11 @@ function duqStop(land){
  function tick(dt){T+=dt;director(dt);stepDrops(dt);stepPeople(dt);stepFx(dt)}
  /* ---- drawing (canvas y = page y − TOP) ---- */
  function rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
- function person(p){const s=p.s*1.2*U,x=p.x,b=BASE-TOP,mv=p.moving,ph=p.ph,col1=p.side==='yes'?col.yes:col.no;
+ function person(p){const s=p.s*1.2*U,x=p.x,b=gy(p.x)-TOP,mv=p.moving,ph=p.ph,col1=p.side==='yes'?col.yes:col.no;
   if(x<-20*U||x>W+20*U)return;const m=p.m==null?1:settle(p.m);
   c.globalAlpha=p.a*(.35+.65*m);c.fillStyle=col1;c.strokeStyle=col1;c.lineCap='round';
   const bob=mv?Math.abs(Math.sin(ph))*1.5*U:0,sw=mv?Math.sin(ph)*2.6*s:0,lean=mv?p.dir*1.2*s:0,k=(p.sq||1)*(.55+.45*m);
-  c.setTransform(DPR*k,0,0,DPR*k,DPR*x,DPR*b);
+  const th=ga(x),cs=Math.cos(th),sn=Math.sin(th);c.setTransform(DPR*k*cs,DPR*k*sn,-DPR*k*sn,DPR*k*cs,DPR*x,DPR*b);
   c.lineWidth=2.1*s;c.beginPath();c.moveTo(-.95*s+lean*.3,-5.4*s-bob*.4);c.lineTo(-.95*s+sw,-.8);c.moveTo(.95*s+lean*.3,-5.4*s-bob*.4);c.lineTo(.95*s-sw,-.8);c.stroke();
   rr(-3.3*s+lean*.6,-14.6*s-bob,6.6*s,9.8*s,3*s);c.fill();if(p.you){c.lineWidth=1.4;c.strokeStyle=col.ink;c.stroke()}
   c.beginPath();c.arc(lean,-18.5*s-bob,3.15*s,0,7);c.fill();if(p.you){c.lineWidth=1.4;c.strokeStyle=col.ink;c.stroke()}
@@ -5852,16 +5855,30 @@ function duqStop(land){
     three draws a person — the moving ones (walking, landing, dissolving, «you») are still drawn one by one */
  const plain=p=>p.mode==='queue'&&p.a>=1&&(p.m==null||p.m>=1)&&!p.you;
  function rrP(P,x,y,w,h,r){P.moveTo(x+r,y);P.arcTo(x+w,y,x+w,y+h,r);P.arcTo(x+w,y+h,x,y+h,r);P.arcTo(x,y+h,x,y,r);P.arcTo(x,y,x+w,y,r);P.closePath()}
- function queues(){const b=BASE-TOP;for(const side of ['yes','no']){const P=new Path2D();let any=false;
-   for(const p of people){if(p.side!==side||!plain(p))continue;const x=p.x;if(x<-20*U||x>W+20*U)continue;any=true;const s=p.s*1.2*U,lw=2.1*s;
-    rrP(P,x-.95*s-lw/2,b-5.4*s-lw/2,lw,5.4*s-.8+lw/2,lw/2);rrP(P,x+.95*s-lw/2,b-5.4*s-lw/2,lw,5.4*s-.8+lw/2,lw/2);
-    rrP(P,x-3.3*s,b-14.6*s,6.6*s,9.8*s,3*s);P.moveTo(x+3.15*s,b-18.5*s);P.arc(x,b-18.5*s,3.15*s,0,7)}
+ const UNIT={},unitOf=s=>{const q=Math.round(s*50)/50;if(UNIT[q])return UNIT[q];const P=new Path2D(),lw=2.1*q;
+   rrP(P,-.95*q-lw/2,-5.4*q-lw/2,lw,5.4*q-.8+lw/2,lw/2);rrP(P,.95*q-lw/2,-5.4*q-lw/2,lw,5.4*q-.8+lw/2,lw/2);
+   rrP(P,-3.3*q,-14.6*q,6.6*q,9.8*q,3*q);P.moveTo(3.15*q,-18.5*q);P.arc(0,-18.5*q,3.15*q,0,7);return UNIT[q]=P};
+ function queues(){for(const side of ['yes','no']){const P=new Path2D();let any=false;
+   for(const p of people){if(p.side!==side||!plain(p))continue;const x=p.x;if(x<-20*U||x>W+20*U)continue;any=true;
+    P.addPath(unitOf(p.s*1.2*U),new DOMMatrix().translate(x,gy(x)-TOP).rotate(ga(x)*180/Math.PI))}
    if(any){c.fillStyle=side==='yes'?col.yes:col.no;c.fill(P)}}}
- function street(){const b=BASE-TOP;c.fillStyle=col.road;c.fillRect(0,b+5*U,W,40*U);
-  c.strokeStyle=col.line2;c.lineWidth=1.5;c.beginPath();c.moveTo(0,b+.5);c.lineTo(W,b+.5);c.stroke();
-  c.setLineDash([10*U,12*U]);c.strokeStyle=col.line;c.lineWidth=1.2;c.beginPath();c.moveTo(0,b+44*U);c.lineTo(W,b+44*U);c.stroke();c.setLineDash([])}
- function drawStop(x,lab,cl,dim){const b=BASE-TOP;c.save();if(dim)c.globalAlpha=.45;c.strokeStyle=col.line2;c.lineWidth=2;c.beginPath();c.moveTo(x,b);c.lineTo(x,b-34*U);c.stroke();
-  rr(x-17*U,b-51*U,34*U,17*U,4*U);c.fillStyle=cl;c.fill();c.fillStyle='#fff';c.font=`800 ${Math.round(10*U)}px Onest, ${col.ff}`;c.textAlign='center';c.textBaseline='middle';c.fillText(lab,x,b-42.3*U);c.restore()}
+ function horizon(){const cx=W/2,cy=BASE+RAD-TOP,dark=col.dark,half=Math.asin(Math.min(1,(W/2+20)/RAD));
+  /* the air over the rim */
+  const atm=c.createRadialGradient(cx,cy,RAD-4*U,cx,cy,RAD+72*U);
+  atm.addColorStop(0,dark?'rgba(90,140,255,.5)':'rgba(90,130,240,.26)');atm.addColorStop(.14,dark?'rgba(80,120,240,.2)':'rgba(90,130,240,.11)');atm.addColorStop(1,dark?'rgba(60,90,200,0)':'rgba(90,130,240,0)');
+  c.fillStyle=atm;c.beginPath();c.arc(cx,cy,RAD+72*U,0,7);c.fill();
+  /* the planet: from the rim down into the page's own ground */
+  const body=c.createLinearGradient(0,BASE-TOP-10*U,0,H-TOP);body.addColorStop(0,dark?'#141b2e':'#e1e6f0');body.addColorStop(1,col.bg||(dark?'#07090f':'#f0f0f5'));
+  c.fillStyle=body;c.beginPath();c.arc(cx,cy,RAD,0,7);c.fill();
+  /* at the outcome a dawn in the winner's colour rises over its queue, and the rim takes that colour */
+  const lit=glow>0&&phase!=='bet';
+  if(lit){const win=outcome?'yes':'no',gc=win==='yes'?col.yes:col.no,n=qlen(win),sx=n?(slot(win,0)+slot(win,n-1))/2:cx,sy=gy(sx)-TOP;
+   const rx=300*U,ry=Math.min(115*U,sy-6),k=ry/rx;   /* an ellipse that stays inside the band: no hard edge at its top */
+   c.save();c.globalAlpha=.42*glow;c.setTransform(DPR,0,0,DPR*k,0,sy*DPR*(1-k));const g=c.createRadialGradient(sx,sy,0,sx,sy,rx);g.addColorStop(0,gc);g.addColorStop(1,clear(gc));c.fillStyle=g;c.beginPath();c.arc(sx,sy,rx,0,7);c.fill();c.restore()}
+  c.save();c.lineWidth=1.6;c.strokeStyle=dark?'rgba(150,190,255,.8)':'rgba(70,110,220,.45)';c.beginPath();c.arc(cx,cy,RAD,Math.PI*1.5-half,Math.PI*1.5+half);c.stroke();
+  if(lit){c.globalAlpha=.9*glow;c.strokeStyle=outcome?col.yes:col.no;c.lineWidth=2.2;c.stroke()}c.restore()}
+ function drawStop(x,lab,cl,dim){const b=gy(x)-TOP;c.save();if(dim)c.globalAlpha=.45;c.translate(x,b);c.rotate(ga(x));c.strokeStyle=col.line2;c.lineWidth=2;c.beginPath();c.moveTo(0,0);c.lineTo(0,-34*U);c.stroke();
+  rr(-17*U,-51*U,34*U,17*U,4*U);c.fillStyle=cl;c.fill();c.fillStyle='#fff';c.font=`800 ${Math.round(10*U)}px Onest, ${col.ff}`;c.textAlign='center';c.textBaseline='middle';c.fillText(lab,0,-42.3*U);c.restore()}
  function drawFx(){c.save();
   for(const p of puffs){const e=settle(p.t/.4);c.globalAlpha=.55*(1-e);c.strokeStyle=p.side==='yes'?col.yes:col.no;c.lineWidth=1.5*U;c.beginPath();c.arc(p.x,p.y-TOP,(3+9*e)*U,0,7);c.stroke()}
   for(const d of dust){c.globalAlpha=Math.max(0,.85*(1-d.t/d.life));c.fillStyle=d.side==='yes'?col.yes:col.no;c.beginPath();c.arc(d.x,d.y-TOP,d.r,0,7);c.fill()}
@@ -5869,9 +5886,9 @@ function duqStop(land){
   for(const p of plus){if(p.t<0)continue;const e=settle(Math.min(1,p.t/1.3));c.globalAlpha=p.t<.2?p.t/.2:Math.max(0,1-(p.t-.6)/.7);c.fillStyle=p.side==='yes'?col.yes:col.no;c.fillText('+$',p.x,p.y-TOP-24*U*e)}
   c.restore()}
  const clear=cl=>{const k=document.createElement('canvas').getContext('2d');k.fillStyle=cl;const v=k.fillStyle;if(v[0]==='#'){const n=parseInt(v.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},0)`}return v.replace(/rgba?\(([^)]*)\)/,(m,a)=>`rgba(${a.split(',').slice(0,3).join(',')},0)`)};   /* the same colour at 0 alpha: a canvas gradient to «transparent» greys out */
- function drawGlow(){if(glow<=0)return;const win=outcome?'yes':'no',n=qlen(win);if(!n)return;const a=slot(win,0),z=slot(win,n-1),cx=(a+z)/2,hw=Math.abs(z-a)/2+26*U,b=BASE-TOP;
+ function drawGlow(){if(glow<=0)return;const win=outcome?'yes':'no',n=qlen(win);if(!n)return;const a=slot(win,0),z=slot(win,n-1),cx=(a+z)/2,hw=Math.abs(z-a)/2+26*U,b=gy(cx)-TOP;
   c.save();c.globalAlpha=.24*glow;const g=c.createRadialGradient(cx,b-12*U,0,cx,b-12*U,hw);const gc=win==='yes'?col.yes:col.no;g.addColorStop(0,gc);g.addColorStop(1,clear(gc));c.fillStyle=g;c.setTransform(DPR,0,0,DPR*.32,0,(b-12*U)*DPR*(1-.32));c.beginPath();c.arc(cx,b-12*U,hw,0,7);c.fill();c.restore()}
- function paint(){c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H-TOP);street();
+ function paint(){c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H-TOP);horizon();
   const res=phase==='resolve'||phase==='quiet';drawStop(YX,'YES',col.yes,res&&!outcome);drawStop(NX,'NO',col.no,res&&outcome);
   drawGlow();queues();for(const p of people)if(!plain(p))person(p);drawFx()}
  /* ---- a still for reduced motion: the crowds over queues by the event's odds, the outcome on the chip ---- */
