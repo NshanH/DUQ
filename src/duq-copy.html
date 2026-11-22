@@ -5506,6 +5506,7 @@ html:not([data-theme=dark]) #stopbg .sb-gbox .rfg-rim{mix-blend-mode:normal!impo
 html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,255,255,.24);--sbg-hot:#FFFFFF;--sbg-rim:#FFFFFF}   /* dark: FreedX's white land and ocean; the warm spot and the rim white, not lilac (v236) */
 #stopbg .sb-chip{position:absolute;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 4px;border-radius:var(--radius-border_radius_round);background:linear-gradient(var(--card),var(--card)),var(--bg);border:1px solid var(--hairline);color:var(--ink);font:600 13px/1 var(--font);white-space:nowrap;box-shadow:0 2px 10px rgba(8,11,15,.06);transition:opacity .25s cubic-bezier(.23,1,.32,1)}
 #stopbg .sb-chip.swap{opacity:0}
+#stopbg .sb-chip{display:none}   /* v248 (the user, 23 Nov 2026, a screenshot of the chip «Juggernaut wins the Dota 2 major? YES ✓»: «delete»): no event chip on the globe — the queues and the globe tell the round without it */
 #stopbg .sb-drop{position:absolute;left:0;top:0;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:currentColor;will-change:transform;pointer-events:none}   /* v230: a bet falling out of a Default crowd */
 #stopbg .sb-drop::before{content:"";position:absolute;left:1.5px;width:3px;bottom:4px;height:15px;border-radius:2px;background:linear-gradient(to top,currentColor,transparent);opacity:.55}
 #stopbg .sb-drop.yes{color:var(--yes)}#stopbg .sb-drop.no{color:var(--no)}#stopbg .sb-drop.you{box-shadow:0 0 0 1.5px var(--ink)}
