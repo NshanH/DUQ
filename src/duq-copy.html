@@ -1426,63 +1426,6 @@ body.is-landing{height:100%;overflow:hidden;display:flex;flex-direction:column;f
 #landing .headline br.m{display:none}
 #landing .headline .yes .v{color:var(--yes-text)}
 #landing .headline .no .v{color:var(--no-text)}
-/* v241 (the user, 23 Nov 2026, after the text-only headline boards: «i chto text bil jivoi resulyt globus») made version 3's
-   headline the globe's result in words; v242 («10 Лестница вопросов», the tenth of the ten text-only headlines) sets it as
-   a ladder: «Will it happen?» stays at the bottom, brightest, and over it the globe's questions climb — the one on the globe
-   now just above it with its crowd's share («61% NO»), then its result («YES ✓»); with the next event it climbs a step,
-   smaller and fainter, and the oldest leaves at the top. The chip under the queues gives way to it. Default, 1 and 2 keep
-   «Will it happen? Just say yes or no.» */
-#landing .headline .lv{display:none}
-#landing.hl-live .headline .line:not(.lv){display:none}
-#landing.hl-ladder .headline .lv-lad,#landing.hl-ladder .headline .lv-main,#landing.hl-maybe .headline .lv2,#landing.hl-reel .headline .lv4{display:block}
-#landing .headline .lv-lad{--lad:clamp(20px,3.25vw,56px);position:relative;width:min(var(--column),calc(100vw - 2*var(--gutter)));height:calc(var(--lad)*1.18*2.44 + 8px);margin-bottom:6px;font-size:var(--lad);overflow:hidden}
-#landing .headline .lv-row{position:absolute;left:0;right:0;top:0;line-height:1.18;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform-origin:50% 0;transition:transform .7s cubic-bezier(.23,1,.32,1),opacity .7s cubic-bezier(.23,1,.32,1)}
-#landing .headline .lv-lad.still .lv-row{transition:none}
-#landing .headline .lv-r{display:inline-flex;align-items:center;gap:.2em;margin-left:.45em;font-size:.6em;font-weight:700;font-variation-settings:"wght" 700;letter-spacing:.02em;vertical-align:.14em}
-#landing .headline .lv-r svg{width:.78em;height:.78em}
-#landing .headline .lv-r.yes{color:var(--yes-text)}
-#landing .headline .lv-r.no{color:var(--no-text)}
-#landing .headline .lv-row.res .lv-r{animation:lv-pop .6s cubic-bezier(.23,1,.32,1)}
-@keyframes lv-pop{0%{transform:scale(.6);opacity:0}100%{transform:none;opacity:1}}
-#landing.hl-ladder #stopbg .sb-chip,#landing.hl-reel #stopbg .sb-chip{display:none}
-@media (max-width:640px){#landing .headline .lv-lad{--lad:4.6vw}}
-@media (prefers-reduced-motion:reduce){#landing .headline .lv-row{transition:none}#landing .headline .lv-row.res .lv-r{animation:none}}
-/* v243 (the user, 23 Nov 2026: «2 Без «может быть»», the second of the four text-only headlines): version 3's headline is
-   «Maybe.» struck through and «Yes or no.» under it — the strike crosses «Maybe.» (0.4 s) and then «Yes or no.» rises in —
-   with «Call what happens next — crypto, politics, sports.»; at the globe's outcome the winning word lights up in its colour
-   and the rest of the line steps back until the next event. The chip under the queues is back (the event, its live share,
-   its result). v242's ladder stays one address away: ?hl=10 */
-#landing .headline .lv-maybe{font-size:calc(var(--hero-size)*.56);line-height:1.15;letter-spacing:-.02em;color:var(--ink-3)}
-#landing .headline .lv-maybe s{position:relative;display:inline-block;text-decoration:none}
-#landing .headline .lv-maybe s::after{content:"";position:absolute;left:-6%;right:-6%;top:52%;height:.075em;border-radius:.04em;background:var(--ink);transform:rotate(-4deg) scaleX(0);transform-origin:0 50%}
-#landing .headline .lv-maybe.on s::after{transform:rotate(-4deg) scaleX(1);transition:transform .4s cubic-bezier(.65,0,.35,1) .2s}
-#landing .headline .lv-yn{font-size:calc(var(--hero-size)*1.2);line-height:1.02;letter-spacing:-.035em;opacity:0;transform:translateY(.12em)}
-#landing .headline .lv-yn.on{opacity:1;transform:none;transition:opacity .5s cubic-bezier(.23,1,.32,1) .55s,transform .5s cubic-bezier(.23,1,.32,1) .55s}
-#landing .headline .lv-yn .lv-w,#landing .headline .lv-yn .lv-o{display:inline-block;transition:color .3s ease,opacity .3s ease}
-#landing .headline .lv-yn.res-yes .lv-w.yes{color:var(--yes-text);animation:lv-pop2 .6s cubic-bezier(.23,1,.32,1)}
-#landing .headline .lv-yn.res-no .lv-w.no{color:var(--no-text);animation:lv-pop2 .6s cubic-bezier(.23,1,.32,1)}
-#landing .headline .lv-yn.res-yes .lv-o,#landing .headline .lv-yn.res-yes .lv-w.no,#landing .headline .lv-yn.res-no .lv-o,#landing .headline .lv-yn.res-no .lv-w.yes{opacity:.28}
-@keyframes lv-pop2{0%{transform:none}35%{transform:scale(1.08)}100%{transform:none}}
-#landing .headline .lv-call{margin-top:18px;font:500 20px/1.4 var(--font);font-variation-settings:"wght" 500;letter-spacing:0;color:var(--ink-2)}
-@media (max-width:640px){#landing .headline .lv-call{font-size:15px;margin-top:12px}}
-@media (prefers-reduced-motion:reduce){#landing .headline .lv-maybe.on s::after,#landing .headline .lv-yn.on{transition:none}#landing .headline .lv-yn .lv-w{animation:none!important}}
-/* v244 (the user, 23 Nov 2026: «4 Вопрос меняется.», the fourth of the four text-only headlines): version 3's headline is
-   «Will [ … ]?» — its middle is a reel of the globe's events: the one on the globe now, the last one faint above it and the
-   next faint below; with the next event the reel turns a notch (0.6 s). Under it the crowd's share right now («36% say yes
-   right now»), at the outcome the result («Yes. 27 people called it.»); the button reads CALL IT and opens the market on
-   screen. The chip under the queues gives way to it. «Maybe.» stays at ?hl=2, the ladder at ?hl=10 */
-#landing .headline .lv-reel{font-size:clamp(26px,3.9vw,68px);line-height:1.15;letter-spacing:-.03em;padding:.72em 0 .82em}
-#landing.hl-reel .headline .lv-reel{white-space:nowrap}
-#landing .headline .rl-slot{position:relative;display:inline-block;vertical-align:top;height:1.15em;transition:width .6s cubic-bezier(.23,1,.32,1)}
-#landing .headline .rl-slot::after{content:"";position:absolute;left:0;right:0;bottom:.02em;border-bottom:.045em dashed var(--ink-3);opacity:.6}
-#landing .headline .rl-t{position:absolute;left:50%;top:0;width:max-content;white-space:nowrap;transform-origin:50% 50%;transition:transform .6s cubic-bezier(.23,1,.32,1),opacity .6s cubic-bezier(.23,1,.32,1)}
-#landing .headline .rl-slot.still,#landing .headline .rl-slot.still .rl-t{transition:none}
-#landing .headline .lv-now{font:500 20px/1.4 var(--font);font-variation-settings:"wght" 500;letter-spacing:0;color:var(--ink-2)}
-#landing .headline .lv-now b{font-weight:700;font-variation-settings:"wght" 700}
-#landing .headline .lv-now .yes{color:var(--yes-text)}
-#landing .headline .lv-now .no{color:var(--no-text)}
-@media (max-width:640px){#landing .headline .lv-reel{font-size:5.4vw}#landing .headline .lv-now{font-size:15px}}
-@media (prefers-reduced-motion:reduce){#landing .headline .rl-slot,#landing .headline .rl-t{transition:none}}
 #landing .sub{margin:22px 0 0;font-size:16px;line-height:1.5;color:var(--ink-2);text-align:center;font-weight:500}
 #landing .cta{margin-top:36px}
 #landing .lhint{margin:14px 0 0;font-size:13px;color:var(--ink-3);text-align:center;opacity:0;transition:opacity 600ms var(--ease);min-height:24px}
@@ -2669,16 +2612,6 @@ html[data-theme=dark] .money .qr{background:#fff}
     <span class="sr-only">Will it happen? Just say yes or no.</span>
     <span class="line" aria-hidden="true"><span class="t">Will it happen</span><span class="q">?</span></span>
     <span class="line" aria-hidden="true"><span class="t">Just say</span><br class="m"> <span class="w yes"><span class="v">yes</span></span><span class="t"> or </span><span class="w no"><span class="v">no</span></span><span class="t">.</span></span>
-    <!-- v241 → v242 (the user, 23 Nov 2026: «i chto text bil jivoi resulyt globus», then «10 Лестница вопросов»): version 3's headline is a ladder of the globe's questions over «Will it happen?»; duqStop fills it, the two lines above stay for Default, 1 and 2 -->
-    <span class="line lv lv-lad" aria-hidden="true"></span>
-    <span class="line lv lv-main" aria-hidden="true">Will it happen?</span>
-    <!-- v243 (the user, 23 Nov 2026: «2 Без «может быть»»): version 3's headline is «Maybe.» struck through and «Yes or no.» — the ladder above stays at ?hl=10 -->
-    <span class="line lv lv2 lv-maybe" aria-hidden="true"><s>Maybe.</s></span>
-    <span class="line lv lv2 lv-yn" aria-hidden="true"><span class="lv-w yes">Yes</span> <span class="lv-o">or</span> <span class="lv-w no">no</span><span class="lv-o">.</span></span>
-    <span class="line lv lv2 lv-call" aria-hidden="true">Call what happens next — crypto, politics, sports.</span>
-    <!-- v244 (the user, 23 Nov 2026: «4 Вопрос меняется.»): version 3's headline is «Will [the globe's question]?» — its middle turns like a reel with the globe's events; «Maybe.» stays at ?hl=2, the ladder at ?hl=10 -->
-    <span class="line lv lv4 lv-reel" aria-hidden="true">Will <span class="rl-slot"></span>?</span>
-    <span class="line lv lv4 lv-now" aria-hidden="true"></span>
   </h1>
   <button type="button" class="btn-link cta" data-enter="home"><span>Make your call</span><span class="arrow" aria-hidden="true" data-icon="arrow-right"></span></button>
 </main>
@@ -3515,7 +3448,7 @@ function setLive(v){live=v;if(v)startTimers();else stopTimers();if(window.duqFie
 mq.addEventListener('change',e=>{reduce=e.matches;if(reduce)setLive(false)});
 
 /* ---------- landing ---------- */
-document.addEventListener('click',e=>{const en=e.target.closest('[data-enter]');if(en){e.preventDefault();if(en.dataset.signin&&!user){authReturn='#home';go('#signin')}else go(en.dataset.goEv?'#event/'+en.dataset.goEv:'#home')}});   /* v244: version 3's CALL IT opens the market in its headline */
+document.addEventListener('click',e=>{const en=e.target.closest('[data-enter]');if(en){e.preventDefault();if(en.dataset.signin&&!user){authReturn='#home';go('#signin')}else go('#home')}});
 document.addEventListener('keydown',e=>{if(view!=='landing'||e.metaKey||e.ctrlKey||e.altKey)return;if(e.key==='y'||e.key==='Y'){window.duqField&&window.duqField.commit(true)}if(e.key==='n'||e.key==='N'){window.duqField&&window.duqField.commit(false)}});
 
 
@@ -7134,53 +7067,6 @@ function duqStop(land){
  /* [event id, question, chance of Yes] — the prototype's own markets */
  const EVS=[['btc','Bitcoin above $150k by New Year?',41],['ecb','ECB cuts rates in October?',62],['shutdown','Shutdown lasts 30+ days?',62],['santa','Santa delivers 7B+ gifts?',71],['dem2028','Newsom wins the 2028 nomination?',31],['ucl','Chelsea beat Barcelona?',40],['nba','Clippers beat the Raptors?',45],['eth','Ethereum below $1,500 this year?',64],['nuclear','Nuclear detonation in 2025?',23],['dotamajor','Juggernaut wins the Dota 2 major?',18]];
  const pic=id=>{try{const e=EVENTS[id];return e&&PIC[e.pic]||''}catch(_){return ''}};
- /* v241 → v242: the headline's ladder of the globe's questions (see the CSS); rows[0] is the event on the globe now */
- const lvQ=s=>land.querySelector('.headline '+s),lad=lvQ('.lv-lad'),lvSr=lvQ('.sr-only'),lvSrTxt=lvSr?lvSr.textContent:'';
- const LV=[{s:1,o:.72},{s:.8,o:.36},{s:.64,o:.18}];let rows=[];   /* scale and opacity of each step, the bottom one first */
- /* v243: «Без «может быть»» is version 3's headline; v242's ladder at ?hl=10 */
- const hlQ=new URLSearchParams(location.search).get('hl'),HLM=hlQ==='10'?'ladder':hlQ==='2'?'maybe':'reel';   /* v244: «Вопрос меняется» by default; ?hl=2 «Maybe.», ?hl=10 the ladder */
- const yn=lvQ('.lv-yn'),mb=lvQ('.lv-maybe'),MB_SR='Maybe. Yes or no. Call what happens next — crypto, politics, sports.';
- /* v244: the reel — rows of the globe's events at levels −1 (the last, above), 0 (now), 1 (the next, below); −2 / 2 leave / enter */
- const STEM={btc:'Bitcoin top $150k',ecb:'the ECB cut rates',shutdown:'the shutdown last 30+ days',santa:'Santa deliver 7B+ gifts',dem2028:'Newsom get the 2028 nod',ucl:'Chelsea beat Barcelona',nba:'the Clippers beat Toronto',eth:'Ethereum drop below $1,500',nuclear:'a nuke go off in 2025',dotamajor:'Juggernaut win the major'};
- const rlSlot=lvQ('.rl-slot'),now=lvQ('.lv-now'),ctaEl=land.querySelector('.cta'),ctaTxt=ctaEl&&ctaEl.querySelector('span'),ctaLbl=ctaTxt?ctaTxt.textContent:'';
- const RL={'-2':[-1.45,.4,0],'-1':[-.86,.5,.16],'0':[0,1,1],'1':[.95,.5,.16],'2':[1.55,.4,0]};let reel=[],nowK='';
- const rlText=id=>STEM[id]||((EVS.find(x=>x[0]===id)||[0,''])[1]).replace(/\?$/,'');
- function rlPlace(){if(!rlSlot)return;const fs=parseFloat(getComputedStyle(rlSlot).fontSize)||56;for(const r of reel){const L=RL[r.lvl]||RL[r.lvl<0?'-2':'2'];r.el.style.transform=`translate(-50%,${(L[0]*fs).toFixed(1)}px) scale(${L[1]})`;r.el.style.opacity=String(L[2])}const c=reel.find(r=>r.lvl===0);if(c)rlSlot.style.width=c.el.offsetWidth+'px'}
- function rlAdd(id,lvl){const el=document.createElement('span');el.className='rl-t';el.textContent=rlText(id);rlSlot.appendChild(el);const r={el,lvl,id};reel.push(r);return r}
- function rlTurn(cur,nxt,still){if(!rlSlot)return;
-  if(!reel.length){const o=EVS.map(x=>x[0]).filter(i=>i!==cur&&i!==nxt);rlAdd(o[(Math.random()*o.length)|0],-1);rlAdd(cur,0);if(nxt)rlAdd(nxt,1);still=true}
-  else{for(const r of reel)r.lvl--;
-   for(const r of reel.filter(r=>r.lvl<-1)){r.lvl=-2;setTimeout(()=>{r.el.remove();reel=reel.filter(x=>x!==r)},still?0:700)}
-   const c=reel.find(r=>r.lvl===0);if(!c)rlAdd(cur,0);else if(c.id!==cur){c.id=cur;c.el.textContent=rlText(cur)}
-   if(nxt){const n=rlAdd(nxt,2);n.el.style.transition='none';rlPlace();void n.el.offsetWidth;n.el.style.transition='';n.lvl=1}}
-  if(still)rlSlot.classList.add('still');rlPlace();if(still){void rlSlot.offsetWidth;rlSlot.classList.remove('still')}}
- const rlNow=(k,html)=>{if(k===nowK||!now)return;nowK=k;now.innerHTML=html};
- function rlShare(pc){const y=pc>=50,v=y?pc:100-pc,s=y?'yes':'no';rlNow(s+v,`<b class="${s}">${v}%</b> say <b class="${s}">${s}</b> right now`)}   /* «36% say yes right now» */
- function rlResult(){const w=outcome?'yes':'no',n=people.filter(p=>p.side===w&&(p.mode==='queue'||p.mode==='walk')).length;
-  rlNow('r'+w,`<b class="${w}">${w==='yes'?'Yes':'No'}.</b> ${n?n+' '+(n===1?'person':'people')+' called it.':'Nobody called it.'}`)}
- const nextId=()=>deck.length?EVS[deck[deck.length-1]][0]:null;
- function mbIntro(){if(!mb||mb.classList.contains('on'))return;requestAnimationFrame(()=>requestAnimationFrame(()=>{mb.classList.add('on');if(yn)yn.classList.add('on')}))}   /* the strike crosses «Maybe.», then «Yes or no.» rises */
- const lvRelayout=()=>{const f=F();if(f&&f.relayout)f.relayout()};   /* the field's crowds keep off the new words */
- function ladGeo(){const fs=lad?parseFloat(getComputedStyle(lad).fontSize)||56:56,lh=fs*1.18,g=4;return{lh,y:[lh*1.44+2*g,lh*.64+g,0]}}
- function ladPlace(){if(!lad)return;const G=ladGeo();rows.forEach((r,i)=>{const L=LV[i];r.el.style.transform=`translateY(${G.y[i].toFixed(1)}px) scale(${L.s})`;r.el.style.opacity=String(i===0&&r.res!=null?.95:L.o)})}
- function rowHtml(r){let tag='';
-  if(r.res!=null){const w=r.res?'yes':'no';tag=`<span class="lv-r ${w}">${w.toUpperCase()}${r.res?CHECK:CROSS}</span>`}
-  else if(r.pc!=null){const y=r.pc>=50,v=y?r.pc:100-r.pc,s=y?'yes':'no';tag=`<span class="lv-r ${s}">${v}% ${s.toUpperCase()}</span>`}
-  return `<span class="lv-q">${r.ev[1]}</span>${tag}`}
- /* a new question rises out from behind «Will it happen?», the others climb a step, the oldest leaves at the top */
- function ladPush(e,pc,res,still){if(!lad)return;const el=document.createElement('span');el.className='lv-row';const r={el,ev:e,pc:pc==null?null:pc,res:res==null?null:res,k:''};el.innerHTML=rowHtml(r);
-  const G=ladGeo();el.style.transform=`translateY(${(G.y[0]+G.lh*.6).toFixed(1)}px) scale(1)`;el.style.opacity='0';lad.appendChild(el);rows.unshift(r);
-  for(const o of rows.splice(LV.length)){o.el.style.transform=`translateY(${(-G.lh*.55).toFixed(1)}px) scale(.52)`;o.el.style.opacity='0';setTimeout(()=>o.el.remove(),still?0:760)}
-  if(still)lad.classList.add('still');void el.offsetWidth;ladPlace();if(still){void el.offsetWidth;lad.classList.remove('still')}}
- function lvEvent(e,pc){if(HLM==='reel'){rlTurn(e[0],nextId(),reduced);nowK='';rlShare(pc);if(ctaEl)ctaEl.dataset.goEv=e[0];if(lvSr)lvSr.textContent='Will '+rlText(e[0])+'?';lvRelayout();return}
-  if(HLM!=='ladder'){if(yn)yn.classList.remove('res-yes','res-no');return}   /* #2: back to plain «Yes or no.» with the next event */
-  if(!rows.length){   /* the first event: two before it already settled, like the queues' warm start */
-   for(const o of EVS.filter(x=>x!==e).sort(()=>Math.random()-.5).slice(0,2))ladPush(o,null,Math.random()*100<o[2],true);ladPush(e,pc,null,true)}
-  else ladPush(e,pc,null,reduced);
-  if(lvSr)lvSr.textContent='Will it happen? '+e[1];lvRelayout()}
- function lvShare(pc){if(HLM==='reel'){rlShare(pc);return}if(HLM!=='ladder')return;const r=rows[0];if(!r||r.res!=null)return;const k=pc>=50?'y'+pc:'n'+(100-pc);if(k===r.k)return;r.k=k;r.pc=pc;r.el.innerHTML=rowHtml(r)}   /* «61% NO» — the side ahead */
- function lvResult(){if(HLM==='reel'){rlResult();return}if(HLM!=='ladder'){if(yn){yn.classList.remove('res-yes','res-no');void yn.offsetWidth;yn.classList.add(outcome?'res-yes':'res-no')}return}   /* #2: the globe's winner lights up in «Yes or no.» */
-  const r=rows[0];if(!r)return;r.res=outcome;r.el.innerHTML=rowHtml(r);r.el.classList.add('res');ladPlace();lvRelayout()}   /* «YES ✓» as the globe floods */
  const root=document.createElement('div');root.id='stopbg';root.setAttribute('aria-hidden','true');root.hidden=true;
  root.innerHTML='<div class="sb-body"></div><div class="sb-gbox"></div><canvas class="sb-c"></canvas><div class="sb-chip"><img alt="" decoding="async"><span class="sb-t"></span><b class="sb-p"></b></div>';
  {const fc=document.getElementById('field');if(fc&&fc.parentNode===land)land.insertBefore(root,fc.nextSibling);else land.insertBefore(root,land.firstChild)}   /* over the field's dots */
@@ -7247,7 +7133,7 @@ function duqStop(land){
  /* v237: the headline and its button in the middle between the top of the page and the rim — the hero's bottom padding
     while version 3 is on (the page's own 7vh / 10vh back when it goes); the Default field re-measures the text it keeps off */
  const heroEl=land.querySelector('.hero');let heroOn=false;
- function placeHero(){ladPlace();if(!heroEl||!heroOn)return;const r=heroEl.getBoundingClientRect(),pt=parseFloat(getComputedStyle(heroEl).paddingTop)||0,pb=Math.max(0,Math.round(r.top+pt+r.bottom-BASE))+'px';
+ function placeHero(){if(!heroEl||!heroOn)return;const r=heroEl.getBoundingClientRect(),pt=parseFloat(getComputedStyle(heroEl).paddingTop)||0,pb=Math.max(0,Math.round(r.top+pt+r.bottom-BASE))+'px';
   if(heroEl.style.paddingBottom!==pb){heroEl.style.paddingBottom=pb;const f=F();if(f&&f.relayout)f.relayout()}}
  function heroOff(){heroOn=false;if(heroEl&&heroEl.style.paddingBottom){heroEl.style.paddingBottom='';const f=F();if(f&&f.relayout)f.relayout()}}
  function syncGlobe(){if(G)G.setSide({on:1,x:BX,wave,waveW:100*U,hy:HY,hn:HN,calm:col.calm,win:(phase==='resolve'||phase==='quiet')?(outcome?1:-1)*glow:0,yes:col.yesR,no:col.noR,lift:col.lift})}
@@ -7293,12 +7179,12 @@ function duqStop(land){
  function stepFx(dt){for(const d of dust){d.t+=dt;d.x+=d.vx*dt;d.y+=d.vy*dt;d.vy-=14*U*dt;d.vx*=1-1.4*dt}dust=dust.filter(d=>d.t<d.life);
   for(const p of puffs)p.t+=dt;puffs=puffs.filter(p=>p.t<.4);for(const p of plus)p.t+=dt;plus=plus.filter(p=>p.t<1.3)}
  /* ---- events ---- */
- function nextEvent(){const first=!ev;if(!deck.length)deck=EVS.map((_,i)=>i).sort(()=>Math.random()-.5);evi=deck.pop();ev=EVS[evi];if(!deck.length)deck=EVS.map((_,i)=>i).filter(i=>i!==evi).sort(()=>Math.random()-.5);   /* v244: the next event is always known (the reel shows it below) */outcome=Math.random()*100<ev[2];
-  const e=ev,apply=()=>{chipImg.src=pic(e[0])||'';chipT.textContent=e[1];chipP.className='sb-p';const fs=F()&&F().state?F().state():null;chipP.textContent=(fs?Math.round(fs.p*100):e[2])+'% Yes';chipPc=-1;lvEvent(e,fs?Math.round(fs.p*100):e[2])};   /* the field's live share, not the event's own odds */
+ function nextEvent(){const first=!ev;if(!deck.length)deck=EVS.map((_,i)=>i).sort(()=>Math.random()-.5);evi=deck.pop();ev=EVS[evi];outcome=Math.random()*100<ev[2];
+  const e=ev,apply=()=>{chipImg.src=pic(e[0])||'';chipT.textContent=e[1];chipP.className='sb-p';const fs=F()&&F().state?F().state():null;chipP.textContent=(fs?Math.round(fs.p*100):e[2])+'% Yes';chipPc=-1};   /* the field's live share, not the event's own odds */
   if(first||reduced)apply();else{chip.classList.add('swap');setTimeout(()=>{apply();chip.classList.remove('swap')},250)}
   phase='bet';pt=0;nextBet=.3;for(const d of drops)d.el.remove();drops=[];plus=[];glow=0;chipPc=-1;if(!first)bxTo(W/2,1.1,false)}
  function arrive(){const yes=outcome;chipP.className='sb-p res '+(yes?'yes':'no');chipP.innerHTML=(yes?'YES':'NO')+(yes?CHECK:CROSS)}
- function resolve(){arrive();lvResult();bxTo(outcome?W+110*U:-110*U,1.25,true);if(outcome)HYt=1;else HNt=1;const win=outcome?'yes':'no',lose=outcome?'no':'yes';
+ function resolve(){arrive();bxTo(outcome?W+110*U:-110*U,1.25,true);if(outcome)HYt=1;else HNt=1;const win=outcome?'yes':'no',lose=outcome?'no':'yes';
   for(const d of drops)if(d.side===lose){dustFrom(d.x,d.y-2*U,d.y+2*U,lose,3);d.done=true;d.el.remove()}drops=drops.filter(d=>!d.done);
   /* the losers dissolve into dots, the front of the queue first */
   people.filter(p=>p.side===lose&&p.mode!=='gone').sort((a,b)=>Math.abs(a.x-W/2)-Math.abs(b.x-W/2)).forEach((p,i)=>{p.mode='dissolve';p.delay=i*.035;p.fade=0});
@@ -7321,7 +7207,7 @@ function duqStop(land){
   if(st){const ph=st.phase;
    if(st.cycle!==fCycle){if(fCycle!==-1&&phase!=='bet')nextEvent();fCycle=st.cycle}
    if(ph==='drift'||ph==='freeze'){const late=ph==='freeze'||st.tc>10.6;phase=late?'gather':'bet';bet(late?rate*1.7:rate,st.p);
-    const pc=Math.round(st.p*100);if(pc!==chipPc){chipPc=pc;chipP.className='sb-p';chipP.textContent=pc+'% Yes';lvShare(pc)}}
+    const pc=Math.round(st.p*100);if(pc!==chipPc){chipPc=pc;chipP.className='sb-p';chipP.textContent=pc+'% Yes'}}
    else if(ph==='snap'||ph==='hold'){if(phase!=='resolve'){phase='resolve';pt=0;outcome=st.winner===1;resolve()}glow=Math.min(1,glow+dt/.45)}
    else{if(phase==='resolve'){phase='quiet';pt=0;winnersLeave()}glow=Math.max(0,glow-dt/.5)}
    return}
@@ -7375,13 +7261,13 @@ function duqStop(land){
  function still(){people=[];const f=F(),st=f&&f.state?f.state():null,py=st?st.p:ev[2]/100;const cap=Math.floor((W/2-80*U)/SP),n=Math.min(cap*2,Math.round(cap*1.1));const y=Math.round(n*py);
   for(let i=0;i<n;i++){const side=i<y?'yes':'no';people.push({side,x:0,s:size(),ph:0,dir:side==='yes'?1:-1,mode:'queue',a:1})}
   const qi={yes:0,no:0};for(const p of people)p.x=slot(p.side,qi[p.side]++);
-  chipP.textContent=Math.round(py*100)+'% Yes';lvShare(Math.round(py*100));HY=HN=HYt=HNt=.55;paint()}
+  chipP.textContent=Math.round(py*100)+'% Yes';HY=HN=HYt=HNt=.55;paint()}
  function frame(t){if(!running){raf=0;return}const dt=Math.min(.05,last?(t-last)/1000:0);last=t;tick(dt);paint();raf=requestAnimationFrame(frame)}
  function prepare(){if(ready)return;ready=true;layout();nextEvent();if(reduced){setTimeout(still,0);return}
   /* a warm start: the first bets have landed */
   for(let i=0;i<60;i++)tick(1/30)}
- function start(){if(!root.hidden){land.classList.add('hl-live','hl-'+HLM);if(lvSr)lvSr.textContent=HLM==='ladder'?(rows[0]?'Will it happen? '+rows[0].ev[1]:lvSrTxt):HLM==='reel'?(ev?'Will '+rlText(ev[0])+'?':lvSrTxt):MB_SR;if(HLM==='maybe')mbIntro();if(HLM==='reel'&&ctaTxt)ctaTxt.textContent='Call it'}prepare();if(HLM==='reel'&&!root.hidden&&ev&&ctaEl)ctaEl.dataset.goEv=ev[0];heroOn=true;placeHero();if(G&&!root.hidden)G.resume();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
- function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0;if(G)G.pause();heroOff();if(root.hidden){land.classList.remove('hl-live','hl-ladder','hl-maybe','hl-reel');if(lvSr)lvSr.textContent=lvSrTxt;if(ctaTxt)ctaTxt.textContent=ctaLbl;if(ctaEl)delete ctaEl.dataset.goEv}}   /* v241: the live headline goes with version 3, not with a hidden tab */
+ function start(){prepare();heroOn=true;placeHero();if(G&&!root.hidden)G.resume();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
+ function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0;if(G)G.pause();heroOff()}
  function commit(yes){if(!ready||reduced||phase==='resolve'||phase==='quiet')return;drop(yes?'yes':'no',true)}
  /* the words «yes» and «no» in the headline drop your own dot (as y / n do) */
  document.addEventListener('click',e=>{if(root.hidden||!running)return;const w=e.target.closest&&e.target.closest('#landing .headline .w');if(!w)return;commit(w.classList.contains('yes'))});
