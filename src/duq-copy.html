@@ -5767,7 +5767,12 @@ function duqStop(land){
     land reaches out under the YES queue and the red under the NO queue, each as wide as its share of the bets (the chip's
     live share, ≈ 0.8 of the screen between them), so with the bets their edges crawl in and out; past them the globe is
     FreedX's own, white; through the last-minute rush the shares sit near even; at the outcome the winner's land runs out to
-    its edge and floods the loser's. */
+    its edge and floods the loser's.
+    v234 (the user, on the territories picture: «globus mojet ne dvigaca, kak est v kartinke, kontinenti krasni i zelyoni
+    kogda dobavlyaeca lyudi togda podsvechivayuca polnim»): the globe stands still (Europe, Africa, the Middle East) and the
+    territories are gone — the land is green on the YES half and red on the NO half in full; each person who joins a queue
+    lights its half's continents up (in 0.1 s, fading over 0.9 s), so while bets come in they glow full and when nobody
+    joins they sink to a quiet colour; at the outcome the winner's land flares as its colour floods the globe. */
  const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  /* [event id, question, chance of Yes] — the prototype's own markets */
  const EVS=[['btc','Bitcoin above $150k by New Year?',41],['ecb','ECB cuts rates in October?',62],['shutdown','Shutdown lasts 30+ days?',62],['santa','Santa delivers 7B+ gifts?',71],['dem2028','Newsom wins the 2028 nomination?',31],['ucl','Chelsea beat Barcelona?',40],['nba','Clippers beat the Raptors?',45],['eth','Ethereum below $1,500 this year?',64],['nuclear','Nuclear detonation in 2025?',23],['dotamajor','Juggernaut wins the Dota 2 major?',18]];
@@ -5788,7 +5793,7 @@ function duqStop(land){
     of latitude 90 … −10 as run lengths (water, land, water …, two characters a run, a row each) ---- */
  const LANDR='BG,BG,BG,BG,BG,BG,BG,BG,BG,BG,BG,BG,BG,3A0508030t0b6Q,330f0V0o6J,2w0o0A050506040m6M,2n0o081G090A62,2i03040m061c61,2f09040f051c1y0202041K0A2a,2d0H0304040P051b160H0f041N0D2Y,2e0I010U0C1U0x0W240E2W,2L040K0F010J0H1X0y0J2J0C03022R,29010C080503060C020M091e0-0I2W092M,2Q0603060508030M061i100D05032Q0A2M,26050T040C03020F0E1d130906054u,1u080u0H0L1a13062f072L,1s090E020N0B040N0F1Y1B021Y05110C03052A,1q06060705040B0908060i1X2a0D0y0U26,1-0B040707090A060B060h1H2T0C0p0l0l0C19,1z0N0A060305030P0h1D2P0A0r0q0k0G03040_,25080S03030O0k1B2O080r0o0s0B08030z,1l0E1w192L080u0l2C,1m0G0W0504090L050i172L080j110u021C,1l0G0K03080703090406040601080h122O070l1D080A0P0619,1k0D020C02030106060B02060608010A05030h112M080Q060G1X1c,1j0C020K0106070A0203080J03070f0z2Q060Q0805010404031W0L0K0z,1j0A030S0A060303080V0c112L080P080403011g0L0L0y,00040h030_04070R0B010407060b0b0t01062N050M0A031n030d0v01,0e0F140U0E09060c0W01030r03041S0C0m050L0B042f0e02,0a0T0c030O0Q0B0A090b0S0_1P0I190B032i0e,0Y0i0H0D01020402090W040502070D070203030L0P07010t1M0M0202150B022j05030C0E06,0X0p040Z050R070603080A080A0I0X0q1M0W0r090609022-040I01,00020P1e020901040O08010306080B0F0Y0n1O0f0f02030C0508043I,00050M1e0C080C05030D04080B01040E0S0j1T0l09040B05020Q0209023J,00080M1l020f030A0904040G0N0g1V0p0705050m043I,000A0M2b0902060I0K0f1V0s0603050n043J,000A01060I2W0I0N0H0c1W0t070t043K,000J0A04032O0O0C03080I0a0O0409050s0h06060304014G,0001010H062Y01010N0C05050J0U0T0J0r0L040L0B4N,000106080B2W02030D0L06020M0P0Z0I0o0K080J0A4O,0A050C2U0306090P0R0O0Z0I0o0L060L0304034N01,0C020O2I030A0G0H0Q0M0b0F0o0M050O034Q04,0c2D080602040H0E0R0L0g050r0M054u03,0K020901032G0A020Q0801040S0J1Z0M054x02,0U2I0H030N070X0G1Y0N064z01,0T2H0J010601030909050X0F1W0O074S030O07,0S2H0V0B0k0E1V0P084Q030L0B,0T2F0W0E0i0D1V0O094E0604040J0E,0T0R0107031e0Y0G0h0A1W0P084C0901040J0G,0Q02020P0207061b0Y0G0m041X0R0806063z0E0C03030I,0a0I03040H1T0Y0G09022B0Q0K3y0D080U,0a0G05020M1Q0X0H07052A09010F0B3w05070B060Y,0a01040C0U1Q0U0K04072907040C0D3j0Z060Z,0j070Z1N0V0U1o040K04060A0G3f0Z070a,0j0403030b1J0V0U1n0401010S0A0G3d0Y0A0a,0h0404040c1I0W0U1l080N0203090A03023d0Y0D0Y,0f050m1O0P0U1l070L050408093h0Z0E0Y,0d050p1Q0M0U1l070L0603070A3g0a0E0Y,0a060s1S0I0X1k070K04020301030D3e0b0D0a,0Y030z1X080c1e0104070J0402030H3c0d0D0a,0W02111W060i1Y0503070J030F02033d0e0D0a,1Z1W070i1W0605060I050202053p04020W090d,1U02051V060j1U0706060E02014804010Q080e,1U02051V070j1T07030A0A4F02020Q080e,1c1V060k1S06040C064L0Q050h,1e1T060j1T05050C064L0R040h,1e1V030j1U02070C064I01040Q030i,1e2C03021d0B024K03030Q010k,1f2904021c0B024M030418,1d05012305021c04094N030418,1g04011p06020A051l4P030517,1i03021l03030402070A1d4S040517,1j04021h03060B0B1Y4X04021A,1l02021g02080B0C1X4X04021A,1l03011f01090B0D1Y4V05011B,1l1i010A0J0102021b4R06021A,1m1u06010D021c1D030P052h070319,1m1t020301021s100306060M082g08011B,1m201r0_0703050L0A2f1L,1m1-1t0S030V0608010L082h0A011B,1m1o03051x0S050R0A03050J092g0B021A,1m1m04041z0S060Q0K0H072h0B05020115,1l1j08021-0J0605050Q0M0G072e0D0815,1l1i1x0Q0D06070M0P0E082c0C0A15,1l1i1w0P0C010207070L0R0C0A2U03010D0818,1l1i1x0O0B020407080I0R0D092S0J03020219,1l1i1x0N0C020508070H09070B0E0801022O0K021E,1l1f1-0M0M08050J050B080G0B2N0L021D,1l1c210J0G02090803090303040f0729010F0L031D,1l1b220J0G030A030202020A050j0727030D0N041C,1m1Z230I0H030B020706070k0725040303060P041C,1m1Z220J0H020D020705070k0724050107040P041C,1n1X230J0W020706060j0A1_0F060N041D,1o1W240H0X010906050j0A200E070M031E,1p1T260G0R060B05070i0A220E060K041E,1p1T260F0M0106040D03090j082908060H061E,1q1S2B080C0E08010E020A0k022A0A070E091E,1r1S2B020B0K0d010304042g0A070D091F,1r1S2B01090O0o2f0C060D091F,1s1Q2B0Z0P0101030D03042d0E05070F1G,1t1O2C0Y0i02052d0E03080E1I,1v1K2D0Z0o2f0M04020101041M,1x1G2E0a0o2g0K02020401021O,1z1C2E0e0m2g0I081T,1z1B2E0k0E040O2i0H051W,1-192E0n0A070N2j0I021X,1-182F0o090A0J2l0H021X,1_0303102G0q070F0405042m0H011Y,1_04030_2G0t033C1r,2003030l07092G461r,2102040k0C052E1q042G1q,2202030Z08030D042D1M010U052F1q,2302030X0P052B1t052E1q,2303030U0R05291Q010U052D1r,2304030S0S05271S050R052B1s,2305030Q0U05251U050R07271t,2504040O0U05251U050S0704031_1t,2702040O0V04231X050R0C01021z1u,2703030O0W03231Y050Q02010802021y1v,2703050M0X01231Z050T07030808041f1w,2802060L0c021z1a050S06040L1e04021q,2902060K0d011y1c040S020201060L1c04021r,2B01060J2Z1d060d0K1Z05031r,2C01060I2Z1d060f0J1X06031r,2K0H0R081_1f060f0K1T09011s,2K0H0Q0204071x1g050f0K0g020i0E011s,2L0G0Z061u1i040f0K0d060f27,2L0G0G050H041t1i050d0M0Y0A0V04022B,0l011b0H0D070I061q1i050c0S0T0B0T06012B,2L0H0D060K061q1h060a0T0S0C0S07012B,0m021Z0I0C060S061i1h070Z0T0Q0F0Q06042A,0m021a0I0A070T071g1h080Y0U0O0H0P06032B,2O0G08090U081e1i080V0W0N0J0O05032C,2P0V0K03040708031Y1j070U0X0M0K0P0S031q,2T0R0L011v1k070R0Z0L0M0O0S041p,2U0Q2F1l060Q0a0J0O0P0R041p,2X0N2F1l070M0e0I0O05010K0Q041p,2Z0K2G1l070K0g0G0Q03030L0O041q,2d01050J271m060K0g0D0Z0M0N031r,2k0J251o050I0j0C0Z0N0M031r,2l0J231r040D0o0B0a0M0M031r,2m0H251r030C0p0B0a0M0O031p,2q0D251s02090s0B0a0M0O061m,2t010108251t02050v0C0a03020H0M0203021m,2v08251u01030y0A0b03020H0N0104011m,2w070N011k1u0_0A0b03050E0U021j,2x060M0302011h1s0E020n090b03050D0Q0105011j,2y050J0501051g1s08070n090b02070B0R0203021j,2y050G0F080203011T1r030B0o080b0208090M010501010201011k,2y060F07020B020401021T230o070c020A060N0106031m,2z060E07020J1V210q050d020B040N0107021n,300305040408010M1U200q0502020Z020B020O010E011i,3108020a1V1_0q0304020Y040A010O010D041h,3205040c1T1-0s0203040Y030k071h,3503030d1S1-0x040Z030h091h,3601050d1S1y0y050Z020h0103051h,3D0d1T1w0z040a030U020D0301011h,3D0e1T1u0-020c040S040D021j,3D0m1M0M081P1c050Q060D011j,3D0o1M0I0B1N1U0406050O081w,3D0p1M050O1L1V0505060M081x,3D0q1N010R01041E1X0504060L081y,3D0r1v1C1Y0504050K081z,3D0r1v1B1a0503050J091z,3B0u1u1A1c0503040G0C1z,3B0u1u191e0503040E0E1y,3B0v1t171h0702020B0H0J011e,3A0w1t161j0702010A0J0C0105021d,380y1t151k080C0I050806031c,380x1u141m080B0H05010E021d,37101p141n080B0H04011u,371001021m131p070B0H040204010A0106051S,36171j121r080A0F05060G071S,36181i111t070B0D05060K0506011K,36191i0_1u080A0D05050M0404061H,381B1f0y1x09080D05060D010704030B0J010v,381I1Y0y1y080C0102060503010308010205040L1A,371K1Y0x1z070H03070201030L01010L17,361M1Y0v1-070R0202030O0K0F010s,351P1X0u20050R0204010R0I0C010u,351S1V0s22040R0204010T0H0A020u,361S1U0s24010v02060I030507010o,361S1V0r25050q02070J0E010n,371R1V0s240604020s0H0H0101010k,381Q1W0r260D0p0H0K010j,391P1W0r2A0C0l0J0M010g,391P1W0r2G08050207010T03020705040N010e,3A1O1W0r2R04020505040R0606040O010c,3B1M1X0r2f030X0109050N010b,3B1L1Y0s2V0206030j050K010d';
  const D2R=Math.PI/180,TILT=55,LMIN=6;   /* the rim stands on latitude 55°: the window runs from it down to ≈ 22° (≈ 15° on a phone) */
- let SPIN=-14,SHARE=null,MASK=null,BX=0,bxA=0,bxB=0,bxT=1,bxD=1,bxFlood=false,wave=0;   /* SPIN: the window's middle is longitude −SPIN — Europe and Africa first */
+ let SPIN=-18,MASK=null,BX=0,bxA=0,bxB=0,bxT=1,bxD=1,bxFlood=false,wave=0;   /* the window's middle is longitude −SPIN: v234 — the globe stands still over Europe, Africa and the Middle East */
  let gl=null,BP=null,GP=null,qbuf=null,pbuf=null,ibuf=null,DOTN=0,dotRows=0;const BU={},GU={},MAT=new Float32Array(9);
  function mask(){if(MASK)return MASK;const A='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_',ix={};for(let i=0;i<64;i++)ix[A[i]]=i;
   const m=new Uint8Array(720*200);LANDR.split(',').forEach((r,y)=>{let x=0,v=0;for(let i=0;i+1<r.length;i+=2){const n=ix[r[i]]*64+ix[r[i+1]];if(v)m.fill(1,y*720+x,y*720+x+n);x+=n;v^=1}});return MASK=m}
@@ -5802,41 +5807,35 @@ function duqStop(land){
    for(let j=0;j<cnt&&n<cap;j++){const lng=-180+(j+off)*dl;let cov=0;for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)cov+=w[a+1]*w[b+1]*landAt(lat+a*dLat*.36,lng+b*dl*.36);
     const r=lng*D2R,h=Math.sin(i*12.9898+j*78.233)*43758.5453;pos[n*3]=cl*Math.sin(r);pos[n*3+1]=sl;pos[n*3+2]=cl*Math.cos(r);inf[n*2]=cov/16>=.5?1:0;inf[n*2+1]=h-Math.floor(h);n++}}
   return {pos:pos.subarray(0,n*3),inf:inf.subarray(0,n*2),n}}
- /* how much land is in sight for each 2° of the turn (0 … 1): the turn is ≈ 0.55°/s over land and up to ≈ 2.4°/s over open sea */
- function shares(){const s=new Float32Array(180),t=new Float32Array(180);let mx=0;
-  for(let k=0;k<180;k++){const c0=-180+k*2;let a=0,ws=0;for(let i=0;i<8;i++){const lat=TILT-30+i*3.6;for(let j=-9;j<=9;j++){const wt=1-Math.abs(j)/11;a+=wt*landAt(lat,c0+j*4.2);ws+=wt}}s[k]=a/ws;if(s[k]>mx)mx=s[k]}
-  for(let k=0;k<180;k++){let a=0;for(let d=-3;d<=3;d++)a+=s[(k+d+180)%180];t[k]=a/7/(mx||1)}return SHARE=t}
- function spinSpeed(){if(!SHARE)shares();const k=Math.round((((180-SPIN)%360+360)%360)/2)%180;return .55+1.85*Math.pow(1-Math.min(1,SHARE[k]),1.6)}
  /* turn by SPIN round the poles, then tip the pole back so latitude TILT stands at the top of the rim */
  function spinMatrix(){const f=SPIN*D2R,a=(TILT-90)*D2R,cf=Math.cos(f),sf=Math.sin(f),ca=Math.cos(a),sa=Math.sin(a);
   MAT[0]=cf;MAT[1]=sa*sf;MAT[2]=-ca*sf;MAT[3]=0;MAT[4]=ca;MAT[5]=sa;MAT[6]=sf;MAT[7]=-sa*cf;MAT[8]=ca*cf;return MAT}
  /* the line between the halves: in the middle; at the outcome it runs out to the loser's edge (the winner's colour floods) */
  const inOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
  function bxTo(x,d,flood){bxA=BX;bxB=x;bxT=0;bxD=d;bxFlood=flood}
- /* v233: the territories — from the middle the YES land reaches left and the NO land right, each as wide as its share */
- let TL=0,TR=0,TP=.5;
- function terrAt(res){const span=.8*W;let l=W/2-TP*span-8*U,r=W/2+(1-TP)*span+8*U;if(res){if(outcome)l=-260*U;else r=W+260*U}return [l,r]}
- function liveShare(){const f=F(),st=f&&f.state?f.state():null;return st?st.p:(ev?ev[2]/100:.5)}   /* as on the chip */
- function terrSnap(){const res=phase==='resolve'||phase==='quiet';if(!res)TP=liveShare();[TL,TR]=terrAt(res)}
- function stepTerr(dt){const res=phase==='resolve'||phase==='quiet';if(!res)TP=liveShare();const [l,r]=terrAt(res),k=1-Math.exp(-dt*(res?2.4:3.5));TL+=(l-TL)*k;TR+=(r-TR)*k}
+ /* v234: each half's land lights up as people join its queue — a person in, its light jumps (0.1 s) and fades (0.9 s; 1.6 s
+    through the outcome): with bets coming in the continents glow full, when nobody joins they sink to a quiet colour */
+ let HY=0,HN=0,HYt=0,HNt=0;
+ function lightUp(side){if(side==='yes')HYt=Math.min(1,HYt+.35);else HNt=Math.min(1,HNt+.35)}
+ function stepLight(dt){const dk=Math.exp(-dt/(phase==='resolve'?1.6:.9)),ak=1-Math.exp(-dt/.1);HYt*=dk;HNt*=dk;HY+=(HYt-HY)*ak;HN+=(HNt-HN)*ak}
  function stepBx(dt){if(bxT<1){bxT=Math.min(1,bxT+dt/bxD);BX=bxA+(bxB-bxA)*(bxFlood?inOut(bxT):settle(bxT))}wave=bxFlood&&bxT<1?Math.sin(Math.PI*Math.min(1,bxT*1.08)):0}
  const BVS='attribute vec2 aQ;void main(){gl_Position=vec4(aQ,0.,1.);}';
  /* the body: dark (light) violet from the rim down into the page, a breath of each half's colour, the air lit round the rim, the rim line */
- const BFS=['precision highp float;uniform vec2 uC,uY;uniform float uR,uH,uAw,uLw,uBx,uBw,uTint;uniform vec3 uTop,uBot,uYes,uNo;uniform vec4 uRim,uAtm,uT;',
+ const BFS=['precision highp float;uniform vec2 uC,uY;uniform float uR,uH,uAw,uLw,uBx,uBw,uTint;uniform vec3 uTop,uBot,uYes,uNo;uniform vec4 uRim,uAtm;',
   'void main(){vec2 p=vec2(gl_FragCoord.x,uH-gl_FragCoord.y);float d=length(p-uC)-uR;vec4 o;',
-  'if(d<0.){float t=clamp((p.y-uY.x)/(uY.y-uY.x),0.,1.),kb=smoothstep(uBx-uBw*3.,uBx+uBw*3.,p.x),tb=mix(smoothstep(uT.x-uBw*2.,uT.x+uBw*2.,p.x),1.-smoothstep(uT.y-uBw*2.,uT.y+uBw*2.,p.x),kb);',
-  'vec3 b=mix(uTop,uBot,t);b=mix(b,mix(uYes,uNo,kb),uTint*(1.-.7*t)*tb);',
+  'if(d<0.){float t=clamp((p.y-uY.x)/(uY.y-uY.x),0.,1.),kb=smoothstep(uBx-uBw*3.,uBx+uBw*3.,p.x);',
+  'vec3 b=mix(uTop,uBot,t);b=mix(b,mix(uYes,uNo,kb),uTint*(1.-.7*t));',
   'b=mix(b,uAtm.rgb,uAtm.a*.5*exp(d/(uAw*.5)));o=vec4(b,1.);}else{float a=uAtm.a*exp(-d/uAw);o=vec4(uAtm.rgb*a,a);}',
   'float l=(1.-smoothstep(uLw,uLw+1.2,abs(d)))*uRim.a;gl_FragColor=o*(1.-l)+vec4(uRim.rgb*l,l);}'].join('');
  /* the dots: on the near side only, smaller and fainter toward the rim; each takes its half's colour (land bright, sea dim);
     while the winner's colour floods, the loser's dots ahead of the line dim and a wave of light rides the line */
- const GVS=['precision highp float;attribute vec3 aP;attribute vec2 aI;uniform mat3 uM;uniform vec2 uC,uV;uniform float uR,uBx,uWin;uniform vec3 uYes,uNo,uNeu;uniform vec4 uA,uS,uT;varying vec4 vC;',
+ const GVS=['precision highp float;attribute vec3 aP;attribute vec2 aI;uniform mat3 uM;uniform vec2 uC,uV;uniform float uR,uBx,uWin;uniform vec3 uYes,uNo;uniform vec4 uA,uS,uH;varying vec4 vC;',
   'void main(){vec3 q=uM*aP;vec2 s=vec2(uC.x+q.x*uR,uC.y-q.y*uR);',
   'if(q.z<=0.||s.y>uV.y+6.||s.x<-6.||s.x>uV.x+6.){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;vC=vec4(0.);return;}',
-  'float k=step(uBx,s.x),lose=uWin>0.?k:1.-k,wv=uA.w*(1.-smoothstep(0.,uS.w,abs(s.x-uBx))),t=k<.5?step(uT.x,s.x):step(s.x,uT.y);',
-  'float a=mix(uA.y,uA.x,aI.x)*smoothstep(0.,.2,q.z)*(1.-.55*uA.z*lose*t)*(1.+1.4*wv)*mix(mix(uT.w,uT.z,aI.x),1.,t);',
-  'float z=uS.x*mix(uS.y,1.,aI.x)*(.42+.58*sqrt(q.z))*(.9+.2*aI.y)*(1.+.6*wv);if(z<1.6){a*=z/1.6;z=1.6;}a=min(a,1.);',
-  'gl_PointSize=z;gl_Position=vec4(s.x/uV.x*2.-1.,1.-s.y/uV.y*2.,0.,1.);vC=vec4(mix(mix(uNeu,mix(uYes,uNo,k),t),vec3(1.),max(uS.z*aI.x*t,.45*wv))*a,a);}'].join('');
+  'float k=step(uBx,s.x),lose=uWin>0.?k:1.-k,wv=uA.w*(1.-smoothstep(0.,uS.w,abs(s.x-uBx))),h=mix(uH.x,uH.y,k);',
+  'float a=mix(uA.y,uA.x*(uH.z+(1.-uH.z)*h),aI.x)*smoothstep(0.,.2,q.z)*(1.-.55*uA.z*lose)*(1.+1.4*wv);',
+  'float z=uS.x*mix(uS.y,1.+.22*h,aI.x)*(.42+.58*sqrt(q.z))*(.9+.2*aI.y)*(1.+.6*wv);if(z<1.6){a*=z/1.6;z=1.6;}a=min(a,1.);',
+  'gl_PointSize=z;gl_Position=vec4(s.x/uV.x*2.-1.,1.-s.y/uV.y*2.,0.,1.);vC=vec4(mix(mix(uYes,uNo,k),vec3(1.),max(uS.z*aI.x*h,.45*wv))*a,a);}'].join('');
  const GFS='precision mediump float;varying vec4 vC;void main(){float r=length(gl_PointCoord-.5)*2.;gl_FragColor=vC*(1.-smoothstep(.55,1.,r));}';
  function glInit(){if(gl===false)return false;if(gl)return true;
   try{gl=gcv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'})}catch(e){gl=null}
@@ -5844,8 +5843,8 @@ function duqStop(land){
   const sh=(t,src)=>{const o=gl.createShader(t);gl.shaderSource(o,src);gl.compileShader(o);return o};
   const pr=(v,f,at)=>{const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,v));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,f));at.forEach((a,i)=>gl.bindAttribLocation(p,i,a));gl.linkProgram(p);return gl.getProgramParameter(p,gl.LINK_STATUS)?p:null};
   BP=pr(BVS,BFS,['aQ']);GP=pr(GVS,GFS,['aP','aI']);if(!BP||!GP){gl=false;return false}
-  'uC uY uR uH uAw uLw uBx uBw uTint uTop uBot uYes uNo uRim uAtm uT'.split(' ').forEach(k=>BU[k]=gl.getUniformLocation(BP,k));
-  'uM uC uV uR uBx uWin uYes uNo uNeu uA uS uT'.split(' ').forEach(k=>GU[k]=gl.getUniformLocation(GP,k));
+  'uC uY uR uH uAw uLw uBx uBw uTint uTop uBot uYes uNo uRim uAtm'.split(' ').forEach(k=>BU[k]=gl.getUniformLocation(BP,k));
+  'uM uC uV uR uBx uWin uYes uNo uA uS uH'.split(' ').forEach(k=>GU[k]=gl.getUniformLocation(GP,k));
   qbuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,qbuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);pbuf=gl.createBuffer();ibuf=gl.createBuffer();
   gcv.addEventListener('webglcontextlost',e=>{e.preventDefault();gl=false;gcv.style.display='none';if(!running&&ready)paint()});   /* the 2D globe (no dots) takes over */
   return true}
@@ -5857,16 +5856,16 @@ function duqStop(land){
   gl.useProgram(BP);gl.bindBuffer(gl.ARRAY_BUFFER,qbuf);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);gl.disableVertexAttribArray(1);
   gl.uniform2f(BU.uC,cx,cy);gl.uniform2f(BU.uY,(BASE-TOP)*D,ch);gl.uniform1f(BU.uR,R);gl.uniform1f(BU.uH,ch);gl.uniform1f(BU.uAw,24*U*D);gl.uniform1f(BU.uLw,.75*D*(1+.6*rm));
   gl.uniform1f(BU.uBx,BX*D);gl.uniform1f(BU.uBw,34*U*D);gl.uniform1f(BU.uTint,G.tint);gl.uniform3fv(BU.uTop,G.top);gl.uniform3fv(BU.uBot,G.bot);gl.uniform3fv(BU.uYes,col.yesR);gl.uniform3fv(BU.uNo,col.noR);
-  gl.uniform4f(BU.uRim,rim[0],rim[1],rim[2],G.rimA+(1-G.rimA)*rm);gl.uniform4f(BU.uAtm,G.atm[0],G.atm[1],G.atm[2],G.atmA);gl.uniform4f(BU.uT,TL*D,TR*D,0,0);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  gl.uniform4f(BU.uRim,rim[0],rim[1],rim[2],G.rimA+(1-G.rimA)*rm);gl.uniform4f(BU.uAtm,G.atm[0],G.atm[1],G.atm[2],G.atmA);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   gl.useProgram(GP);gl.bindBuffer(gl.ARRAY_BUFFER,pbuf);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,ibuf);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,2,gl.FLOAT,false,0,0);
-  gl.uniformMatrix3fv(GU.uM,false,spinMatrix());gl.uniform2f(GU.uC,cx,cy);gl.uniform2f(GU.uV,cw,ch);gl.uniform1f(GU.uR,R);gl.uniform1f(GU.uBx,BX*D);gl.uniform1f(GU.uWin,outcome?1:-1);gl.uniform3fv(GU.uNeu,G.neu);gl.uniform4f(GU.uT,TL*D,TR*D,G.neuA,G.neuS);
+  gl.uniformMatrix3fv(GU.uM,false,spinMatrix());gl.uniform2f(GU.uC,cx,cy);gl.uniform2f(GU.uV,cw,ch);gl.uniform1f(GU.uR,R);gl.uniform1f(GU.uBx,BX*D);gl.uniform1f(GU.uWin,outcome?1:-1);gl.uniform4f(GU.uH,HY,HN,G.calm,0);
   gl.uniform3fv(GU.uYes,col.yesR);gl.uniform3fv(GU.uNo,col.noR);gl.uniform4f(GU.uA,G.land,G.sea,(phase==='resolve'||phase==='quiet')?glow:0,wave);gl.uniform4f(GU.uS,Math.PI*RAD/dotRows*.4*D,.6,G.lift,100*U*D);
   gl.drawArrays(gl.POINTS,0,DOTN);return true}
  const rgbOf=cl=>{const k=document.createElement('canvas').getContext('2d');k.fillStyle='#000';k.fillStyle=cl;const v=k.fillStyle;if(v[0]==='#'){const n=parseInt(v.slice(1),16);return [(n>>16)/255,(n>>8&255)/255,(n&255)/255]}const m=v.match(/[\d.]+/g)||[0,0,0];return [m[0]/255,m[1]/255,m[2]/255]};
  const rgba=(v,a)=>`rgba(${Math.round(v[0]*255)},${Math.round(v[1]*255)},${Math.round(v[2]*255)},${a})`;
  function globeColors(){col.yesR=rgbOf(col.yes);col.noR=rgbOf(col.no);const bg=rgbOf(col.bg||(col.dark?'#07090f':'#f0f0f5'));
-  col.globe=col.dark?{top:rgbOf('#1b1640'),bot:bg.map((v,i)=>v*.5+[.047,.039,.1][i]*.5),rim:rgbOf('#a996ff'),rimA:.85,atm:rgbOf('#7b5cff'),atmA:.5,land:1,sea:.12,tint:.07,lift:.16,neu:rgbOf('#e4deff'),neuA:.6,neuS:.4}
-   :{top:rgbOf('#e7e3fb'),bot:bg,rim:rgbOf('#6f5be6'),rimA:.55,atm:rgbOf('#8d78f2'),atmA:.22,land:.95,sea:.15,tint:.06,lift:0,neu:rgbOf('#6a5fb0'),neuA:.5,neuS:.45}}
+  col.globe=col.dark?{top:rgbOf('#1b1640'),bot:bg.map((v,i)=>v*.5+[.047,.039,.1][i]*.5),rim:rgbOf('#a996ff'),rimA:.85,atm:rgbOf('#7b5cff'),atmA:.5,land:1,sea:.12,tint:.07,lift:.3,calm:.6}
+   :{top:rgbOf('#e7e3fb'),bot:bg,rim:rgbOf('#6f5be6'),rimA:.55,atm:rgbOf('#8d78f2'),atmA:.22,land:.95,sea:.15,tint:.06,lift:0,calm:.58}}
  /* without WebGL: the body, its air and the rim in 2D (no dots) */
  function globe2D(){const cx=W/2,cy=BASE+RAD-TOP,G=col.globe,half=Math.asin(Math.min(1,(W/2+20)/RAD));
   const atm=c.createRadialGradient(cx,cy,RAD-4*U,cx,cy,RAD+64*U);atm.addColorStop(0,rgba(G.atm,G.atmA));atm.addColorStop(.18,rgba(G.atm,G.atmA*.35));atm.addColorStop(1,rgba(G.atm,0));c.fillStyle=atm;c.beginPath();c.arc(cx,cy,RAD+64*U,0,7);c.fill();
@@ -5883,7 +5882,7 @@ function duqStop(land){
   TOP=Math.round(BASE-130*U);DPR=Math.min(2,window.devicePixelRatio||1);   /* the canvases are the globe's band; a falling dot above it is a light DOM dot */
   for(const k of [cv,gcv]){k.style.top=TOP+'px';k.style.height=(H-TOP)+'px';k.width=Math.round(W*DPR);k.height=Math.round((H-TOP)*DPR)}
   chip.style.top=Math.round(BASE+50*U)+'px';colors();
-  if(phase==='resolve'||phase==='quiet')BX=bxB=outcome?W+110*U:-110*U;else BX=bxB=W/2;bxT=1;terrSnap();
+  if(phase==='resolve'||phase==='quiet')BX=bxB=outcome?W+110*U:-110*U;else BX=bxB=W/2;bxT=1;
   if(glInit())uploadDots()}
  /* v231 (the user, 22 Nov 2026: «1» of «mojesh predlagat mesto shose drugoe pod ludmi 4 varianta»): the road became a planet's
     horizon — a wide arc; everyone stands on it upright to the ground, tilted along its normal. v232: the arc is the globe's rim
@@ -5899,7 +5898,7 @@ function duqStop(land){
   drops.push({el,side,you:!!you,x,y,vy:0,tx:slot(side,qlen(side)+drops.filter(d=>d.side===side).length)+(Math.random()-.5)*SP*.6})}
  function stepDrops(dt){for(const d of drops){d.vy+=(d.you?1900:1150)*U*dt;d.y+=d.vy*dt;d.x+=(d.tx-d.x)*(1-Math.exp(-dt*5));
    d.el.style.transform=`translate3d(${d.x.toFixed(1)}px,${d.y.toFixed(1)}px,0)`;
-   if(d.y>=gy(d.x)-22*U){d.done=true;d.el.remove();people.push({side:d.side,x:d.x,s:size(),ph:Math.random()*6,dir:d.side==='yes'?1:-1,mode:'walk',you:d.you,v:Math.max(46*U,W*.05)*(.9+Math.random()*.2),a:1,fade:0,delay:0,m:0});
+   if(d.y>=gy(d.x)-22*U){d.done=true;d.el.remove();lightUp(d.side);people.push({side:d.side,x:d.x,s:size(),ph:Math.random()*6,dir:d.side==='yes'?1:-1,mode:'walk',you:d.you,v:Math.max(46*U,W*.05)*(.9+Math.random()*.2),a:1,fade:0,delay:0,m:0});
     puffs.push({x:d.x,y:gy(d.x)-22*U,t:0,side:d.side})}}
   drops=drops.filter(d=>!d.done)}
  const size=()=>.86+.42*Math.pow(Math.random(),3);
@@ -5913,7 +5912,7 @@ function duqStop(land){
   if(first||reduced)apply();else{chip.classList.add('swap');setTimeout(()=>{apply();chip.classList.remove('swap')},250)}
   phase='bet';pt=0;nextBet=.3;for(const d of drops)d.el.remove();drops=[];plus=[];glow=0;chipPc=-1;if(!first)bxTo(W/2,1.1,false)}
  function arrive(){const yes=outcome;chipP.className='sb-p res '+(yes?'yes':'no');chipP.innerHTML=(yes?'YES':'NO')+(yes?CHECK:CROSS)}
- function resolve(){arrive();bxTo(outcome?W+110*U:-110*U,1.25,true);const win=outcome?'yes':'no',lose=outcome?'no':'yes';
+ function resolve(){arrive();bxTo(outcome?W+110*U:-110*U,1.25,true);if(outcome)HYt=1;else HNt=1;const win=outcome?'yes':'no',lose=outcome?'no':'yes';
   for(const d of drops)if(d.side===lose){dustFrom(d.x,d.y-2*U,d.y+2*U,lose,3);d.done=true;d.el.remove()}drops=drops.filter(d=>!d.done);
   /* the losers dissolve into dots, the front of the queue first */
   people.filter(p=>p.side===lose&&p.mode!=='gone').sort((a,b)=>Math.abs(a.x-W/2)-Math.abs(b.x-W/2)).forEach((p,i)=>{p.mode='dissolve';p.delay=i*.035;p.fade=0});
@@ -5945,7 +5944,7 @@ function duqStop(land){
   else if(phase==='gather'){bet(rate*1.7,ev[2]/100);if(pt>2.4){phase='resolve';pt=0;resolve()}}      /* the crowds sink low, the last bets rush in */
   else if(phase==='resolve'){glow=Math.min(1,glow+dt/.45);if(pt>2.6){phase='quiet';pt=0;winnersLeave()}}
   else if(phase==='quiet'){glow=Math.max(0,glow-dt/.5);if(pt>.6&&!people.some(p=>p.mode==='leave'||p.mode==='dissolve')&&!dust.length)nextEvent()}}
- function tick(dt){T+=dt;director(dt);stepDrops(dt);stepPeople(dt);stepFx(dt);SPIN+=spinSpeed()*dt;stepBx(dt);stepTerr(dt)}
+ function tick(dt){T+=dt;director(dt);stepDrops(dt);stepPeople(dt);stepFx(dt);stepBx(dt);stepLight(dt)}
  /* ---- drawing (canvas y = page y − TOP) ---- */
  function rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
  function person(p){const s=p.s*1.2*U,x=p.x,b=gy(p.x)-TOP,mv=p.moving,ph=p.ph,col1=p.side==='yes'?col.yes:col.no;
@@ -5990,7 +5989,7 @@ function duqStop(land){
  function still(){people=[];const f=F(),st=f&&f.state?f.state():null,py=st?st.p:ev[2]/100;const cap=Math.floor((W/2-80*U)/SP),n=Math.min(cap*2,Math.round(cap*1.1));const y=Math.round(n*py);
   for(let i=0;i<n;i++){const side=i<y?'yes':'no';people.push({side,x:0,s:size(),ph:0,dir:side==='yes'?1:-1,mode:'queue',a:1})}
   const qi={yes:0,no:0};for(const p of people)p.x=slot(p.side,qi[p.side]++);
-  chipP.textContent=Math.round(py*100)+'% Yes';TP=py;[TL,TR]=terrAt(false);paint()}
+  chipP.textContent=Math.round(py*100)+'% Yes';HY=HN=HYt=HNt=.55;paint()}
  function frame(t){if(!running){raf=0;return}const dt=Math.min(.05,last?(t-last)/1000:0);last=t;tick(dt);paint();raf=requestAnimationFrame(frame)}
  function prepare(){if(ready)return;ready=true;layout();nextEvent();if(reduced){setTimeout(still,0);return}
   /* a warm start: the first bets have landed */
