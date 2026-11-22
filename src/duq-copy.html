@@ -5501,6 +5501,9 @@ html[data-theme=dark] #grav .gv-in{box-shadow:0 1px 0 rgba(255,255,255,.05) inse
 #stopbg canvas{position:absolute;left:0;width:100%;display:block}
 #stopbg .sb-chip{position:absolute;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 4px;border-radius:var(--radius-border_radius_round);background:linear-gradient(var(--card),var(--card)),var(--bg);border:1px solid var(--hairline);color:var(--ink);font:600 13px/1 var(--font);white-space:nowrap;box-shadow:0 2px 10px rgba(8,11,15,.06);transition:opacity .25s cubic-bezier(.23,1,.32,1)}
 #stopbg .sb-chip.swap{opacity:0}
+#stopbg .sb-drop{position:absolute;left:0;top:0;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:currentColor;will-change:transform;pointer-events:none}   /* v230: a bet falling out of a Default crowd */
+#stopbg .sb-drop::before{content:"";position:absolute;left:1.5px;width:3px;bottom:4px;height:15px;border-radius:2px;background:linear-gradient(to top,currentColor,transparent);opacity:.55}
+#stopbg .sb-drop.yes{color:var(--yes)}#stopbg .sb-drop.no{color:var(--no)}#stopbg .sb-drop.you{box-shadow:0 0 0 1.5px var(--ink)}
 #stopbg .sb-chip img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none;background:var(--card-2)}
 #stopbg .sb-p{display:inline-flex;align-items:center;gap:4px;color:var(--yes-text);font-weight:700;font-variant-numeric:tabular-nums}
 #stopbg .sb-p.res.no{color:var(--no-text)}
@@ -5747,57 +5750,47 @@ function duqStop(land){
     The ending is «Толпа и люди», a mix of Default and 3: the Default's dot crowds float over their queues and a bet is a
     dot that drops out of its crowd and lands as a person at the end of the queue; near the close the crowds sink low over
     their queues and the last bets rush in; at the outcome the losers dissolve into dots that float up, the winners glow
-    with «+$» over them and their crowd bursts like a salute; then the winners walk off and the next event's crowds fade in. */
+    with «+$» over them and their crowd bursts like a salute; then the winners walk off and the next event's crowds fade in.
+    v230 (the user: «mne nujni chto krujki kak v defoul versi billi i ves ekran dvgalis»): the dots ARE the Default field now —
+    version 3 runs the real dot-crowd field over the whole screen and this scene rides its 20 s round: the field's drift = bets
+    (a dot leaves one of the field's own crowds and falls to its queue; the chip shows the field's live share), the end of the
+    drift and its freeze = the last-minute rush, the field's snap = the outcome (its winner), its relax = the winners walk off,
+    its next round = the next event. Its own little crowds are gone; it falls back to its own clock until the field is up. */
  const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  /* [event id, question, chance of Yes] — the prototype's own markets */
  const EVS=[['btc','Bitcoin above $150k by New Year?',41],['ecb','ECB cuts rates in October?',62],['shutdown','Shutdown lasts 30+ days?',62],['santa','Santa delivers 7B+ gifts?',71],['dem2028','Newsom wins the 2028 nomination?',31],['ucl','Chelsea beat Barcelona?',40],['nba','Clippers beat the Raptors?',45],['eth','Ethereum below $1,500 this year?',64],['nuclear','Nuclear detonation in 2025?',23],['dotamajor','Juggernaut wins the Dota 2 major?',18]];
  const pic=id=>{try{const e=EVENTS[id];return e&&PIC[e.pic]||''}catch(_){return ''}};
  const root=document.createElement('div');root.id='stopbg';root.setAttribute('aria-hidden','true');root.hidden=true;
  root.innerHTML='<canvas></canvas><div class="sb-chip"><img alt="" decoding="async"><span class="sb-t"></span><b class="sb-p"></b></div>';
- land.insertBefore(root,land.firstChild);
+ {const fc=document.getElementById('field');if(fc&&fc.parentNode===land)land.insertBefore(root,fc.nextSibling);else land.insertBefore(root,land.firstChild)}   /* over the field's dots */
  const cv=root.querySelector('canvas'),c=cv.getContext('2d'),chip=root.querySelector('.sb-chip'),chipImg=chip.querySelector('img'),chipT=chip.querySelector('.sb-t'),chipP=chip.querySelector('.sb-p');
  /* motion kit: ease-out «settle» (cubic-bezier .23,1,.32,1, the prototype's curve) */
  const bez=(x1,y1,x2,y2)=>t=>{let a=t;for(let i=0;i<6;i++){const ca=3*x1*a*(1-a)*(1-a)+3*x2*a*a*(1-a)+a*a*a-t,d=3*x1*(1-a)*(1-a)+6*(x2-x1)*a*(1-a)+3*(1-x2)*a*a;if(Math.abs(d)<1e-6)break;a-=ca/d;a=Math.min(1,Math.max(0,a))}return 3*y1*a*(1-a)*(1-a)+3*y2*a*a*(1-a)+a*a*a};
  const settle=bez(.23,1,.32,1);
  const CHECK='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6.5l2.6 2.6L10 3.4"/></svg>';
  const CROSS='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6"/></svg>';
- let W=0,H=0,U=1,BASE=0,YX=0,NX=0,SP=16,TOP=0,SKY=0,SKYB=0,DPR=1,col={},running=false,raf=0,last=0,ready=false,phone=false;
+ let W=0,H=0,U=1,BASE=0,YX=0,NX=0,SP=16,TOP=0,DPR=1,col={},running=false,raf=0,last=0,ready=false,phone=false;
  let people=[],ev=null,evi=-1,phase='bet',pt=0,outcome=true,nextBet=0,rate=4,deck=[],T=0;
- let crowd={yes:null,no:null},drops=[],dust=[],puffs=[],plus=[],glow=0;
+ let drops=[],dust=[],puffs=[],plus=[],glow=0,fCycle=-1,chipPc=-1;
+ const F=()=>{try{return window.duqDotsApi&&window.duqDotsApi()}catch(e){return null}};   /* the Default field (its state and crowds) */
  function colors(){const cs=getComputedStyle(document.documentElement),g=k=>cs.getPropertyValue(k).trim();
-  col={yes:g('--yes')||'#1cb785',no:g('--no')||'#f53e3e',ink:g('--ink')||'#0e1117',ink2:g('--ink-2')||'#555',line:g('--hairline')||'rgba(0,0,0,.08)',line2:g('--hairline-2')||'rgba(0,0,0,.16)',dark:document.documentElement.dataset.theme==='dark',road:document.documentElement.dataset.theme==='dark'?'rgba(255,255,255,.025)':'rgba(8,11,15,.035)'}}
+  col={yes:g('--yes')||'#1cb785',no:g('--no')||'#f53e3e',ink:g('--ink')||'#0e1117',ink2:g('--ink-2')||'#555',line:g('--hairline')||'rgba(0,0,0,.08)',line2:g('--hairline-2')||'rgba(0,0,0,.16)',ff:getComputedStyle(document.body).fontFamily,dark:document.documentElement.dataset.theme==='dark',road:document.documentElement.dataset.theme==='dark'?'rgba(255,255,255,.025)':'rgba(8,11,15,.035)'}}
  function layout(){W=window.innerWidth;H=window.innerHeight;phone=W<=640;U=Math.max(.9,Math.min(1.45,Math.min(W/1200,H/800)));
   BASE=Math.round(H-56*U-Math.max(0,H*.04));YX=Math.round(W/2-67*U);NX=Math.round(W/2+67*U);SP=13*U;rate=phone?2:4;
-  /* the crowds float between the button and the event's chip over the stops */
-  const cta=land.querySelector('.cta'),cr=cta&&cta.getBoundingClientRect();
-  SKYB=Math.round(BASE-100*U);SKY=Math.round(cr&&cr.height?cr.bottom+16*U:BASE-200*U);if(SKYB-SKY<44*U)SKY=Math.round(SKYB-44*U);
-  TOP=Math.min(SKY-30*U,Math.round(BASE-60*U));DPR=Math.min(2,window.devicePixelRatio||1);
+  TOP=Math.round(BASE-130*U);DPR=Math.min(2,window.devicePixelRatio||1);   /* the canvas is the street band; a falling dot above it is a light DOM dot */
   cv.style.top=TOP+'px';cv.style.height=(H-TOP)+'px';cv.width=Math.round(W*DPR);cv.height=Math.round((H-TOP)*DPR);
   chip.style.top=Math.round(BASE-76*U)+'px';colors()}
  const slot=(side,i)=>side==='yes'?YX-11*U-i*SP:NX+11*U+i*SP;
  const qlen=side=>{let n=0;for(const p of people)if(p.side===side&&(p.mode==='queue'||p.mode==='walk'))n++;return n};
- /* ---- the crowds (Default's dots), one over each queue ---- */
- function aim(side){const room=(side==='yes'?YX:W-NX)-24*U,len=Math.min(Math.max(4,qlen(side))*SP,room);
-  const half=Math.max(44*U,Math.min(len/2+28*U,room/2,190*U)),   /* a cloud, not a thin band over a long queue */cx=side==='yes'?Math.max(half+8*U,YX-14*U-len/2):Math.min(W-half-8*U,NX+14*U+len/2);
-  const lo=phase==='gather'||phase==='resolve';return{cx,cy:(SKY+SKYB)/2+(lo?(SKYB-SKY)*.14:0),rx:half*(lo?.78:1),ry:(SKYB-SKY)*(lo?.3:.38)}}
- function mkCrowd(side,n){const g=aim(side),ps=[];
-  for(let i=0;i<n;i++){const a0=Math.random()*6.283,r=Math.sqrt(Math.random());ps.push({a0,r,w:(Math.random()<.5?-1:1)*(.18+Math.random()*.3),x:g.cx+Math.cos(a0)*r*g.rx,y:g.cy+Math.sin(a0)*r*g.ry,vx:0,vy:0,s:1+Math.random()*1.3,al:.3+Math.random()*.55,j:Math.random()*6.283})}
-  return{side,ps,g,a:reduced?1:0,mode:reduced?'live':'in'}}
- function stepCrowd(s,dt){if(!s)return;
-  if(s.mode==='in'){s.a=Math.min(1,s.a+dt/.7);if(s.a>=1)s.mode='live'}
-  if(s.mode==='burst'||s.mode==='scatter'){const gr=s.mode==='burst'?300*U:-26*U,fade=s.mode==='burst'?1.7:1.1;s.a=Math.max(0,s.a-dt/fade);
-   for(const q of s.ps){q.vy+=gr*dt;q.vx*=1-1.1*dt;q.vy*=1-.9*dt;q.x+=q.vx*dt;q.y+=q.vy*dt}return}
-  const g=aim(s.side),k=1-Math.exp(-dt*1.8);for(const key of ['cx','cy','rx','ry'])s.g[key]+=(g[key]-s.g[key])*k;
-  const spin=phase==='gather'?1.8:1;
-  for(const q of s.ps){const ang=q.a0+T*q.w*spin,tx=s.g.cx+Math.cos(ang)*q.r*s.g.rx+Math.sin(T*1.3+q.j)*3*U,ty=s.g.cy+Math.sin(ang)*q.r*s.g.ry+Math.cos(T*1.1+q.j)*2.4*U;
-   q.vx+=(tx-q.x)*7*dt;q.vy+=(ty-q.y)*7*dt;q.vx*=1-3.2*dt;q.vy*=1-3.2*dt;q.x+=q.vx*dt;q.y+=q.vy*dt}}
- function burst(s){s.mode='burst';for(const q of s.ps){const dx=(q.x-s.g.cx)/Math.max(1,s.g.rx);q.vx=dx*(90+Math.random()*150)*U;q.vy=-(170+Math.random()*190)*U}}
- function scatter(s){s.mode='scatter';for(const q of s.ps){const dx=(q.x-s.g.cx)/Math.max(1,s.g.rx);q.vx=dx*(30+Math.random()*60)*U+(Math.random()-.5)*40*U;q.vy=-(30+Math.random()*90)*U}}
  /* ---- a bet: a dot drops out of its crowd and lands as a person at the end of the queue ---- */
- function drop(side,you){const s=crowd[side];if(!s||!s.ps.length)return;const q=s.ps[(Math.random()*s.ps.length)|0];
-  drops.push({side,you:!!you,x:q.x,y:q.y,vy:0,tx:slot(side,qlen(side)+drops.filter(d=>d.side===side).length)+(Math.random()-.5)*SP*.6})}
+ function drop(side,you){const f=F(),cs=f&&f.crowds?f.crowds(side==='yes'?0:1):[];let x,y;
+  if(cs.length){const c0=cs[(Math.random()*cs.length)|0],a=Math.random()*6.283,r=Math.sqrt(Math.random())*c0.r*.7;x=c0.x+Math.cos(a)*r;y=c0.y+Math.sin(a)*r}   /* out of one of the field's own crowds */
+  else{x=side==='yes'?YX-120*U:NX+120*U;y=BASE-240*U}
+  const el=document.createElement('i');el.className='sb-drop '+side+(you?' you':'');root.appendChild(el);
+  drops.push({el,side,you:!!you,x,y,vy:0,tx:slot(side,qlen(side)+drops.filter(d=>d.side===side).length)+(Math.random()-.5)*SP*.6})}
  function stepDrops(dt){for(const d of drops){d.vy+=(d.you?1900:1150)*U*dt;d.y+=d.vy*dt;d.x+=(d.tx-d.x)*(1-Math.exp(-dt*5));
-   if(d.y>=BASE-22*U){d.done=true;people.push({side:d.side,x:d.x,s:size(),ph:Math.random()*6,dir:d.side==='yes'?1:-1,mode:'walk',you:d.you,v:Math.max(46*U,W*.05)*(.9+Math.random()*.2),a:1,fade:0,delay:0,m:0});
+   d.el.style.transform=`translate3d(${d.x.toFixed(1)}px,${d.y.toFixed(1)}px,0)`;
+   if(d.y>=BASE-22*U){d.done=true;d.el.remove();people.push({side:d.side,x:d.x,s:size(),ph:Math.random()*6,dir:d.side==='yes'?1:-1,mode:'walk',you:d.you,v:Math.max(46*U,W*.05)*(.9+Math.random()*.2),a:1,fade:0,delay:0,m:0});
     puffs.push({x:d.x,y:BASE-22*U,t:0,side:d.side})}}
   drops=drops.filter(d=>!d.done)}
  const size=()=>.86+.42*Math.pow(Math.random(),3);
@@ -5807,16 +5800,14 @@ function duqStop(land){
   for(const p of puffs)p.t+=dt;puffs=puffs.filter(p=>p.t<.4);for(const p of plus)p.t+=dt;plus=plus.filter(p=>p.t<1.3)}
  /* ---- events ---- */
  function nextEvent(){const first=!ev;if(!deck.length)deck=EVS.map((_,i)=>i).sort(()=>Math.random()-.5);evi=deck.pop();ev=EVS[evi];outcome=Math.random()*100<ev[2];
-  const e=ev,apply=()=>{chipImg.src=pic(e[0])||'';chipT.textContent=e[1];chipP.className='sb-p';chipP.textContent=e[2]+'% Yes'};
+  const e=ev,apply=()=>{chipImg.src=pic(e[0])||'';chipT.textContent=e[1];chipP.className='sb-p';const fs=F()&&F().state?F().state():null;chipP.textContent=(fs?Math.round(fs.p*100):e[2])+'% Yes';chipPc=-1};   /* the field's live share, not the event's own odds */
   if(first||reduced)apply();else{chip.classList.add('swap');setTimeout(()=>{apply();chip.classList.remove('swap')},250)}
-  phase='bet';pt=0;nextBet=.3;drops=[];plus=[];glow=0;
-  const N=phone?150:240,y=Math.max(24,Math.min(N-24,Math.round(N*e[2]/100)));crowd={yes:mkCrowd('yes',y),no:mkCrowd('no',N-y)}}
+  phase='bet';pt=0;nextBet=.3;for(const d of drops)d.el.remove();drops=[];plus=[];glow=0;chipPc=-1}
  function arrive(){const yes=outcome;chipP.className='sb-p res '+(yes?'yes':'no');chipP.innerHTML=(yes?'YES':'NO')+(yes?CHECK:CROSS)}
  function resolve(){arrive();const win=outcome?'yes':'no',lose=outcome?'no':'yes';
-  for(const d of drops)if(d.side===lose){dustFrom(d.x,d.y-2*U,d.y+2*U,lose,3);d.done=true}drops=drops.filter(d=>!d.done);
+  for(const d of drops)if(d.side===lose){dustFrom(d.x,d.y-2*U,d.y+2*U,lose,3);d.done=true;d.el.remove()}drops=drops.filter(d=>!d.done);
   /* the losers dissolve into dots, the front of the queue first */
   people.filter(p=>p.side===lose&&p.mode!=='gone').sort((a,b)=>Math.abs(a.x-W/2)-Math.abs(b.x-W/2)).forEach((p,i)=>{p.mode='dissolve';p.delay=i*.035;p.fade=0});
-  if(crowd[lose])scatter(crowd[lose]);if(crowd[win])burst(crowd[win]);
   /* «+$» over every third winner, nearest the stop first */
   people.filter(p=>p.side===win&&(p.mode==='queue'||p.mode==='walk')).sort((a,b)=>Math.abs(a.x-W/2)-Math.abs(b.x-W/2)).forEach((p,i)=>{if(i%3===0&&plus.length<9)plus.push({x:p.x,y:BASE-30*U*p.s,t:-i*.03,side:win})})}
  function winnersLeave(){let i=0;for(const p of people)if(p.mode==='queue'||p.mode==='walk'){p.mode='leave';p.delay=i++*.02;p.dir=p.side==='yes'?-1:1;p.fade=0}}
@@ -5831,37 +5822,50 @@ function duqStop(land){
    else if(p.mode==='leave'){if(p.delay>0){p.delay-=dt;continue}p.fade+=dt/.9;p.x+=p.dir*60*U*dt;p.ph+=dt*2.2*Math.PI*2;p.moving=true;p.a=Math.max(0,1-p.fade);if(p.fade>=1)p.mode='gone'}}
   people=people.filter(p=>p.mode!=='gone');
   for(const side of ['yes','no']){const q=people.filter(p=>p.side===side&&(p.mode==='queue'||p.mode==='walk'));if(q.length>140)for(const p of q.slice(140))p.mode='gone'}}
- function director(dt){pt+=dt;const bet=r=>{nextBet-=dt;while(nextBet<=0){drop(Math.random()*100<ev[2]?'yes':'no');nextBet+=-Math.log(1-Math.random())/r}};
-  if(phase==='bet'){bet(rate);if(pt>10.5){phase='gather';pt=0}}
-  else if(phase==='gather'){bet(rate*1.7);if(pt>2.4){phase='resolve';pt=0;resolve()}}      /* the crowds sink low, the last bets rush in */
+ function director(dt){pt+=dt;const f=F(),st=f&&f.state?f.state():null;
+  const bet=(r,py)=>{nextBet-=dt;while(nextBet<=0){drop(Math.random()<py?'yes':'no');nextBet+=-Math.log(1-Math.random())/r}};
+  if(st){const ph=st.phase;
+   if(st.cycle!==fCycle){if(fCycle!==-1&&phase!=='bet')nextEvent();fCycle=st.cycle}
+   if(ph==='drift'||ph==='freeze'){const late=ph==='freeze'||st.tc>10.6;phase=late?'gather':'bet';bet(late?rate*1.7:rate,st.p);
+    const pc=Math.round(st.p*100);if(pc!==chipPc){chipPc=pc;chipP.className='sb-p';chipP.textContent=pc+'% Yes'}}
+   else if(ph==='snap'||ph==='hold'){if(phase!=='resolve'){phase='resolve';pt=0;outcome=st.winner===1;resolve()}glow=Math.min(1,glow+dt/.45)}
+   else{if(phase==='resolve'){phase='quiet';pt=0;winnersLeave()}glow=Math.max(0,glow-dt/.5)}
+   return}
+  /* the field is not up yet: the scene's own clock */
+  if(phase==='bet'){bet(rate,ev[2]/100);if(pt>10.5){phase='gather';pt=0}}
+  else if(phase==='gather'){bet(rate*1.7,ev[2]/100);if(pt>2.4){phase='resolve';pt=0;resolve()}}      /* the crowds sink low, the last bets rush in */
   else if(phase==='resolve'){glow=Math.min(1,glow+dt/.45);if(pt>2.6){phase='quiet';pt=0;winnersLeave()}}
   else if(phase==='quiet'){glow=Math.max(0,glow-dt/.5);if(pt>.6&&!people.some(p=>p.mode==='leave'||p.mode==='dissolve')&&!dust.length)nextEvent()}}
- function tick(dt){T+=dt;director(dt);stepCrowd(crowd.yes,dt);stepCrowd(crowd.no,dt);stepDrops(dt);stepPeople(dt);stepFx(dt)}
+ function tick(dt){T+=dt;director(dt);stepDrops(dt);stepPeople(dt);stepFx(dt)}
  /* ---- drawing (canvas y = page y − TOP) ---- */
  function rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
  function person(p){const s=p.s*1.2*U,x=p.x,b=BASE-TOP,mv=p.moving,ph=p.ph,col1=p.side==='yes'?col.yes:col.no;
   if(x<-20*U||x>W+20*U)return;const m=p.m==null?1:settle(p.m);
-  c.save();c.globalAlpha=p.a*(.35+.65*m);c.fillStyle=col1;c.strokeStyle=col1;c.lineCap='round';
+  c.globalAlpha=p.a*(.35+.65*m);c.fillStyle=col1;c.strokeStyle=col1;c.lineCap='round';
   const bob=mv?Math.abs(Math.sin(ph))*1.5*U:0,sw=mv?Math.sin(ph)*2.6*s:0,lean=mv?p.dir*1.2*s:0,k=(p.sq||1)*(.55+.45*m);
-  c.translate(x,b);c.scale(k,k);
+  c.setTransform(DPR*k,0,0,DPR*k,DPR*x,DPR*b);
   c.lineWidth=2.1*s;c.beginPath();c.moveTo(-.95*s+lean*.3,-5.4*s-bob*.4);c.lineTo(-.95*s+sw,-.8);c.moveTo(.95*s+lean*.3,-5.4*s-bob*.4);c.lineTo(.95*s-sw,-.8);c.stroke();
   rr(-3.3*s+lean*.6,-14.6*s-bob,6.6*s,9.8*s,3*s);c.fill();if(p.you){c.lineWidth=1.4;c.strokeStyle=col.ink;c.stroke()}
   c.beginPath();c.arc(lean,-18.5*s-bob,3.15*s,0,7);c.fill();if(p.you){c.lineWidth=1.4;c.strokeStyle=col.ink;c.stroke()}
-  c.restore()}
+  c.setTransform(DPR,0,0,DPR,0,0);c.globalAlpha=1}
+ /* people standing in a queue are drawn in one shape per side (bodies, heads and legs in a single Path2D): one fill, not
+    three draws a person — the moving ones (walking, landing, dissolving, «you») are still drawn one by one */
+ const plain=p=>p.mode==='queue'&&p.a>=1&&(p.m==null||p.m>=1)&&!p.you;
+ function rrP(P,x,y,w,h,r){P.moveTo(x+r,y);P.arcTo(x+w,y,x+w,y+h,r);P.arcTo(x+w,y+h,x,y+h,r);P.arcTo(x,y+h,x,y,r);P.arcTo(x,y,x+w,y,r);P.closePath()}
+ function queues(){const b=BASE-TOP;for(const side of ['yes','no']){const P=new Path2D();let any=false;
+   for(const p of people){if(p.side!==side||!plain(p))continue;const x=p.x;if(x<-20*U||x>W+20*U)continue;any=true;const s=p.s*1.2*U,lw=2.1*s;
+    rrP(P,x-.95*s-lw/2,b-5.4*s-lw/2,lw,5.4*s-.8+lw/2,lw/2);rrP(P,x+.95*s-lw/2,b-5.4*s-lw/2,lw,5.4*s-.8+lw/2,lw/2);
+    rrP(P,x-3.3*s,b-14.6*s,6.6*s,9.8*s,3*s);P.moveTo(x+3.15*s,b-18.5*s);P.arc(x,b-18.5*s,3.15*s,0,7)}
+   if(any){c.fillStyle=side==='yes'?col.yes:col.no;c.fill(P)}}}
  function street(){const b=BASE-TOP;c.fillStyle=col.road;c.fillRect(0,b+5*U,W,40*U);
   c.strokeStyle=col.line2;c.lineWidth=1.5;c.beginPath();c.moveTo(0,b+.5);c.lineTo(W,b+.5);c.stroke();
   c.setLineDash([10*U,12*U]);c.strokeStyle=col.line;c.lineWidth=1.2;c.beginPath();c.moveTo(0,b+44*U);c.lineTo(W,b+44*U);c.stroke();c.setLineDash([])}
  function drawStop(x,lab,cl,dim){const b=BASE-TOP;c.save();if(dim)c.globalAlpha=.45;c.strokeStyle=col.line2;c.lineWidth=2;c.beginPath();c.moveTo(x,b);c.lineTo(x,b-34*U);c.stroke();
-  rr(x-17*U,b-51*U,34*U,17*U,4*U);c.fillStyle=cl;c.fill();c.fillStyle='#fff';c.font=`800 ${Math.round(10*U)}px Onest, ${getComputedStyle(document.body).fontFamily}`;c.textAlign='center';c.textBaseline='middle';c.fillText(lab,x,b-42.3*U);c.restore()}
- function drawCrowd(s){if(!s||s.a<=0)return;c.save();c.fillStyle=s.side==='yes'?col.yes:col.no;
-  for(const q of s.ps){c.globalAlpha=q.al*s.a;c.beginPath();c.arc(q.x,q.y-TOP,q.s*U,0,7);c.fill()}c.restore()}
- function drawDrops(){c.save();for(const d of drops){const cl=d.side==='yes'?col.yes:col.no;c.fillStyle=cl;
-   for(let i=3;i>=1;i--){c.globalAlpha=.16*(4-i);c.beginPath();c.arc(d.x,d.y-TOP-i*Math.min(9*U,d.vy*.012),2.2*U*(1-i*.15),0,7);c.fill()}
-   c.globalAlpha=1;c.beginPath();c.arc(d.x,d.y-TOP,2.6*U,0,7);c.fill();if(d.you){c.lineWidth=1.4;c.strokeStyle=col.ink;c.stroke()}}c.restore()}
+  rr(x-17*U,b-51*U,34*U,17*U,4*U);c.fillStyle=cl;c.fill();c.fillStyle='#fff';c.font=`800 ${Math.round(10*U)}px Onest, ${col.ff}`;c.textAlign='center';c.textBaseline='middle';c.fillText(lab,x,b-42.3*U);c.restore()}
  function drawFx(){c.save();
   for(const p of puffs){const e=settle(p.t/.4);c.globalAlpha=.55*(1-e);c.strokeStyle=p.side==='yes'?col.yes:col.no;c.lineWidth=1.5*U;c.beginPath();c.arc(p.x,p.y-TOP,(3+9*e)*U,0,7);c.stroke()}
   for(const d of dust){c.globalAlpha=Math.max(0,.85*(1-d.t/d.life));c.fillStyle=d.side==='yes'?col.yes:col.no;c.beginPath();c.arc(d.x,d.y-TOP,d.r,0,7);c.fill()}
-  c.font=`800 ${Math.round(12*U)}px Onest, ${getComputedStyle(document.body).fontFamily}`;c.textAlign='center';
+  c.font=`800 ${Math.round(12*U)}px Onest, ${col.ff}`;c.textAlign='center';
   for(const p of plus){if(p.t<0)continue;const e=settle(Math.min(1,p.t/1.3));c.globalAlpha=p.t<.2?p.t/.2:Math.max(0,1-(p.t-.6)/.7);c.fillStyle=p.side==='yes'?col.yes:col.no;c.fillText('+$',p.x,p.y-TOP-24*U*e)}
   c.restore()}
  const clear=cl=>{const k=document.createElement('canvas').getContext('2d');k.fillStyle=cl;const v=k.fillStyle;if(v[0]==='#'){const n=parseInt(v.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},0)`}return v.replace(/rgba?\(([^)]*)\)/,(m,a)=>`rgba(${a.split(',').slice(0,3).join(',')},0)`)};   /* the same colour at 0 alpha: a canvas gradient to «transparent» greys out */
@@ -5869,17 +5873,16 @@ function duqStop(land){
   c.save();c.globalAlpha=.24*glow;const g=c.createRadialGradient(cx,b-12*U,0,cx,b-12*U,hw);const gc=win==='yes'?col.yes:col.no;g.addColorStop(0,gc);g.addColorStop(1,clear(gc));c.fillStyle=g;c.setTransform(DPR,0,0,DPR*.32,0,(b-12*U)*DPR*(1-.32));c.beginPath();c.arc(cx,b-12*U,hw,0,7);c.fill();c.restore()}
  function paint(){c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H-TOP);street();
   const res=phase==='resolve'||phase==='quiet';drawStop(YX,'YES',col.yes,res&&!outcome);drawStop(NX,'NO',col.no,res&&outcome);
-  drawCrowd(crowd.yes);drawCrowd(crowd.no);drawGlow();drawDrops();for(const p of people)person(p);drawFx()}
+  drawGlow();queues();for(const p of people)if(!plain(p))person(p);drawFx()}
  /* ---- a still for reduced motion: the crowds over queues by the event's odds, the outcome on the chip ---- */
- function still(){people=[];const cap=Math.floor((W/2-80*U)/SP),n=Math.min(cap*2,Math.round(cap*1.1));const y=Math.round(n*ev[2]/100);
+ function still(){people=[];const f=F(),st=f&&f.state?f.state():null,py=st?st.p:ev[2]/100;const cap=Math.floor((W/2-80*U)/SP),n=Math.min(cap*2,Math.round(cap*1.1));const y=Math.round(n*py);
   for(let i=0;i<n;i++){const side=i<y?'yes':'no';people.push({side,x:0,s:size(),ph:0,dir:side==='yes'?1:-1,mode:'queue',a:1})}
   const qi={yes:0,no:0};for(const p of people)p.x=slot(p.side,qi[p.side]++);
-  for(const s of [crowd.yes,crowd.no]){const g=aim(s.side);s.g=g;for(const q of s.ps){q.x=g.cx+Math.cos(q.a0)*q.r*g.rx;q.y=g.cy+Math.sin(q.a0)*q.r*g.ry}}
-  arrive();paint()}
+  chipP.textContent=Math.round(py*100)+'% Yes';paint()}
  function frame(t){if(!running){raf=0;return}const dt=Math.min(.05,last?(t-last)/1000:0);last=t;tick(dt);paint();raf=requestAnimationFrame(frame)}
  function prepare(){if(ready)return;ready=true;layout();nextEvent();if(reduced){setTimeout(still,0);return}
-  /* a warm start: the crowds are in and the first bets have landed */
-  crowd.yes.a=crowd.no.a=1;crowd.yes.mode=crowd.no.mode='live';for(let i=0;i<90;i++)tick(1/30)}
+  /* a warm start: the first bets have landed */
+  for(let i=0;i<60;i++)tick(1/30)}
  function start(){prepare();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
  function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0}
  function commit(yes){if(!ready||reduced||phase==='resolve'||phase==='quiet')return;drop(yes?'yes':'no',true)}
@@ -5895,20 +5898,24 @@ function duqStop(land){
  const land=document.getElementById('landing');if(!land)return;
  const cv=document.getElementById('field');if(cv)cv.style.display='none';   /* shown again when Default is picked */
  /* Default = the dot-crowd field (its own script below; it hands its API over through duqBgRegister) */
- let dots=null;
+ let dots=null;window.duqDotsApi=()=>dots;   /* v230: version 3 reads the field's round and crowds */
  const duqDots=()=>({root:null,show(on){if(cv)cv.style.display=on?'':'none';if(!on){if(dots)dots.stop();land.querySelectorAll('.headline .w,.headline .v,.headline .q').forEach(e=>{e.style.transform='';e.style.color='';e.style.fontVariationSettings=''})}},
   start(){if(!dots){if(window.duqDotsBoot)window.duqDotsBoot();return}dots.repaint&&dots.repaint();dots.start()},stop(){if(dots)dots.stop()},commit(y){if(dots)dots.commit(y)}});
  const makers={dots:duqDots,river:duqRiver,gravity:duqGravity,stop:duqStop},inst={};let cur=null;
- window.duqBgRegister=a=>{dots=a;if(document.documentElement.dataset.theme==='dark')a.setTheme(true);if(cur==='dots'&&live())a.start()};
+ window.duqBgRegister=a=>{dots=a;if(document.documentElement.dataset.theme==='dark')a.setTheme(true);if((cur==='dots'||cur==='stop')&&live())a.start()};
  const pick=()=>{const q=new URLSearchParams(location.search).get('bg');if(q==='0'||q==='default'||q==='dots')return'dots';if(q==='1'||q==='river')return'river';if(q==='2'||q==='gravity')return'gravity';if(q==='3'||q==='stop')return'stop';try{const v=localStorage.getItem('duq-lbg-v3');if(makers[v])return v}catch(e){}return'dots'};
  const live=()=>!window.duqLive||window.duqLive();
  function show(k,on){const i=inst[k];if(!i)return;if(i.show)i.show(on);else{i.root.hidden=!on;if(!on)i.stop()}}
- function use(k,save){if(!makers[k]||cur===k)return;if(cur){inst[cur].stop();show(cur,false)}
-  cur=k;window.DUQ_LBG=k;if(!inst[k])inst[k]=makers[k](land);show(k,true);
+ const withDots=k=>k==='dots'||k==='stop';   /* v230: version 3 stands on the Default field */
+ function use(k,save){if(!makers[k]||cur===k)return;const prev=cur;
+  if(prev){inst[prev].stop();show(prev,false);if(prev==='stop'&&!withDots(k)&&inst.dots)show('dots',false)}
+  cur=k;window.DUQ_LBG=k;if(!inst[k])inst[k]=makers[k](land);
+  if(k==='stop'){if(!inst.dots)inst.dots=makers.dots(land);show('dots',true)}
+  show(k,true);
   if(save){try{localStorage.setItem('duq-lbg-v3',k)}catch(e){}}
   document.querySelectorAll('#landing .lbgsw [data-lbg]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lbg===k)));
-  if(live())inst[k].start()}
- window.duqField={start(){if(cur)inst[cur].start()},stop(){if(cur)inst[cur].stop()},commit(y){if(cur)inst[cur].commit(y)},setTheme(d){if(dots)dots.setTheme(d)}};
+  if(live()){if(k==='stop')inst.dots.start();inst[k].start()}}
+ window.duqField={start(){if(cur){if(cur==='stop'&&inst.dots)inst.dots.start();inst[cur].start()}},stop(){if(cur){if(cur==='stop'&&inst.dots)inst.dots.stop();inst[cur].stop()}},commit(y){if(cur)inst[cur].commit(y)},setTheme(d){if(dots)dots.setTheme(d)}};
  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#landing .lbgsw [data-lbg]');if(b)use(b.dataset.lbg,true)});
  document.addEventListener('keydown',e=>{if(!document.body.classList.contains('is-landing')||e.metaKey||e.ctrlKey||e.altKey)return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
   if(e.key==='0')use('dots',true);else if(e.key==='1')use('river',true);else if(e.key==='2')use('gravity',true);else if(e.key==='3')use('stop',true)});
@@ -5921,8 +5928,8 @@ function duqStop(land){
   'use strict';
   // v225 (the user: «moi osnovnoi budet default versia»): this dot-crowd field is the landing's Default ground again; versions 1 (river) and
   // 2 (gravity) sit beside it on the switch. It boots now when Default is on, else later when the switch picks it; it only runs while on.
-  var deferred = !!(window.DUQ_LBG && window.DUQ_LBG !== 'dots');
-  var isOn = function () { return !window.DUQ_LBG || window.DUQ_LBG === 'dots'; };
+  var isOn = function () { var k = window.DUQ_LBG; return !k || k === 'dots' || k === 'stop'; };   // v230: version 3 (the stop) runs on this field too
+  var deferred = !isOn();
 
   /* ---------- tokens used by the script (same values as the CSS above) ---------- */
   var PAGE    = [0.941, 0.941, 0.961];   // #f0f0f5 — one ground for landing and app
@@ -7001,6 +7008,8 @@ function duqStop(land){
       stop: stop,
       commit: commit,
       setTheme: setTheme,
+      state: function () { return market(clock); },   // v230: version 3 rides this round (phase, share p, winner, cycle, tc)
+      crowds: function (k) { var out = [], j; for (j = k * KC; j < k * KC + KC; j++) if (cAlive[j]) out.push({ x: ccx[j], y: ccy[j], r: cR[j] }); return out; },   // side k (0 yes, 1 no): its live crowds
       repaint: function () { words.yes.lastW = words.no.lastW = -1; words.yes.lastC = words.no.lastC = ''; words.yes.lastPop = words.no.lastPop = -1; lastQ = -1; }
     };
     if (window.duqBgRegister) window.duqBgRegister(api); else window.duqField = api;
