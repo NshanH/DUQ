@@ -8044,6 +8044,12 @@ function duqStop(land){
    G=RFGlobe.create(gbox,{radiusPx:()=>RAD,center:GC,view:{lat:TILT-90,lng:-SPIN},idle:'still',autoRotate:0,intro:true,keyboard:false,flow:false,fall:false,heatR:500,hotMix:.3,rim:RIM,colors:GCOL,onError:()=>{gFail=true}});
    const re=gbox.querySelector('.rfg-rim');if(re){limbCv=document.createElement('canvas');limbCv.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;display:block';re.appendChild(limbCv);drawLimb()}
   }catch(e){gFail=true;G=null;if(window.console)console.warn('version 3 globe:',e&&e.message||e)}}
+ /* v237: the headline and its button in the middle between the top of the page and the rim — the hero's bottom padding
+    while version 3 is on (the page's own 7vh / 10vh back when it goes); the Default field re-measures the text it keeps off */
+ const heroEl=land.querySelector('.hero');let heroOn=false;
+ function placeHero(){if(!heroEl||!heroOn)return;const r=heroEl.getBoundingClientRect(),pt=parseFloat(getComputedStyle(heroEl).paddingTop)||0,pb=Math.max(0,Math.round(r.top+pt+r.bottom-BASE))+'px';
+  if(heroEl.style.paddingBottom!==pb){heroEl.style.paddingBottom=pb;const f=F();if(f&&f.relayout)f.relayout()}}
+ function heroOff(){heroOn=false;if(heroEl&&heroEl.style.paddingBottom){heroEl.style.paddingBottom='';const f=F();if(f&&f.relayout)f.relayout()}}
  function syncGlobe(){if(G)G.setSide({on:1,x:BX,wave,waveW:100*U,hy:HY,hn:HN,calm:col.calm,win:(phase==='resolve'||phase==='quiet')?(outcome?1:-1)*glow:0,yes:col.yesR,no:col.noR,lift:col.lift})}
  /* at the outcome the rim takes the winner's colour (v232) */
  function rimWin(){if(!(glow>0&&phase!=='bet'))return;const half=Math.asin(Math.min(1,(W/2+20)/RAD));c.save();c.globalAlpha=.85*glow;c.strokeStyle=outcome?col.yes:col.no;c.lineWidth=2;c.beginPath();c.arc(W/2,BASE+RAD-TOP,RAD,Math.PI*1.5-half,Math.PI*1.5+half);c.stroke();c.restore()}
@@ -8053,14 +8059,17 @@ function duqStop(land){
  function colors(){const cs=getComputedStyle(document.documentElement),g=k=>cs.getPropertyValue(k).trim();
   col={bg:g('--bg')||'',yes:g('--yes')||'#1cb785',no:g('--no')||'#f53e3e',ink:g('--ink')||'#0e1117',ink2:g('--ink-2')||'#555',line:g('--hairline')||'rgba(0,0,0,.08)',line2:g('--hairline-2')||'rgba(0,0,0,.16)',ff:getComputedStyle(document.body).fontFamily,dark:document.documentElement.dataset.theme==='dark',road:document.documentElement.dataset.theme==='dark'?'rgba(255,255,255,.025)':'rgba(8,11,15,.035)'};globeColors()}
  function layout(){W=window.innerWidth;H=window.innerHeight;phone=W<=640;U=Math.max(.9,Math.min(1.45,Math.min(W/1200,H/800)));
-  /* v232: the globe's rim (the ground at the middle) ≈ 30 % of the height up, but clear of the button with room for the stops' signs */
-  const cta=land.querySelector('.cta'),cr=cta&&cta.getBoundingClientRect(),cb=cr&&cr.height?cr.bottom:H*.62;
-  BASE=Math.round(Math.min(H-92*U,Math.max(H*.7,cb+51*U+22)));RAD=Math.round(Math.max(W*1.08,Math.min(H*1.25,W*1.7)));YX=Math.round(W/2-67*U);NX=Math.round(W/2+67*U);SP=13*U;rate=phone?2:4;
+  /* v237 (the user, 22 Nov 2026: «centerlize title and button, do glubousa do verx stranici»): the globe's rim stands at 70 %
+     of the height (≈ 30 % of the globe in sight) — lower only where the headline and its button need the room — and the
+     headline with its button sits in the middle between the top of the page and the rim (placeHero). v232–v236: the rim
+     followed the button down (its bottom + 51U + 22) and the headline kept the page's middle */
+  const hl=land.querySelector('.headline'),cta=land.querySelector('.cta'),hr=hl&&hl.getBoundingClientRect(),cr=cta&&cta.getBoundingClientRect(),hh=hr&&cr&&cr.height?cr.bottom-hr.top:H*.3;
+  BASE=Math.round(Math.min(H-92*U,Math.max(H*.7,hh+102*U+44,hh+176)));   /* the button clear of the stops' signs (51U + 22), the headline clear of the header (88) */RAD=Math.round(Math.max(W*1.08,Math.min(H*1.25,W*1.7)));YX=Math.round(W/2-67*U);NX=Math.round(W/2+67*U);SP=13*U;rate=phone?2:4;
   TOP=Math.round(BASE-130*U);DPR=Math.min(2,window.devicePixelRatio||1);   /* the canvases are the globe's band; a falling dot above it is a light DOM dot */
   for(const k of [cv]){k.style.top=TOP+'px';k.style.height=(H-TOP)+'px';k.width=Math.round(W*DPR);k.height=Math.round((H-TOP)*DPR)}
   chip.style.top=Math.round(BASE+50*U)+'px';colors();
   if(phase==='resolve'||phase==='quiet')BX=bxB=outcome?W+110*U:-110*U;else BX=bxB=W/2;bxT=1;
-  globeLayout()}
+  globeLayout();placeHero()}
  /* v231 (the user, 22 Nov 2026: «1» of «mojesh predlagat mesto shose drugoe pod ludmi 4 varianta»): the road became a planet's
     horizon — a wide arc; everyone stands on it upright to the ground, tilted along its normal. v232: the arc is the globe's rim
     (radius 1.08 × the width) */
@@ -8171,8 +8180,8 @@ function duqStop(land){
  function prepare(){if(ready)return;ready=true;layout();nextEvent();if(reduced){setTimeout(still,0);return}
   /* a warm start: the first bets have landed */
   for(let i=0;i<60;i++)tick(1/30)}
- function start(){prepare();if(G&&!root.hidden)G.resume();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
- function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0;if(G)G.pause()}
+ function start(){prepare();heroOn=true;placeHero();if(G&&!root.hidden)G.resume();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
+ function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0;if(G)G.pause();heroOff()}
  function commit(yes){if(!ready||reduced||phase==='resolve'||phase==='quiet')return;drop(yes?'yes':'no',true)}
  /* the words «yes» and «no» in the headline drop your own dot (as y / n do) */
  document.addEventListener('click',e=>{if(root.hidden||!running)return;const w=e.target.closest&&e.target.closest('#landing .headline .w');if(!w)return;commit(w.classList.contains('yes'))});
@@ -9298,6 +9307,7 @@ function duqStop(land){
       setTheme: setTheme,
       state: function () { return market(clock); },   // v230: version 3 rides this round (phase, share p, winner, cycle, tc)
       crowds: function (k) { var out = [], j; for (j = k * KC; j < k * KC + KC; j++) if (cAlive[j]) out.push({ x: ccx[j], y: ccy[j], r: cR[j] }); return out; },   // side k (0 yes, 1 no): its live crowds
+      relayout: function () { measureWordBoxes(); measureLayout(); },   // v237: the headline moved without a resize (version 3 lifts it over its globe) — the crowds keep off it where it is now
       repaint: function () { words.yes.lastW = words.no.lastW = -1; words.yes.lastC = words.no.lastC = ''; words.yes.lastPop = words.no.lastPop = -1; lastQ = -1; }
     };
     if (window.duqBgRegister) window.duqBgRegister(api); else window.duqField = api;
