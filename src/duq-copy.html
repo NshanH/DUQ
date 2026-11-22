@@ -7091,7 +7091,9 @@ function duqStop(land){
     colour flooding at the outcome and running along the rim. Under the dots lies the page's own ground: the globe looks
     open as FreedX's, and the Default field's crowds pass behind it.
     v238 (the user: «kogda hover nenujno beloe a zelyoni ili krasni pust yarche budet»): under the cursor the dots take their
-    half's own colour, brighter (green on the YES half, red on the NO half; land full, sea half) — never white or the ink. */
+    half's own colour, brighter (green on the YES half, red on the NO half; land full, sea half) — never white or the ink.
+    v239 (the user: «krayni belli vid ochen yarki, nemnogo isprav»): the white limb light along the rim a quarter dimmer on the
+    dark page (× .5 → × .375); the ink's on the light page as it was. */
  const TILT=55;let SPIN=-18,BX=0,bxA=0,bxB=0,bxT=1,bxD=1,bxFlood=false,wave=0;   /* the rim on latitude 55°; the window's middle on longitude −SPIN (18° E) */
  /* the line between the halves: in the middle; at the outcome it runs out to the loser's edge (the winner's colour floods) */
  const inOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
@@ -7104,13 +7106,14 @@ function duqStop(land){
  function stepBx(dt){if(bxT<1){bxT=Math.min(1,bxT+dt/bxD);BX=bxA+(bxB-bxA)*(bxFlood?inOut(bxT):settle(bxT))}wave=bxFlood&&bxT<1?Math.sin(Math.PI*Math.min(1,bxT*1.08)):0}
  /* the limb light of FreedX's RF_LIMB picture across the top of its ring (±25°), in CSS px at the FreedX landing's R 500
     (inside < 0): [d, alpha] — smoothed over the picture's alpha steps. Its violet rgb(123,70,255) went in v236 («sirenovi
-    voobshe ne nujno»): the same light in white on the dark page (× .5) and in the ink on the light one (× .24) */
+    voobshe ne nujno»): the same light in white on the dark page (× .5) and in the ink on the light one (× .24). v239 («krayni belli
+    vid ochen yarki, nemnogo isprav»): the white a quarter dimmer, × .375 — about as bright as FreedX's violet line was */
  const LIMB=[[-46,0],[-40,.03],[-35,.06],[-30,.09],[-24,.1],[-20,.13],[-16,.16],[-12,.21],[-9,.28],[-6,.36],[-4,.46],[-2,.56],[-1,.62],[0,.68],[1,.6],[2,.36],[3,.27],[5,.19],[7,.15],[9,.11],[12,.08],[15,.045],[20,.026],[25,.015],[30,0]];
  const GCOL={land:'--sbg-land',ocean:'--sbg-ocean',hot:'--sbg-hot',hue0:'--sbg-hot',hue1:'--sbg-hot',hue2:'--sbg-hot',hue3:'--sbg-hot',hue4:'--sbg-hot',hue5:'--sbg-hot',rim:'--sbg-rim'};   /* the globe's colours by theme (CSS on .sb-gbox); v236: no lilac anywhere */
  const GC=[.5,1],RIM={src:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',w:1,h:1,cx:0,cy:0,r:1};   /* the module's rim layer (its screen blend and entrance) — the light drawn in it at this sphere's size */
  let G=null,gFail=false,limbCv=null;
  function drawLimb(){if(!limbCv)return;const w=W,h=H-TOP;limbCv.width=Math.round(w*DPR);limbCv.height=Math.round(h*DPR);const k=limbCv.getContext('2d');k.setTransform(DPR,0,0,DPR,0,0);k.clearRect(0,0,w,h);
-  const cx=W/2,cy=BASE+RAD-TOP,r0=RAD+LIMB[0][0],r1=RAD+LIMB[LIMB.length-1][0],g=k.createRadialGradient(cx,cy,r0,cx,cy,r1),lc=col.dark?[255,255,255,.5]:[14,17,23,.24];for(const [d,a] of LIMB)g.addColorStop((RAD+d-r0)/(r1-r0),`rgba(${lc[0]},${lc[1]},${lc[2]},${(a*lc[3]).toFixed(3)})`);
+  const cx=W/2,cy=BASE+RAD-TOP,r0=RAD+LIMB[0][0],r1=RAD+LIMB[LIMB.length-1][0],g=k.createRadialGradient(cx,cy,r0,cx,cy,r1),lc=col.dark?[255,255,255,.375]:[14,17,23,.24];for(const [d,a] of LIMB)g.addColorStop((RAD+d-r0)/(r1-r0),`rgba(${lc[0]},${lc[1]},${lc[2]},${(a*lc[3]).toFixed(3)})`);
   k.fillStyle=g;k.fillRect(0,0,w,h)}
  /* the ground under the dots: the page's own background, laid as the page lays it */
  function ground(){const bs=getComputedStyle(document.body),x=Math.round(W/2-RAD);gbody.style.left=x+'px';gbody.style.top=BASE+'px';gbody.style.width=gbody.style.height=2*RAD+'px';
