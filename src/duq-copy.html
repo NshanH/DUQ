@@ -5500,8 +5500,9 @@ html[data-theme=dark] #grav .gv-in{box-shadow:0 1px 0 rgba(255,255,255,.05) inse
 #stopbg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:strict}
 #stopbg>canvas{position:absolute;left:0;width:100%;display:block}
 #stopbg .sb-body{position:absolute;border-radius:50%;pointer-events:none;background-repeat:no-repeat}   /* v235: the globe's ground — the page's own ground laid in it, so it looks as FreedX's open ball and the Default field's crowds pass behind it */
-#stopbg .sb-gbox{position:absolute;left:0;pointer-events:auto;isolation:isolate;--sbg-land:#491DBA;--sbg-ocean:rgba(102,53,242,.2);--sbg-hot:#6434E0;--sbg-h0:#6434E0;--sbg-h1:#491DBA;--sbg-h2:#9075FF;--sbg-h3:#6635F2;--sbg-rim:#9075FF}   /* v235: the FreedX globe (rf-globe.js) — it takes the pointer: the warm spot follows the cursor, a drag turns it; light: FreedX's light-theme colours (v562) */
-html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,255,255,.24);--sbg-hot:#BBB3FF;--sbg-h0:#BBB3FF;--sbg-h1:#8170FF}   /* dark: FreedX's own */
+#stopbg .sb-gbox{position:absolute;left:0;pointer-events:auto;isolation:isolate;--sbg-land:#0e1117;--sbg-ocean:rgba(8,11,15,.16);--sbg-hot:#0e1117;--sbg-rim:#0e1117}   /* v235: the FreedX globe (rf-globe.js) — it takes the pointer: the warm spot follows the cursor, a drag turns it. v236 («sirenovi voobshe ne nujno, vo vremya hovera toje»): no lilac — light: the ink's neutrals */
+html:not([data-theme=dark]) #stopbg .sb-gbox .rfg-rim{mix-blend-mode:normal!important}   /* v236: the rim's dark light on the light page is laid as it is (a screen blend would lose it over the dots) */
+html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,255,255,.24);--sbg-hot:#FFFFFF;--sbg-rim:#FFFFFF}   /* dark: FreedX's white land and ocean; the warm spot and the rim white, not lilac (v236) */
 #stopbg .sb-chip{position:absolute;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 4px;border-radius:var(--radius-border_radius_round);background:linear-gradient(var(--card),var(--card)),var(--bg);border:1px solid var(--hairline);color:var(--ink);font:600 13px/1 var(--font);white-space:nowrap;box-shadow:0 2px 10px rgba(8,11,15,.06);transition:opacity .25s cubic-bezier(.23,1,.32,1)}
 #stopbg .sb-chip.swap{opacity:0}
 #stopbg .sb-drop{position:absolute;left:0;top:0;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:currentColor;will-change:transform;pointer-events:none}   /* v230: a bet falling out of a Default crowd */
@@ -5604,7 +5605,8 @@ html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,2
    by the halves of version 3 of the landing's background (YES green left of a line, NO red right of it, each lit as people join;
    the winner's flood at the outcome), dots off the canvas are skipped (a sphere far wider than the screen), the pin loop stops at
    the pins there are, the warm spot keeps the FreedX landing's size on a bigger sphere (opts.heatR), the theme switch refreshes the
-   warm spot's palette too, and the dot cache keeps one size. */
+   warm spot's palette too, and the dot cache keeps one size. v236 («sirenovi voobshe ne nujno, vo vremya hovera toje»): the warm
+   spot can keep each dot's own colour (opts.hotMix: 0 its own, 1 COLORS.hot as FreedX) — the page also sets LOOK.rimTint 0 and LOOK.heatHue null. */
 (function (root) {
   'use strict';
   if (root.RFGlobe) return;
@@ -5888,7 +5890,7 @@ html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,2
     'uniform vec4 uSize; uniform vec4 uShade; uniform vec3 uKey; uniform vec3 uFall;',
     'uniform vec4 uMouse; uniform vec4 uHeat; uniform float uReveal;',
     'uniform vec4 uPin[12]; uniform vec4 uRing[12];',
-    'uniform float uPinN; uniform vec4 uSide; uniform vec4 uSideL; uniform vec3 uYes; uniform vec3 uNo; uniform float uLift;',   // DUQ v235: the pins there are; the halves (uSide: line x px, its wave, the wave's half-width px, on; uSideL: YES light, NO light, calm, ±winner × glow)
+    'uniform float uPinN; uniform vec4 uSide; uniform vec4 uSideL; uniform vec3 uYes; uniform vec3 uNo; uniform float uLift; uniform float uHotK;',   // DUQ v235 (uHotK v236): the pins there are; the halves (uSide: line x px, its wave, the wave's half-width px, on; uSideL: YES light, NO light, calm, ±winner × glow)
     'uniform vec3 uHue[6]; uniform vec4 uTint;',   // v431: the warm spot's palette; uTint = LOOK.heatHue with the clock in z (w 0 = the single colour)
     'varying vec4 vCol; varying float vPx;',
     'vec3 hueAt(float h) { float f = fract(h) * 6.0; float i = min(floor(f), 5.0); float u = f - i; u = u * u * (3.0 - 2.0 * u);',
@@ -5935,7 +5937,7 @@ html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,2
     '  float wave = uHeat.w * f * sin(k * 18.0 - uMouse.w * 4.0);',
     '  s += (dm / max(dist, 0.001)) * uHeat.y * 1.4142 * k * exp(0.5 - k * k) * uMouse.z * front;',
     '  float hot = clamp(max(f, rh), 0.0, 1.0);',
-    '  vec3 hc = uHot.rgb;',
+    '  vec3 hc = mix(col.rgb, uHot.rgb, uHotK);',   // DUQ v236: the dot's own colour toward COLORS.hot by opts.hotMix (FreedX: 1)
     '  if (uTint.w > 0.0 && f > rh) { hc = hueAt(k * uTint.x + atan(dm.y, dm.x + 0.0001) * 0.15915494 * uTint.y - uTint.z); hot = clamp(max(f * uTint.w, rh), 0.0, 1.0); }',
     '  col.rgb = mix(col.rgb, hc, hot); col.a = mix(col.a, max(col.a, uHot.a), hot);',
     '  size *= (1.0 + uHeat.z * f + 0.22 * wave + sw) * (0.7 + 0.3 * facing) * (0.55 + 0.45 * rv);',
@@ -6417,7 +6419,7 @@ html[data-theme=dark] #stopbg .sb-gbox{--sbg-land:#FFFFFF;--sbg-ocean:rgba(255,2
       gl.uniform4fv(u.uPin, uPin); gl.uniform4fv(u.uRing, uRing);
       gl.uniform1f(u.uPinN, you ? 12 : Math.min(11, pins.length));   // DUQ v235
       gl.uniform4f(u.uSide, (side.x + bleed) * dpr, side.wave, Math.max(1, side.waveW * dpr), side.on ? 1 : 0); gl.uniform4f(u.uSideL, side.hy, side.hn, side.calm, side.win);
-      gl.uniform3fv(u.uYes, side.yes); gl.uniform3fv(u.uNo, side.no); gl.uniform1f(u.uLift, side.lift);
+      gl.uniform3fv(u.uYes, side.yes); gl.uniform3fv(u.uNo, side.no); gl.uniform1f(u.uLift, side.lift); gl.uniform1f(u.uHotK, opts.hotMix != null ? +opts.hotMix : 1);   // DUQ v236
       gl.drawArrays(gl.POINTS, 0, dots.count);
       gl.disableVertexAttribArray(1);
 
@@ -7097,13 +7099,14 @@ function duqStop(land){
  function stepLight(dt){const dk=Math.exp(-dt/(phase==='resolve'?1.6:.9)),ak=1-Math.exp(-dt/.1);HYt*=dk;HNt*=dk;HY+=(HYt-HY)*ak;HN+=(HNt-HN)*ak}
  function stepBx(dt){if(bxT<1){bxT=Math.min(1,bxT+dt/bxD);BX=bxA+(bxB-bxA)*(bxFlood?inOut(bxT):settle(bxT))}wave=bxFlood&&bxT<1?Math.sin(Math.PI*Math.min(1,bxT*1.08)):0}
  /* the limb light of FreedX's RF_LIMB picture across the top of its ring (±25°), in CSS px at the FreedX landing's R 500
-    (inside < 0): [d, alpha] of rgb(123,70,255) — smoothed over the picture's alpha steps */
+    (inside < 0): [d, alpha] — smoothed over the picture's alpha steps. Its violet rgb(123,70,255) went in v236 («sirenovi
+    voobshe ne nujno»): the same light in white on the dark page (× .5) and in the ink on the light one (× .24) */
  const LIMB=[[-46,0],[-40,.03],[-35,.06],[-30,.09],[-24,.1],[-20,.13],[-16,.16],[-12,.21],[-9,.28],[-6,.36],[-4,.46],[-2,.56],[-1,.62],[0,.68],[1,.6],[2,.36],[3,.27],[5,.19],[7,.15],[9,.11],[12,.08],[15,.045],[20,.026],[25,.015],[30,0]];
- const GCOL={land:'--sbg-land',ocean:'--sbg-ocean',hot:'--sbg-hot',hue0:'--sbg-h0',hue1:'--sbg-h1',hue2:'--sbg-h2',hue3:'--sbg-h3',hue4:'--sbg-h2',hue5:'--sbg-h1',rim:'--sbg-rim'};   /* FreedX's colours by theme (CSS on .sb-gbox) */
+ const GCOL={land:'--sbg-land',ocean:'--sbg-ocean',hot:'--sbg-hot',hue0:'--sbg-hot',hue1:'--sbg-hot',hue2:'--sbg-hot',hue3:'--sbg-hot',hue4:'--sbg-hot',hue5:'--sbg-hot',rim:'--sbg-rim'};   /* the globe's colours by theme (CSS on .sb-gbox); v236: no lilac anywhere */
  const GC=[.5,1],RIM={src:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',w:1,h:1,cx:0,cy:0,r:1};   /* the module's rim layer (its screen blend and entrance) — the light drawn in it at this sphere's size */
  let G=null,gFail=false,limbCv=null;
  function drawLimb(){if(!limbCv)return;const w=W,h=H-TOP;limbCv.width=Math.round(w*DPR);limbCv.height=Math.round(h*DPR);const k=limbCv.getContext('2d');k.setTransform(DPR,0,0,DPR,0,0);k.clearRect(0,0,w,h);
-  const cx=W/2,cy=BASE+RAD-TOP,r0=RAD+LIMB[0][0],r1=RAD+LIMB[LIMB.length-1][0],g=k.createRadialGradient(cx,cy,r0,cx,cy,r1);for(const [d,a] of LIMB)g.addColorStop((RAD+d-r0)/(r1-r0),`rgba(123,70,255,${a})`);
+  const cx=W/2,cy=BASE+RAD-TOP,r0=RAD+LIMB[0][0],r1=RAD+LIMB[LIMB.length-1][0],g=k.createRadialGradient(cx,cy,r0,cx,cy,r1),lc=col.dark?[255,255,255,.5]:[14,17,23,.24];for(const [d,a] of LIMB)g.addColorStop((RAD+d-r0)/(r1-r0),`rgba(${lc[0]},${lc[1]},${lc[2]},${(a*lc[3]).toFixed(3)})`);
   k.fillStyle=g;k.fillRect(0,0,w,h)}
  /* the ground under the dots: the page's own background, laid as the page lays it */
  function ground(){const bs=getComputedStyle(document.body),x=Math.round(W/2-RAD);gbody.style.left=x+'px';gbody.style.top=BASE+'px';gbody.style.width=gbody.style.height=2*RAD+'px';
@@ -7112,7 +7115,8 @@ function duqStop(land){
   GC[1]=(BASE+RAD-TOP)/(H-TOP);RIM.w=W;RIM.h=H-TOP;RIM.cx=W/2;RIM.cy=BASE+RAD-TOP;RIM.r=RAD;
   if(G){G.resize();drawLimb();return}if(gFail||!window.RFGlobe)return;
   try{RFGlobe.LOOK.rowsMax=Math.max(RFGlobe.LOOK.rowsMax,520);   /* rows ≈ 13.5 px apart on this sphere too (FreedX caps them at 240: its R is ≤ 500) */
-   G=RFGlobe.create(gbox,{radiusPx:()=>RAD,center:GC,view:{lat:TILT-90,lng:-SPIN},idle:'still',autoRotate:0,intro:true,keyboard:false,flow:false,fall:false,heatR:500,rim:RIM,colors:GCOL,onError:()=>{gFail=true}});
+   RFGlobe.LOOK.rimTint=0;RFGlobe.LOOK.heatHue=null;   /* v236: no lilac — the dots keep their colour up to the rim, and under the cursor (hotMix .3: their own colour, a third of the way to white / the ink) */
+   G=RFGlobe.create(gbox,{radiusPx:()=>RAD,center:GC,view:{lat:TILT-90,lng:-SPIN},idle:'still',autoRotate:0,intro:true,keyboard:false,flow:false,fall:false,heatR:500,hotMix:.3,rim:RIM,colors:GCOL,onError:()=>{gFail=true}});
    const re=gbox.querySelector('.rfg-rim');if(re){limbCv=document.createElement('canvas');limbCv.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;display:block';re.appendChild(limbCv);drawLimb()}
   }catch(e){gFail=true;G=null;if(window.console)console.warn('version 3 globe:',e&&e.message||e)}}
  function syncGlobe(){if(G)G.setSide({on:1,x:BX,wave,waveW:100*U,hy:HY,hn:HN,calm:col.calm,win:(phase==='resolve'||phase==='quiet')?(outcome?1:-1)*glow:0,yes:col.yesR,no:col.noR,lift:col.lift})}
@@ -7248,7 +7252,7 @@ function duqStop(land){
  /* the words «yes» and «no» in the headline drop your own dot (as y / n do) */
  document.addEventListener('click',e=>{if(root.hidden||!running)return;const w=e.target.closest&&e.target.closest('#landing .headline .w');if(!w)return;commit(w.classList.contains('yes'))});
  let rt=0;window.addEventListener('resize',()=>{if(!ready)return;clearTimeout(rt);rt=setTimeout(()=>{layout();if(!running)paint()},120)});
- new MutationObserver(()=>{if(!ready)return;colors();ground();window.dispatchEvent(new Event('ds-theme'));if(!running)paint()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+ new MutationObserver(()=>{if(!ready)return;colors();ground();drawLimb();window.dispatchEvent(new Event('ds-theme'));if(!running)paint()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(ready){layout();if(!running)paint()}});
  return{root,start,stop,commit};
 }
