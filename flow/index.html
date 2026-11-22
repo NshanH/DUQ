@@ -2349,6 +2349,25 @@ body.is-landing{height:100%;overflow:hidden;display:flex;flex-direction:column;f
 #landing .headline br.m{display:none}
 #landing .headline .yes .v{color:var(--yes-text)}
 #landing .headline .no .v{color:var(--no-text)}
+/* v241 (the user, 23 Nov 2026, after the text-only headline boards: «i chto text bil jivoi resulyt globus»): in version 3
+   the headline is the globe's result in words — the event the crowd is betting on (its photo and question), the share of
+   the crowd as it moves («64% say no.» / «Know better?»), and at the outcome what the globe shows («It’s a no.» / «23 people
+   called it.»); the chip under the queues gives way to it. Default, 1 and 2 keep «Will it happen? Just say yes or no.» */
+#landing .headline .lv{display:none}
+#landing.hl-live .headline .line:not(.lv){display:none}
+#landing.hl-live .headline .lv{display:block}
+#landing.hl-live .headline .lv-ev{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 20px;font:600 18px/1.3 var(--font);font-variation-settings:"wght" 600;letter-spacing:0;color:var(--ink-2)}
+#landing .headline .lv-ev img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none;background:var(--card-2)}
+#landing .headline .lv-ev,#landing .headline .lv-big,#landing .headline .lv-sub{transition:opacity .25s cubic-bezier(.23,1,.32,1)}
+#landing .headline .lv.swap{opacity:0}
+#landing .headline .lv-big .yes{color:var(--yes-text)}
+#landing .headline .lv-big .no{color:var(--no-text)}
+#landing .headline .lv-big.pop{animation:lv-pop .6s cubic-bezier(.23,1,.32,1)}
+@keyframes lv-pop{0%{transform:scale(.92);opacity:0}100%{transform:none;opacity:1}}
+#landing .headline .lv-sub{margin-top:14px;font:600 28px/1.25 var(--font);font-variation-settings:"wght" 600;letter-spacing:-.01em;color:var(--ink-2)}
+#landing.hl-live #stopbg .sb-chip{display:none}
+@media (max-width:640px){#landing.hl-live .headline .lv-ev{font-size:15px;margin-bottom:14px}#landing .headline .lv-ev img{width:24px;height:24px}#landing .headline .lv-sub{font-size:20px;margin-top:10px}}
+@media (prefers-reduced-motion:reduce){#landing .headline .lv-big.pop{animation:none}}
 #landing .sub{margin:22px 0 0;font-size:16px;line-height:1.5;color:var(--ink-2);text-align:center;font-weight:500}
 #landing .cta{margin-top:36px}
 #landing .lhint{margin:14px 0 0;font-size:13px;color:var(--ink-3);text-align:center;opacity:0;transition:opacity 600ms var(--ease);min-height:24px}
@@ -3537,6 +3556,10 @@ html[data-theme=dark] .money .qr{background:#fff}
     <span class="sr-only">Will it happen? Just say yes or no.</span>
     <span class="line" aria-hidden="true"><span class="t">Will it happen</span><span class="q">?</span></span>
     <span class="line" aria-hidden="true"><span class="t">Just say</span><br class="m"> <span class="w yes"><span class="v">yes</span></span><span class="t"> or </span><span class="w no"><span class="v">no</span></span><span class="t">.</span></span>
+    <!-- v241 (the user, 23 Nov 2026: «i chto text bil jivoi resulyt globus»): version 3's headline is live — the globe's event, its crowd's share, then the outcome; duqStop fills these lines, the two above stay for Default, 1 and 2 -->
+    <span class="line lv lv-ev" aria-hidden="true"><img alt="" decoding="async"><span class="lv-q"></span></span>
+    <span class="line lv lv-big" aria-hidden="true"></span>
+    <span class="line lv lv-sub" aria-hidden="true"></span>
   </h1>
   <button type="button" class="btn-link cta" data-enter="home"><span>Make your call</span><span class="arrow" aria-hidden="true" data-icon="arrow-right"></span></button>
 </main>
@@ -7992,6 +8015,17 @@ function duqStop(land){
  /* [event id, question, chance of Yes] — the prototype's own markets */
  const EVS=[['btc','Bitcoin above $150k by New Year?',41],['ecb','ECB cuts rates in October?',62],['shutdown','Shutdown lasts 30+ days?',62],['santa','Santa delivers 7B+ gifts?',71],['dem2028','Newsom wins the 2028 nomination?',31],['ucl','Chelsea beat Barcelona?',40],['nba','Clippers beat the Raptors?',45],['eth','Ethereum below $1,500 this year?',64],['nuclear','Nuclear detonation in 2025?',23],['dotamajor','Juggernaut wins the Dota 2 major?',18]];
  const pic=id=>{try{const e=EVENTS[id];return e&&PIC[e.pic]||''}catch(_){return ''}};
+ /* v241: the live headline (see the CSS) — the event, its crowd's share, the outcome: the globe's result in words */
+ const lvQ=s=>land.querySelector('.headline '+s),lv={ev:lvQ('.lv-ev'),img:lvQ('.lv-ev img'),q:lvQ('.lv-q'),big:lvQ('.lv-big'),sub:lvQ('.lv-sub')},lvSr=lvQ('.sr-only'),lvSrTxt=lvSr?lvSr.textContent:'';let lvKey='';
+ const lvSet=(el,html)=>{if(el&&el.innerHTML!==html)el.innerHTML=html};
+ const lvSwap=on=>[lv.ev,lv.big,lv.sub].forEach(e=>e&&e.classList.toggle('swap',on));
+ const lvRelayout=()=>{const f=F();if(f&&f.relayout)f.relayout()};   /* the field's crowds keep off the new words */
+ function lvShare(pc){const yes=pc>=50,v=yes?pc:100-pc,s=yes?'yes':'no',k='s'+v+s;if(k===lvKey)return;lvKey=k;   /* «64% say no.» — the side ahead, in its colour */
+  if(lv.big){lv.big.classList.remove('pop');lvSet(lv.big,`<span class="${s}">${v}%</span> say <span class="${s}">${s}</span>.`)}lvSet(lv.sub,'Know better?')}
+ function lvEvent(e,pc){if(lv.img)lv.img.src=pic(e[0])||'';if(lv.q)lv.q.textContent=e[1];if(lvSr)lvSr.textContent=e[1]+' The crowd is calling it live.';lvKey='';lvShare(pc);lvRelayout()}
+ function lvResult(){const win=outcome?'yes':'no',n=people.filter(p=>p.side===win&&(p.mode==='queue'||p.mode==='walk')).length;lvKey='r'+win;   /* «It’s a no.» — the winners on the globe counted */
+  if(lv.big){lvSet(lv.big,`It’s a <span class="${win}">${win}</span>.`);lv.big.classList.remove('pop');void lv.big.offsetWidth;lv.big.classList.add('pop')}
+  lvSet(lv.sub,n?`${n} ${n===1?'person':'people'} called it.`:'Nobody called it.');lvRelayout()}
  const root=document.createElement('div');root.id='stopbg';root.setAttribute('aria-hidden','true');root.hidden=true;
  root.innerHTML='<div class="sb-body"></div><div class="sb-gbox"></div><canvas class="sb-c"></canvas><div class="sb-chip"><img alt="" decoding="async"><span class="sb-t"></span><b class="sb-p"></b></div>';
  {const fc=document.getElementById('field');if(fc&&fc.parentNode===land)land.insertBefore(root,fc.nextSibling);else land.insertBefore(root,land.firstChild)}   /* over the field's dots */
@@ -8105,11 +8139,11 @@ function duqStop(land){
   for(const p of puffs)p.t+=dt;puffs=puffs.filter(p=>p.t<.4);for(const p of plus)p.t+=dt;plus=plus.filter(p=>p.t<1.3)}
  /* ---- events ---- */
  function nextEvent(){const first=!ev;if(!deck.length)deck=EVS.map((_,i)=>i).sort(()=>Math.random()-.5);evi=deck.pop();ev=EVS[evi];outcome=Math.random()*100<ev[2];
-  const e=ev,apply=()=>{chipImg.src=pic(e[0])||'';chipT.textContent=e[1];chipP.className='sb-p';const fs=F()&&F().state?F().state():null;chipP.textContent=(fs?Math.round(fs.p*100):e[2])+'% Yes';chipPc=-1};   /* the field's live share, not the event's own odds */
-  if(first||reduced)apply();else{chip.classList.add('swap');setTimeout(()=>{apply();chip.classList.remove('swap')},250)}
+  const e=ev,apply=()=>{chipImg.src=pic(e[0])||'';chipT.textContent=e[1];chipP.className='sb-p';const fs=F()&&F().state?F().state():null;chipP.textContent=(fs?Math.round(fs.p*100):e[2])+'% Yes';chipPc=-1;lvEvent(e,fs?Math.round(fs.p*100):e[2])};   /* the field's live share, not the event's own odds */
+  if(first||reduced)apply();else{chip.classList.add('swap');lvSwap(true);setTimeout(()=>{apply();chip.classList.remove('swap');lvSwap(false)},250)}
   phase='bet';pt=0;nextBet=.3;for(const d of drops)d.el.remove();drops=[];plus=[];glow=0;chipPc=-1;if(!first)bxTo(W/2,1.1,false)}
  function arrive(){const yes=outcome;chipP.className='sb-p res '+(yes?'yes':'no');chipP.innerHTML=(yes?'YES':'NO')+(yes?CHECK:CROSS)}
- function resolve(){arrive();bxTo(outcome?W+110*U:-110*U,1.25,true);if(outcome)HYt=1;else HNt=1;const win=outcome?'yes':'no',lose=outcome?'no':'yes';
+ function resolve(){arrive();lvResult();bxTo(outcome?W+110*U:-110*U,1.25,true);if(outcome)HYt=1;else HNt=1;const win=outcome?'yes':'no',lose=outcome?'no':'yes';
   for(const d of drops)if(d.side===lose){dustFrom(d.x,d.y-2*U,d.y+2*U,lose,3);d.done=true;d.el.remove()}drops=drops.filter(d=>!d.done);
   /* the losers dissolve into dots, the front of the queue first */
   people.filter(p=>p.side===lose&&p.mode!=='gone').sort((a,b)=>Math.abs(a.x-W/2)-Math.abs(b.x-W/2)).forEach((p,i)=>{p.mode='dissolve';p.delay=i*.035;p.fade=0});
@@ -8132,7 +8166,7 @@ function duqStop(land){
   if(st){const ph=st.phase;
    if(st.cycle!==fCycle){if(fCycle!==-1&&phase!=='bet')nextEvent();fCycle=st.cycle}
    if(ph==='drift'||ph==='freeze'){const late=ph==='freeze'||st.tc>10.6;phase=late?'gather':'bet';bet(late?rate*1.7:rate,st.p);
-    const pc=Math.round(st.p*100);if(pc!==chipPc){chipPc=pc;chipP.className='sb-p';chipP.textContent=pc+'% Yes'}}
+    const pc=Math.round(st.p*100);if(pc!==chipPc){chipPc=pc;chipP.className='sb-p';chipP.textContent=pc+'% Yes';lvShare(pc)}}
    else if(ph==='snap'||ph==='hold'){if(phase!=='resolve'){phase='resolve';pt=0;outcome=st.winner===1;resolve()}glow=Math.min(1,glow+dt/.45)}
    else{if(phase==='resolve'){phase='quiet';pt=0;winnersLeave()}glow=Math.max(0,glow-dt/.5)}
    return}
@@ -8186,13 +8220,13 @@ function duqStop(land){
  function still(){people=[];const f=F(),st=f&&f.state?f.state():null,py=st?st.p:ev[2]/100;const cap=Math.floor((W/2-80*U)/SP),n=Math.min(cap*2,Math.round(cap*1.1));const y=Math.round(n*py);
   for(let i=0;i<n;i++){const side=i<y?'yes':'no';people.push({side,x:0,s:size(),ph:0,dir:side==='yes'?1:-1,mode:'queue',a:1})}
   const qi={yes:0,no:0};for(const p of people)p.x=slot(p.side,qi[p.side]++);
-  chipP.textContent=Math.round(py*100)+'% Yes';HY=HN=HYt=HNt=.55;paint()}
+  chipP.textContent=Math.round(py*100)+'% Yes';lvShare(Math.round(py*100));HY=HN=HYt=HNt=.55;paint()}
  function frame(t){if(!running){raf=0;return}const dt=Math.min(.05,last?(t-last)/1000:0);last=t;tick(dt);paint();raf=requestAnimationFrame(frame)}
  function prepare(){if(ready)return;ready=true;layout();nextEvent();if(reduced){setTimeout(still,0);return}
   /* a warm start: the first bets have landed */
   for(let i=0;i<60;i++)tick(1/30)}
- function start(){prepare();heroOn=true;placeHero();if(G&&!root.hidden)G.resume();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
- function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0;if(G)G.pause();heroOff()}
+ function start(){if(!root.hidden)land.classList.add('hl-live');prepare();heroOn=true;placeHero();if(G&&!root.hidden)G.resume();if(running||reduced||document.hidden||root.hidden||!document.body.classList.contains('is-landing'))return;running=true;last=0;raf=requestAnimationFrame(frame)}
+ function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0;if(G)G.pause();heroOff();if(root.hidden){land.classList.remove('hl-live');if(lvSr)lvSr.textContent=lvSrTxt}}   /* v241: the live headline goes with version 3, not with a hidden tab */
  function commit(yes){if(!ready||reduced||phase==='resolve'||phase==='quiet')return;drop(yes?'yes':'no',true)}
  /* the words «yes» and «no» in the headline drop your own dot (as y / n do) */
  document.addEventListener('click',e=>{if(root.hidden||!running)return;const w=e.target.closest&&e.target.closest('#landing .headline .w');if(!w)return;commit(w.classList.contains('yes'))});
