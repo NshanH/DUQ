@@ -5762,7 +5762,12 @@ function duqStop(land){
     The world turns slowly under them (slower over land, faster over open sea: a continent is nearly always in sight); the
     half under YES is green and the half under NO red, land bright and sea dim; at the outcome the winner's colour floods the
     whole globe from the middle while the loser's land dims ahead of it, and the rim takes the winner's colour; with the next
-    event the halves come back. The chip sits on the globe under the queues. */
+    event the halves come back. The chip sits on the globe under the queues.
+    v233 (the user: «Территории» — version 3 of the four globes): the halves became territories — from the middle the green
+    land reaches out under the YES queue and the red under the NO queue, each as wide as its share of the bets (the chip's
+    live share, ≈ 0.8 of the screen between them), so with the bets their edges crawl in and out; past them the globe is
+    FreedX's own, white; through the last-minute rush the shares sit near even; at the outcome the winner's land runs out to
+    its edge and floods the loser's. */
  const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  /* [event id, question, chance of Yes] — the prototype's own markets */
  const EVS=[['btc','Bitcoin above $150k by New Year?',41],['ecb','ECB cuts rates in October?',62],['shutdown','Shutdown lasts 30+ days?',62],['santa','Santa delivers 7B+ gifts?',71],['dem2028','Newsom wins the 2028 nomination?',31],['ucl','Chelsea beat Barcelona?',40],['nba','Clippers beat the Raptors?',45],['eth','Ethereum below $1,500 this year?',64],['nuclear','Nuclear detonation in 2025?',23],['dotamajor','Juggernaut wins the Dota 2 major?',18]];
@@ -5808,23 +5813,30 @@ function duqStop(land){
  /* the line between the halves: in the middle; at the outcome it runs out to the loser's edge (the winner's colour floods) */
  const inOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
  function bxTo(x,d,flood){bxA=BX;bxB=x;bxT=0;bxD=d;bxFlood=flood}
+ /* v233: the territories — from the middle the YES land reaches left and the NO land right, each as wide as its share */
+ let TL=0,TR=0,TP=.5;
+ function terrAt(res){const span=.8*W;let l=W/2-TP*span-8*U,r=W/2+(1-TP)*span+8*U;if(res){if(outcome)l=-260*U;else r=W+260*U}return [l,r]}
+ function liveShare(){const f=F(),st=f&&f.state?f.state():null;return st?st.p:(ev?ev[2]/100:.5)}   /* as on the chip */
+ function terrSnap(){const res=phase==='resolve'||phase==='quiet';if(!res)TP=liveShare();[TL,TR]=terrAt(res)}
+ function stepTerr(dt){const res=phase==='resolve'||phase==='quiet';if(!res)TP=liveShare();const [l,r]=terrAt(res),k=1-Math.exp(-dt*(res?2.4:3.5));TL+=(l-TL)*k;TR+=(r-TR)*k}
  function stepBx(dt){if(bxT<1){bxT=Math.min(1,bxT+dt/bxD);BX=bxA+(bxB-bxA)*(bxFlood?inOut(bxT):settle(bxT))}wave=bxFlood&&bxT<1?Math.sin(Math.PI*Math.min(1,bxT*1.08)):0}
  const BVS='attribute vec2 aQ;void main(){gl_Position=vec4(aQ,0.,1.);}';
  /* the body: dark (light) violet from the rim down into the page, a breath of each half's colour, the air lit round the rim, the rim line */
- const BFS=['precision highp float;uniform vec2 uC,uY;uniform float uR,uH,uAw,uLw,uBx,uBw,uTint;uniform vec3 uTop,uBot,uYes,uNo;uniform vec4 uRim,uAtm;',
+ const BFS=['precision highp float;uniform vec2 uC,uY;uniform float uR,uH,uAw,uLw,uBx,uBw,uTint;uniform vec3 uTop,uBot,uYes,uNo;uniform vec4 uRim,uAtm,uT;',
   'void main(){vec2 p=vec2(gl_FragCoord.x,uH-gl_FragCoord.y);float d=length(p-uC)-uR;vec4 o;',
-  'if(d<0.){float t=clamp((p.y-uY.x)/(uY.y-uY.x),0.,1.);vec3 b=mix(uTop,uBot,t);b=mix(b,mix(uYes,uNo,smoothstep(uBx-uBw*3.,uBx+uBw*3.,p.x)),uTint*(1.-.7*t));',
+  'if(d<0.){float t=clamp((p.y-uY.x)/(uY.y-uY.x),0.,1.),kb=smoothstep(uBx-uBw*3.,uBx+uBw*3.,p.x),tb=mix(smoothstep(uT.x-uBw*2.,uT.x+uBw*2.,p.x),1.-smoothstep(uT.y-uBw*2.,uT.y+uBw*2.,p.x),kb);',
+  'vec3 b=mix(uTop,uBot,t);b=mix(b,mix(uYes,uNo,kb),uTint*(1.-.7*t)*tb);',
   'b=mix(b,uAtm.rgb,uAtm.a*.5*exp(d/(uAw*.5)));o=vec4(b,1.);}else{float a=uAtm.a*exp(-d/uAw);o=vec4(uAtm.rgb*a,a);}',
   'float l=(1.-smoothstep(uLw,uLw+1.2,abs(d)))*uRim.a;gl_FragColor=o*(1.-l)+vec4(uRim.rgb*l,l);}'].join('');
  /* the dots: on the near side only, smaller and fainter toward the rim; each takes its half's colour (land bright, sea dim);
     while the winner's colour floods, the loser's dots ahead of the line dim and a wave of light rides the line */
- const GVS=['precision highp float;attribute vec3 aP;attribute vec2 aI;uniform mat3 uM;uniform vec2 uC,uV;uniform float uR,uBx,uBw,uWin;uniform vec3 uYes,uNo;uniform vec4 uA,uS;varying vec4 vC;',
+ const GVS=['precision highp float;attribute vec3 aP;attribute vec2 aI;uniform mat3 uM;uniform vec2 uC,uV;uniform float uR,uBx,uWin;uniform vec3 uYes,uNo,uNeu;uniform vec4 uA,uS,uT;varying vec4 vC;',
   'void main(){vec3 q=uM*aP;vec2 s=vec2(uC.x+q.x*uR,uC.y-q.y*uR);',
   'if(q.z<=0.||s.y>uV.y+6.||s.x<-6.||s.x>uV.x+6.){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;vC=vec4(0.);return;}',
-  'float k=step(uBx,s.x),lose=uWin>0.?k:1.-k,wv=uA.w*(1.-smoothstep(0.,uS.w,abs(s.x-uBx)));',
-  'float a=mix(uA.y,uA.x,aI.x)*smoothstep(0.,.2,q.z)*(1.-.55*uA.z*lose)*(1.+1.4*wv);',
+  'float k=step(uBx,s.x),lose=uWin>0.?k:1.-k,wv=uA.w*(1.-smoothstep(0.,uS.w,abs(s.x-uBx))),t=k<.5?step(uT.x,s.x):step(s.x,uT.y);',
+  'float a=mix(uA.y,uA.x,aI.x)*smoothstep(0.,.2,q.z)*(1.-.55*uA.z*lose*t)*(1.+1.4*wv)*mix(mix(uT.w,uT.z,aI.x),1.,t);',
   'float z=uS.x*mix(uS.y,1.,aI.x)*(.42+.58*sqrt(q.z))*(.9+.2*aI.y)*(1.+.6*wv);if(z<1.6){a*=z/1.6;z=1.6;}a=min(a,1.);',
-  'gl_PointSize=z;gl_Position=vec4(s.x/uV.x*2.-1.,1.-s.y/uV.y*2.,0.,1.);vC=vec4(mix(mix(uYes,uNo,k),vec3(1.),max(uS.z*aI.x,.45*wv))*a,a);}'].join('');
+  'gl_PointSize=z;gl_Position=vec4(s.x/uV.x*2.-1.,1.-s.y/uV.y*2.,0.,1.);vC=vec4(mix(mix(uNeu,mix(uYes,uNo,k),t),vec3(1.),max(uS.z*aI.x*t,.45*wv))*a,a);}'].join('');
  const GFS='precision mediump float;varying vec4 vC;void main(){float r=length(gl_PointCoord-.5)*2.;gl_FragColor=vC*(1.-smoothstep(.55,1.,r));}';
  function glInit(){if(gl===false)return false;if(gl)return true;
   try{gl=gcv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'})}catch(e){gl=null}
@@ -5832,8 +5844,8 @@ function duqStop(land){
   const sh=(t,src)=>{const o=gl.createShader(t);gl.shaderSource(o,src);gl.compileShader(o);return o};
   const pr=(v,f,at)=>{const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,v));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,f));at.forEach((a,i)=>gl.bindAttribLocation(p,i,a));gl.linkProgram(p);return gl.getProgramParameter(p,gl.LINK_STATUS)?p:null};
   BP=pr(BVS,BFS,['aQ']);GP=pr(GVS,GFS,['aP','aI']);if(!BP||!GP){gl=false;return false}
-  'uC uY uR uH uAw uLw uBx uBw uTint uTop uBot uYes uNo uRim uAtm'.split(' ').forEach(k=>BU[k]=gl.getUniformLocation(BP,k));
-  'uM uC uV uR uBx uBw uWin uYes uNo uA uS'.split(' ').forEach(k=>GU[k]=gl.getUniformLocation(GP,k));
+  'uC uY uR uH uAw uLw uBx uBw uTint uTop uBot uYes uNo uRim uAtm uT'.split(' ').forEach(k=>BU[k]=gl.getUniformLocation(BP,k));
+  'uM uC uV uR uBx uWin uYes uNo uNeu uA uS uT'.split(' ').forEach(k=>GU[k]=gl.getUniformLocation(GP,k));
   qbuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,qbuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);pbuf=gl.createBuffer();ibuf=gl.createBuffer();
   gcv.addEventListener('webglcontextlost',e=>{e.preventDefault();gl=false;gcv.style.display='none';if(!running&&ready)paint()});   /* the 2D globe (no dots) takes over */
   return true}
@@ -5845,16 +5857,16 @@ function duqStop(land){
   gl.useProgram(BP);gl.bindBuffer(gl.ARRAY_BUFFER,qbuf);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);gl.disableVertexAttribArray(1);
   gl.uniform2f(BU.uC,cx,cy);gl.uniform2f(BU.uY,(BASE-TOP)*D,ch);gl.uniform1f(BU.uR,R);gl.uniform1f(BU.uH,ch);gl.uniform1f(BU.uAw,24*U*D);gl.uniform1f(BU.uLw,.75*D*(1+.6*rm));
   gl.uniform1f(BU.uBx,BX*D);gl.uniform1f(BU.uBw,34*U*D);gl.uniform1f(BU.uTint,G.tint);gl.uniform3fv(BU.uTop,G.top);gl.uniform3fv(BU.uBot,G.bot);gl.uniform3fv(BU.uYes,col.yesR);gl.uniform3fv(BU.uNo,col.noR);
-  gl.uniform4f(BU.uRim,rim[0],rim[1],rim[2],G.rimA+(1-G.rimA)*rm);gl.uniform4f(BU.uAtm,G.atm[0],G.atm[1],G.atm[2],G.atmA);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  gl.uniform4f(BU.uRim,rim[0],rim[1],rim[2],G.rimA+(1-G.rimA)*rm);gl.uniform4f(BU.uAtm,G.atm[0],G.atm[1],G.atm[2],G.atmA);gl.uniform4f(BU.uT,TL*D,TR*D,0,0);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   gl.useProgram(GP);gl.bindBuffer(gl.ARRAY_BUFFER,pbuf);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,ibuf);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,2,gl.FLOAT,false,0,0);
-  gl.uniformMatrix3fv(GU.uM,false,spinMatrix());gl.uniform2f(GU.uC,cx,cy);gl.uniform2f(GU.uV,cw,ch);gl.uniform1f(GU.uR,R);gl.uniform1f(GU.uBx,BX*D);gl.uniform1f(GU.uBw,6*U*D);gl.uniform1f(GU.uWin,outcome?1:-1);
+  gl.uniformMatrix3fv(GU.uM,false,spinMatrix());gl.uniform2f(GU.uC,cx,cy);gl.uniform2f(GU.uV,cw,ch);gl.uniform1f(GU.uR,R);gl.uniform1f(GU.uBx,BX*D);gl.uniform1f(GU.uWin,outcome?1:-1);gl.uniform3fv(GU.uNeu,G.neu);gl.uniform4f(GU.uT,TL*D,TR*D,G.neuA,G.neuS);
   gl.uniform3fv(GU.uYes,col.yesR);gl.uniform3fv(GU.uNo,col.noR);gl.uniform4f(GU.uA,G.land,G.sea,(phase==='resolve'||phase==='quiet')?glow:0,wave);gl.uniform4f(GU.uS,Math.PI*RAD/dotRows*.4*D,.6,G.lift,100*U*D);
   gl.drawArrays(gl.POINTS,0,DOTN);return true}
  const rgbOf=cl=>{const k=document.createElement('canvas').getContext('2d');k.fillStyle='#000';k.fillStyle=cl;const v=k.fillStyle;if(v[0]==='#'){const n=parseInt(v.slice(1),16);return [(n>>16)/255,(n>>8&255)/255,(n&255)/255]}const m=v.match(/[\d.]+/g)||[0,0,0];return [m[0]/255,m[1]/255,m[2]/255]};
  const rgba=(v,a)=>`rgba(${Math.round(v[0]*255)},${Math.round(v[1]*255)},${Math.round(v[2]*255)},${a})`;
  function globeColors(){col.yesR=rgbOf(col.yes);col.noR=rgbOf(col.no);const bg=rgbOf(col.bg||(col.dark?'#07090f':'#f0f0f5'));
-  col.globe=col.dark?{top:rgbOf('#1b1640'),bot:bg.map((v,i)=>v*.5+[.047,.039,.1][i]*.5),rim:rgbOf('#a996ff'),rimA:.85,atm:rgbOf('#7b5cff'),atmA:.5,land:1,sea:.12,tint:.07,lift:.16}
-   :{top:rgbOf('#e7e3fb'),bot:bg,rim:rgbOf('#6f5be6'),rimA:.55,atm:rgbOf('#8d78f2'),atmA:.22,land:.95,sea:.15,tint:.06,lift:0}}
+  col.globe=col.dark?{top:rgbOf('#1b1640'),bot:bg.map((v,i)=>v*.5+[.047,.039,.1][i]*.5),rim:rgbOf('#a996ff'),rimA:.85,atm:rgbOf('#7b5cff'),atmA:.5,land:1,sea:.12,tint:.07,lift:.16,neu:rgbOf('#e4deff'),neuA:.6,neuS:.4}
+   :{top:rgbOf('#e7e3fb'),bot:bg,rim:rgbOf('#6f5be6'),rimA:.55,atm:rgbOf('#8d78f2'),atmA:.22,land:.95,sea:.15,tint:.06,lift:0,neu:rgbOf('#6a5fb0'),neuA:.5,neuS:.45}}
  /* without WebGL: the body, its air and the rim in 2D (no dots) */
  function globe2D(){const cx=W/2,cy=BASE+RAD-TOP,G=col.globe,half=Math.asin(Math.min(1,(W/2+20)/RAD));
   const atm=c.createRadialGradient(cx,cy,RAD-4*U,cx,cy,RAD+64*U);atm.addColorStop(0,rgba(G.atm,G.atmA));atm.addColorStop(.18,rgba(G.atm,G.atmA*.35));atm.addColorStop(1,rgba(G.atm,0));c.fillStyle=atm;c.beginPath();c.arc(cx,cy,RAD+64*U,0,7);c.fill();
@@ -5871,7 +5883,7 @@ function duqStop(land){
   TOP=Math.round(BASE-130*U);DPR=Math.min(2,window.devicePixelRatio||1);   /* the canvases are the globe's band; a falling dot above it is a light DOM dot */
   for(const k of [cv,gcv]){k.style.top=TOP+'px';k.style.height=(H-TOP)+'px';k.width=Math.round(W*DPR);k.height=Math.round((H-TOP)*DPR)}
   chip.style.top=Math.round(BASE+50*U)+'px';colors();
-  if(phase==='resolve'||phase==='quiet')BX=bxB=outcome?W+110*U:-110*U;else BX=bxB=W/2;bxT=1;
+  if(phase==='resolve'||phase==='quiet')BX=bxB=outcome?W+110*U:-110*U;else BX=bxB=W/2;bxT=1;terrSnap();
   if(glInit())uploadDots()}
  /* v231 (the user, 22 Nov 2026: «1» of «mojesh predlagat mesto shose drugoe pod ludmi 4 varianta»): the road became a planet's
     horizon — a wide arc; everyone stands on it upright to the ground, tilted along its normal. v232: the arc is the globe's rim
@@ -5933,7 +5945,7 @@ function duqStop(land){
   else if(phase==='gather'){bet(rate*1.7,ev[2]/100);if(pt>2.4){phase='resolve';pt=0;resolve()}}      /* the crowds sink low, the last bets rush in */
   else if(phase==='resolve'){glow=Math.min(1,glow+dt/.45);if(pt>2.6){phase='quiet';pt=0;winnersLeave()}}
   else if(phase==='quiet'){glow=Math.max(0,glow-dt/.5);if(pt>.6&&!people.some(p=>p.mode==='leave'||p.mode==='dissolve')&&!dust.length)nextEvent()}}
- function tick(dt){T+=dt;director(dt);stepDrops(dt);stepPeople(dt);stepFx(dt);SPIN+=spinSpeed()*dt;stepBx(dt)}
+ function tick(dt){T+=dt;director(dt);stepDrops(dt);stepPeople(dt);stepFx(dt);SPIN+=spinSpeed()*dt;stepBx(dt);stepTerr(dt)}
  /* ---- drawing (canvas y = page y − TOP) ---- */
  function rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
  function person(p){const s=p.s*1.2*U,x=p.x,b=gy(p.x)-TOP,mv=p.moving,ph=p.ph,col1=p.side==='yes'?col.yes:col.no;
@@ -5978,7 +5990,7 @@ function duqStop(land){
  function still(){people=[];const f=F(),st=f&&f.state?f.state():null,py=st?st.p:ev[2]/100;const cap=Math.floor((W/2-80*U)/SP),n=Math.min(cap*2,Math.round(cap*1.1));const y=Math.round(n*py);
   for(let i=0;i<n;i++){const side=i<y?'yes':'no';people.push({side,x:0,s:size(),ph:0,dir:side==='yes'?1:-1,mode:'queue',a:1})}
   const qi={yes:0,no:0};for(const p of people)p.x=slot(p.side,qi[p.side]++);
-  chipP.textContent=Math.round(py*100)+'% Yes';paint()}
+  chipP.textContent=Math.round(py*100)+'% Yes';TP=py;[TL,TR]=terrAt(false);paint()}
  function frame(t){if(!running){raf=0;return}const dt=Math.min(.05,last?(t-last)/1000:0);last=t;tick(dt);paint();raf=requestAnimationFrame(frame)}
  function prepare(){if(ready)return;ready=true;layout();nextEvent();if(reduced){setTimeout(still,0);return}
   /* a warm start: the first bets have landed */
