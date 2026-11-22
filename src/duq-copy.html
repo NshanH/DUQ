@@ -5750,7 +5750,7 @@ function duqStop(land){
     with «+$» over them and their crowd bursts like a salute; then the winners walk off and the next event's crowds fade in. */
  const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  /* [event id, question, chance of Yes] — the prototype's own markets */
- const EVS=[['btc','Bitcoin above $150k by New Year?',41],['ecb','ECB cuts rates in October?',62],['shutdown','Shutdown lasts 30+ days?',62],['santa','Santa delivers 7B+ gifts?',71],['dem2028','Newsom wins the 2028 nomination?',31],['ucl','Chelsea beat Barcelona?',40],['nba','Clippers beat the Raptors?',45],['khamenei','Khamenei out in 2025?',23],['nuclear','Nuclear detonation in 2025?',23],['dotamajor','Juggernaut wins the Dota 2 major?',18]];
+ const EVS=[['btc','Bitcoin above $150k by New Year?',41],['ecb','ECB cuts rates in October?',62],['shutdown','Shutdown lasts 30+ days?',62],['santa','Santa delivers 7B+ gifts?',71],['dem2028','Newsom wins the 2028 nomination?',31],['ucl','Chelsea beat Barcelona?',40],['nba','Clippers beat the Raptors?',45],['eth','Ethereum below $1,500 this year?',64],['nuclear','Nuclear detonation in 2025?',23],['dotamajor','Juggernaut wins the Dota 2 major?',18]];
  const pic=id=>{try{const e=EVENTS[id];return e&&PIC[e.pic]||''}catch(_){return ''}};
  const root=document.createElement('div');root.id='stopbg';root.setAttribute('aria-hidden','true');root.hidden=true;
  root.innerHTML='<canvas></canvas><div class="sb-chip"><img alt="" decoding="async"><span class="sb-t"></span><b class="sb-p"></b></div>';
