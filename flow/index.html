@@ -3535,8 +3535,9 @@ html[data-theme=dark] .money .qr{background:#fff}
 <main class="hero">
   <h1 class="headline" tabindex="-1">
     <span class="sr-only">Will it happen? Just say yes or no.</span>
-    <span class="line" aria-hidden="true"><span class="t">Will it happen</span><span class="q">?</span></span>
-    <span class="line" aria-hidden="true"><span class="t">Just say</span><br class="m"> <span class="w yes"><span class="v">yes</span></span><span class="t"> or </span><span class="w no"><span class="v">no</span></span><span class="t">.</span></span>
+    <!-- v247 (the user, in the artifact's comment: «Will it happen? Just say / yes or no»): the line breaks after «Just say», so the second line is «yes or no.» alone, on the phone too (two lines: at 390 px «Will it happen? Just say» is ≈ 320 px at its 30 px) -->
+    <span class="line" aria-hidden="true"><span class="t">Will it happen</span><span class="q">?</span> <span class="t">Just say</span></span>
+    <span class="line" aria-hidden="true"><span class="w yes"><span class="v">yes</span></span><span class="t"> or </span><span class="w no"><span class="v">no</span></span><span class="t">.</span></span>
   </h1>
   <button type="button" class="btn-link cta" data-enter="home"><span>Make your call</span><span class="arrow" aria-hidden="true" data-icon="arrow-right"></span></button>
 </main>
