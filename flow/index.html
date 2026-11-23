@@ -8502,14 +8502,14 @@ function duqStop(land){
 
   /* ---------- particles ---------- */
   function allocate() {
-    // believers: about one dot per 68 px^2 of mass area at 50/50, so the core stays airy; grey sprinkle: one per 3900 px^2
+    // believers: about one dot per 68 px^2 of mass area at 50/50, so the core stays airy; grey sprinkle: one per 5200 px^2
     // (v249, the user, 23 Nov 2026: «nemnogo umenshai kalichestvo bellix dvijushix» — a quarter fewer than the 2200 it was: 2930;
-    //  v251, the same day: «esho umenshai kalichestvo» — another quarter: 3900)
+    //  v251, the same day: «esho umenshai kalichestvo» — another quarter: 3900; v252: «esho umenshai» — another quarter: 5200)
     var nm = Math.round(2 * Math.PI * Rbase * Rbase / 68);
-    var na = Math.round(W * H / 3900);
+    var na = Math.round(W * H / 5200);
     if (!gl) { nm = Math.round(nm * 0.5); na = Math.round(na * 0.5); }
     NM = Math.max(160, Math.min(1000, nm));
-    N = NM + Math.max(68, Math.min(506, na));   // v249 / v251: the sprinkle's floor and ceiling a quarter lower each time (120 / 900 → 90 / 675 → 68 / 506)
+    N = NM + Math.max(51, Math.min(380, na));   // v249 / v251 / v252: the sprinkle's floor and ceiling a quarter lower each time (120 / 900 → 90 / 675 → 68 / 506 → 51 / 380)
     buf = new Float32Array(N * STRIDE);
     vel = new Float32Array(N * 2);
     side = new Int8Array(N); fromSide = new Int8Array(N);
