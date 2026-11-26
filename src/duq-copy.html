@@ -5525,7 +5525,7 @@ html:not([data-theme=dark]) #ribbonbg .rb-cta{color:#0e1117;--lgs-fill:rgb(242 2
 #ribbonbg .rb-stats{display:flex;align-items:flex-start;gap:clamp(24px,3.4vw,56px);margin:0;flex:1 1 auto;justify-content:space-between}   /* v261 (the user: «fill»): the numbers spread across the whole column — the first under the headline's left edge, the last ending at its right */
 #ribbonbg .rb-stats>div{display:flex;flex-direction:column-reverse;min-width:0}
 #ribbonbg .rb-stats dd{margin:0;font:400 clamp(34px,3.3vw,54px)/1 "Anton",var(--font);color:var(--rb-fg);font-variant-numeric:tabular-nums;white-space:nowrap;transition:color .4s var(--ease)}
-#ribbonbg .rb-stats dt{margin-top:8px;font:500 14px/1.35 var(--font);color:var(--rb-mute);max-width:15em}
+#ribbonbg .rb-stats dt{margin-top:8px;font:500 14px/1.35 var(--font);color:var(--rb-mute);white-space:nowrap}   /* v270 (the user, on «say yes · Ethereum below / $1,500 this year»: «один строк»): the labels on one line */
 html:not([data-theme=dark]) #ribbonbg .rb-stats{text-shadow:0 0 1.5px var(--bg),0 0 12px color-mix(in srgb,var(--bg) 80%,transparent)}   /* v261: on a short light page the ribbon can dip under the numbers — the same halo as the words */
 #ribbonbg .rb-stats dd.win-yes{color:var(--rb-yes)}#ribbonbg .rb-stats dd.win-no{color:var(--rb-no)}
 @media (max-width:640px){
@@ -5533,7 +5533,7 @@ html:not([data-theme=dark]) #ribbonbg .rb-stats{text-shadow:0 0 1.5px var(--bg),
  #ribbonbg .rb-foot{flex-direction:column;align-items:stretch;gap:14px}
  #ribbonbg .rb-stats{justify-content:space-between;gap:12px}
  #ribbonbg .rb-stats dd{font-size:28px}
- #ribbonbg .rb-stats dt{font-size:12px;margin-top:4px}
+ #ribbonbg .rb-stats dt{font-size:12px;margin-top:4px;white-space:normal;max-width:14em}   /* a phone's three narrow columns still wrap */
 }
 @media (prefers-reduced-motion:reduce){#ribbonbg .rb-ch,#ribbonbg .rb-foot,#ribbonbg .rb-cta,#ribbonbg .rb-cta svg{transition:none}}
 
