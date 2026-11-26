@@ -7167,21 +7167,20 @@ function duqRibbon(land){
   const cs=getComputedStyle(land),gut=parseFloat(cs.getPropertyValue('--gutter'))||24,colMax=parseFloat(cs.getPropertyValue('--column'))||1168,colW=Math.min(colMax,W-2*gut);
   colL=(W-colW)/2;colR=colL+colW;
   /* JUST SAY YES OR NO. ≈ 7.6 em wide fills the column; on a phone four lines (YES OR NO. ≈ 3.96 em) */
-  F=Math.floor(phone?Math.min(colW/3.98,(H-300)/4.3):Math.min(colW/7.62,(H-290)/2.5));F=Math.max(phone?36:56,F);
+  F=Math.floor(phone?Math.min(colW/3.98,(H-420)/4.3):Math.min(colW/7.62,(H-316)/3.55));   /* v263: the height now holds the button above the headline too */F=Math.max(phone?36:56,F);
   root.style.setProperty('--rb-F',F+'px');root.style.setProperty('--rb-sw',Math.max(1,F*.0105).toFixed(2)+'px');
   capH=capOf(F);
-  BD=Math.round(phone?Math.min(116,colW*.32):clamp(F*1.27,132,236));root.style.setProperty('--rb-B',BD+'px');
+  BD=Math.round(phone?Math.min(104,colW*.28):clamp(F*1.15,120,210));root.style.setProperty('--rb-B',BD+'px');
   const hdr=(land.querySelector('.header')||{}).offsetHeight||72;
   topEl.style.top='0px';
   const t0=bls[0].getBoundingClientRect().top-capH;   /* the first line's cap top with the block at 0 */
-  const capTop=phone?hdr+Math.max(14,H*.03):Math.max(hdr+12+BD/2-.12*capH,hdr+H*.075);   /* the badge clear of the header */
+  const gapB=Math.round(.22*capH),capTop=hdr+(phone?10:14)+BD+gapB;   /* v263 (the user: «replace this button to center up to title»): the round button sits centred above the headline */
   topEl.style.top=Math.round(capTop-t0)+'px';
   b0=bls[0].getBoundingClientRect().top;b2=bls[2].getBoundingClientRect().top;
   foot.style.bottom=(phone?18:Math.round(clamp(H*.055,26,64)))+'px';
   footTop=foot.getBoundingClientRect().top;
   let bx,by;
-  if(phone){bx=colR-BD;by=footTop-BD-14}
-  else{const l1=words[2].getBoundingClientRect().right;bx=Math.max(colR-BD-6,l1+18);if(bx+BD>W-8)bx=W-8-BD;by=b0-capH+.12*capH-BD/2}
+  bx=(colL+colR)/2-BD/2;by=b0-capH-gapB-BD;
   root.style.setProperty('--rb-bx',Math.round(bx)+'px');root.style.setProperty('--rb-by',Math.round(by)+'px');
   /* v262: the braid's middle under the last line, clear of the numbers; each ribbon rises behind its own word (YES, NO.) */
   const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;sgY=Math.max(56,ry.width*.6);sgN=Math.max(56,rn.width*.6);
