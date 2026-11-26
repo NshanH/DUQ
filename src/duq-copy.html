@@ -7168,7 +7168,7 @@ function duqRibbon(land){
  const clamp=(v,a,b)=>v<a?a:v>b?b:v,ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,outE=t=>1-Math.pow(1-t,3),sm=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
  const gauss=(x,m,s)=>{const d=(x-m)/s;return Math.exp(-d*d)};
  /* ---- the layout: the headline fills the landing's column; the two ribbons hang from its last line ---- */
- let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,AMP=0,LIFT=0,xY=0,xN=0,sgY=100,sgN=100,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06;
+ let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,AMP=0,LIFT=0,xY=0,xN=0,sgY=100,sgN=100,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06,RS=128;
  const mctx=document.createElement('canvas').getContext('2d');
  function capOf(f){mctx.font='400 '+f+'px Anton';const m=mctx.measureText('H');return m.actualBoundingBoxAscent||f*.86}
  function layout(){if(root.hidden)return;
@@ -7177,9 +7177,10 @@ function duqRibbon(land){
   colL=(W-colW)/2;colR=colL+colW;
   /* JUST SAY YES OR NO. ≈ 7.6 em wide fills the column; on a phone four lines (YES OR NO. ≈ 3.96 em) */
   F=Math.floor(phone?Math.min(colW/3.98,(H-420)/4.3):Math.min(colW/7.62,(H-316)/3.55));   /* v263: the height now holds the button above the headline too */F=Math.max(phone?36:56,F);
+  const F0=F;if(!phone)F=Math.min(F,120);   /* v266 (the user, on the sizes: «120»): the headline 120 px at most on a computer; the ribbons and the button keep the scale they had (F0) */
   root.style.setProperty('--rb-F',F+'px');root.style.setProperty('--rb-sw',Math.max(1,F*.0105).toFixed(2)+'px');
-  capH=capOf(F);
-  CH=Math.round(phone?52:clamp(F*.46,56,80));CF=Math.round(phone?15:clamp(F*.13,15,21));root.style.setProperty('--rb-ch',CH+'px');root.style.setProperty('--rb-cf',CF+'px');BD=CH;   /* v265: the capsule's height */
+  capH=capOf(F);RS=capOf(F0);   /* RS: the ribbons' own scale */
+  CH=Math.round(phone?52:clamp(F0*.46,56,80));CF=Math.round(phone?15:clamp(F0*.13,15,21));root.style.setProperty('--rb-ch',CH+'px');root.style.setProperty('--rb-cf',CF+'px');BD=CH;   /* v265: the capsule's height */
   const hdr=(land.querySelector('.header')||{}).offsetHeight||72;
   foot.style.bottom=(phone?18:Math.round(clamp(H*.055,26,64)))+'px';
   footTop=foot.getBoundingClientRect().top;
@@ -7195,7 +7196,7 @@ function duqRibbon(land){
   root.style.setProperty('--rb-bx',Math.round(bx)+'px');root.style.setProperty('--rb-by',Math.round(by)+'px');
   /* v262: the braid's middle under the last line, clear of the numbers; each ribbon rises behind its own word (YES, NO.) */
   const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;sgY=Math.max(56,ry.width*.6);sgN=Math.max(56,rn.width*.6);
-  AMP=.55*capH;base=Math.min(by+CH*.5+.08*capH,footTop-AMP-.5*capH);   /* v265: the braid runs through the glass capsule */LIFT=Math.max(0,base-(b2-.4*capH));
+  AMP=.55*RS;base=Math.min(by+CH*.5+.08*RS,footTop-AMP-.5*RS);   /* v265: the braid runs through the glass capsule */LIFT=Math.max(0,base-(b2-.4*capH));
   const s2=phone?120:200;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
   if(gl&&(s2!==S||!verts)){S=s2;alloc()}else S=s2}
@@ -7268,7 +7269,7 @@ function duqRibbon(land){
  const isLoser=r=>(phase==='resolve'||phase==='next')&&(winner>0)!==(r===0);
  function build(){const e=closeFx(),x0=-.06*W,x1=W*1.06,k=2*Math.PI/(.62*W),ph=T*.09;let o=0;
   for(let r=0;r<2;r++){const sgn=r===0?1:-1,L=isLoser(r),Wn=(phase==='resolve'||phase==='next')&&!L,share=r===0?pS:1-pS,xr=r===0?xY:xN,sr=r===0?sgY:sgN,cy=RY[r];
-   const hw0=capH*(.08+.5*share)*(Wn?1+.55*e.wide:1),amp=AMP*(Wn?1-.6*e.wide:1),lift=LIFT*(Wn?1+.25*e.wide:1),drop=L?e.fall*H*.85:0,lead=(r===0)===topY?1:.8;
+   const hw0=RS*(.08+.5*share)*(Wn?1+.55*e.wide:1),amp=AMP*(Wn?1-.6*e.wide:1),lift=LIFT*(Wn?1+.25*e.wide:1),drop=L?e.fall*H*.85:0,lead=(r===0)===topY?1:.8;
    for(let i=0;i<=S;i++){const x=x0+(x1-x0)*i/S;X[i]=x;cy[i]=base+sgn*amp*Math.sin(k*x+ph)-lift*gauss(x,xr,sr)+drop+6*Math.sin(x/170+T*.3+r*2)}
    for(const [off,fold,wid,tw,lit,fk,fph] of SHEETS)for(let i=0;i<=S;i++){const ia=Math.max(0,i-1),ib=Math.min(S,i+1);let tx=X[ib]-X[ia],ty=cy[ib]-cy[ia];const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx;
     const s=i/S,hw=hw0*(.94+.06*Math.sin(s*7.1+T*.4+fph+r)),d=hw*(off+fold*Math.sin(fk*s*2.2-T*.25+fph+r*1.7)),x=X[i]+nx*d,y=cy[i]+ny*d;
