@@ -8051,17 +8051,19 @@ function duqRibbon(land){
  /* v256 (the user, 26 Nov 2026 — a shot of a «CodeWave» hero section: «obrobotai etu versiu low fi» → the board «Welcome DUQ —
     версия CodeWave» → «sobirai, kak versia 4, ispolzui highsfield»): version 4 «the ribbon». The reference's signature, in DUQ terms:
     — a huge narrow uppercase headline, WILL IT HAPPEN? / JUST SAY YES OR NO., with YES OR NO. hollow: the answer is not in yet;
-    — a ribbon through the type = a live chart of one market's YES share: the past on the left, now at the right end, drifting slowly
-      left; it turns edge-on wherever the lead changed; it runs under all the text (v259), seen through the hollow words;
-    — a bet sends a glint along it from the right end into the past and nudges the end; click YES / NO (or press Y / N) for your own;
-    — every ~21 s the market closes: the end shoots up (YES) or down (NO), a glint runs back along the ribbon, the winning word fills
-      with its colour and the rest dims; then the next market's ribbon forms;
+    — two ribbons under the type (v262, the user picked variant 7 «Две ленты» of the motion boards, after «lini ochen ploxo
+      dvigaeca net logiki»): YES and NO, braided. Each one's thickness = its share; the leader runs on top and brighter. Both are the
+      reference's glass — you tell them apart by the word each rises behind (the YES ribbon behind YES, the NO ribbon behind NO.,
+      seen through the hollow letters). A bet sends a glint out of its word along its own ribbon and thickens it; the braid only
+      drifts slowly, nothing else moves by itself. Click YES / NO (or press Y / N) for your own;
+    — every ~21 s the market closes: the loser's ribbon unravels and falls away, the winner's widens into one broad wave, the winning
+      word fills with its colour and the rest dims; with the next market the other ribbon comes back up;
     — the round orange button (--brand) runs MAKE YOUR CALL around it and enters the app; the numbers bottom right are live.
     The material (the user: «doljen sovpodat materyalom kartinki 100%», on a crop of the reference's ribbon): the reference's own —
     smoky black glass, steel-blue sheen, orange-copper glints, a thin white edge. Higgsfield (GPT Image 2.6, the reference crops as
-    image references) made a matcap ball of exactly that material (window.DUQ_RIBBON.mat); it lights, colours and all, four sheets of
-    a WebGL ribbon built every frame from the data (the back three folded around the chart line like the reference's layers). The
-    ribbon has no green or red of its own on either theme: YES and NO show in the words and the numbers. */
+    image references) made a matcap ball of exactly that material (window.DUQ_RIBBON.mat); it lights, colours and all, the WebGL ribbons
+    built every frame from the data (each a main sheet and a thinner fold behind it, like the reference's layers). The
+    ribbons have no green or red of its own on either theme: YES and NO show in the words and the numbers. */
  const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  const AS=window.DUQ_RIBBON||{};
  /* (the words carry data-rbside, not data-side: the trade panel's own click handler takes any [data-side]) [id, the market as the numbers name it, chance of Yes] — the prototype's own markets (as version 3 has them) */
@@ -8080,9 +8082,9 @@ function duqRibbon(land){
  /* the letters rise one by one when the version comes in */
  {let n=0;words.forEach(w=>{const t=w.textContent;w.textContent='';for(const ch of t){const s=document.createElement('span');s.className='rb-ch';s.textContent=ch;s.style.transitionDelay=(70+n*24)+'ms';n++;w.appendChild(s)}})}
  const clamp=(v,a,b)=>v<a?a:v>b?b:v,ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,outE=t=>1-Math.pow(1-t,3),sm=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
- const cr=(a,b,c,d,u)=>.5*(2*b+(-a+c)*u+(2*a-5*b+4*c-d)*u*u+(-a+3*b-3*c+d)*u*u*u);
- /* ---- the layout: the headline fills the landing's column; the ribbon's band hangs from its last line ---- */
- let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,yMid=0,Dup=0,Ddn=0,H0=46,SPEED=36,S=200;
+ const gauss=(x,m,s)=>{const d=(x-m)/s;return Math.exp(-d*d)};
+ /* ---- the layout: the headline fills the landing's column; the two ribbons hang from its last line ---- */
+ let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,AMP=0,LIFT=0,xY=0,xN=0,sgY=100,sgN=100;
  const mctx=document.createElement('canvas').getContext('2d');
  function capOf(f){mctx.font='400 '+f+'px Anton';const m=mctx.measureText('H');return m.actualBoundingBoxAscent||f*.86}
  function layout(){if(root.hidden)return;
@@ -8092,7 +8094,7 @@ function duqRibbon(land){
   /* JUST SAY YES OR NO. ≈ 7.6 em wide fills the column; on a phone four lines (YES OR NO. ≈ 3.96 em) */
   F=Math.floor(phone?Math.min(colW/3.98,(H-300)/4.3):Math.min(colW/7.62,(H-290)/2.5));F=Math.max(phone?36:56,F);
   root.style.setProperty('--rb-F',F+'px');root.style.setProperty('--rb-sw',Math.max(1,F*.0105).toFixed(2)+'px');
-  capH=capOf(F);H0=.58*capH;
+  capH=capOf(F);
   BD=Math.round(phone?Math.min(116,colW*.32):clamp(F*1.27,132,236));root.style.setProperty('--rb-B',BD+'px');
   const hdr=(land.querySelector('.header')||{}).offsetHeight||72;
   topEl.style.top='0px';
@@ -8106,23 +8108,19 @@ function duqRibbon(land){
   if(phone){bx=colR-BD;by=footTop-BD-14}
   else{const l1=words[2].getBoundingClientRect().right;bx=Math.max(colR-BD-6,l1+18);if(bx+BD>W-8)bx=W-8-BD;by=b0-capH+.12*capH-BD/2}
   root.style.setProperty('--rb-bx',Math.round(bx)+'px');root.style.setProperty('--rb-by',Math.round(by)+'px');
-  /* an even market sits a little under the last line; YES rises behind the hollow letters, NO sinks toward the numbers */
-  yMid=b2+.42*capH;Dup=(phone?1.35:1.15)*capH;Ddn=clamp(footTop-.3*capH-H0-yMid,.7*capH,2.3*capH);
-  SPEED=Math.max(26,.022*W);const s2=phone?120:200;
+  /* v262: the braid's middle under the last line, clear of the numbers; each ribbon rises behind its own word (YES, NO.) */
+  const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;sgY=Math.max(56,ry.width*.6);sgN=Math.max(56,rn.width*.6);
+  AMP=.55*capH;base=Math.min(b2+1.05*capH,footTop-AMP-.5*capH);LIFT=Math.max(0,base-(b2-.4*capH));
+  const s2=phone?120:200;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
   if(gl&&(s2!==S||!verts)){S=s2;alloc()}else S=s2}
- /* ---- the market: its share's past (seeded) and now (bets) ---- */
- const HSTEP=3.2,BET=16,CLOSE=1,RES=2.7,NXT=1.5;
- let T=0,mt=0,pt=0,phase='bet',mi=0,mk=MK[0],p=.64,pS=.64,goal=.62,flipAt=-1,hist=[],winner=1,nextBet=.4,vol=2.41e6,calls=18240,pulses=[],reveal=1.1,revealT=-1,ba=-16,bv=18,hov=false,running=false,raf=0,last=0,ready=false,wonOn=false;
- function seed(i,first){mk=MK[i%MK.length];const p0=mk[2]/100;p=pS=p0;goal=clamp(p0+(Math.random()-.5)*.1,.2,.8);flipAt=Math.random()<.45?5+Math.random()*5:-1;
-  const nv=Math.ceil(W*1.075/(SPEED*HSTEP)),n=nv+4;let a=[];   /* the screen's width of past, and four more to the left */
-  if(first){const sh=[.57,.6,.58,.52,.44,.4,.4,.44,.5,.57,.62,.64];for(let k=0;k<n;k++){const u=clamp((k-4)/nv,0,1)*(sh.length-1),j=Math.min(sh.length-2,Math.floor(u));a.push(sh[j]+(sh[j+1]-sh[j])*(u-j))}}
-  else{const st=Math.random()<.6?clamp(1-p0+(Math.random()-.5)*.12,.24,.76):clamp(p0+(Math.random()-.5)*.14,.24,.76);let z=0;const zs=[];for(let k=0;k<n;k++){z+=(Math.random()-.5)*.07;zs.push(z)}
-   for(let k=0;k<n;k++){const u=k/(n-1);a.push(st+(p0-st)*u+zs[k]-zs[0]-(zs[n-1]-zs[0])*u)}
-   for(let r=0;r<2;r++)a=a.map((v,k)=>k===0||k===n-1?v:(a[k-1]+2*v+a[k+1])/4)}
-  hist=a.map((v,k)=>({t:-(n-1-k)*HSTEP,v:clamp(v,.1,.9)}));hist[hist.length-1].v=p0;mt=0}
+ /* ---- the market: one share (bets) and its cycle ---- */
+ const BET=16,CLOSE=1,RES=2.7,NXT=1.5;
+ let T=0,mt=0,pt=0,phase='bet',mi=0,mk=MK[0],p=.64,pS=.64,goal=.62,flipAt=-1,winner=1,nextBet=.4,vol=2.41e6,calls=18240,pulses=[],reveal=1.1,revealT=-1,ba=-16,bv=18,hov=false,running=false,raf=0,last=0,ready=false,wonOn=false,topY=true;
+ function seed(i){mk=MK[i%MK.length];const p0=mk[2]/100;p=p0;goal=clamp(p0+(Math.random()-.5)*.1,.2,.8);flipAt=Math.random()<.45?5+Math.random()*5:-1;mt=0}
+ /* a bet: its own ribbon thickens (the share) and a glint runs out of its word along it */
  function bet(yes,size,you){p=clamp(p+(yes?1:-1)*(.0035+.0055*Math.min(1,size/2400))*(you?1.8:1),.04,.96);calls++;vol+=size;
-  pulses.push({s:1.02,a0:you?1:.42+.33*Math.min(1,size/2400),age:0});if(pulses.length>4)pulses.shift();if(you)flash(yes);numbers()}
+  pulses.push({r:yes?0:1,a:you?1:.42+.33*Math.min(1,size/2400),age:0});if(pulses.length>10)pulses.shift();if(you)flash(yes);numbers()}
  function bets(dt,k){nextBet-=dt;while(nextBet<=0){const rate=2.1*(mt>BET-3.5?1.9:1)*(k||1);nextBet+=-Math.log(1-Math.random())/rate;
   bet(Math.random()<clamp(.5+2.6*(goal-p),.12,.88),60+(-Math.log(1-Math.random()))*1100,false)}}
  function flash(yes){const w=root.querySelector('.rb-w.'+(yes?'yes':'no'));if(!w)return;w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');clearTimeout(w._ft);w._ft=setTimeout(()=>w.classList.remove('flash'),650)}
@@ -8134,34 +8132,32 @@ function duqRibbon(land){
  function step(dt){T+=dt;mt+=dt;
   if(phase==='bet'){bets(dt);if(flipAt>0&&mt>flipAt){goal=clamp(1-goal+(Math.random()-.5)*.06,.25,.75);flipAt=-1}if(mt>=BET){phase='close';pt=0}}
   else{pt+=dt;
-   if(phase==='close'){if(pt>=CLOSE){phase='resolve';pt=0;winner=pS>=.5?1:-1}}
-   else if(phase==='resolve'){if(!wonOn&&pt>=.35)won(true);if(pt>=RES){fromY=Y?Float32Array.from(Y):null;fromC=CC?Float32Array.from(CC):null;phase='next';pt=0;mi++;seed(mi,false);won(false)}}
-   else if(phase==='next'){bets(dt,.5);if(pt>=NXT){phase='bet';fromY=fromC=null}}}
-  while(mt-hist[hist.length-1].t>=HSTEP)hist.push({t:hist[hist.length-1].t+HSTEP,v:pS});
-  const xN=W*1.015;while(hist.length>5&&xN-(mt-hist[1].t)*SPEED<-.06*W-SPEED*HSTEP*1.5)hist.shift();
-  pS+=(p-pS)*(1-Math.exp(-dt/.35));
-  for(const q of pulses){q.age+=dt;q.s-=dt*.78}pulses=pulses.filter(q=>q.s>-.12&&q.age<1.8);
+   if(phase==='close'){if(pt>=CLOSE){phase='resolve';pt=0;winner=pS>=.5?1:-1;topY=winner>0;pulses.push({r:winner>0?0:1,a:1.1,age:0})}}
+   else if(phase==='resolve'){if(!wonOn&&pt>=.35)won(true);if(pt>=RES){phase='next';pt=0;mi++;seed(mi);won(false)}}
+   else if(phase==='next'){bets(dt,.5);if(pt>=NXT)phase='bet'}}
+  pS+=(p-pS)*(1-Math.exp(-dt/(phase==='next'?.7:.35)));
+  if(phase==='bet'||phase==='close'){if(topY&&pS<.48)topY=false;else if(!topY&&pS>.52)topY=true}   /* the leader on top (with a little hysteresis) */
+  for(const q of pulses)q.age+=dt;pulses=pulses.filter(q=>q.age<2.4);
   if(revealT>=0){revealT+=dt;reveal=-.05+1.12*outE(clamp((revealT-.1)/1.6,0,1));if(revealT>2)revealT=-1}
   bv+=((hov?54:18)-bv)*(1-Math.exp(-dt/.35));ba=(ba+bv*dt)%360;btxt.style.transform='rotate('+ba.toFixed(2)+'deg)';
   numbers()}
- /* ---- the ribbon: a strip along the chart, edge-on where the lead changed, lit by the Higgsfield matcap ---- */
+ /* ---- the ribbons: two strips braided under the type, lit by the Higgsfield matcap ---- */
  const VS='attribute vec2 aP;attribute vec3 aN;attribute vec4 aD;uniform vec2 uRes;varying vec3 vN;varying vec4 vD;'+
   'void main(){vec2 c=aP/uRes*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);vN=aN;vD=aD;}';
- const FS='precision mediump float;varying vec3 vN;varying vec4 vD;uniform sampler2D uMat;uniform float uReveal;uniform vec4 uPulse[4];uniform vec2 uFlash;'+
+ const FS='precision mediump float;varying vec3 vN;varying vec4 vD;uniform sampler2D uMat;uniform float uReveal,uAlpha;uniform vec4 uPulse[4];'+
   'void main(){vec3 n=normalize(vN);vec3 m=texture2D(uMat,vec2(.5+.47*n.x,.5+.47*n.y)).rgb;float g=1.-abs(n.z);'+
   'float rim=(smoothstep(.84,.99,-vD.y)*.35+smoothstep(.945,.975,-vD.y)*.8)*(.45+.55*g)*(vD.z>.99?1.:.3);vec3 c=pow(m,vec3(1.18))*.86*vD.z+rim*vec3(.88,.9,.95);'+
-  'float p=0.;for(int i=0;i<4;i++){float d=(vD.x-uPulse[i].x)/max(uPulse[i].z,.001);p+=uPulse[i].y*exp(-d*d);}'+
-  'float e=(vD.x-uFlash.x)/.05;float fl=uFlash.y*exp(-e*e);float L=dot(m,vec3(.3,.59,.11));'+
-  'c+=(p*.5+fl)*(.2+.8*L+.3*g)*vec3(1.,.84,.68)*vD.z;'+
-  'float a=smoothstep(0.,1.25,(1.-abs(vD.y))*vD.w)*(1.-smoothstep(uReveal-.03,uReveal,vD.x));gl_FragColor=vec4(c*a,a*mix(.82,.97,vD.z));}';
- const AC=7;let gl=null,glFail=false,prog=null,vbuf=null,ibuf=null,loc={},verts=null,X=null,Y=null,CC=null,fromY=null,fromC=null,nIdx=0;const tex={},texOk={};
+  'float p=0.;for(int i=0;i<4;i++){float d=(abs(vD.x-uPulse[i].x)-uPulse[i].y)/max(uPulse[i].w,.001);p+=uPulse[i].z*exp(-d*d);}'+
+  'float L=dot(m,vec3(.3,.59,.11));c+=p*.55*(.2+.8*L+.3*g)*vec3(1.,.84,.68)*vD.z;'+
+  'float a=smoothstep(0.,1.25,(1.-abs(vD.y))*vD.w)*(1.-smoothstep(uReveal-.03,uReveal,vD.x))*uAlpha;gl_FragColor=vec4(c*a,a*mix(.82,.97,vD.z));}';
+ const AC=7;let gl=null,glFail=false,prog=null,vbuf=null,ibuf=null,loc={},verts=null,X=null,RY=null,nIdx=0;const tex={},texOk={};
  function initGL(){if(gl||glFail)return;
   try{gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:true,depth:false,stencil:false})}catch(e){gl=null}
   if(!gl){glFail=true;return}
   const sh=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s};
   try{prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog))}
   catch(e){glFail=true;gl=null;if(window.console)console.warn('version 4 ribbon:',e&&e.message||e);return}
-  gl.useProgram(prog);for(const k of ['aP','aN','aD'])loc[k]=gl.getAttribLocation(prog,k);for(const k of ['uRes','uMat','uReveal','uPulse','uFlash'])loc[k]=gl.getUniformLocation(prog,k);
+  gl.useProgram(prog);for(const k of ['aP','aN','aD'])loc[k]=gl.getAttribLocation(prog,k);for(const k of ['uRes','uMat','uReveal','uPulse','uAlpha'])loc[k]=gl.getUniformLocation(prog,k);
   vbuf=gl.createBuffer();ibuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);
   gl.enableVertexAttribArray(loc.aP);gl.vertexAttribPointer(loc.aP,2,gl.FLOAT,false,36,0);
   gl.enableVertexAttribArray(loc.aN);gl.vertexAttribPointer(loc.aN,3,gl.FLOAT,false,36,8);
@@ -8174,45 +8170,42 @@ function duqRibbon(land){
    if(AS.mat)im.src=AS.mat}
   cv.addEventListener('webglcontextlost',e=>{e.preventDefault();gl=null;glFail=true},false);
   alloc()}
- /* the reference's ribbon is a few silk sheets laid over each other: three thinner ones behind the main one, each off the chart line
-    by its own slow fold and twisting its own way; they close up where the main one turns edge-on. [off, fold, width, twist, light, k, phase] */
- const SHEETS=[[.72,.3,.62,1.3,.5,1.3,2.1],[-.46,.28,.76,-1,.66,1.7,.6],[0,0,1,0,1,0,0]],NS=SHEETS.length;
- function alloc(){if(!gl)return;X=new Float32Array(S+1);Y=new Float32Array(S+1);CC=new Float32Array(S+1);verts=new Float32Array(NS*(S+1)*AC*9);fromY=fromC=null;
-  const idx=new Uint16Array(NS*S*(AC-1)*6);let o=0;for(let q=0;q<NS;q++){const base=q*(S+1)*AC;for(let i=0;i<S;i++)for(let j=0;j<AC-1;j++){const a=base+i*AC+j,b=base+(i+1)*AC+j;idx[o++]=a;idx[o++]=b;idx[o++]=b+1;idx[o++]=a;idx[o++]=b+1;idx[o++]=a+1}}
-  nIdx=o;gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,idx,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferData(gl.ARRAY_BUFFER,verts.byteLength,gl.DYNAMIC_DRAW)}
- function yOf(v){return yMid-(v>=.5?Dup:Ddn)*Math.tanh((v-.5)/.16)}
- /* the chart on an even grid of x: the share's past scrolls left at SPEED, the right end is now */
- function curve(){const x0=-.06*W,xN=W*1.015,pts=[];for(const h of hist)pts.push([xN-(mt-h.t)*SPEED,h.v]);pts.push([xN,pS]);
-  let k=0;for(let i=0;i<=S;i++){const x=x0+(xN-x0)*i/S;X[i]=x;while(k<pts.length-2&&pts[k+1][0]<=x)k++;
-   const a=pts[Math.max(0,k-1)],b=pts[k],c=pts[Math.min(pts.length-1,k+1)],d=pts[Math.min(pts.length-1,k+2)],u=c[0]>b[0]?clamp((x-b[0])/(c[0]-b[0]),0,1):0,v=clamp(cr(a[1],b[1],c[1],d[1],u),.02,.98);
-   Y[i]=yOf(v);CC[i]=Math.tanh((v-.5)/.065)}   /* v258: a longer turn */
-  if(phase==='resolve'){const r=pt/RES,E=ease(clamp(r/.72,0,1)),xf=1-outE(clamp(r/.6,0,1))*1.08;   /* the end shoots off; the winner's face runs back */
-   for(let i=0;i<=S;i++){const s=i/S;Y[i]-=winner*E*H*.95*Math.pow(sm((s-.6)/.4),2);CC[i]+=(winner-CC[i])*sm((s-xf)/.05)}}
-  if(phase==='next'&&fromY&&fromY.length===Y.length){const m=ease(clamp(pt/NXT,0,1));for(let i=0;i<=S;i++){Y[i]=fromY[i]+(Y[i]-fromY[i])*m;CC[i]=fromC[i]+(CC[i]-fromC[i])*m}}}
- function build(){curve();const wv=.05*capH,lam=.8*W,ph=T/9,tau=2*Math.PI,Yw=i=>Y[i]+wv*Math.sin(tau*(X[i]/lam+ph));let o=0;
-  for(const [off,fold,wid,tw,lit,fk,fph] of SHEETS)for(let i=0;i<=S;i++){const ia=Math.max(0,i-1),ib=Math.min(S,i+1);let tx=X[ib]-X[ia],ty=Yw(ib)-Yw(ia);const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx;
-   const s=i/S,c0=clamp(CC[i],-1,1),d=H0*(off+fold*Math.sin(fk*s*2.2-T*.25+fph)),x=X[i]+nx*d,y=Yw(i)+ny*d;
-   const phi=Math.acos(c0)+(.26*Math.sin(s*5.3-T*.33)+.1*Math.sin(s*12.7+T*.55))*(.35+.65*Math.abs(c0))+tw*.6*Math.sin(s*2.4+T*.2+fph),cp=Math.cos(phi),sp=Math.sin(phi);
-   /* v258 (the user, on a shot of a turn: «ne poxoj na kartinku kogda kruglyaeca»): the turn no longer pinches to a point. The strip
-      is 3D: it leans into the screen (tz) the more it stands on edge, so its two edges slide past each other along it — a long
-      diagonal fold, as the reference's — and across a turn its section curls (bend up to ~1.4 rad), so the fold reads rounded */
-   const tz=.22+.66*Math.abs(sp),lz=Math.sqrt(1+tz*tz),bx=-tz*tx/lz,by=-tz*ty/lz,bz=1/lz;   /* B = T × N: the way out of the strip's plane */
-   const wx=cp*nx+sp*bx,wy=cp*ny+sp*by,wz=sp*bz;   /* W: across the strip, in 3D */
-   let fx=cp*bx-sp*nx,fy=cp*by-sp*ny,fz=cp*bz;if(fz<0){fx=-fx;fy=-fy;fz=-fz}   /* its face toward us */
-   const hl=H0*wid*(.92+.08*Math.sin(s*7.1+T*.4+fph)),hwa=hl*Math.hypot(wx,wy)+1.1,bend=.62+.78*Math.abs(sp),shm=.22*Math.sin(s*6.5-T*.5+fph);
-   for(let j=0;j<AC;j++){const v=-1+2*j/(AC-1),cb=Math.cos(bend*v),sb=Math.sin(bend*v);let qx=cb*fx+sb*wx+shm*tx,qy=cb*fy+sb*wy+shm*ty,qz=cb*fz+sb*wz;const ql=Math.hypot(qx,qy,qz)||1;
-    verts[o++]=x+wx*v*hl;verts[o++]=y+wy*v*hl;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=s;verts[o++]=v;verts[o++]=lit;verts[o++]=hwa}}}
+ /* each ribbon: a thinner fold behind the main sheet, like the reference's layers. [off, fold, width, twist, light, k, phase] */
+ const SHEETS=[[.62,.3,.5,1.1,.6,1.4,2.1],[0,0,1,0,1,0,0]],NS=SHEETS.length;
+ function alloc(){if(!gl)return;X=new Float32Array(S+1);RY=[new Float32Array(S+1),new Float32Array(S+1)];verts=new Float32Array(2*NS*(S+1)*AC*9);
+  const per=NS*S*(AC-1)*6,idx=new Uint16Array(2*per);let o=0;
+  for(let r=0;r<2;r++)for(let q=0;q<NS;q++){const b0=(r*NS+q)*(S+1)*AC;for(let i=0;i<S;i++)for(let j=0;j<AC-1;j++){const a=b0+i*AC+j,b=b0+(i+1)*AC+j;idx[o++]=a;idx[o++]=b;idx[o++]=b+1;idx[o++]=a;idx[o++]=b+1;idx[o++]=a+1}}
+  nIdx=per;gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,idx,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferData(gl.ARRAY_BUFFER,verts.byteLength,gl.DYNAMIC_DRAW)}
+ /* the close: the loser falls away and fades (and comes back up with the next market), the winner widens into one broad wave */
+ function closeFx(){if(phase==='resolve')return{fall:Math.pow(clamp((pt-.2)/1.6,0,1),2),fade:1-sm((pt-.7)/1.5),wide:ease(clamp(pt/1.3,0,1))};
+  if(phase==='next'){const q=ease(clamp(pt/NXT,0,1));return{fall:1-q,fade:q,wide:1-q}}return{fall:0,fade:1,wide:0}}
+ const isLoser=r=>(phase==='resolve'||phase==='next')&&(winner>0)!==(r===0);
+ function build(){const e=closeFx(),x0=-.06*W,x1=W*1.06,k=2*Math.PI/(.62*W),ph=T*.09;let o=0;
+  for(let r=0;r<2;r++){const sgn=r===0?1:-1,L=isLoser(r),Wn=(phase==='resolve'||phase==='next')&&!L,share=r===0?pS:1-pS,xr=r===0?xY:xN,sr=r===0?sgY:sgN,cy=RY[r];
+   const hw0=capH*(.08+.5*share)*(Wn?1+.55*e.wide:1),amp=AMP*(Wn?1-.6*e.wide:1),lift=LIFT*(Wn?1+.25*e.wide:1),drop=L?e.fall*H*.85:0,lead=(r===0)===topY?1:.8;
+   for(let i=0;i<=S;i++){const x=x0+(x1-x0)*i/S;X[i]=x;cy[i]=base+sgn*amp*Math.sin(k*x+ph)-lift*gauss(x,xr,sr)+drop+6*Math.sin(x/170+T*.3+r*2)}
+   for(const [off,fold,wid,tw,lit,fk,fph] of SHEETS)for(let i=0;i<=S;i++){const ia=Math.max(0,i-1),ib=Math.min(S,i+1);let tx=X[ib]-X[ia],ty=cy[ib]-cy[ia];const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx;
+    const s=i/S,hw=hw0*(.94+.06*Math.sin(s*7.1+T*.4+fph+r)),d=hw*(off+fold*Math.sin(fk*s*2.2-T*.25+fph+r*1.7)),x=X[i]+nx*d,y=cy[i]+ny*d;
+    const phi=.5*Math.sin(s*4.2-T*.2+r*2.3+fph)+.22*Math.sin(s*9.7+T*.33+r)+tw*.25*Math.sin(s*2.4+T*.2+fph)+(L?e.fall*6*s:0),cp=Math.cos(phi),sp=Math.sin(phi);
+    /* v258: a 3D strip — it leans into the screen the more it stands on edge, so a turn is a long rounded fold, never a pinch */
+    const tz=.22+.66*Math.abs(sp),lz=Math.sqrt(1+tz*tz),bx=-tz*tx/lz,by=-tz*ty/lz,bz=1/lz,wx=cp*nx+sp*bx,wy=cp*ny+sp*by,wz=sp*bz;
+    let fx=cp*bx-sp*nx,fy=cp*by-sp*ny,fz=cp*bz;if(fz<0){fx=-fx;fy=-fy;fz=-fz}
+    const hl=hw*wid,hwa=hl*Math.hypot(wx,wy)+1.1,bend=.62+.78*Math.abs(sp),shm=.22*Math.sin(s*6.5-T*.5+fph+r);
+    for(let j=0;j<AC;j++){const v=-1+2*j/(AC-1),cb=Math.cos(bend*v),sb=Math.sin(bend*v);let qx=cb*fx+sb*wx+shm*tx,qy=cb*fy+sb*wy+shm*ty,qz=cb*fz+sb*wz;const ql=Math.hypot(qx,qy,qz)||1;
+     verts[o++]=x+wx*v*hl;verts[o++]=y+wy*v*hl;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=s;verts[o++]=v;verts[o++]=lit*lead;verts[o++]=hwa}}}}
  const PU=new Float32Array(16);
- function draw(){if(!gl||!verts||root.hidden||!hist.length||!texOk.mat)return;build();
+ function draw(){if(!gl||!verts||root.hidden||!texOk.mat||!X)return;build();
   gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(prog);
   gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferSubData(gl.ARRAY_BUFFER,0,verts);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);
   gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex.mat);gl.uniform1i(loc.uMat,0);gl.uniform2f(loc.uRes,W,H);gl.uniform1f(loc.uReveal,reveal);
-  {const r=phase==='resolve'?pt/RES:-1;gl.uniform2f(loc.uFlash,r<0?-1:1-outE(clamp(r/.6,0,1))*1.08,r<0?0:.95*Math.sin(Math.PI*clamp(r/.8,0,1)))}   /* the close: a glint runs back along it */
-  PU.fill(0);pulses.slice(-4).forEach((q,i)=>{PU[i*4]=q.s;PU[i*4+1]=q.a0*Math.exp(-q.age/1.1);PU[i*4+2]=.03});gl.uniform4fv(loc.uPulse,PU);
-  gl.drawElements(gl.TRIANGLES,nIdx,gl.UNSIGNED_SHORT,0)}
+  const e=closeFx(),span=1.12*W;
+  for(const r of (topY?[1,0]:[0,1])){   /* the leader last, on top (r: 0 YES, 1 NO) */
+   PU.fill(0);let n=0;const s0=((r===0?xY:xN)+.06*W)/span;
+   for(let i=pulses.length-1;i>=0&&n<4;i--){const q=pulses[i];if(q.r!==r)continue;PU[n*4]=s0;PU[n*4+1]=q.age*.5;PU[n*4+2]=q.a*Math.exp(-q.age/1.1);PU[n*4+3]=.035;n++}
+   gl.uniform4fv(loc.uPulse,PU);gl.uniform1f(loc.uAlpha,isLoser(r)?e.fade:1);gl.drawElements(gl.TRIANGLES,nIdx,gl.UNSIGNED_SHORT,r*nIdx*2)}}
  function frame(ts){if(!running)return;raf=requestAnimationFrame(frame);const now=ts/1000,dt=last?Math.min(.05,now-last):1/60;last=now;step(dt);draw()}
  /* ---- the version's life ---- */
- function prepare(){if(ready)return;ready=true;initGL();layout();seed(0,true);numbers();btxt.style.transform='rotate('+ba+'deg)';
+ function prepare(){if(ready)return;ready=true;initGL();layout();seed(0);pS=p;numbers();btxt.style.transform='rotate('+ba+'deg)';
   if(document.fonts&&document.fonts.load)document.fonts.load('400 100px Anton').then(()=>{if(!root.hidden){layout();if(!running)draw()}})}
  function intro(){if(reduced){root.classList.add('in');reveal=1.1;revealT=-1;return}root.classList.remove('in');reveal=-.05;revealT=0;void root.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>root.classList.add('in')))}
  function show(on){root.hidden=!on;land.classList.toggle('lbg-ribbon',on);if(on){const was=ready;prepare();if(was)layout();intro();if(!running)draw()}else stop()}
@@ -8222,7 +8215,7 @@ function duqRibbon(land){
  root.addEventListener('click',e=>{const w=e.target.closest&&e.target.closest('.rb-w[data-rbside]');if(w)commit(w.dataset.rbside==='yes')});
  badge.addEventListener('pointerenter',()=>{hov=true});badge.addEventListener('pointerleave',()=>{hov=false});badge.addEventListener('focus',()=>{hov=true});badge.addEventListener('blur',()=>{hov=false});
  let rt=0;window.addEventListener('resize',()=>{if(!ready||root.hidden)return;clearTimeout(rt);rt=setTimeout(()=>{layout();if(!running)draw()},100)});
- window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,capH,b0,b2,yMid,Dup,Ddn,running,gl:!!gl,glFail,texOk:{...texOk}});   /* preview aid */
+ window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,capH,b0,b2,base,AMP,LIFT,xY,xN,topY,running,gl:!!gl,glFail,texOk:{...texOk}});   /* preview aid */
  return{root,show,start,stop,commit};
 }
 
