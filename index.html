@@ -6423,19 +6423,27 @@ html:not([data-theme=dark]) #ribbonbg .rb-w:not(.hol){text-shadow:0 0 1.5px var(
 #ribbonbg.won-yes .rb-w.hol:not(.yes),#ribbonbg.won-no .rb-w.hol:not(.no){opacity:.22}
 #ribbonbg .rb-ch{display:inline-block;transition:transform .95s cubic-bezier(.2,.75,.15,1),opacity .6s ease}
 #ribbonbg:not(.in) .rb-ch{transform:translateY(.4em);opacity:0}
-/* the round button: its running text turns from the script (a turn in 20 s, three times faster under the pointer) */
-#ribbonbg .rb-badge{position:absolute;left:0;top:0;z-index:4;width:var(--rb-B);height:var(--rb-B);margin:0;padding:0;border:0;border-radius:50%;background:none;cursor:pointer;pointer-events:auto;translate:var(--rb-bx) var(--rb-by);scale:var(--rb-bs,1);transition:scale .5s var(--spring),opacity .5s ease .35s;-webkit-tap-highlight-color:transparent}
-#ribbonbg .rb-badge svg{display:block;width:100%;height:100%;overflow:visible}
-#ribbonbg .rb-badge .rb-ring{fill:var(--brand)}
-#ribbonbg .rb-badge text{font:800 13.2px/1 var(--font);fill:#fff;letter-spacing:0}
-#ribbonbg .rb-badge .rb-txt{transform-origin:100px 100px}
-#ribbonbg .rb-badge .rb-disc{fill:var(--rb-disc)}
-#ribbonbg .rb-badge .rb-arr{fill:none;stroke:#fff;stroke-width:4.6;stroke-linecap:round;stroke-linejoin:round;transform-origin:100px 100px;transition:transform .45s var(--spring)}
-#ribbonbg .rb-badge:hover,#ribbonbg .rb-badge:focus-visible{--rb-bs:1.06}
-#ribbonbg .rb-badge:hover .rb-arr,#ribbonbg .rb-badge:focus-visible .rb-arr{transform:rotate(45deg)}
-#ribbonbg .rb-badge:active{--rb-bs:.97}
-#ribbonbg .rb-badge:focus-visible{outline:2px solid var(--focus);outline-offset:6px}
-#ribbonbg:not(.in) .rb-badge{--rb-bs:.5;opacity:0}
+/* v265 (the user picked «3 · Стеклянная капсула» of the five buttons): MAKE YOUR CALL on a Liquid Glass Small capsule — the
+   system's recipe (fill, inner shade under the top edge, light lines, rim crescents, 0.5 px ring, side crescents, soft drop,
+   3 px frost); the ribbons show through it, and the WebGL draws them magnified inside it — a lens (1.06×, 1.32× under the
+   pointer, when its ring turns orange and glows and the arrow turns right). Its size comes from the script (--rb-ch, --rb-cf) */
+#ribbonbg .rb-cta{position:absolute;left:0;top:0;z-index:4;display:inline-flex;align-items:center;gap:.62em;height:var(--rb-ch,72px);margin:0;padding:0 calc(var(--rb-ch,72px) * .5);border:0;border-radius:var(--radius-border_radius_round,999px);cursor:pointer;pointer-events:auto;white-space:nowrap;
+ translate:var(--rb-bx) var(--rb-by);scale:var(--rb-bs,1);font:800 var(--rb-cf,19px)/1 var(--font);letter-spacing:.07em;text-transform:uppercase;color:#fff;-webkit-tap-highlight-color:transparent;
+ --lgs-fill:rgb(255 255 255 / .1);--lgs-shade:rgb(0 0 0 / .357),rgb(0 0 0 / .281) 4px,rgb(0 0 0 / .211) 8px,rgb(0 0 0 / .147) 12px,rgb(0 0 0 / .095) 16px,rgb(0 0 0 / .059) 20px,rgb(0 0 0 / .024) 26px,rgb(0 0 0 / .006) 32px,rgb(0 0 0 / 0) 37px;
+ --lgs-ring:rgb(0 0 0 / .9);--lgs-side:rgb(0 0 0 / .85);--lgs-rim:rgb(255 255 255 / .107);--lgs-rimx:rgb(255 255 255 / 0);--lgs-t1:rgb(255 255 255 / .2);--lgs-t2:rgb(255 255 255 / .076);--lgs-b1:rgb(255 255 255 / .12);--lgs-b2:rgb(255 255 255 / .085);--lgs-drop:rgb(0 0 0 / .04);--rb-ringw:.5px;--rb-glow:0px;
+ background:linear-gradient(var(--lgs-shade)) no-repeat,var(--lgs-fill);
+ box-shadow:inset 0 .5px 0 var(--lgs-t1),inset 0 1px 0 var(--lgs-t2),inset 0 -.5px 0 var(--lgs-b1),inset 0 -1px 0 var(--lgs-b2),inset 0 40px 10px -40px var(--lgs-rim),inset 0 -40px 10px -40px var(--lgs-rim),inset 0 40px 10px -40px var(--lgs-rimx),inset 0 -40px 10px -40px var(--lgs-rimx),
+  0 0 0 var(--rb-ringw) var(--lgs-ring),1.25px 0 0 -.75px var(--lgs-side),-1.25px 0 0 -.75px var(--lgs-side),0 8px 15px var(--lgs-drop),0 0 var(--rb-glow) rgb(254 121 17 / .38);
+ -webkit-backdrop-filter:blur(3px) saturate(1.25);backdrop-filter:blur(3px) saturate(1.25);
+ transition:scale .5s var(--spring),opacity .5s ease .35s,box-shadow .35s var(--ease),color .3s var(--ease)}
+html:not([data-theme=dark]) #ribbonbg .rb-cta{color:#0e1117;--lgs-fill:rgb(242 242 242 / .55);--lgs-shade:rgb(0 0 0 / .052),rgb(0 0 0 / .041) 4px,rgb(0 0 0 / .031) 8px,rgb(0 0 0 / .021) 12px,rgb(0 0 0 / .014) 16px,rgb(0 0 0 / .009) 20px,rgb(0 0 0 / .003) 26px,rgb(0 0 0 / .001) 32px,rgb(0 0 0 / 0) 37px;
+ --lgs-ring:rgb(0 0 0 / .096);--lgs-side:rgb(0 0 0 / .196);--lgs-rim:rgb(255 255 255 / .9);--lgs-rimx:rgb(255 255 255 / .9);--lgs-t1:rgb(255 255 255 / 0);--lgs-t2:rgb(255 255 255 / 0);--lgs-b1:rgb(255 255 255 / 0);--lgs-b2:rgb(255 255 255 / 0);--lgs-drop:rgb(0 0 0 / .02)}
+#ribbonbg .rb-cta svg{width:1.05em;height:1.05em;flex:none;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .45s var(--spring)}
+#ribbonbg .rb-cta:hover,#ribbonbg .rb-cta:focus-visible{--lgs-ring:var(--brand);--rb-ringw:1.5px;--rb-glow:36px}
+#ribbonbg .rb-cta:hover svg,#ribbonbg .rb-cta:focus-visible svg{transform:rotate(45deg)}
+#ribbonbg .rb-cta:active{--rb-bs:.97}
+#ribbonbg .rb-cta:focus-visible{outline:2px solid var(--focus);outline-offset:5px}
+#ribbonbg:not(.in) .rb-cta{--rb-bs:.86;opacity:0}
 /* the live numbers (v260, the user: «delete» on the line «Pick a side… Get paid when you’re right.» — gone; the numbers keep to the right) */
 #ribbonbg .rb-foot{position:absolute;left:0;right:0;bottom:48px;z-index:4;display:flex;align-items:flex-end;justify-content:flex-end;gap:32px;transition:opacity .7s ease .6s,transform .9s cubic-bezier(.2,.75,.15,1) .6s}
 #ribbonbg:not(.in) .rb-foot{opacity:0;transform:translateY(14px)}
@@ -6452,7 +6460,7 @@ html:not([data-theme=dark]) #ribbonbg .rb-stats{text-shadow:0 0 1.5px var(--bg),
  #ribbonbg .rb-stats dd{font-size:28px}
  #ribbonbg .rb-stats dt{font-size:12px;margin-top:4px}
 }
-@media (prefers-reduced-motion:reduce){#ribbonbg .rb-ch,#ribbonbg .rb-foot,#ribbonbg .rb-badge,#ribbonbg .rb-badge .rb-arr{transition:none}}
+@media (prefers-reduced-motion:reduce){#ribbonbg .rb-ch,#ribbonbg .rb-foot,#ribbonbg .rb-cta,#ribbonbg .rb-cta svg{transition:none}}
 
 /* the version switch on the landing: Default = the crowd field (the main one, v225), 3 = the stop, 4 = the ribbon (v256) (Liquid Glass Small, like the theme button); v250: 1 (river) and 2 (gravity) deleted */
 #landing .lbgsw{display:inline-flex;align-items:center;gap:2px;height:var(--sizing-control-xl);padding:4px;border-radius:var(--radius-border_radius_round);margin-right:4px}
@@ -8058,7 +8066,8 @@ function duqRibbon(land){
       drifts slowly, nothing else moves by itself. Click YES / NO (or press Y / N) for your own;
     — every ~21 s the market closes: the loser's ribbon unravels and falls away, the winner's widens into one broad wave, the winning
       word fills with its colour and the rest dims; with the next market the other ribbon comes back up;
-    — the round orange button (--brand) runs MAKE YOUR CALL around it and enters the app; the numbers bottom right are live.
+    — the button (v265, «Стеклянная капсула»): MAKE YOUR CALL on a Liquid Glass Small capsule under the headline; the ribbons show
+      through it magnified like a lens (more so under the pointer, when its ring turns orange); it enters the app; the numbers are live.
     The material (the user: «doljen sovpodat materyalom kartinki 100%», on a crop of the reference's ribbon): the reference's own —
     smoky black glass, steel-blue sheen, orange-copper glints, a thin white edge. Higgsfield (GPT Image 2.6, the reference crops as
     image references) made a matcap ball of exactly that material (window.DUQ_RIBBON.mat); it lights, colours and all, the WebGL ribbons
@@ -8074,17 +8083,17 @@ function duqRibbon(land){
   '<div class="rb-col rb-top"><h1 class="rb-h"><span class="sr-only">Will it happen? Just say yes or no.</span>'+
   '<span class="rb-l" aria-hidden="true"><i class="rb-bl"></i>'+word('WILL')+' '+word('IT')+'<br class="rb-m"> '+word('HAPPEN?')+'<i class="rb-bl"></i></span>'+
   '<span class="rb-l" aria-hidden="true">'+word('JUST')+' '+word('SAY')+'<br class="rb-m"> '+word('YES','hol yes','yes')+' '+word('OR','hol or')+' '+word('NO.','hol no','no')+'<i class="rb-bl"></i></span></h1></div>'+
-  '<button type="button" class="rb-badge" data-enter="home" aria-label="Make your call"><svg viewBox="0 0 200 200" aria-hidden="true" focusable="false"><circle class="rb-ring" cx="100" cy="100" r="100"/><defs><path id="rbArc" d="M29 100A71 71 0 1 1 171 100A71 71 0 1 1 29 100"/></defs><g class="rb-txt"><text><textPath href="#rbArc" textLength="444" lengthAdjust="spacing">MAKE YOUR CALL • MAKE YOUR CALL • MAKE YOUR CALL • </textPath></text></g><circle class="rb-disc" cx="100" cy="100" r="50"/><path class="rb-arr" d="M82 118L118 82M89 82H118V111"/></svg></button>'+
+  '<button type="button" class="rb-cta" data-enter="home"><span>Make your call</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg></button>'+
   '<div class="rb-col rb-foot"><dl class="rb-stats"><div><dt>Traded today</dt><dd data-k="vol"></dd></div><div><dt>Calls today</dt><dd data-k="calls"></dd></div><div class="rb-mk"><dt data-k="q"></dt><dd data-k="p"></dd></div></dl></div>';
  {const fc=document.getElementById('field');if(fc&&fc.parentNode===land)land.insertBefore(root,fc.nextSibling);else land.insertBefore(root,land.firstChild)}
- const cv=root.querySelector('.rb-gl'),topEl=root.querySelector('.rb-top'),bls=root.querySelectorAll('.rb-bl'),words=root.querySelectorAll('.rb-w'),badge=root.querySelector('.rb-badge'),btxt=root.querySelector('.rb-txt'),foot=root.querySelector('.rb-foot'),DD={};
+ const cv=root.querySelector('.rb-gl'),topEl=root.querySelector('.rb-top'),bls=root.querySelectorAll('.rb-bl'),words=root.querySelectorAll('.rb-w'),badge=root.querySelector('.rb-cta'),foot=root.querySelector('.rb-foot'),DD={};
  root.querySelectorAll('[data-k]').forEach(e=>{DD[e.dataset.k]=e});
  /* the letters rise one by one when the version comes in */
  {let n=0;words.forEach(w=>{const t=w.textContent;w.textContent='';for(const ch of t){const s=document.createElement('span');s.className='rb-ch';s.textContent=ch;s.style.transitionDelay=(70+n*24)+'ms';n++;w.appendChild(s)}})}
  const clamp=(v,a,b)=>v<a?a:v>b?b:v,ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,outE=t=>1-Math.pow(1-t,3),sm=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
  const gauss=(x,m,s)=>{const d=(x-m)/s;return Math.exp(-d*d)};
  /* ---- the layout: the headline fills the landing's column; the two ribbons hang from its last line ---- */
- let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,AMP=0,LIFT=0,xY=0,xN=0,sgY=100,sgN=100;
+ let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,AMP=0,LIFT=0,xY=0,xN=0,sgY=100,sgN=100,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06;
  const mctx=document.createElement('canvas').getContext('2d');
  function capOf(f){mctx.font='400 '+f+'px Anton';const m=mctx.measureText('H');return m.actualBoundingBoxAscent||f*.86}
  function layout(){if(root.hidden)return;
@@ -8095,7 +8104,7 @@ function duqRibbon(land){
   F=Math.floor(phone?Math.min(colW/3.98,(H-420)/4.3):Math.min(colW/7.62,(H-316)/3.55));   /* v263: the height now holds the button above the headline too */F=Math.max(phone?36:56,F);
   root.style.setProperty('--rb-F',F+'px');root.style.setProperty('--rb-sw',Math.max(1,F*.0105).toFixed(2)+'px');
   capH=capOf(F);
-  BD=Math.round(phone?Math.min(104,colW*.28):clamp(F*1.15,120,210));root.style.setProperty('--rb-B',BD+'px');
+  CH=Math.round(phone?52:clamp(F*.46,56,80));CF=Math.round(phone?15:clamp(F*.13,15,21));root.style.setProperty('--rb-ch',CH+'px');root.style.setProperty('--rb-cf',CF+'px');BD=CH;   /* v265: the capsule's height */
   const hdr=(land.querySelector('.header')||{}).offsetHeight||72;
   foot.style.bottom=(phone?18:Math.round(clamp(H*.055,26,64)))+'px';
   footTop=foot.getBoundingClientRect().top;
@@ -8107,11 +8116,11 @@ function duqRibbon(land){
   topEl.style.top=Math.round(capTop-t0)+'px';
   b0=bls[0].getBoundingClientRect().top;b2=bls[2].getBoundingClientRect().top;
   let bx,by;
-  bx=(colL+colR)/2-BD/2;by=b2+gapB;
+  const CW=badge.offsetWidth;bx=(colL+colR)/2-CW/2;by=b2+gapB;LENS=[bx+CW/2,by+CH/2,CW/2,CH/2];   /* the lens = the capsule */
   root.style.setProperty('--rb-bx',Math.round(bx)+'px');root.style.setProperty('--rb-by',Math.round(by)+'px');
   /* v262: the braid's middle under the last line, clear of the numbers; each ribbon rises behind its own word (YES, NO.) */
   const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;sgY=Math.max(56,ry.width*.6);sgN=Math.max(56,rn.width*.6);
-  AMP=.55*capH;base=Math.min(b2+1.05*capH,footTop-AMP-.5*capH);LIFT=Math.max(0,base-(b2-.4*capH));
+  AMP=.55*capH;base=Math.min(by+CH*.5+.08*capH,footTop-AMP-.5*capH);   /* v265: the braid runs through the glass capsule */LIFT=Math.max(0,base-(b2-.4*capH));
   const s2=phone?120:200;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
   if(gl&&(s2!==S||!verts)){S=s2;alloc()}else S=s2}
@@ -8140,17 +8149,18 @@ function duqRibbon(land){
   if(phase==='bet'||phase==='close'){if(topY&&pS<.48)topY=false;else if(!topY&&pS>.52)topY=true}   /* the leader on top (with a little hysteresis) */
   for(const q of pulses)q.age+=dt;pulses=pulses.filter(q=>q.age<2.4);
   if(revealT>=0){revealT+=dt;reveal=-.05+1.12*outE(clamp((revealT-.1)/1.6,0,1));if(revealT>2)revealT=-1}
-  bv+=((hov?54:18)-bv)*(1-Math.exp(-dt/.35));ba=(ba+bv*dt)%360;btxt.style.transform='rotate('+ba.toFixed(2)+'deg)';
+  lensK+=((hov?1.32:1.06)-lensK)*(1-Math.exp(-dt/.16));   /* the glass: a lens, stronger under the pointer */
   numbers()}
  /* ---- the ribbons: two strips braided under the type, lit by the Higgsfield matcap ---- */
- const VS='attribute vec2 aP;attribute vec3 aN;attribute vec4 aD;uniform vec2 uRes;varying vec3 vN;varying vec4 vD;'+
-  'void main(){vec2 c=aP/uRes*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);vN=aN;vD=aD;}';
- const FS='precision mediump float;varying vec3 vN;varying vec4 vD;uniform sampler2D uMat;uniform float uReveal,uAlpha;uniform vec4 uPulse[4];'+
+ const VS='attribute vec2 aP;attribute vec3 aN;attribute vec4 aD;uniform vec2 uRes;uniform vec4 uLens;uniform float uLensK,uPassV;varying vec3 vN;varying vec4 vD;varying vec2 vP;'+
+  'void main(){vec2 p=aP;if(uPassV>.5)p=uLens.xy+(p-uLens.xy)*uLensK;vP=p;vec2 c=p/uRes*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);vN=aN;vD=aD;}';
+ const FS='precision mediump float;varying vec3 vN;varying vec4 vD;varying vec2 vP;uniform sampler2D uMat;uniform float uReveal,uAlpha,uPassF;uniform vec4 uPulse[4],uLensF;'+
   'void main(){vec3 n=normalize(vN);vec3 m=texture2D(uMat,vec2(.5+.47*n.x,.5+.47*n.y)).rgb;float g=1.-abs(n.z);'+
   'float rim=(smoothstep(.84,.99,-vD.y)*.35+smoothstep(.945,.975,-vD.y)*.8)*(.45+.55*g)*(vD.z>.99?1.:.3);vec3 c=pow(m,vec3(1.18))*.86*vD.z+rim*vec3(.88,.9,.95);'+
   'float p=0.;for(int i=0;i<4;i++){float d=(abs(vD.x-uPulse[i].x)-uPulse[i].y)/max(uPulse[i].w,.001);p+=uPulse[i].z*exp(-d*d);}'+
   'float L=dot(m,vec3(.3,.59,.11));c+=p*.55*(.2+.8*L+.3*g)*vec3(1.,.84,.68)*vD.z;'+
-  'float a=smoothstep(0.,1.25,(1.-abs(vD.y))*vD.w)*(1.-smoothstep(uReveal-.03,uReveal,vD.x))*uAlpha;gl_FragColor=vec4(c*a,a*mix(.82,.97,vD.z));}';
+  'vec2 q=abs(vP-uLensF.xy)-uLensF.zw+uLensF.w;float sd=length(max(q,0.))+min(max(q.x,q.y),0.)-uLensF.w,ins=1.-smoothstep(-.8,.8,sd);'+
+  'float a=smoothstep(0.,1.25,(1.-abs(vD.y))*vD.w)*(1.-smoothstep(uReveal-.03,uReveal,vD.x))*uAlpha*(uPassF>.5?ins:1.-ins);if(uPassF>.5)c*=1.07;gl_FragColor=vec4(c*a,a*mix(.82,.97,vD.z));}';
  const AC=7;let gl=null,glFail=false,prog=null,vbuf=null,ibuf=null,loc={},verts=null,X=null,RY=null,nIdx=0;const tex={},texOk={};
  function initGL(){if(gl||glFail)return;
   try{gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:true,depth:false,stencil:false})}catch(e){gl=null}
@@ -8158,7 +8168,7 @@ function duqRibbon(land){
   const sh=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s};
   try{prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog))}
   catch(e){glFail=true;gl=null;if(window.console)console.warn('version 4 ribbon:',e&&e.message||e);return}
-  gl.useProgram(prog);for(const k of ['aP','aN','aD'])loc[k]=gl.getAttribLocation(prog,k);for(const k of ['uRes','uMat','uReveal','uPulse','uAlpha'])loc[k]=gl.getUniformLocation(prog,k);
+  gl.useProgram(prog);for(const k of ['aP','aN','aD'])loc[k]=gl.getAttribLocation(prog,k);for(const k of ['uRes','uMat','uReveal','uPulse','uAlpha','uLens','uLensF','uLensK','uPassV','uPassF'])   /* the vertex and fragment stages keep their own names: a shared uniform must share its precision */loc[k]=gl.getUniformLocation(prog,k);
   vbuf=gl.createBuffer();ibuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);
   gl.enableVertexAttribArray(loc.aP);gl.vertexAttribPointer(loc.aP,2,gl.FLOAT,false,36,0);
   gl.enableVertexAttribArray(loc.aN);gl.vertexAttribPointer(loc.aN,3,gl.FLOAT,false,36,8);
@@ -8199,14 +8209,15 @@ function duqRibbon(land){
   gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(prog);
   gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferSubData(gl.ARRAY_BUFFER,0,verts);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);
   gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex.mat);gl.uniform1i(loc.uMat,0);gl.uniform2f(loc.uRes,W,H);gl.uniform1f(loc.uReveal,reveal);
-  const e=closeFx(),span=1.12*W;
+  const e=closeFx(),span=1.12*W;gl.uniform4f(loc.uLens,LENS[0],LENS[1],LENS[2],LENS[3]);gl.uniform4f(loc.uLensF,LENS[0],LENS[1],LENS[2],LENS[3]);gl.uniform1f(loc.uLensK,lensK);
+  for(const pass of [0,1]){gl.uniform1f(loc.uPassV,pass);gl.uniform1f(loc.uPassF,pass);   /* 0: the ribbons outside the capsule; 1: inside it, magnified (the glass lens) */
   for(const r of (topY?[1,0]:[0,1])){   /* the leader last, on top (r: 0 YES, 1 NO) */
    PU.fill(0);let n=0;const s0=((r===0?xY:xN)+.06*W)/span;
    for(let i=pulses.length-1;i>=0&&n<4;i--){const q=pulses[i];if(q.r!==r)continue;PU[n*4]=s0;PU[n*4+1]=q.age*.5;PU[n*4+2]=q.a*Math.exp(-q.age/1.1);PU[n*4+3]=.035;n++}
-   gl.uniform4fv(loc.uPulse,PU);gl.uniform1f(loc.uAlpha,isLoser(r)?e.fade:1);gl.drawElements(gl.TRIANGLES,nIdx,gl.UNSIGNED_SHORT,r*nIdx*2)}}
+   gl.uniform4fv(loc.uPulse,PU);gl.uniform1f(loc.uAlpha,isLoser(r)?e.fade:1);gl.drawElements(gl.TRIANGLES,nIdx,gl.UNSIGNED_SHORT,r*nIdx*2)}}}
  function frame(ts){if(!running)return;raf=requestAnimationFrame(frame);const now=ts/1000,dt=last?Math.min(.05,now-last):1/60;last=now;step(dt);draw()}
  /* ---- the version's life ---- */
- function prepare(){if(ready)return;ready=true;initGL();layout();seed(0);pS=p;numbers();btxt.style.transform='rotate('+ba+'deg)';
+ function prepare(){if(ready)return;ready=true;initGL();layout();seed(0);pS=p;numbers();
   if(document.fonts&&document.fonts.load)document.fonts.load('400 100px Anton').then(()=>{if(!root.hidden){layout();if(!running)draw()}})}
  function intro(){if(reduced){root.classList.add('in');reveal=1.1;revealT=-1;return}root.classList.remove('in');reveal=-.05;revealT=0;void root.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>root.classList.add('in')))}
  function show(on){root.hidden=!on;land.classList.toggle('lbg-ribbon',on);if(on){const was=ready;prepare();if(was)layout();intro();if(!running)draw()}else stop()}
@@ -8214,7 +8225,7 @@ function duqRibbon(land){
  function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0}
  function commit(yes){if(!ready||root.hidden||phase==='close'||phase==='resolve')return;bet(yes,1500+Math.random()*2500,true);if(!running){pS=p;numbers();draw()}}
  root.addEventListener('click',e=>{const w=e.target.closest&&e.target.closest('.rb-w[data-rbside]');if(w)commit(w.dataset.rbside==='yes')});
- badge.addEventListener('pointerenter',()=>{hov=true});badge.addEventListener('pointerleave',()=>{hov=false});badge.addEventListener('focus',()=>{hov=true});badge.addEventListener('blur',()=>{hov=false});
+ const setHov=v=>{hov=v;if(!running){lensK=v?1.32:1.06;draw()}};badge.addEventListener('pointerenter',()=>setHov(true));badge.addEventListener('pointerleave',()=>setHov(false));badge.addEventListener('focus',()=>setHov(true));badge.addEventListener('blur',()=>setHov(false));
  let rt=0;window.addEventListener('resize',()=>{if(!ready||root.hidden)return;clearTimeout(rt);rt=setTimeout(()=>{layout();if(!running)draw()},100)});
  window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,capH,b0,b2,base,AMP,LIFT,xY,xN,topY,running,gl:!!gl,glFail,texOk:{...texOk}});   /* preview aid */
  return{root,show,start,stop,commit};
