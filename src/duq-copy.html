@@ -5484,8 +5484,13 @@ html[data-theme=dark] #ribbonbg{--rb-ground:var(--bg);--rb-yes:var(--yes);--rb-n
 #ribbonbg .rb-w{display:inline-block;position:relative;z-index:1}
 #ribbonbg .rb-w.hol{z-index:3;color:transparent;-webkit-text-stroke:var(--rb-sw) var(--rb-fg);transition:color .45s var(--ease),-webkit-text-stroke-color .45s var(--ease),opacity .45s var(--ease)}
 #ribbonbg .rb-w[data-rbside]{pointer-events:auto;cursor:pointer}
-#ribbonbg .rb-w.yes:hover{color:color-mix(in srgb,var(--rb-yes) 20%,transparent);-webkit-text-stroke-color:var(--rb-yes)}
-#ribbonbg .rb-w.no:hover{color:color-mix(in srgb,var(--rb-no) 20%,transparent);-webkit-text-stroke-color:var(--rb-no)}
+/* v257 (the user: «yes or no red and green»): YES green and NO red — their outline in the side's colour, a little heavier, and a tint
+   of it inside, so the ribbon still shows through; OR stays the plain outline. Under the pointer the tint deepens; your call and the
+   win fill the word in full */
+#ribbonbg .rb-w.yes{-webkit-text-stroke:calc(var(--rb-sw) * 1.35) var(--rb-yes);color:color-mix(in srgb,var(--rb-yes) 24%,transparent)}
+#ribbonbg .rb-w.no{-webkit-text-stroke:calc(var(--rb-sw) * 1.35) var(--rb-no);color:color-mix(in srgb,var(--rb-no) 24%,transparent)}
+#ribbonbg .rb-w.yes:hover{color:color-mix(in srgb,var(--rb-yes) 48%,transparent)}
+#ribbonbg .rb-w.no:hover{color:color-mix(in srgb,var(--rb-no) 48%,transparent)}
 #ribbonbg .rb-w.yes.flash,#ribbonbg.won-yes .rb-w.yes{color:var(--rb-yes);-webkit-text-stroke-color:var(--rb-yes)}
 #ribbonbg .rb-w.no.flash,#ribbonbg.won-no .rb-w.no{color:var(--rb-no);-webkit-text-stroke-color:var(--rb-no)}
 #ribbonbg .rb-w.flash{transition-duration:.08s}
