@@ -6402,7 +6402,7 @@ html[data-theme=dark] #ribbonbg{--rb-ground:var(--bg);--rb-yes:var(--yes);--rb-n
 #ribbonbg .rb-gl{position:absolute;left:0;top:0;width:100%;height:100%;display:block;z-index:2}
 #ribbonbg .rb-col{width:100%;max-width:calc(var(--column) + var(--gutter) * 2);margin:0 auto;padding:0 var(--gutter)}
 #ribbonbg .rb-top{position:absolute;left:0;right:0;top:0}
-#ribbonbg .rb-h{margin:0;font:400 var(--rb-F)/.98 "Anton",var(--font);letter-spacing:0;text-transform:uppercase;color:var(--rb-fg);white-space:nowrap;font-synthesis:none;font-kerning:normal}
+#ribbonbg .rb-h{margin:0;font:400 var(--rb-F)/.98 "Anton",var(--font);letter-spacing:0;text-transform:uppercase;color:var(--rb-fg);white-space:nowrap;text-align:center;font-synthesis:none;font-kerning:normal}
 #ribbonbg .rb-l{display:block}
 #ribbonbg .rb-bl{display:inline-block;width:0;height:0;vertical-align:baseline}
 #ribbonbg .rb-m{display:none}
@@ -8097,15 +8097,17 @@ function duqRibbon(land){
   capH=capOf(F);
   BD=Math.round(phone?Math.min(104,colW*.28):clamp(F*1.15,120,210));root.style.setProperty('--rb-B',BD+'px');
   const hdr=(land.querySelector('.header')||{}).offsetHeight||72;
-  topEl.style.top='0px';
-  const t0=bls[0].getBoundingClientRect().top-capH;   /* the first line's cap top with the block at 0 */
-  const gapB=Math.round(.22*capH),capTop=hdr+(phone?10:14)+BD+gapB;   /* v263 (the user: «replace this button to center up to title»): the round button sits centred above the headline */
-  topEl.style.top=Math.round(capTop-t0)+'px';
-  b0=bls[0].getBoundingClientRect().top;b2=bls[2].getBoundingClientRect().top;
   foot.style.bottom=(phone?18:Math.round(clamp(H*.055,26,64)))+'px';
   footTop=foot.getBoundingClientRect().top;
+  topEl.style.top='0px';
+  const t0=bls[0].getBoundingClientRect().top-capH;   /* the first line's cap top with the block at 0 */
+  /* v264 (the user, after v263's button above the headline: «down», «and text centerlize»): the headline centred and the round button
+     centred under it, the two together in the middle between the header and the numbers; the ribbons run behind the button */
+  const gapB=Math.round(.3*capH),blockH=capH+(phone?3:1)*.98*F+gapB+BD,capTop=Math.max(hdr+(phone?12:24),hdr+(footTop-hdr-blockH)/2);
+  topEl.style.top=Math.round(capTop-t0)+'px';
+  b0=bls[0].getBoundingClientRect().top;b2=bls[2].getBoundingClientRect().top;
   let bx,by;
-  bx=(colL+colR)/2-BD/2;by=b0-capH-gapB-BD;
+  bx=(colL+colR)/2-BD/2;by=b2+gapB;
   root.style.setProperty('--rb-bx',Math.round(bx)+'px');root.style.setProperty('--rb-by',Math.round(by)+'px');
   /* v262: the braid's middle under the last line, clear of the numbers; each ribbon rises behind its own word (YES, NO.) */
   const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;sgY=Math.max(56,ry.width*.6);sgN=Math.max(56,rn.width*.6);
