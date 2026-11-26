@@ -7177,7 +7177,7 @@ function duqRibbon(land){
   colL=(W-colW)/2;colR=colL+colW;
   /* JUST SAY YES OR NO. ≈ 7.6 em wide fills the column; on a phone four lines (YES OR NO. ≈ 3.96 em) */
   F=Math.floor(phone?Math.min(colW/3.98,(H-420)/4.3):Math.min(colW/7.62,(H-316)/3.55));   /* v263: the height now holds the button above the headline too */F=Math.max(phone?36:56,F);
-  const F0=F;if(!phone)F=Math.min(F,120);   /* v266 (the user, on the sizes: «120»): the headline 120 px at most on a computer; the ribbons and the button keep the scale they had (F0) */
+  const F0=F;if(!phone)F=Math.min(F,140);   /* v266 (the user, on the sizes: «120»), v267 («140»): the headline 140 px at most on a computer; the ribbons and the button keep the scale they had (F0) */
   root.style.setProperty('--rb-F',F+'px');root.style.setProperty('--rb-sw',Math.max(1,F*.0105).toFixed(2)+'px');
   capH=capOf(F);RS=capOf(F0);   /* RS: the ribbons' own scale */
   CH=Math.round(phone?52:clamp(F0*.46,56,80));CF=Math.round(phone?15:clamp(F0*.13,15,21));root.style.setProperty('--rb-ch',CH+'px');root.style.setProperty('--rb-cf',CF+'px');BD=CH;   /* v265: the capsule's height */
