@@ -8185,18 +8185,23 @@ function duqRibbon(land){
  function curve(){const x0=-.06*W,xN=W*1.015,pts=[];for(const h of hist)pts.push([xN-(mt-h.t)*SPEED,h.v]);pts.push([xN,pS]);
   let k=0;for(let i=0;i<=S;i++){const x=x0+(xN-x0)*i/S;X[i]=x;while(k<pts.length-2&&pts[k+1][0]<=x)k++;
    const a=pts[Math.max(0,k-1)],b=pts[k],c=pts[Math.min(pts.length-1,k+1)],d=pts[Math.min(pts.length-1,k+2)],u=c[0]>b[0]?clamp((x-b[0])/(c[0]-b[0]),0,1):0,v=clamp(cr(a[1],b[1],c[1],d[1],u),.02,.98);
-   Y[i]=yOf(v);CC[i]=Math.tanh((v-.5)/.04)}
+   Y[i]=yOf(v);CC[i]=Math.tanh((v-.5)/.065)}   /* v258: a longer turn */
   if(phase==='resolve'){const r=pt/RES,E=ease(clamp(r/.72,0,1)),xf=1-outE(clamp(r/.6,0,1))*1.08;   /* the end shoots off; the winner's face runs back */
    for(let i=0;i<=S;i++){const s=i/S;Y[i]-=winner*E*H*.95*Math.pow(sm((s-.6)/.4),2);CC[i]+=(winner-CC[i])*sm((s-xf)/.05)}}
   if(phase==='next'&&fromY&&fromY.length===Y.length){const m=ease(clamp(pt/NXT,0,1));for(let i=0;i<=S;i++){Y[i]=fromY[i]+(Y[i]-fromY[i])*m;CC[i]=fromC[i]+(CC[i]-fromC[i])*m}}}
  function build(){curve();const wv=.05*capH,lam=.8*W,ph=T/9,tau=2*Math.PI,Yw=i=>Y[i]+wv*Math.sin(tau*(X[i]/lam+ph));let o=0;
   for(const [off,fold,wid,tw,lit,fk,fph] of SHEETS)for(let i=0;i<=S;i++){const ia=Math.max(0,i-1),ib=Math.min(S,i+1);let tx=X[ib]-X[ia],ty=Yw(ib)-Yw(ia);const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx;
-   const s=i/S,c0=clamp(CC[i],-1,1),close=.3+.7*Math.abs(c0),d=H0*(off+fold*Math.sin(fk*s*2.2-T*.25+fph))*close,x=X[i]+nx*d,y=Yw(i)+ny*d;
-   const phi=Math.acos(c0)+(.26*Math.sin(s*5.3-T*.33)+.1*Math.sin(s*12.7+T*.55))*(.35+.65*Math.abs(c0))+tw*.6*Math.sin(s*2.4+T*.2+fph),cp=Math.cos(phi),sp=Math.sin(phi),sg=cp>=0?1:-1;
-   const hw=(H0*wid*(.92+.08*Math.sin(s*7.1+T*.4+fph))*Math.abs(cp)+1.1)*sg;   /* the sheet's half-width as seen: edge-on where it turns */
-   const fx=sp*ty*sg,fy=-sp*tx*sg,fz=cp*sg,wx=cp*nx,wy=cp*ny,wz=sp,shm=.22*Math.sin(s*6.5-T*.5+fph);   /* its face toward us, the way across it, a slow shimmer */
-   for(let j=0;j<AC;j++){const v=-1+2*j/(AC-1),cb=Math.cos(.62*v),sb=Math.sin(.62*v);let qx=cb*fx+sb*wx+shm*tx,qy=cb*fy+sb*wy+shm*ty,qz=cb*fz+sb*wz;const ql=Math.hypot(qx,qy,qz)||1;
-    verts[o++]=x+nx*v*hw;verts[o++]=y+ny*v*hw;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=s;verts[o++]=v;verts[o++]=lit;verts[o++]=Math.abs(hw)}}}
+   const s=i/S,c0=clamp(CC[i],-1,1),d=H0*(off+fold*Math.sin(fk*s*2.2-T*.25+fph)),x=X[i]+nx*d,y=Yw(i)+ny*d;
+   const phi=Math.acos(c0)+(.26*Math.sin(s*5.3-T*.33)+.1*Math.sin(s*12.7+T*.55))*(.35+.65*Math.abs(c0))+tw*.6*Math.sin(s*2.4+T*.2+fph),cp=Math.cos(phi),sp=Math.sin(phi);
+   /* v258 (the user, on a shot of a turn: «ne poxoj na kartinku kogda kruglyaeca»): the turn no longer pinches to a point. The strip
+      is 3D: it leans into the screen (tz) the more it stands on edge, so its two edges slide past each other along it — a long
+      diagonal fold, as the reference's — and across a turn its section curls (bend up to ~1.4 rad), so the fold reads rounded */
+   const tz=.22+.66*Math.abs(sp),lz=Math.sqrt(1+tz*tz),bx=-tz*tx/lz,by=-tz*ty/lz,bz=1/lz;   /* B = T × N: the way out of the strip's plane */
+   const wx=cp*nx+sp*bx,wy=cp*ny+sp*by,wz=sp*bz;   /* W: across the strip, in 3D */
+   let fx=cp*bx-sp*nx,fy=cp*by-sp*ny,fz=cp*bz;if(fz<0){fx=-fx;fy=-fy;fz=-fz}   /* its face toward us */
+   const hl=H0*wid*(.92+.08*Math.sin(s*7.1+T*.4+fph)),hwa=hl*Math.hypot(wx,wy)+1.1,bend=.62+.78*Math.abs(sp),shm=.22*Math.sin(s*6.5-T*.5+fph);
+   for(let j=0;j<AC;j++){const v=-1+2*j/(AC-1),cb=Math.cos(bend*v),sb=Math.sin(bend*v);let qx=cb*fx+sb*wx+shm*tx,qy=cb*fy+sb*wy+shm*ty,qz=cb*fz+sb*wz;const ql=Math.hypot(qx,qy,qz)||1;
+    verts[o++]=x+wx*v*hl;verts[o++]=y+wy*v*hl;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=s;verts[o++]=v;verts[o++]=lit;verts[o++]=hwa}}}
  const PU=new Float32Array(16);
  function draw(){if(!gl||!verts||root.hidden||!hist.length||!texOk.mat)return;build();
   gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(prog);
