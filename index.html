@@ -6436,10 +6436,9 @@ html:not([data-theme=dark]) #ribbonbg .rb-w:not(.hol){text-shadow:0 0 1.5px var(
 #ribbonbg .rb-badge:active{--rb-bs:.97}
 #ribbonbg .rb-badge:focus-visible{outline:2px solid var(--focus);outline-offset:6px}
 #ribbonbg:not(.in) .rb-badge{--rb-bs:.5;opacity:0}
-/* the line under the ribbon and the live numbers */
-#ribbonbg .rb-foot{position:absolute;left:0;right:0;bottom:48px;z-index:4;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;transition:opacity .7s ease .6s,transform .9s cubic-bezier(.2,.75,.15,1) .6s}
+/* the live numbers (v260, the user: «delete» on the line «Pick a side… Get paid when you’re right.» — gone; the numbers keep to the right) */
+#ribbonbg .rb-foot{position:absolute;left:0;right:0;bottom:48px;z-index:4;display:flex;align-items:flex-end;justify-content:flex-end;gap:32px;transition:opacity .7s ease .6s,transform .9s cubic-bezier(.2,.75,.15,1) .6s}
 #ribbonbg:not(.in) .rb-foot{opacity:0;transform:translateY(14px)}
-#ribbonbg .rb-sub{margin:0;max-width:30em;font:500 17px/1.5 var(--font);color:var(--rb-mute)}
 #ribbonbg .rb-stats{display:flex;align-items:flex-start;gap:clamp(24px,3.4vw,56px);margin:0}
 #ribbonbg .rb-stats>div{display:flex;flex-direction:column-reverse;min-width:0}
 #ribbonbg .rb-stats dd{margin:0;font:400 clamp(34px,3.3vw,54px)/1 "Anton",var(--font);color:var(--rb-fg);font-variant-numeric:tabular-nums;white-space:nowrap;transition:color .4s var(--ease)}
@@ -6448,7 +6447,6 @@ html:not([data-theme=dark]) #ribbonbg .rb-w:not(.hol){text-shadow:0 0 1.5px var(
 @media (max-width:640px){
  #ribbonbg .rb-m{display:inline}
  #ribbonbg .rb-foot{flex-direction:column;align-items:stretch;gap:14px}
- #ribbonbg .rb-sub{font-size:14px;line-height:1.45;max-width:none}
  #ribbonbg .rb-stats{justify-content:space-between;gap:12px}
  #ribbonbg .rb-stats dd{font-size:28px}
  #ribbonbg .rb-stats dt{font-size:12px;margin-top:4px}
@@ -8074,7 +8072,7 @@ function duqRibbon(land){
   '<span class="rb-l" aria-hidden="true"><i class="rb-bl"></i>'+word('WILL')+' '+word('IT')+'<br class="rb-m"> '+word('HAPPEN?')+'<i class="rb-bl"></i></span>'+
   '<span class="rb-l" aria-hidden="true">'+word('JUST')+' '+word('SAY')+'<br class="rb-m"> '+word('YES','hol yes','yes')+' '+word('OR','hol or')+' '+word('NO.','hol no','no')+'<i class="rb-bl"></i></span></h1></div>'+
   '<button type="button" class="rb-badge" data-enter="home" aria-label="Make your call"><svg viewBox="0 0 200 200" aria-hidden="true" focusable="false"><circle class="rb-ring" cx="100" cy="100" r="100"/><defs><path id="rbArc" d="M29 100A71 71 0 1 1 171 100A71 71 0 1 1 29 100"/></defs><g class="rb-txt"><text><textPath href="#rbArc" textLength="444" lengthAdjust="spacing">MAKE YOUR CALL • MAKE YOUR CALL • MAKE YOUR CALL • </textPath></text></g><circle class="rb-disc" cx="100" cy="100" r="50"/><path class="rb-arr" d="M82 118L118 82M89 82H118V111"/></svg></button>'+
-  '<div class="rb-col rb-foot"><p class="rb-sub">Pick a side on what happens next — sports, crypto, politics.<br>Get paid when you’re right.</p><dl class="rb-stats"><div><dt>Traded today</dt><dd data-k="vol"></dd></div><div><dt>Calls today</dt><dd data-k="calls"></dd></div><div class="rb-mk"><dt data-k="q"></dt><dd data-k="p"></dd></div></dl></div>';
+  '<div class="rb-col rb-foot"><dl class="rb-stats"><div><dt>Traded today</dt><dd data-k="vol"></dd></div><div><dt>Calls today</dt><dd data-k="calls"></dd></div><div class="rb-mk"><dt data-k="q"></dt><dd data-k="p"></dd></div></dl></div>';
  {const fc=document.getElementById('field');if(fc&&fc.parentNode===land)land.insertBefore(root,fc.nextSibling);else land.insertBefore(root,land.firstChild)}
  const cv=root.querySelector('.rb-gl'),topEl=root.querySelector('.rb-top'),bls=root.querySelectorAll('.rb-bl'),words=root.querySelectorAll('.rb-w'),badge=root.querySelector('.rb-badge'),btxt=root.querySelector('.rb-txt'),foot=root.querySelector('.rb-foot'),DD={};
  root.querySelectorAll('[data-k]').forEach(e=>{DD[e.dataset.k]=e});
