@@ -6439,10 +6439,11 @@ html:not([data-theme=dark]) #ribbonbg .rb-w:not(.hol){text-shadow:0 0 1.5px var(
 /* the live numbers (v260, the user: «delete» on the line «Pick a side… Get paid when you’re right.» — gone; the numbers keep to the right) */
 #ribbonbg .rb-foot{position:absolute;left:0;right:0;bottom:48px;z-index:4;display:flex;align-items:flex-end;justify-content:flex-end;gap:32px;transition:opacity .7s ease .6s,transform .9s cubic-bezier(.2,.75,.15,1) .6s}
 #ribbonbg:not(.in) .rb-foot{opacity:0;transform:translateY(14px)}
-#ribbonbg .rb-stats{display:flex;align-items:flex-start;gap:clamp(24px,3.4vw,56px);margin:0}
+#ribbonbg .rb-stats{display:flex;align-items:flex-start;gap:clamp(24px,3.4vw,56px);margin:0;flex:1 1 auto;justify-content:space-between}   /* v261 (the user: «fill»): the numbers spread across the whole column — the first under the headline's left edge, the last ending at its right */
 #ribbonbg .rb-stats>div{display:flex;flex-direction:column-reverse;min-width:0}
 #ribbonbg .rb-stats dd{margin:0;font:400 clamp(34px,3.3vw,54px)/1 "Anton",var(--font);color:var(--rb-fg);font-variant-numeric:tabular-nums;white-space:nowrap;transition:color .4s var(--ease)}
 #ribbonbg .rb-stats dt{margin-top:8px;font:500 14px/1.35 var(--font);color:var(--rb-mute);max-width:15em}
+html:not([data-theme=dark]) #ribbonbg .rb-stats{text-shadow:0 0 1.5px var(--bg),0 0 12px color-mix(in srgb,var(--bg) 80%,transparent)}   /* v261: on a short light page the ribbon can dip under the numbers — the same halo as the words */
 #ribbonbg .rb-stats dd.win-yes{color:var(--rb-yes)}#ribbonbg .rb-stats dd.win-no{color:var(--rb-no)}
 @media (max-width:640px){
  #ribbonbg .rb-m{display:inline}
