@@ -7188,7 +7188,7 @@ function duqRibbon(land){
   const t0=bls[0].getBoundingClientRect().top-capH;   /* the first line's cap top with the block at 0 */
   /* v264 (the user, after v263's button above the headline: «down», «and text centerlize»): the headline centred and the round button
      centred under it, the two together in the middle between the header and the numbers; the ribbons run behind the button */
-  const gapB=Math.round(.3*capH),blockH=capH+(phone?3:1)*.98*F+gapB+BD,capTop=Math.max(hdr+(phone?12:24),hdr+(footTop-hdr-blockH)/2);
+  const gapB=Math.round(.3*capH),blockH=capH+(phone?3:1)*.98*F+gapB+BD,capTop=phone?Math.max(hdr+12,hdr+(footTop-hdr-blockH)/2):hdr+80;   /* v268 (the user: «zagolovka modnimi verx 80 do headera»): on a computer the headline's caps start 80 px under the header; the phone keeps the block in the middle */
   topEl.style.top=Math.round(capTop-t0)+'px';
   b0=bls[0].getBoundingClientRect().top;b2=bls[2].getBoundingClientRect().top;
   let bx,by;
