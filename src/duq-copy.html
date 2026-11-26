@@ -7192,7 +7192,7 @@ function duqRibbon(land){
   topEl.style.top=Math.round(capTop-t0)+'px';
   b0=bls[0].getBoundingClientRect().top;b2=bls[2].getBoundingClientRect().top;
   let bx,by;
-  const CW=badge.offsetWidth;bx=(colL+colR)/2-CW/2;by=b2+gapB;LENS=[bx+CW/2,by+CH/2,CW/2,CH/2];   /* the lens = the capsule */
+  const CW=badge.offsetWidth;bx=(colL+colR)/2-CW/2;by=phone?b2+gapB:Math.round(Math.max(b2+gapB,(b2+footTop)/2-CH/2));   /* v269 (the user: «centerlize button»): on a computer the capsule sits midway between the headline and the numbers */LENS=[bx+CW/2,by+CH/2,CW/2,CH/2];   /* the lens = the capsule */
   root.style.setProperty('--rb-bx',Math.round(bx)+'px');root.style.setProperty('--rb-by',Math.round(by)+'px');
   /* v262: the braid's middle under the last line, clear of the numbers; each ribbon rises behind its own word (YES, NO.) */
   const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;sgY=Math.max(56,ry.width*.6);sgN=Math.max(56,rn.width*.6);
