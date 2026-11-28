@@ -7135,13 +7135,14 @@ function duqRibbon(land){
     версия CodeWave» → «sobirai, kak versia 4, ispolzui highsfield»): version 4 «the ribbon». The reference's signature, in DUQ terms:
     — a huge narrow uppercase headline, WILL IT HAPPEN? / JUST SAY YES OR NO., with YES OR NO. hollow: the answer is not in yet;
     — two ribbons under the type, YES and NO (v262: the user picked variant 7 «Две ленты» of the motion boards, after «lini ochen
-      ploxo dvigaeca net logiki»; v271: variant 18 «Течение в слова» of the second board; v272: the user, «16» → variant 16 «Эхо
-      ставок»): YES runs above, NO below, each rising behind its own word (seen through the hollow letters), the leader on top and
-      brighter. Both are the reference's glass and only breathe, slowly, in place. Every bet peels a thin thread off its own
-      ribbon: it lifts off from the word outwards, drifts away and slowly fades — many bets, many threads, like the reference's
-      layers of silk; a bigger bet's thread is brighter and wider. Click YES / NO (or press Y / N) for your own: the brightest one;
-    — every ~21 s the market closes: the loser's ribbon falls away with its threads, the winner's widens, the winning word fills
-      with its colour and the rest dims; with the next market the other ribbon comes back up;
+      ploxo dvigaeca net logiki»; then variants 18 «Течение в слова» (v271) and 16 «Эхо ставок» (v272) of the second board; v273:
+      the user, «11» → variant 11 «Расстояние = отрыв»): the two run side by side and never braid, and the gap between them is the
+      lead — at 50/50 they touch, and the leader runs on top (and brighter); each one rises behind its own word (seen through the
+      hollow letters). Both are the reference's glass and only breathe, slowly, in place. Every bet swells its own ribbon up from its
+      word outwards and the gap settles to the new lead; when the lead changes hands, the new leader climbs over the other, from its
+      word outwards. Click YES / NO (or press Y / N) for your own: the biggest swell;
+    — every ~21 s the market closes: the loser's ribbon falls away, the winner's widens, the winning word fills with its colour and
+      the rest dims; with the next market the other ribbon comes back up;
     — the button (v265, «Стеклянная капсула»): MAKE YOUR CALL on a Liquid Glass Small capsule under the headline; the ribbons show
       through it magnified like a lens (more so under the pointer, when its ring turns orange); it enters the app; the numbers are live.
     The material (the user: «doljen sovpodat materyalom kartinki 100%», on a crop of the reference's ribbon): the reference's own —
@@ -7169,7 +7170,7 @@ function duqRibbon(land){
  const clamp=(v,a,b)=>v<a?a:v>b?b:v,ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,outE=t=>1-Math.pow(1-t,3),sm=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
  const gauss=(x,m,s)=>{const d=(x-m)/s;return Math.exp(-d*d)};
  /* ---- the layout: the headline fills the landing's column; the two ribbons hang from its last line ---- */
- let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,AMP=0,LIFT=0,xY=0,xN=0,sgY=100,sgN=100,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06,RS=128,SEP=46,WAV=22;
+ let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,xY=0,xN=0,sgY=100,sgN=100,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06,RS=128,WAV=13,G0=80,GMX=240,pc=0;
  const mctx=document.createElement('canvas').getContext('2d');
  function capOf(f){mctx.font='400 '+f+'px Anton';const m=mctx.measureText('H');return m.actualBoundingBoxAscent||f*.86}
  function layout(){if(root.hidden)return;
@@ -7197,19 +7198,24 @@ function duqRibbon(land){
   root.style.setProperty('--rb-bx',Math.round(bx)+'px');root.style.setProperty('--rb-by',Math.round(by)+'px');
   /* v262/v271: the ribbons' middle under the button, clear of the numbers; each ribbon rises behind its own word (YES, NO.) */
   const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;sgY=Math.max(56,ry.width*.6);sgN=Math.max(56,rn.width*.6);
-  SEP=.42*RS;WAV=.2*RS;AMP=SEP+WAV;base=Math.min(by+CH*.5,footTop-AMP-.45*RS);   /* v271: YES above, NO below, closest under the glass capsule */LIFT=Math.max(0,base-SEP-(b2-.4*capH));
+  /* v273: the pair wants its middle in the capsule; the gap runs from touching (50/50) to all the room between the headline and the
+     numbers (each ribbon .3 RS wide either side, its fold hanging .42 of that lower; the shared wave and a bet's swell on top) */
+  base=by+CH*.5;WAV=.1*RS;G0=.63*RS;GMX=Math.max(G0+.3*RS,(footTop-b2-16)-.726*RS-2*(WAV+.12*RS));
   const s2=phone?120:200;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
   if(gl&&(s2!==S||!verts)){S=s2;alloc()}else S=s2}
  /* ---- the market: one share (bets) and its cycle ---- */
  const BET=16,CLOSE=1,RES=2.7,NXT=1.5;
  let T=0,mt=0,pt=0,phase='bet',mi=0,mk=MK[0],p=.64,pS=.64,goal=.62,flipAt=-1,winner=1,nextBet=.4,vol=2.41e6,calls=18240,reveal=1.1,revealT=-1,ba=-16,bv=18,hov=false,running=false,raf=0,last=0,ready=false,wonOn=false,topY=true;
- /* v272 — the echo of the bets (variant 16 «Эхо ставок»): TH = the live threads, each peeled off its ribbon by one bet */
- let TH=[];const TMAX=24;
+ /* v273 — variant 11 «Расстояние = отрыв»: G = the gap, a soft spring after the lead; SG = which ribbon runs on top, along the screen
+    (+1 YES, −1 NO — a change of leader runs from the new leader's word outwards: swp); BU = the bets' swells */
+ let G=80,Gv=0,SG=null,swp=null,BU=[];const TN=Math.tanh(.46/.24);
+ const gapOf=ps=>G0+(GMX-G0)*Math.tanh(Math.abs(ps-.5)/.24)/TN;   /* the lead → the gap: near-linear, easing off at the room's end */
  function seed(i){mk=MK[i%MK.length];const p0=mk[2]/100;p=p0;goal=clamp(p0+(Math.random()-.5)*.1,.2,.8);flipAt=Math.random()<.45?5+Math.random()*5:-1;mt=0}
- /* a bet: the share moves, and a thread peels off its own ribbon (v272; yours is the brightest) */
+ /* a bet: the share moves (and with it the gap), and its own ribbon swells up from its word (v273; yours the most) */
  function bet(yes,size,you){p=clamp(p+(yes?1:-1)*(.0035+.0055*Math.min(1,size/2400))*(you?1.8:1),.04,.96);calls++;vol+=size;
-  thread(yes?0:1,size,you);if(you)flash(yes);numbers()}
+  const q=Math.min(1,size/2400);BU.push({r:yes?0:1,t:0,life:you?1.9:1.2+.4*q,a:RS*(you?.24:.05+.1*q)});if(BU.length>24)BU.shift();
+  if(you)flash(yes);numbers()}
  function bets(dt,k){nextBet-=dt;while(nextBet<=0){const rate=2.1*(mt>BET-3.5?1.9:1)*(k||1);nextBet+=-Math.log(1-Math.random())/rate;
   bet(Math.random()<clamp(.5+2.6*(goal-p),.12,.88),60+(-Math.log(1-Math.random()))*1100,false)}}
  function flash(yes){const w=root.querySelector('.rb-w.'+(yes?'yes':'no'));if(!w)return;w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');clearTimeout(w._ft);w._ft=setTimeout(()=>w.classList.remove('flash'),650)}
@@ -7218,40 +7224,41 @@ function duqRibbon(land){
  function numbers(){setT('vol','$'+(vol/1e6).toFixed(2)+'M');setT('calls',calls.toLocaleString('en-US'));
   if(wonOn){setT('p',winner>0?'YES':'NO');setT('q',mk[1]+' — resolved')}else{setT('p',Math.round(pS*100)+'%');setT('q','say yes · '+mk[1])}}
  function won(on){wonOn=on;root.classList.toggle('won-yes',on&&winner>0);root.classList.toggle('won-no',on&&winner<0);DD.p.classList.toggle('win-yes',on&&winner>0);DD.p.classList.toggle('win-no',on&&winner<0);numbers()}
+ /* the leader on top: a change runs from the new leader's word outwards (v273) */
+ function setLead(y){if(y===topY)return;topY=y;swp={xw:y?xY:xN,f:0}}
  function step(dt){T+=dt;mt+=dt;
   if(phase==='bet'){bets(dt);if(flipAt>0&&mt>flipAt){goal=clamp(1-goal+(Math.random()-.5)*.06,.25,.75);flipAt=-1}if(mt>=BET){phase='close';pt=0}}
   else{pt+=dt;
-   if(phase==='close'){if(pt>=CLOSE){phase='resolve';pt=0;winner=pS>=.5?1:-1;topY=winner>0}}
+   if(phase==='close'){if(pt>=CLOSE){phase='resolve';pt=0;winner=pS>=.5?1:-1;setLead(winner>0)}}
    else if(phase==='resolve'){if(!wonOn&&pt>=.35)won(true);if(pt>=RES){phase='next';pt=0;mi++;seed(mi);won(false)}}
    else if(phase==='next'){bets(dt,.5);if(pt>=NXT)phase='bet'}}
   pS+=(p-pS)*(1-Math.exp(-dt/(phase==='next'?.7:.35)));
-  if(phase==='bet'||phase==='close'){if(topY&&pS<.48)topY=false;else if(!topY&&pS>.52)topY=true}   /* the leader on top (with a little hysteresis) */
-  TH=TH.filter(t=>(t.age+=dt)<t.life);   /* the threads age and go */
+  if(phase!=='resolve'){if(topY&&pS<.48)setLead(false);else if(!topY&&pS>.52)setLead(true)}   /* (with a little hysteresis; v273: with the next market too) */
+  /* v273: the gap follows the lead on a soft spring; who runs on top changes from the new leader's word outwards */
+  Gv+=((gapOf(pS)-G)*30-Gv*6)*dt;G+=Gv*dt;
+  if(SG&&X){const to=topY?1:-1,kk=1-Math.exp(-dt/.12),ws=.32*W;if(swp&&(swp.f+=dt*.85*W)>1.5*W)swp=null;   /* (a smooth front, ws wide — never a step from frame to frame) */
+   for(let i=0;i<=S;i++)SG[i]+=((swp?to*(2*sm(.5+(swp.f-Math.abs(X[i]-swp.xw))/ws)-1):to)-SG[i])*kk}
+  BU=BU.filter(b=>(b.t+=dt)<b.life);   /* the swells run out and go */
   if(revealT>=0){revealT+=dt;reveal=-.05+1.12*outE(clamp((revealT-.1)/1.6,0,1));if(revealT>2)revealT=-1}
   lensK+=((hov?1.32:1.06)-lensK)*(1-Math.exp(-dt/.16));   /* the glass: a lens, stronger under the pointer */
   numbers()}
- /* ---- v272: a thread — its ribbon; how bright and how wide (the bet's size, yours more so); which way it lifts (mostly away from the
-    other ribbon); how far it drifts; its own gentle wave ---- */
- function thread(r,size,you){const q=Math.min(1,size/2400);
-  TH.push({r,age:0,life:you?6.5:3.8+1.8*q,a:you?1:.5+.45*q,w:(you?1.6:1)*(.016+.02*q),up:(Math.random()<.68)===(r===0)?-1:1,far:.5+.65*Math.random(),wa:.05+.1*Math.random(),wk:1.2+2.4*Math.random(),wp:Math.random()*6.283,slot:-1});
-  if(TH.length>TMAX)TH.shift()}
  /* ---- the ribbons: two strips under the type, lit by the Higgsfield matcap ---- */
  const VS='attribute vec2 aP;attribute vec3 aN;attribute vec4 aD;uniform vec2 uRes;uniform vec4 uLens;uniform float uLensK,uPassV;varying vec3 vN;varying vec4 vD;varying vec2 vP;'+
   'void main(){vec2 p=aP;if(uPassV>.5)p=uLens.xy+(p-uLens.xy)*uLensK;vP=p;vec2 c=p/uRes*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);vN=aN;vD=aD;}';
  const FS='#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n'+
-  'varying vec3 vN;varying vec4 vD;varying vec2 vP;uniform sampler2D uMat;uniform float uReveal,uAlpha,uPassF,uGain,uThr;uniform vec4 uLensF;'+
+  'varying vec3 vN;varying vec4 vD;varying vec2 vP;uniform sampler2D uMat;uniform float uReveal,uAlpha,uPassF;uniform vec4 uLensF;'+
   'void main(){vec2 q=abs(vP-uLensF.xy)-uLensF.zw+uLensF.w;float sd=length(max(q,0.))+min(max(q.x,q.y),0.)-uLensF.w,ins=1.-smoothstep(-.8,.8,sd),k=uPassF>.5?ins:1.-ins;if(k<.002)discard;'+
   'vec3 n=normalize(vN);vec3 m=texture2D(uMat,vec2(.5+.47*n.x,.5+.47*n.y)).rgb;float g=1.-abs(n.z);'+
-  'float rim=(smoothstep(.84,.99,-vD.y)*.35+smoothstep(.945,.975,-vD.y)*.8)*(.45+.55*g)*(vD.z>.99?1.:.3);vec3 c=(pow(m,vec3(1.18))*.86*vD.z+rim*vec3(.88,.9,.95))*uGain;c=mix(c,vec3(.8,.84,.9)*(.3+.95*dot(m,vec3(.3,.59,.11))+.45*g),uThr);'+   /* v272: a thread on the dark ground: the glass's silver edge, lit by the same light */
+  'float rim=(smoothstep(.84,.99,-vD.y)*.35+smoothstep(.945,.975,-vD.y)*.8)*(.45+.55*g)*(vD.z>.99?1.:.3);vec3 c=pow(m,vec3(1.18))*.86*vD.z+rim*vec3(.88,.9,.95);'+
   'float a=smoothstep(0.,1.25,(1.-abs(vD.y))*vD.w)*(1.-smoothstep(uReveal-.03,uReveal,vD.x))*uAlpha*k;if(uPassF>.5)c*=1.07;gl_FragColor=vec4(c*a,a*mix(.82,.97,vD.z));}';
- const AC=7,ACT=3;let gl=null,glFail=false,prog=null,vbuf=null,ibuf=null,loc={},verts=null,X=null,RY=null,TY=null,nIdx=0,nIdxT=0,vRib=0,ST=100;const tex={},texOk={},HW=[30,30];
+ const AC=7;let gl=null,glFail=false,prog=null,vbuf=null,ibuf=null,loc={},verts=null,X=null,RY=null,nIdx=0;const tex={},texOk={};
  function initGL(){if(gl||glFail)return;
   try{gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:true,depth:false,stencil:false})}catch(e){gl=null}
   if(!gl){glFail=true;return}
   const sh=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s};
   try{prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog))}
   catch(e){glFail=true;gl=null;if(window.console)console.warn('version 4 ribbon:',e&&e.message||e);return}
-  gl.useProgram(prog);for(const k of ['aP','aN','aD'])loc[k]=gl.getAttribLocation(prog,k);for(const k of ['uRes','uMat','uReveal','uGain','uThr','uAlpha','uLens','uLensF','uLensK','uPassV','uPassF'])   /* the vertex and fragment stages keep their own names: a shared uniform must share its precision */loc[k]=gl.getUniformLocation(prog,k);
+  gl.useProgram(prog);for(const k of ['aP','aN','aD'])loc[k]=gl.getAttribLocation(prog,k);for(const k of ['uRes','uMat','uReveal','uAlpha','uLens','uLensF','uLensK','uPassV','uPassF'])   /* the vertex and fragment stages keep their own names: a shared uniform must share its precision */loc[k]=gl.getUniformLocation(prog,k);
   vbuf=gl.createBuffer();ibuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);
   gl.enableVertexAttribArray(loc.aP);gl.vertexAttribPointer(loc.aP,2,gl.FLOAT,false,36,0);
   gl.enableVertexAttribArray(loc.aN);gl.vertexAttribPointer(loc.aN,3,gl.FLOAT,false,36,8);
@@ -7266,70 +7273,58 @@ function duqRibbon(land){
   alloc()}
  /* each ribbon: a thinner fold behind the main sheet, like the reference's layers. [off, fold, width, twist, light, k, phase] */
  const SHEETS=[[.62,.3,.5,1.1,.6,1.4,2.1],[0,0,1,0,1,0,0]],NS=SHEETS.length;
- /* the buffers: the two ribbons, then room for TMAX threads (v272; each a thin strip on every second step of the ribbons) */
- function alloc(){if(!gl)return;ST=S/2;X=new Float32Array(S+1);RY=[new Float32Array(S+1),new Float32Array(S+1)];TY=new Float32Array(ST+1);vRib=2*NS*(S+1)*AC;verts=new Float32Array((vRib+TMAX*(ST+1)*ACT)*9);
-  const per=NS*S*(AC-1)*6,perT=ST*(ACT-1)*6,idx=new Uint16Array(2*per+TMAX*perT);let o=0;
-  const quads=(b0,n,ac)=>{for(let i=0;i<n;i++)for(let j=0;j<ac-1;j++){const a=b0+i*ac+j,b=b0+(i+1)*ac+j;idx[o++]=a;idx[o++]=b;idx[o++]=b+1;idx[o++]=a;idx[o++]=b+1;idx[o++]=a+1}};
-  for(let r=0;r<2;r++)for(let q=0;q<NS;q++)quads((r*NS+q)*(S+1)*AC,S,AC);
-  for(let t=0;t<TMAX;t++)quads(vRib+t*(ST+1)*ACT,ST,ACT);
-  nIdx=per;nIdxT=perT;gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,idx,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferData(gl.ARRAY_BUFFER,verts.byteLength,gl.DYNAMIC_DRAW)}
+ /* the buffers: the two ribbons, each a fold and a main sheet (and, v273, SG: who runs on top, along the screen) */
+ function alloc(){if(!gl)return;X=new Float32Array(S+1);RY=[new Float32Array(S+1),new Float32Array(S+1)];SG=new Float32Array(S+1).fill(topY?1:-1);swp=null;verts=new Float32Array(2*NS*(S+1)*AC*9);
+  const per=NS*S*(AC-1)*6,idx=new Uint16Array(2*per);let o=0;
+  for(let r=0;r<2;r++)for(let q=0;q<NS;q++){const v0=(r*NS+q)*(S+1)*AC;for(let i=0;i<S;i++)for(let j=0;j<AC-1;j++){const a=v0+i*AC+j,b=v0+(i+1)*AC+j;idx[o++]=a;idx[o++]=b;idx[o++]=b+1;idx[o++]=a;idx[o++]=b+1;idx[o++]=a+1}}
+  nIdx=per;gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,idx,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferData(gl.ARRAY_BUFFER,verts.byteLength,gl.DYNAMIC_DRAW)}
  /* the close: the loser falls away and fades (and comes back up with the next market), the winner widens into one broad wave */
  function closeFx(){if(phase==='resolve')return{fall:Math.pow(clamp((pt-.2)/1.6,0,1),2),fade:1-sm((pt-.7)/1.5),wide:ease(clamp(pt/1.3,0,1))};
   if(phase==='next'){const q=ease(clamp(pt/NXT,0,1));return{fall:1-q,fade:q,wide:1-q}}return{fall:0,fade:1,wide:0}}
  const isLoser=r=>(phase==='resolve'||phase==='next')&&(winner>0)!==(r===0);
- function build(){const e=closeFx(),x0=-.06*W,x1=W*1.06,span=x1-x0,k=2*Math.PI/(.62*W),ph0=Math.PI/2-k*LENS[0],br=.85+.15*Math.sin(T*.35);let o=0;
-  for(let r=0;r<2;r++){const sgn=r===0?-1:1,L=isLoser(r),Wn=(phase==='resolve'||phase==='next')&&!L,xr=r===0?xY:xN,sr=r===0?sgY:sgN,cy=RY[r];
-   /* v271: YES above, NO below, closest under the capsule; each one rises behind its own word */
-   const y0=base+sgn*SEP,hw0=RS*.3*(Wn?1+.55*e.wide:1),wav=WAV*br*(Wn?1-.6*e.wide:1),lift=Math.max(0,y0-(b2-.4*capH))*(Wn?1+.25*e.wide:1),drop=L?e.fall*H*.85:0,lead=(r===0)===topY?1:.8;HW[r]=hw0;
-   for(let i=0;i<=S;i++){const x=x0+span*i/S;X[i]=x;cy[i]=y0-sgn*wav*Math.sin(k*x+ph0)-lift*gauss(x,xr,sr)+drop+6*Math.sin(x/170+r*2)*Math.cos(T*.4+r)}
+ function build(){const e=closeFx(),x0=-.06*W,x1=W*1.06,span=x1-x0,k=2*Math.PI/(.62*W),ph0=-k*LENS[0],br=.85+.15*Math.sin(T*.35),g=running?G:gapOf(pS),hwB=.3*RS,ext=WAV+.12*RS,
+   cMin=b2+8+g/2+hwB+ext,cMax=footTop-8-g/2-1.42*hwB-ext,c=cMin>cMax?(cMin+cMax)/2:clamp(base,cMin,cMax),sb=.9*RS,vb=.5*Math.max(W,700);let o=0;pc=c;   /* c: the pair's middle — in the capsule when the gap fits there */
+  for(let i=0;i<=S;i++)X[i]=x0+span*i/S;
+  for(let r=0;r<2;r++){const sgn=r===0?-1:1,L=isLoser(r),Wn=(phase==='resolve'||phase==='next')&&!L,xr=r===0?xY:xN,sr=r===0?sgY:sgN,cy=RY[r],ir=clamp(Math.round((xr-x0)/span*S),0,S);
+   /* v273: side by side on one shared wave (it crosses the middle under the capsule), the gap = the lead and SG = who runs on top
+      here; each one rises behind its own word, and its bets swell it up from there */
+   const hw0=hwB*(Wn?1+.55*e.wide:1),wav=WAV*br*(Wn?1-.6*e.wide:1),drop=L?e.fall*H*.85:0,lead=(r===0)===topY?1:.8;
+   for(let i=0;i<=S;i++){const x=X[i];cy[i]=c+sgn*SG[i]*g/2+wav*Math.sin(k*x+ph0)+5*Math.sin(x/170+r*2)*Math.cos(T*.4+r)}
+   const lift=Math.max(0,cy[ir]-(b2-.4*capH))*(Wn?1+.25*e.wide:1),hr=sgn*SG[ir]<0?Math.max(.06*RS,cy[ir]-hwB-(b2+4)):1e9;   /* (the one on top: a swell stays out of the headline) */
+   for(let i=0;i<=S;i++)cy[i]+=drop-lift*gauss(X[i],xr,sr);
+   for(const b of BU){if(b.r!==r)continue;const A=Math.min(b.a,hr)*sm(b.t/.12)*(1-sm(b.t/b.life)),pos=b.t*vb;if(A<.3)continue;
+    for(let i=0;i<=S;i++){const d=(Math.abs(X[i]-xr)-pos)/sb;cy[i]-=A*Math.exp(-d*d)}}
    for(const [off,fold,wid,tw,lit,fk,fph] of SHEETS)for(let i=0;i<=S;i++){const ia=Math.max(0,i-1),ib=Math.min(S,i+1);let tx=X[ib]-X[ia],ty=cy[ib]-cy[ia];const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx;
-    /* v272: the ribbon itself only breathes, slowly, in place — the bets show in its threads */
+    /* v272: the ribbon itself only breathes, slowly, in place */
     const s=i/S,hw=hw0*(.94+.06*Math.sin(s*7.1+fph+r+.5*Math.sin(T*.23+r))),d=hw*(off+fold*Math.sin(fk*s*2.2+fph+r*1.7+.6*Math.sin(T*.17+fph))),x=X[i]+nx*d,y=cy[i]+ny*d;
     const phi=.5*Math.sin(s*4.2+r*2.3+fph+.7*Math.sin(T*.13+r))+.22*Math.sin(s*9.7+r+.6*Math.sin(T*.19+fph))+tw*.25*Math.sin(s*2.4+fph+.5*Math.sin(T*.11+r))+(L?e.fall*6*s:0),cp=Math.cos(phi),sp=Math.sin(phi);
     /* v258: a 3D strip — it leans into the screen the more it stands on edge, so a turn is a long rounded fold, never a pinch */
     const tz=.22+.66*Math.abs(sp),lz=Math.sqrt(1+tz*tz),bx=-tz*tx/lz,by=-tz*ty/lz,bz=1/lz,wx=cp*nx+sp*bx,wy=cp*ny+sp*by,wz=sp*bz;
     let fx=cp*bx-sp*nx,fy=cp*by-sp*ny,fz=cp*bz;if(fz<0){fx=-fx;fy=-fy;fz=-fz}
     const hl=hw*wid,hwa=hl*Math.hypot(wx,wy)+1.1,bend=.62+.78*Math.abs(sp),shm=.22*Math.sin(s*6.5+fph+r+.8*Math.sin(T*.21+r));
-    for(let j=0;j<AC;j++){const v=-1+2*j/(AC-1),cb=Math.cos(bend*v),sb=Math.sin(bend*v);let qx=cb*fx+sb*wx+shm*tx,qy=cb*fy+sb*wy+shm*ty,qz=cb*fz+sb*wz;const ql=Math.hypot(qx,qy,qz)||1;
-     verts[o++]=x+wx*v*hl;verts[o++]=y+wy*v*hl;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=s;verts[o++]=v;verts[o++]=lit*lead;verts[o++]=hwa}}}
-  /* v272: the threads — each follows its own ribbon's line, lifts off it from the word outwards (less so by the word itself), drifts away
-     and fades */
-  const PEEL=.6*Math.max(W,700),st=S/ST;let n=0;o=vRib*9;
-  for(const t of TH){t.slot=-1;if(n>=TMAX)continue;const r=t.r,cy=RY[r],xr=r===0?xY:xN,sr=r===0?sgY:sgN,a=t.age,b0=.6*HW[r],yr=base+(r===0?-SEP:SEP),room=(t.up<0?yr-WAV-(b2+14):footTop-14-(yr+WAV))-b0-RS*t.wa,   /* (never into the headline above or the numbers below) */
-    sep=Math.min(Math.max(10,room),RS*t.far*(.22+.78*outE(clamp(a/(.75*t.life),0,1)))),R=a*PEEL,hw=RS*t.w,kw=t.wk*2*Math.PI/W;
-   for(let j=0;j<=ST;j++){const i=j*st,x=X[i],dx=Math.abs(x-xr),env=sm((R-dx)/(1.2*RS))*(.45+.55*sm(dx/(2*sr)));TY[j]=cy[i]+t.up*(b0+env*(sep+RS*t.wa*Math.sin(kw*x+t.wp+a*.5)))}
-   for(let j=0;j<=ST;j++){const ja=Math.max(0,j-1),jb=Math.min(ST,j+1);let tx=X[jb*st]-X[ja*st],ty=TY[jb]-TY[ja];const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx,x=X[j*st],y=TY[j];
-    const phi=.45*Math.sin(j/ST*6.3+t.wp+a*.6),cp=Math.cos(phi),sp=Math.sin(phi),tz=.22+.66*Math.abs(sp),lz=Math.sqrt(1+tz*tz),bx=-tz*tx/lz,by=-tz*ty/lz,bz=1/lz,wx=cp*nx+sp*bx,wy=cp*ny+sp*by,wz=sp*bz;
-    let fx=cp*bx-sp*nx,fy=cp*by-sp*ny,fz=cp*bz;if(fz<0){fx=-fx;fy=-fy;fz=-fz}
-    const hwa=hw*Math.hypot(wx,wy)+1.1;
-    for(let q=0;q<ACT;q++){const v=q-1,cb=Math.cos(.9*v),sb=Math.sin(.9*v);let qx=cb*fx+sb*wx,qy=cb*fy+sb*wy,qz=cb*fz+sb*wz;const ql=Math.hypot(qx,qy,qz)||1;
-     verts[o++]=x+wx*v*hw;verts[o++]=y+wy*v*hw;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=j/ST;verts[o++]=v;verts[o++]=1;verts[o++]=hwa}}
-   t.slot=n++}}
+    for(let j=0;j<AC;j++){const v=-1+2*j/(AC-1),cb=Math.cos(bend*v),sb2=Math.sin(bend*v);let qx=cb*fx+sb2*wx+shm*tx,qy=cb*fy+sb2*wy+shm*ty,qz=cb*fz+sb2*wz;const ql=Math.hypot(qx,qy,qz)||1;
+     verts[o++]=x+wx*v*hl;verts[o++]=y+wy*v*hl;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=s;verts[o++]=v;verts[o++]=lit*lead;verts[o++]=hwa}}}}
  function draw(){if(!gl||!verts||root.hidden||!texOk.mat||!X)return;build();
   gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(prog);
   gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferSubData(gl.ARRAY_BUFFER,0,verts);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);
   gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex.mat);gl.uniform1i(loc.uMat,0);gl.uniform2f(loc.uRes,W,H);gl.uniform1f(loc.uReveal,reveal);
-  const e=closeFx(),dk=document.documentElement.dataset.theme==='dark';   /* a thread is the same glass: its silver edge on the dark ground, its dark body on the light one */
+  const e=closeFx();
   gl.uniform4f(loc.uLens,LENS[0],LENS[1],LENS[2],LENS[3]);gl.uniform4f(loc.uLensF,LENS[0],LENS[1],LENS[2],LENS[3]);gl.uniform1f(loc.uLensK,lensK);
   for(const pass of [0,1]){gl.uniform1f(loc.uPassV,pass);gl.uniform1f(loc.uPassF,pass);   /* 0: the ribbons outside the capsule; 1: inside it, magnified (the glass lens) */
-  for(const r of (topY?[1,0]:[0,1])){   /* the leader last, on top (r: 0 YES, 1 NO); each ribbon's threads just behind it */
-   const fr=isLoser(r)?e.fade:1;gl.uniform1f(loc.uGain,dk?1.25:1);gl.uniform1f(loc.uThr,dk?.85:0);
-   for(const t of TH){if(t.r!==r||t.slot<0)continue;const a=t.a*sm(t.age/.3)*(1-sm((t.age-.3*t.life)/(.7*t.life)))*fr*(dk?1:.62);if(a<.004)continue;   /* on the light ground a finer, greyer line */
-    gl.uniform1f(loc.uAlpha,a);gl.drawElements(gl.TRIANGLES,nIdxT,gl.UNSIGNED_SHORT,(2*nIdx+t.slot*nIdxT)*2)}
-   gl.uniform1f(loc.uGain,1);gl.uniform1f(loc.uThr,0);gl.uniform1f(loc.uAlpha,fr);gl.drawElements(gl.TRIANGLES,nIdx,gl.UNSIGNED_SHORT,r*nIdx*2)}}}
+   for(const r of (topY?[1,0]:[0,1])){gl.uniform1f(loc.uAlpha,isLoser(r)?e.fade:1);gl.drawElements(gl.TRIANGLES,nIdx,gl.UNSIGNED_SHORT,r*nIdx*2)}}}   /* the leader last, on top (r: 0 YES, 1 NO) */
  function frame(ts){if(!running)return;raf=requestAnimationFrame(frame);const now=ts/1000,dt=last?Math.min(.05,now-last):1/60;last=now;step(dt);draw()}
  /* ---- the version's life ---- */
- function prepare(){if(ready)return;ready=true;initGL();layout();seed(0);pS=p;numbers();for(let i=0;i<7;i++){thread(i%2,500+Math.random()*1900,false);const t=TH[TH.length-1];t.age=Math.min(.8*t.life,.6+i*.45)}
+ function prepare(){if(ready)return;ready=true;initGL();layout();seed(0);pS=p;topY=p>=.5;if(SG)SG.fill(topY?1:-1);G=gapOf(pS);numbers();
   if(document.fonts&&document.fonts.load)document.fonts.load('400 100px Anton').then(()=>{if(!root.hidden){layout();if(!running)draw()}})}
  function intro(){if(reduced){root.classList.add('in');reveal=1.1;revealT=-1;return}root.classList.remove('in');reveal=-.05;revealT=0;void root.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>root.classList.add('in')))}
  function show(on){root.hidden=!on;land.classList.toggle('lbg-ribbon',on);if(on){const was=ready;prepare();if(was)layout();intro();if(!running)draw()}else stop()}
  function start(){if(root.hidden)return;prepare();if(running)return;if(reduced||document.hidden||!document.body.classList.contains('is-landing')){draw();return}running=true;last=0;raf=requestAnimationFrame(frame)}
  function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0}
- function commit(yes){if(!ready||root.hidden||phase==='close'||phase==='resolve')return;bet(yes,1500+Math.random()*2500,true);if(!running){pS=p;numbers();draw()}}
+ function commit(yes){if(!ready||root.hidden||phase==='close'||phase==='resolve')return;bet(yes,1500+Math.random()*2500,true);if(!running){pS=p;topY=pS>=.5;if(SG)SG.fill(topY?1:-1);numbers();draw()}}
  root.addEventListener('click',e=>{const w=e.target.closest&&e.target.closest('.rb-w[data-rbside]');if(w)commit(w.dataset.rbside==='yes')});
  const setHov=v=>{hov=v;if(!running){lensK=v?1.32:1.06;draw()}};badge.addEventListener('pointerenter',()=>setHov(true));badge.addEventListener('pointerleave',()=>setHov(false));badge.addEventListener('focus',()=>setHov(true));badge.addEventListener('blur',()=>setHov(false));
  let rt=0;window.addEventListener('resize',()=>{if(!ready||root.hidden)return;clearTimeout(rt);rt=setTimeout(()=>{layout();if(!running)draw()},100)});
- window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,capH,b0,b2,base,AMP,LIFT,SEP,WAV,xY,xN,topY,running,th:TH.length,thY:TH.filter(t=>t.r===0).length,gl:!!gl,glFail,texOk:{...texOk}});   /* preview aid */
+ window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,RS,capH,b0,b2,base,footTop,c:pc,G,Gt:gapOf(pS),G0,GMX,WAV,sig:SG?SG[S>>1]:0,swp:!!swp,bu:BU.length,yY:RY?RY[0][S>>1]:0,yN:RY?RY[1][S>>1]:0,xY,xN,topY,running,gl:!!gl,glFail,texOk:{...texOk}});   /* preview aid */
  return{root,show,start,stop,commit};
 }
 
