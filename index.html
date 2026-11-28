@@ -6453,6 +6453,7 @@ html:not([data-theme=dark]) #ribbonbg .rb-cta{color:#0e1117;--lgs-fill:rgb(242 2
 #ribbonbg .rb-stats dt{margin-top:8px;font:500 14px/1.35 var(--font);color:var(--rb-mute);white-space:nowrap}   /* v270 (the user, on «say yes · Ethereum below / $1,500 this year»: «один строк»): the labels on one line */
 html:not([data-theme=dark]) #ribbonbg .rb-stats{text-shadow:0 0 1.5px var(--bg),0 0 12px color-mix(in srgb,var(--bg) 80%,transparent)}   /* v261: on a short light page the ribbon can dip under the numbers — the same halo as the words */
 #ribbonbg .rb-stats dd.win-yes{color:var(--rb-yes)}#ribbonbg .rb-stats dd.win-no{color:var(--rb-no)}
+#ribbonbg .rb-tag{position:absolute;left:0;top:0;z-index:3;font:700 var(--rb-cf)/1 var(--font);letter-spacing:.08em;text-transform:uppercase;opacity:0;pointer-events:none;will-change:transform,opacity}#ribbonbg .rb-tag.yes{color:var(--rb-yes)}#ribbonbg .rb-tag.no{color:var(--rb-no)}   /* v274: which ribbon is which, as on the board's frames of variant 11 */
 @media (max-width:640px){
  #ribbonbg .rb-m{display:inline}
  #ribbonbg .rb-foot{flex-direction:column;align-items:stretch;gap:14px}
@@ -8062,10 +8063,12 @@ function duqRibbon(land){
     — two ribbons under the type, YES and NO (v262: the user picked variant 7 «Две ленты» of the motion boards, after «lini ochen
       ploxo dvigaeca net logiki»; then variants 18 «Течение в слова» (v271) and 16 «Эхо ставок» (v272) of the second board; v273:
       the user, «11» → variant 11 «Расстояние = отрыв»): the two run side by side and never braid, and the gap between them is the
-      lead — at 50/50 they touch, and the leader runs on top (and brighter); each one rises behind its own word (seen through the
-      hollow letters). Both are the reference's glass and only breathe, slowly, in place. Every bet swells its own ribbon up from its
-      word outwards and the gap settles to the new lead; when the lead changes hands, the new leader climbs over the other, from its
-      word outwards. Click YES / NO (or press Y / N) for your own: the biggest swell;
+      lead — at 50/50 they touch, and the leader runs on top (and brighter). v274 (the user sent back the board's own two frames of
+      variant 11): flat, calm bands across the screen like the frames — no more rising behind the words — each with its small YES / NO
+      label (above the one on top, under the one below), as on the frames. Both are the reference's glass and only breathe, slowly,
+      in place. Every bet swells its own ribbon up from under its word outwards and the gap settles to the new lead; when the lead
+      changes hands, the new leader climbs over the other, from its word outwards. Click YES / NO (or press Y / N) for your own: the
+      biggest swell;
     — every ~21 s the market closes: the loser's ribbon falls away, the winner's widens, the winning word fills with its colour and
       the rest dims; with the next market the other ribbon comes back up;
     — the button (v265, «Стеклянная капсула»): MAKE YOUR CALL on a Liquid Glass Small capsule under the headline; the ribbons show
@@ -8081,7 +8084,7 @@ function duqRibbon(land){
  const MK=[['eth','Ethereum below $1,500 this year',64],['btc','Bitcoin above $150k by New Year',41],['ecb','ECB cuts rates in October',62],['ucl','Chelsea beat Barcelona',40],['shutdown','Shutdown lasts 30+ days',62],['nba','Clippers beat the Raptors',45],['santa','Santa delivers 7B+ gifts',71],['dem2028','Newsom wins the 2028 nomination',31]];
  const word=(t,c,side)=>'<span class="rb-w'+(c?' '+c:'')+'"'+(side?' data-rbside="'+side+'" title="Your call: '+side+' ('+(side==='yes'?'Y':'N')+')"':'')+'>'+t+'</span>';
  const root=document.createElement('div');root.id='ribbonbg';root.hidden=true;
- root.innerHTML='<canvas class="rb-gl" aria-hidden="true"></canvas>'+
+ root.innerHTML='<canvas class="rb-gl" aria-hidden="true"></canvas><span class="rb-tag yes" aria-hidden="true">Yes</span><span class="rb-tag no" aria-hidden="true">No</span>'+
   '<div class="rb-col rb-top"><h1 class="rb-h"><span class="sr-only">Will it happen? Just say yes or no.</span>'+
   '<span class="rb-l" aria-hidden="true"><i class="rb-bl"></i>'+word('WILL')+' '+word('IT')+'<br class="rb-m"> '+word('HAPPEN?')+'<i class="rb-bl"></i></span>'+
   '<span class="rb-l" aria-hidden="true">'+word('JUST')+' '+word('SAY')+'<br class="rb-m"> '+word('YES','hol yes','yes')+' '+word('OR','hol or')+' '+word('NO.','hol no','no')+'<i class="rb-bl"></i></span></h1></div>'+
@@ -8090,12 +8093,13 @@ function duqRibbon(land){
  {const fc=document.getElementById('field');if(fc&&fc.parentNode===land)land.insertBefore(root,fc.nextSibling);else land.insertBefore(root,land.firstChild)}
  const cv=root.querySelector('.rb-gl'),topEl=root.querySelector('.rb-top'),bls=root.querySelectorAll('.rb-bl'),words=root.querySelectorAll('.rb-w'),badge=root.querySelector('.rb-cta'),foot=root.querySelector('.rb-foot'),DD={};
  root.querySelectorAll('[data-k]').forEach(e=>{DD[e.dataset.k]=e});
+ const tags=[root.querySelector('.rb-tag.yes'),root.querySelector('.rb-tag.no')].map(el=>({el,w:0,h:0}));   /* v274: the ribbons' YES / NO labels */
  /* the letters rise one by one when the version comes in */
  {let n=0;words.forEach(w=>{const t=w.textContent;w.textContent='';for(const ch of t){const s=document.createElement('span');s.className='rb-ch';s.textContent=ch;s.style.transitionDelay=(70+n*24)+'ms';n++;w.appendChild(s)}})}
  const clamp=(v,a,b)=>v<a?a:v>b?b:v,ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,outE=t=>1-Math.pow(1-t,3),sm=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
  const gauss=(x,m,s)=>{const d=(x-m)/s;return Math.exp(-d*d)};
  /* ---- the layout: the headline fills the landing's column; the two ribbons hang from its last line ---- */
- let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,xY=0,xN=0,sgY=100,sgN=100,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06,RS=128,WAV=13,G0=80,GMX=240,pc=0;
+ let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=200,base=0,xY=0,xN=0,sgY=100,sgN=100,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06,RS=128,WAV=13,G0=80,GMX=240,pc=0,LBL=28;
  const mctx=document.createElement('canvas').getContext('2d');
  function capOf(f){mctx.font='400 '+f+'px Anton';const m=mctx.measureText('H');return m.actualBoundingBoxAscent||f*.86}
  function layout(){if(root.hidden)return;
@@ -8108,6 +8112,7 @@ function duqRibbon(land){
   root.style.setProperty('--rb-F',F+'px');root.style.setProperty('--rb-sw',Math.max(1,F*.0105).toFixed(2)+'px');
   capH=capOf(F);RS=capOf(F0);   /* RS: the ribbons' own scale */
   CH=Math.round(phone?52:clamp(F0*.46,56,80));CF=Math.round(phone?15:clamp(F0*.13,15,21));root.style.setProperty('--rb-ch',CH+'px');root.style.setProperty('--rb-cf',CF+'px');BD=CH;   /* v265: the capsule's height */
+  for(const t of tags){t.w=t.el.offsetWidth;t.h=t.el.offsetHeight}LBL=Math.max(tags[0].h,tags[1].h)+12;   /* v274: a label's room above the ribbon on top and under the one below */
   const hdr=(land.querySelector('.header')||{}).offsetHeight||72;
   foot.style.bottom=(phone?18:Math.round(clamp(H*.055,26,64)))+'px';
   footTop=foot.getBoundingClientRect().top;
@@ -8124,8 +8129,8 @@ function duqRibbon(land){
   /* v262/v271: the ribbons' middle under the button, clear of the numbers; each ribbon rises behind its own word (YES, NO.) */
   const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;sgY=Math.max(56,ry.width*.6);sgN=Math.max(56,rn.width*.6);
   /* v273: the pair wants its middle in the capsule; the gap runs from touching (50/50) to all the room between the headline and the
-     numbers (each ribbon .3 RS wide either side, its fold hanging .42 of that lower; the shared wave and a bet's swell on top) */
-  base=by+CH*.5;WAV=.1*RS;G0=.63*RS;GMX=Math.max(G0+.3*RS,(footTop-b2-16)-.726*RS-2*(WAV+.12*RS));
+     numbers (each ribbon .3 RS wide either side, its fold hanging .42 of that lower, and the wave; v274: and the two labels) */
+  base=by+CH*.5;WAV=.1*RS;G0=.6*RS;GMX=Math.max(G0+.3*RS,(footTop-b2-16-2*LBL)-.726*RS-2*WAV);
   const s2=phone?120:200;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
   if(gl&&(s2!==S||!verts)){S=s2;alloc()}else S=s2}
@@ -8207,16 +8212,18 @@ function duqRibbon(land){
  function closeFx(){if(phase==='resolve')return{fall:Math.pow(clamp((pt-.2)/1.6,0,1),2),fade:1-sm((pt-.7)/1.5),wide:ease(clamp(pt/1.3,0,1))};
   if(phase==='next'){const q=ease(clamp(pt/NXT,0,1));return{fall:1-q,fade:q,wide:1-q}}return{fall:0,fade:1,wide:0}}
  const isLoser=r=>(phase==='resolve'||phase==='next')&&(winner>0)!==(r===0);
- function build(){const e=closeFx(),x0=-.06*W,x1=W*1.06,span=x1-x0,k=2*Math.PI/(.62*W),ph0=-k*LENS[0],br=.85+.15*Math.sin(T*.35),g=running?G:gapOf(pS),hwB=.3*RS,ext=WAV+.12*RS,
-   cMin=b2+8+g/2+hwB+ext,cMax=footTop-8-g/2-1.42*hwB-ext,c=cMin>cMax?(cMin+cMax)/2:clamp(base,cMin,cMax),sb=.9*RS,vb=.5*Math.max(W,700);let o=0;pc=c;   /* c: the pair's middle — in the capsule when the gap fits there */
+ function build(){const e=closeFx(),x0=-.06*W,x1=W*1.06,span=x1-x0,k=2*Math.PI/(.62*W),ph0=-k*LENS[0],br=.85+.15*Math.sin(T*.35),g=running?G:gapOf(pS),hwB=.3*RS,ext=WAV,
+   cMin=b2+8+LBL+g/2+hwB+ext,cMax=footTop-8-LBL-g/2-1.42*hwB-ext,c=cMin>cMax?(cMin+cMax)/2:clamp(base,cMin,cMax),sb=.9*RS,vb=.5*Math.max(W,700);let o=0;pc=c;   /* c: the pair's middle — in the capsule when the gap fits there */
   for(let i=0;i<=S;i++)X[i]=x0+span*i/S;
   for(let r=0;r<2;r++){const sgn=r===0?-1:1,L=isLoser(r),Wn=(phase==='resolve'||phase==='next')&&!L,xr=r===0?xY:xN,sr=r===0?sgY:sgN,cy=RY[r],ir=clamp(Math.round((xr-x0)/span*S),0,S);
-   /* v273: side by side on one shared wave (it crosses the middle under the capsule), the gap = the lead and SG = who runs on top
-      here; each one rises behind its own word, and its bets swell it up from there */
-   const hw0=hwB*(Wn?1+.55*e.wide:1),wav=WAV*br*(Wn?1-.6*e.wide:1),drop=L?e.fall*H*.85:0,lead=(r===0)===topY?1:.8;
-   for(let i=0;i<=S;i++){const x=X[i];cy[i]=c+sgn*SG[i]*g/2+wav*Math.sin(k*x+ph0)+5*Math.sin(x/170+r*2)*Math.cos(T*.4+r)}
-   const lift=Math.max(0,cy[ir]-(b2-.4*capH))*(Wn?1+.25*e.wide:1),hr=sgn*SG[ir]<0?Math.max(.06*RS,cy[ir]-hwB-(b2+4)):1e9;   /* (the one on top: a swell stays out of the headline) */
-   for(let i=0;i<=S;i++)cy[i]+=drop-lift*gauss(X[i],xr,sr);
+   /* v273: side by side, the gap = the lead and SG = who runs on top here; v274: flat bands on one calm wave (a little out of step,
+      as on the board's frames; it crosses the middle under the capsule), no rising behind the words; its bets swell it up from under its word */
+   const hw0=hwB*(Wn?1+.55*e.wide:1),wav=WAV*br*(Wn?1-.6*e.wide:1),drop=L?e.fall*H*.85:0,lead=(r===0)===topY?1:.8,fr=L?e.fade:1;
+   for(let i=0;i<=S;i++){const x=X[i];cy[i]=c+sgn*SG[i]*g/2+wav*Math.sin(k*x+ph0+sgn*.45)+5*Math.sin(x/170+r*2)*Math.cos(T*.4+r)+drop}
+   /* its label: above its ribbon while it runs on top, under it while below (it changes sides with the lead), at the column's left edge */
+   {const t=tags[r],il=clamp(Math.round((colL+t.w/2-x0)/span*S),0,S),u=-sgn*SG[il],yA=cy[il]-hw0-6-t.h,yB=cy[il]+1.42*hw0+6;
+    t.el.style.transform='translate('+colL.toFixed(1)+'px,'+(yB+(yA-yB)*sm((u+1)/2)).toFixed(1)+'px)';t.el.style.opacity=(fr*(.35+.65*Math.abs(u))*sm((reveal-(colL-x0)/span)/.06)).toFixed(3)}
+   const hr=sgn*SG[ir]<0?Math.max(.06*RS,cy[ir]-hwB-(b2+4)):1e9;   /* (the one on top: a swell stays out of the headline) */
    for(const b of BU){if(b.r!==r)continue;const A=Math.min(b.a,hr)*sm(b.t/.12)*(1-sm(b.t/b.life)),pos=b.t*vb;if(A<.3)continue;
     for(let i=0;i<=S;i++){const d=(Math.abs(X[i]-xr)-pos)/sb;cy[i]-=A*Math.exp(-d*d)}}
    for(const [off,fold,wid,tw,lit,fk,fph] of SHEETS)for(let i=0;i<=S;i++){const ia=Math.max(0,i-1),ib=Math.min(S,i+1);let tx=X[ib]-X[ia],ty=cy[ib]-cy[ia];const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx;
@@ -8249,7 +8256,7 @@ function duqRibbon(land){
  root.addEventListener('click',e=>{const w=e.target.closest&&e.target.closest('.rb-w[data-rbside]');if(w)commit(w.dataset.rbside==='yes')});
  const setHov=v=>{hov=v;if(!running){lensK=v?1.32:1.06;draw()}};badge.addEventListener('pointerenter',()=>setHov(true));badge.addEventListener('pointerleave',()=>setHov(false));badge.addEventListener('focus',()=>setHov(true));badge.addEventListener('blur',()=>setHov(false));
  let rt=0;window.addEventListener('resize',()=>{if(!ready||root.hidden)return;clearTimeout(rt);rt=setTimeout(()=>{layout();if(!running)draw()},100)});
- window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,RS,capH,b0,b2,base,footTop,c:pc,G,Gt:gapOf(pS),G0,GMX,WAV,sig:SG?SG[S>>1]:0,swp:!!swp,bu:BU.length,yY:RY?RY[0][S>>1]:0,yN:RY?RY[1][S>>1]:0,xY,xN,topY,running,gl:!!gl,glFail,texOk:{...texOk}});   /* preview aid */
+ window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,RS,capH,b0,b2,base,footTop,c:pc,G,Gt:gapOf(pS),G0,GMX,WAV,LBL,colL,tags:tags.map(t=>[t.el.style.transform,t.el.style.opacity]),sig:SG?SG[S>>1]:0,swp:!!swp,bu:BU.length,yY:RY?RY[0][S>>1]:0,yN:RY?RY[1][S>>1]:0,xY,xN,topY,running,gl:!!gl,glFail,texOk:{...texOk}});   /* preview aid */
  return{root,show,start,stop,commit};
 }
 
