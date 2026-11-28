@@ -6453,7 +6453,6 @@ html:not([data-theme=dark]) #ribbonbg .rb-cta{color:#0e1117;--lgs-fill:rgb(242 2
 #ribbonbg .rb-stats dt{margin-top:8px;font:500 14px/1.35 var(--font);color:var(--rb-mute);white-space:nowrap}   /* v270 (the user, on «say yes · Ethereum below / $1,500 this year»: «один строк»): the labels on one line */
 html:not([data-theme=dark]) #ribbonbg .rb-stats{text-shadow:0 0 1.5px var(--bg),0 0 12px color-mix(in srgb,var(--bg) 80%,transparent)}   /* v261: on a short light page the ribbon can dip under the numbers — the same halo as the words */
 #ribbonbg .rb-stats dd.win-yes{color:var(--rb-yes)}#ribbonbg .rb-stats dd.win-no{color:var(--rb-no)}
-#ribbonbg .rb-tag{position:absolute;left:0;top:0;z-index:3;font:700 var(--rb-cf)/1 var(--font);letter-spacing:.08em;text-transform:uppercase;opacity:0;pointer-events:none;will-change:transform,opacity}#ribbonbg .rb-tag.yes{color:var(--rb-yes)}#ribbonbg .rb-tag.no{color:var(--rb-no)}   /* v274: which ribbon is which, as on the board's frames of variant 11 */
 @media (max-width:640px){
  #ribbonbg .rb-m{display:inline}
  #ribbonbg .rb-foot{flex-direction:column;align-items:stretch;gap:14px}
@@ -8060,28 +8059,27 @@ function duqRibbon(land){
  /* v256 (the user, 26 Nov 2026 — a shot of a «CodeWave» hero section: «obrobotai etu versiu low fi» → the board «Welcome DUQ —
     версия CodeWave» → «sobirai, kak versia 4, ispolzui highsfield»): version 4 «the ribbon». The reference's signature, in DUQ terms:
     — a huge narrow uppercase headline, WILL IT HAPPEN? / JUST SAY YES OR NO., with YES OR NO. hollow: the answer is not in yet;
-    — two ribbons under the type, YES and NO (v262 … v275: the motion boards' variants 7 «Две ленты», 18 «Течение в слова», 16 «Эхо
-      ставок», 11 «Расстояние = отрыв» and 20 «Лента пишет ответ»; v276: the user, «21» → variant 21 «Воронка в кнопку»): everything
-      runs into MAKE YOUR CALL. The YES ribbon comes in from the left, the NO ribbon from the right, and the bets draw both in a
-      spiral into the glass capsule; the side with more money is wound wider and thicker (and the leader runs on top, brighter), and
-      its ribbon is drawn in the faster the more money is coming that way. Each carries its small YES / NO label where it comes in.
-      Click YES / NO (or press Y / N) for your own: your side's spiral gives a tug;
-    — every ~21 s the market closes: the capsule shoots the winner's ribbon up into its word, which fills with its colour while
-      the rest dims, and the loser's ribbon slackens and falls away; with the next market both are drawn in again;
-    — the button (v265, «Стеклянная капсула»): MAKE YOUR CALL on a Liquid Glass Small capsule under the headline; the ribbons show
+    — the ribbon under the type (v262 … v276: the motion boards' variants 7, 18, 16, 11, 20 and 21; then the user: «ne dvijnie a drugoe
+      pattern» → a board of line patterns, 40–44; v277: «Пружина»): the reference's glass ribbon coiled into a spring right across
+      the screen, through the glass capsule — its coils go round into the depth (dark) and come out to the light (the glass, its
+      white edge and copper glints). How it moves, for now: the spring turns like a screw, so its coils glide towards the leading
+      side (the faster, the bigger the lead) and the leader's half stretches while the other is pressed together; every bet sends a
+      slinky pulse along it from its own end — YES from the left, NO from the right (yours the biggest). Click YES / NO (or press Y / N);
+    — every ~21 s the market closes: the spring springs — its coils race to the winner, the winner's half swells and the loser's
+      pulls straight; the winning word fills with its colour and the rest dims; with the next market the spring relaxes again;
+    — the button (v265, «Стеклянная капсула»): MAKE YOUR CALL on a Liquid Glass Small capsule under the headline; the spring shows
       through it magnified like a lens (more so under the pointer, when its ring turns orange); it enters the app; the numbers are live.
     The material (the user: «doljen sovpodat materyalom kartinki 100%», on a crop of the reference's ribbon): the reference's own —
     smoky black glass, steel-blue sheen, orange-copper glints, a thin white edge. Higgsfield (GPT Image 2.6, the reference crops as
-    image references) made a matcap ball of exactly that material (window.DUQ_RIBBON.mat); it lights, colours and all, the WebGL ribbons
-    built every frame from the data (each a main sheet and a thinner fold behind it, like the reference's layers). The
-    ribbons have no green or red of its own on either theme: YES and NO show in the words, the labels and the numbers. */
+    image references) made a matcap ball of exactly that material (window.DUQ_RIBBON.mat); it lights, colours and all, the WebGL
+    spring built every frame from the data. It has no green or red of its own on either theme: YES and NO show in the words and the numbers. */
  const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  const AS=window.DUQ_RIBBON||{};
  /* (the words carry data-rbside, not data-side: the trade panel's own click handler takes any [data-side]) [id, the market as the numbers name it, chance of Yes] — the prototype's own markets (as version 3 has them) */
  const MK=[['eth','Ethereum below $1,500 this year',64],['btc','Bitcoin above $150k by New Year',41],['ecb','ECB cuts rates in October',62],['ucl','Chelsea beat Barcelona',40],['shutdown','Shutdown lasts 30+ days',62],['nba','Clippers beat the Raptors',45],['santa','Santa delivers 7B+ gifts',71],['dem2028','Newsom wins the 2028 nomination',31]];
  const word=(t,c,side)=>'<span class="rb-w'+(c?' '+c:'')+'"'+(side?' data-rbside="'+side+'" title="Your call: '+side+' ('+(side==='yes'?'Y':'N')+')"':'')+'>'+t+'</span>';
  const root=document.createElement('div');root.id='ribbonbg';root.hidden=true;
- root.innerHTML='<canvas class="rb-gl" aria-hidden="true"></canvas><span class="rb-tag yes" aria-hidden="true">Yes</span><span class="rb-tag no" aria-hidden="true">No</span>'+
+ root.innerHTML='<canvas class="rb-gl" aria-hidden="true"></canvas>'+
   '<div class="rb-col rb-top"><h1 class="rb-h"><span class="sr-only">Will it happen? Just say yes or no.</span>'+
   '<span class="rb-l" aria-hidden="true"><i class="rb-bl"></i>'+word('WILL')+' '+word('IT')+'<br class="rb-m"> '+word('HAPPEN?')+'<i class="rb-bl"></i></span>'+
   '<span class="rb-l" aria-hidden="true">'+word('JUST')+' '+word('SAY')+'<br class="rb-m"> '+word('YES','hol yes','yes')+' '+word('OR','hol or')+' '+word('NO.','hol no','no')+'<i class="rb-bl"></i></span></h1></div>'+
@@ -8090,13 +8088,11 @@ function duqRibbon(land){
  {const fc=document.getElementById('field');if(fc&&fc.parentNode===land)land.insertBefore(root,fc.nextSibling);else land.insertBefore(root,land.firstChild)}
  const cv=root.querySelector('.rb-gl'),topEl=root.querySelector('.rb-top'),bls=root.querySelectorAll('.rb-bl'),words=root.querySelectorAll('.rb-w'),badge=root.querySelector('.rb-cta'),foot=root.querySelector('.rb-foot'),DD={};
  root.querySelectorAll('[data-k]').forEach(e=>{DD[e.dataset.k]=e});
- const tags=[root.querySelector('.rb-tag.yes'),root.querySelector('.rb-tag.no')].map(el=>({el,w:0,h:0}));   /* v274/v276: the ribbons' YES / NO labels */
  /* the letters rise one by one when the version comes in */
  {let n=0;words.forEach(w=>{const t=w.textContent;w.textContent='';for(const ch of t){const s=document.createElement('span');s.className='rb-ch';s.textContent=ch;s.style.transitionDelay=(70+n*24)+'ms';n++;w.appendChild(s)}})}
  const clamp=(v,a,b)=>v<a?a:v>b?b:v,ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,outE=t=>1-Math.pow(1-t,3),sm=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
- /* ---- the layout: the headline fills the landing's column; the whirlpool turns in the capsule under it ---- */
- let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=360,xY=0,xN=0,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06,RS=128,R0=800,KU=.25,KD=.25;
- const SHOT=[null,null];   /* v276: the winner's way at the close — in from its side, through the capsule, up into its word */
+ /* ---- the layout: the headline fills the landing's column; the spring runs across under it ---- */
+ let W=0,H=0,DPR=1,F=150,capH=128,b0=0,b2=0,colL=0,colR=0,phone=false,BD=190,footTop=0,S=600,xY=0,xN=0,CH=72,CF=19,LENS=[0,0,0,0],lensK=1.06,RS=128,AY=500,RM=100,NC=15,HWS=10;
  const mctx=document.createElement('canvas').getContext('2d');
  function capOf(f){mctx.font='400 '+f+'px Anton';const m=mctx.measureText('H');return m.actualBoundingBoxAscent||f*.86}
  function layout(){if(root.hidden)return;
@@ -8105,18 +8101,17 @@ function duqRibbon(land){
   colL=(W-colW)/2;colR=colL+colW;
   /* JUST SAY YES OR NO. ≈ 7.6 em wide fills the column; on a phone four lines (YES OR NO. ≈ 3.96 em) */
   F=Math.floor(phone?Math.min(colW/3.98,(H-420)/4.3):Math.min(colW/7.62,(H-316)/3.55));   /* v263: the height now holds the button above the headline too */F=Math.max(phone?36:56,F);
-  const F0=F;if(!phone)F=Math.min(F,140);   /* v266 (the user, on the sizes: «120»), v267 («140»): the headline 140 px at most on a computer; the ribbons and the button keep the scale they had (F0) */
+  const F0=F;if(!phone)F=Math.min(F,140);   /* v266 (the user, on the sizes: «120»), v267 («140»): the headline 140 px at most on a computer; the spring and the button keep the scale they had (F0) */
   root.style.setProperty('--rb-F',F+'px');root.style.setProperty('--rb-sw',Math.max(1,F*.0105).toFixed(2)+'px');
-  capH=capOf(F);RS=capOf(F0);   /* RS: the ribbons' own scale */
+  capH=capOf(F);RS=capOf(F0);   /* RS: the spring's own scale */
   CH=Math.round(phone?52:clamp(F0*.46,56,80));CF=Math.round(phone?15:clamp(F0*.13,15,21));root.style.setProperty('--rb-ch',CH+'px');root.style.setProperty('--rb-cf',CF+'px');BD=CH;   /* v265: the capsule's height */
-  for(const t of tags){t.w=t.el.offsetWidth;t.h=t.el.offsetHeight}
   const hdr=(land.querySelector('.header')||{}).offsetHeight||72;
   foot.style.bottom=(phone?18:Math.round(clamp(H*.055,26,64)))+'px';
   footTop=foot.getBoundingClientRect().top;
   topEl.style.top='0px';
   const t0=bls[0].getBoundingClientRect().top-capH;   /* the first line's cap top with the block at 0 */
   /* v264 (the user, after v263's button above the headline: «down», «and text centerlize»): the headline centred and the round button
-     centred under it, the two together in the middle between the header and the numbers; the ribbons run behind the button */
+     centred under it, the two together in the middle between the header and the numbers; the spring runs behind the button */
   const gapB=Math.round(.3*capH),blockH=capH+(phone?3:1)*.98*F+gapB+BD,capTop=phone?Math.max(hdr+12,hdr+(footTop-hdr-blockH)/2):hdr+80;   /* v268 (the user: «zagolovka modnimi verx 80 do headera»): on a computer the headline's caps start 80 px under the header; the phone keeps the block in the middle */
   topEl.style.top=Math.round(capTop-t0)+'px';
   b0=bls[0].getBoundingClientRect().top;b2=bls[2].getBoundingClientRect().top;
@@ -8124,30 +8119,23 @@ function duqRibbon(land){
   const CW=badge.offsetWidth;bx=(colL+colR)/2-CW/2;by=phone?b2+gapB:Math.round(Math.max(b2+gapB,(b2+footTop)/2-CH/2));   /* v269 (the user: «centerlize button»): on a computer the capsule sits midway between the headline and the numbers */LENS=[bx+CW/2,by+CH/2,CW/2,CH/2];   /* the lens = the capsule */
   root.style.setProperty('--rb-bx',Math.round(bx)+'px');root.style.setProperty('--rb-by',Math.round(by)+'px');
   const ry=words[5].getBoundingClientRect(),rn=words[7].getBoundingClientRect();xY=ry.left+ry.width/2;xN=rn.left+rn.width/2;
-  /* v276: the whirlpool — centred in the capsule, as wide as the screen, flattened to stay between the headline and the numbers */
-  const cx=LENS[0],cy=LENS[1];R0=Math.max(cx+.06*W,1.06*W-cx);
-  const kM=phone?.8:.3;KU=clamp((cy-b2-8-.36*RS)/(.79*R0),.08,kM);KD=clamp((footTop-8-cy-.5*RS)/(.79*R0),.08,kM);   /* (a phone: rounder, mostly under the capsule) */
-  const s2=phone?220:360;
+  /* v277: the spring — its axis through the capsule on a computer, between the capsule and the numbers on a phone; its coils as tall
+     as the room allows, about one coil to every 118 px across (85 on a phone) */
+  if(phone){const top=by+CH+8,bot=footTop-14;AY=(top+bot)/2;RM=Math.max(12,((bot-top)/2-.11*RM-4)/1.25)}else{AY=by+CH*.5;RM=Math.min(.95*RS,.55*Math.min(AY-b2,footTop-AY))}
+  NC=Math.max(4,Math.round(W/(phone?85:118)));HWS=Math.max(3.5,.11*RM);
+  const s2=Math.min(1000,Math.max(phone?240:400,NC*42));
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
-  if(gl&&(s2!==S||!verts)){S=s2;alloc()}else S=s2;
-  const yw=b2-.42*capH;SHOT[0]=shotPath(-1,xY,yw);SHOT[1]=shotPath(1,xN,yw)}
- /* a smooth line through points (Catmull–Rom, n steps a span), and n points evenly along a line */
- function cr(P,n){const o=[];for(let i=0;i<P.length-1;i++){const p0=P[Math.max(0,i-1)],p1=P[i],p2=P[i+1],p3=P[Math.min(P.length-1,i+2)];
-  for(let k=0;k<n;k++){const t=k/n,t2=t*t,t3=t2*t;o.push([0,1].map(a=>.5*(2*p1[a]+(-p0[a]+p2[a])*t+(2*p0[a]-5*p1[a]+4*p2[a]-p3[a])*t2+(-p0[a]+3*p1[a]-3*p2[a]+p3[a])*t3)))}}o.push(P[P.length-1]);return o}
- function rs(P,n){if(P.length<2)P=[P[0],P[0]];const L=[0];for(let i=1;i<P.length;i++)L.push(L[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));const tot=L[L.length-1]||1,o=[];let j=0;
-  for(let k=0;k<n;k++){const d=tot*k/(n-1||1);while(j<P.length-2&&L[j+1]<d)j++;const t=clamp((d-L[j])/((L[j+1]-L[j])||1),0,1);o.push([P[j][0]+(P[j+1][0]-P[j][0])*t,P[j][1]+(P[j+1][1]-P[j][1])*t])}return o}
- function shotPath(sd,xw,yw){const cx=LENS[0],cy=LENS[1];
-  return rs(cr([[cx+sd*R0,cy],[cx+sd*.5*R0,cy+.12*R0*KD],[cx+sd*.14*R0,cy+.05*R0*KD],[cx,cy],[(cx+xw)/2,cy-.55*(cy-yw)],[xw,yw]],18),S+1)}
+  if(gl&&(s2!==S||!verts)){S=s2;alloc()}else S=s2}
  /* ---- the market: one share (bets) and its cycle ---- */
  const BET=16,CLOSE=1,RES=2.7,NXT=1.5;
- let T=0,mt=0,pt=0,phase='bet',mi=0,mk=MK[0],p=.64,pS=.64,goal=.62,flipAt=-1,winner=1,nextBet=.4,vol=2.41e6,calls=18240,reveal=1.1,revealT=-1,hov=false,running=false,raf=0,last=0,ready=false,wonOn=false,topY=true;
- /* v276 — variant 21 «Воронка в кнопку»: MR = each side's money a second (its bets of the last few seconds), RUN = how far its
-    ribbon has been drawn in, JOLT = your own bet's tug on your side's spiral */
- let MR=[0,0],RUN=[0,0],JOLT=[0,0];const MREF=1500,TURNS=1.35;
+ let T=0,mt=0,pt=0,phase='bet',mi=0,mk=MK[0],p=.64,pS=.64,goal=.62,flipAt=-1,winner=1,nextBet=.4,vol=2.41e6,calls=18240,reveal=1.1,revealT=-1,hov=false,running=false,raf=0,last=0,ready=false,wonOn=false;
+ /* v277 — the spring: ROT = how far it has turned (its coils glide towards the leader), PUL = the bets' slinky pulses */
+ let ROT=0,PUL=[];
  function seed(i){mk=MK[i%MK.length];const p0=mk[2]/100;p=p0;goal=clamp(p0+(Math.random()-.5)*.1,.2,.8);flipAt=Math.random()<.45?5+Math.random()*5:-1;mt=0}
- /* a bet: the share moves (and with it how wide and thick each spiral is), and its money pulls its own ribbon in (v276; yours tugs) */
+ /* a bet: the share moves, and a pulse runs along the spring from its own end (v277; yours the biggest) */
  function bet(yes,size,you){p=clamp(p+(yes?1:-1)*(.0035+.0055*Math.min(1,size/2400))*(you?1.8:1),.04,.96);calls++;vol+=size;
-  const r=yes?0:1;MR[r]+=size*(you?2:1)/2.6;if(you){JOLT[r]=1;flash(yes)}numbers()}
+  const q=Math.min(1,size/2400);PUL.push({d:yes?1:-1,t:0,a:you?.035:.01+.015*q});if(PUL.length>12)PUL.shift();
+  if(you)flash(yes);numbers()}
  function bets(dt,k){nextBet-=dt;while(nextBet<=0){const rate=2.1*(mt>BET-3.5?1.9:1)*(k||1);nextBet+=-Math.log(1-Math.random())/rate;
   bet(Math.random()<clamp(.5+2.6*(goal-p),.12,.88),60+(-Math.log(1-Math.random()))*1100,false)}}
  function flash(yes){const w=root.querySelector('.rb-w.'+(yes?'yes':'no'));if(!w)return;w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');clearTimeout(w._ft);w._ft=setTimeout(()=>w.classList.remove('flash'),650)}
@@ -8159,33 +8147,36 @@ function duqRibbon(land){
  function step(dt){T+=dt;mt+=dt;
   if(phase==='bet'){bets(dt);if(flipAt>0&&mt>flipAt){goal=clamp(1-goal+(Math.random()-.5)*.06,.25,.75);flipAt=-1}if(mt>=BET){phase='close';pt=0}}
   else{pt+=dt;
-   if(phase==='close'){if(pt>=CLOSE){phase='resolve';pt=0;winner=pS>=.5?1:-1;topY=winner>0}}
+   if(phase==='close'){if(pt>=CLOSE){phase='resolve';pt=0;winner=pS>=.5?1:-1}}
    else if(phase==='resolve'){if(!wonOn&&pt>=.35)won(true);if(pt>=RES){phase='next';pt=0;mi++;seed(mi);won(false)}}
    else if(phase==='next'){bets(dt,.5);if(pt>=NXT)phase='bet'}}
   pS+=(p-pS)*(1-Math.exp(-dt/(phase==='next'?.7:.35)));
-  if(phase==='bet'||phase==='close'){if(topY&&pS<.48)topY=false;else if(!topY&&pS>.52)topY=true}   /* the leader on top (with a little hysteresis) */
-  /* v276: the money pulls each ribbon in — the faster the more is coming that way; your tug fades */
-  for(let r=0;r<2;r++){MR[r]*=Math.exp(-dt/2.6);JOLT[r]*=Math.exp(-dt/.35);RUN[r]+=dt*(90+520*Math.min(1,MR[r]/MREF))*RS/128}
+  /* v277: the spring turns like a screw — its coils glide towards the leading side (YES left, NO right), the faster the bigger the
+     lead; at the close they race to the winner */
+  const d=pS-.5;let om=.25*Math.tanh(d/.02)+2.2*d;
+  if(phase==='resolve')om=(winner>0?1:-1)*(1.2+3.2*sm(pt/.5)*(1-sm((pt-1.3)/1)));
+  ROT+=om*dt;PUL=PUL.filter(u=>(u.t+=dt)<2.6);
   if(revealT>=0){revealT+=dt;reveal=-.05+1.12*outE(clamp((revealT-.1)/1.8,0,1));if(revealT>2.2)revealT=-1}
   lensK+=((hov?1.32:1.06)-lensK)*(1-Math.exp(-dt/.16));   /* the glass: a lens, stronger under the pointer */
   numbers()}
- /* ---- the ribbons: two strips spiralling into the capsule, lit by the Higgsfield matcap ---- */
+ /* ---- the spring: one strip along a helix, lit by the Higgsfield matcap ---- */
  const VS='attribute vec2 aP;attribute vec3 aN;attribute vec4 aD;uniform vec2 uRes;uniform vec4 uLens;uniform float uLensK,uPassV;varying vec3 vN;varying vec4 vD;varying vec2 vP;'+
   'void main(){vec2 p=aP;if(uPassV>.5)p=uLens.xy+(p-uLens.xy)*uLensK;vP=p;vec2 c=p/uRes*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);vN=aN;vD=aD;}';
  const FS='#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n'+
-  'varying vec3 vN;varying vec4 vD;varying vec2 vP;uniform sampler2D uMat;uniform float uReveal,uAlpha,uPassF;uniform vec4 uLensF;'+
+  'varying vec3 vN;varying vec4 vD;varying vec2 vP;uniform sampler2D uMat;uniform float uReveal,uAlpha,uPassF,uGain,uThr;uniform vec4 uLensF;'+
   'void main(){vec2 q=abs(vP-uLensF.xy)-uLensF.zw+uLensF.w;float sd=length(max(q,0.))+min(max(q.x,q.y),0.)-uLensF.w,ins=1.-smoothstep(-.8,.8,sd),k=uPassF>.5?ins:1.-ins;if(k<.002)discard;'+
   'vec3 n=normalize(vN);vec3 m=texture2D(uMat,vec2(.5+.47*n.x,.5+.47*n.y)).rgb;float g=1.-abs(n.z);'+
   'float rim=(smoothstep(.84,.99,-vD.y)*.35+smoothstep(.945,.975,-vD.y)*.8)*(.45+.55*g)*(vD.z>.99?1.:.3);vec3 c=pow(m,vec3(1.18))*.86*vD.z+rim*vec3(.88,.9,.95);'+
-  'float a=smoothstep(0.,1.25,(1.-abs(vD.y))*vD.w)*(1.-smoothstep(uReveal-.03,uReveal,vD.x))*uAlpha*k;if(uPassF>.5)c*=1.07;gl_FragColor=vec4(c*a,a*mix(.82,.97,vD.z));}';
- const AC=7;let gl=null,glFail=false,prog=null,vbuf=null,ibuf=null,loc={},verts=null,RX=null,RY=null,UL=null,nIdx=0;const tex={},texOk={};
+  'float fr=step(.99,vD.z);c*=mix(1.,uGain,fr);c=mix(c,vec3(.8,.84,.9)*(.3+.95*dot(m,vec3(.3,.59,.11))+.45*g),uThr*fr);'+   /* v277: on the dark ground the coils' near sides brighter, with the glass's silver edge */
+  'float a=smoothstep(0.,1.25,(1.-abs(vD.y))*vD.w)*(1.-smoothstep(uReveal-.02,uReveal,vD.x))*uAlpha*k;if(uPassF>.5)c*=1.07;gl_FragColor=vec4(c*a,a*mix(.82,.97,vD.z));}';
+ const AC=7;let gl=null,glFail=false,prog=null,vbuf=null,ibuf=null,loc={},verts=null,idx=null,X=null,Y=null,TH=null,nIdx=0;const tex={},texOk={};
  function initGL(){if(gl||glFail)return;
   try{gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:true,depth:false,stencil:false})}catch(e){gl=null}
   if(!gl){glFail=true;return}
   const sh=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s};
   try{prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog))}
   catch(e){glFail=true;gl=null;if(window.console)console.warn('version 4 ribbon:',e&&e.message||e);return}
-  gl.useProgram(prog);for(const k of ['aP','aN','aD'])loc[k]=gl.getAttribLocation(prog,k);for(const k of ['uRes','uMat','uReveal','uAlpha','uLens','uLensF','uLensK','uPassV','uPassF'])   /* the vertex and fragment stages keep their own names: a shared uniform must share its precision */loc[k]=gl.getUniformLocation(prog,k);
+  gl.useProgram(prog);for(const k of ['aP','aN','aD'])loc[k]=gl.getAttribLocation(prog,k);for(const k of ['uRes','uMat','uReveal','uAlpha','uGain','uThr','uLens','uLensF','uLensK','uPassV','uPassF'])   /* the vertex and fragment stages keep their own names: a shared uniform must share its precision */loc[k]=gl.getUniformLocation(prog,k);
   vbuf=gl.createBuffer();ibuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);
   gl.enableVertexAttribArray(loc.aP);gl.vertexAttribPointer(loc.aP,2,gl.FLOAT,false,36,0);
   gl.enableVertexAttribArray(loc.aN);gl.vertexAttribPointer(loc.aN,3,gl.FLOAT,false,36,8);
@@ -8198,59 +8189,47 @@ function duqRibbon(land){
    if(AS.mat)im.src=AS.mat}
   cv.addEventListener('webglcontextlost',e=>{e.preventDefault();gl=null;glFail=true},false);
   alloc()}
- /* each ribbon: a thinner fold behind the main sheet, like the reference's layers. [off, fold, width, twist, light, k, phase] */
- const SHEETS=[[.62,.3,.5,1.1,.6,1.4,2.1],[0,0,1,0,1,0,0]],NS=SHEETS.length;
- function alloc(){if(!gl)return;RX=[new Float32Array(S+1),new Float32Array(S+1)];RY=[new Float32Array(S+1),new Float32Array(S+1)];UL=new Float32Array(S+1);verts=new Float32Array(2*NS*(S+1)*AC*9);
-  const per=NS*S*(AC-1)*6,idx=new Uint16Array(2*per);let o=0;
-  for(let r=0;r<2;r++)for(let q=0;q<NS;q++){const v0=(r*NS+q)*(S+1)*AC;for(let i=0;i<S;i++)for(let j=0;j<AC-1;j++){const a=v0+i*AC+j,b=v0+(i+1)*AC+j;idx[o++]=a;idx[o++]=b;idx[o++]=b+1;idx[o++]=a;idx[o++]=b+1;idx[o++]=a+1}}
-  nIdx=per;gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,idx,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferData(gl.ARRAY_BUFFER,verts.byteLength,gl.DYNAMIC_DRAW)}
- /* the close: the capsule shoots the winner's ribbon up into its word; the loser's slackens, falls away and fades (and is drawn in again with the next market) */
- function closeFx(){if(phase==='resolve')return{fall:Math.pow(clamp((pt-.2)/1.6,0,1),2),fade:1-sm((pt-.7)/1.5),shot:outE(clamp((pt-.05)/.55,0,1))};
-  if(phase==='next'){const q=ease(clamp(pt/NXT,0,1));return{fall:1-q,fade:q,shot:1-q}}return{fall:0,fade:1,shot:0}}
- const isLoser=r=>(phase==='resolve'||phase==='next')&&(winner>0)!==(r===0);
- function build(){const e=closeFx(),cx=LENS[0],cy=LENS[1];let o=0;
-  for(let r=0;r<2;r++){const L=isLoser(r),Wn=(phase==='resolve'||phase==='next')&&!L,sh=r===0?pS:1-pS,th0=r===0?Math.PI:0,gam=2.4-1.6*sh,sw=Wn?e.shot:0,
-    hw0=RS*(.1+.26*sh)*(1+.3*sw),drop=L?e.fall*H*.85:0,lead=(r===0)===topY?1:.8,rot=.22*Math.sin(T*.3+r*2)+.9*JOLT[r],X=RX[r],Y=RY[r],SP=SHOT[r];
-   /* v276: in from its own side, wound into the capsule — the more money, the wider (a slower close of the turns) and the thicker */
-   for(let i=0;i<=S;i++){const t=i/S,th=th0+TURNS*2*Math.PI*t+rot*t*t,rr=.05*RS+(R0-.05*RS)*Math.pow(1-t,gam),sn=Math.sin(th);
-    let x=cx+rr*Math.cos(th),y=cy+rr*(sn<0?KU:KD)*sn;if(sw>0){x+=(SP[i][0]-x)*sw;y+=(SP[i][1]-y)*sw}X[i]=x;Y[i]=y+drop}
-   UL[0]=0;for(let i=1;i<=S;i++)UL[i]=UL[i-1]+Math.hypot(X[i]-X[i-1],Y[i]-Y[i-1]);
-   /* its label where it comes in, at the column's edge */
-   {const tg=tags[r],xl=r===0?colL+tg.w/2:colR-tg.w/2;let il=0;for(let i=0;i<=S;i++){if(r===0?X[i]>=xl:X[i]<=xl){il=i;break}}
-    let ly=Y[il]-hw0-8-tg.h;if(ly<b2+6)ly=Y[il]+1.42*hw0+8;   /* (under it where the headline is right above) */
-    tg.el.style.transform='translate('+(r===0?colL:colR-tg.w).toFixed(1)+'px,'+ly.toFixed(1)+'px)';tg.el.style.opacity=((L?e.fade:1)*sm((reveal-il/S)/.06)).toFixed(3)}
-   for(const [off,fold,wid,tw,lit,fk,fph] of SHEETS)for(let i=0;i<=S;i++){const ia=Math.max(0,i-1),ib=Math.min(S,i+1);let tx=X[ib]-X[ia],ty=Y[ib]-Y[ia];const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx;
-    /* the folds and glints ride the ribbon in (m: the material, drawn in by RUN) */
-    const s=i/S,m=(UL[i]-RUN[r])/(1.6*W),tp=1-sm((s-.84)/.16)*(1-.6*sw),hw=hw0*tp*(.94+.06*Math.sin(m*7.1+fph+r+.5*Math.sin(T*.23+r))),d=hw*(off+fold*Math.sin(fk*m*2.2+fph+r*1.7+.6*Math.sin(T*.17+fph))),x=X[i]+nx*d,y=Y[i]+ny*d;
-    const phi=.5*Math.sin(m*4.2+r*2.3+fph+.7*Math.sin(T*.13+r))+.22*Math.sin(m*9.7+r+.6*Math.sin(T*.19+fph))+tw*.25*Math.sin(m*2.4+fph+.5*Math.sin(T*.11+r))+(L?e.fall*6*s:0),cp=Math.cos(phi),sp=Math.sin(phi);
-    /* v258: a 3D strip — it leans into the screen the more it stands on edge, so a turn is a long rounded fold, never a pinch */
-    const tz=.22+.66*Math.abs(sp),lz=Math.sqrt(1+tz*tz),bx=-tz*tx/lz,by=-tz*ty/lz,bz=1/lz,wx=cp*nx+sp*bx,wy=cp*ny+sp*by,wz=sp*bz;
-    let fx=cp*bx-sp*nx,fy=cp*by-sp*ny,fz=cp*bz;if(fz<0){fx=-fx;fy=-fy;fz=-fz}
-    const hl=hw*wid,hwa=hl*Math.hypot(wx,wy)+1.1,bend=.62+.78*Math.abs(sp),shm=.22*Math.sin(m*6.5+fph+r+.8*Math.sin(T*.21+r));
-    for(let j=0;j<AC;j++){const v=-1+2*j/(AC-1),cb=Math.cos(bend*v),sb=Math.sin(bend*v);let qx=cb*fx+sb*wx+shm*tx,qy=cb*fy+sb*wy+shm*ty,qz=cb*fz+sb*wz;const ql=Math.hypot(qx,qy,qz)||1;
-     verts[o++]=x+wx*v*hl;verts[o++]=y+wy*v*hl;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=s;verts[o++]=v;verts[o++]=lit*lead;verts[o++]=hwa}}}}
- function draw(){if(!gl||!verts||root.hidden||!texOk.mat||!RX||!SHOT[0])return;build();
+ /* one strip; its quads are re-ordered every frame — the coils' far sides first, their near sides over them */
+ function alloc(){if(!gl)return;X=new Float32Array(S+1);Y=new Float32Array(S+1);TH=new Float32Array(S+1);verts=new Float32Array((S+1)*AC*9);idx=new Uint16Array(S*(AC-1)*6);nIdx=idx.length;
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,idx.byteLength,gl.DYNAMIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferData(gl.ARRAY_BUFFER,verts.byteLength,gl.DYNAMIC_DRAW)}
+ /* the close: the spring springs — the winner's half swells, the loser's pulls straight; with the next market it relaxes */
+ function closeFx(){if(phase==='resolve')return{flat:sm((pt-.15)/.8),bulge:sm(pt/.6)};
+  if(phase==='next'){const q=ease(clamp(pt/NXT,0,1));return{flat:1-q,bulge:1-q}}return{flat:0,bulge:0}}
+ function build(){const e=closeFx(),x0=-.06*W,span=1.12*W,d=pS-.5,ka=clamp(2*d,-.6,.6),wY=winner>0;
+  for(let i=0;i<=S;i++){const t=i/S;let u=t+ka*t*(1-t),bump=0;   /* the leader's half stretched, the other pressed together */
+   let du=0;for(const q of PUL){const pos=q.d>0?-.05+.45*q.t:1.05-.45*q.t,z=(t-pos)/.05,g=Math.exp(-z*z)*(1-sm((q.t-1.8)/.8));du-=q.a*z*g;bump+=q.a*16*g}u+=clamp(du,-.025,.025);bump=Math.min(.22,bump);   /* a slinky pulse from its own end (their sum kept in bounds) */
+   const fl=e.flat*sm(wY?(t-.42)/.16:(.58-t)/.16),wb=e.bulge*sm(wY?(.58-t)/.16:(t-.42)/.16),th=2*Math.PI*NC*t+ROT,R=RM*(.55+.45*Math.sin(Math.PI*t))*(1+bump)*(1-.9*fl)*(1+.3*wb);
+   X[i]=x0+span*u+.32*R*Math.sin(th);Y[i]=AY+R*Math.cos(th);TH[i]=th}
+  let o=0;
+  for(let i=0;i<=S;i++){const ia=Math.max(0,i-1),ib=Math.min(S,i+1);let tx=X[ib]-X[ia],ty=Y[ib]-Y[ia];const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;const nx=-ty,ny=tx;
+   const th=TH[i],sn=Math.sin(th),cs=Math.cos(th),front=sn>0,s=i/S;
+   /* the glass faces out of the coil where it comes to the light, its inside where it goes round the back */
+   const ax=0,ay=front?cs:-cs,az=Math.abs(sn)*.9+.1,lit=front?1:.4+.25*sm(1+sn*3),hw=HWS*(.9+.1*Math.abs(sn));
+   for(let j=0;j<AC;j++){const v=-1+2*j/(AC-1),cb=Math.cos(.95*v),sb=Math.sin(.95*v);let qx=cb*ax+sb*nx,qy=cb*ay+sb*ny,qz=cb*az;const ql=Math.hypot(qx,qy,qz)||1;
+    verts[o++]=X[i]+nx*v*hw;verts[o++]=Y[i]+ny*v*hw;verts[o++]=qx/ql;verts[o++]=qy/ql;verts[o++]=qz/ql;verts[o++]=s;verts[o++]=v;verts[o++]=lit;verts[o++]=hw+1.1}}
+  /* far sides first, near sides over them */
+  let k=0;for(const want of [false,true])for(let i=0;i<S;i++){if((Math.sin((TH[i]+TH[i+1])/2)>0)!==want)continue;for(let j=0;j<AC-1;j++){const a=i*AC+j,b=(i+1)*AC+j;idx[k++]=a;idx[k++]=b;idx[k++]=b+1;idx[k++]=a;idx[k++]=b+1;idx[k++]=a+1}}}
+ function draw(){if(!gl||!verts||root.hidden||!texOk.mat||!X)return;build();
   gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(prog);
-  gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferSubData(gl.ARRAY_BUFFER,0,verts);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);
-  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex.mat);gl.uniform1i(loc.uMat,0);gl.uniform2f(loc.uRes,W,H);gl.uniform1f(loc.uReveal,reveal);
-  const e=closeFx();
+  gl.bindBuffer(gl.ARRAY_BUFFER,vbuf);gl.bufferSubData(gl.ARRAY_BUFFER,0,verts);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibuf);gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER,0,idx);
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex.mat);gl.uniform1i(loc.uMat,0);gl.uniform2f(loc.uRes,W,H);gl.uniform1f(loc.uReveal,reveal);gl.uniform1f(loc.uAlpha,1);
+  {const dk=document.documentElement.dataset.theme==='dark';gl.uniform1f(loc.uGain,dk?1.45:1);gl.uniform1f(loc.uThr,dk?.3:0)}
   gl.uniform4f(loc.uLens,LENS[0],LENS[1],LENS[2],LENS[3]);gl.uniform4f(loc.uLensF,LENS[0],LENS[1],LENS[2],LENS[3]);gl.uniform1f(loc.uLensK,lensK);
-  for(const pass of [0,1]){gl.uniform1f(loc.uPassV,pass);gl.uniform1f(loc.uPassF,pass);   /* 0: the ribbons outside the capsule; 1: inside it, magnified (the glass lens) */
-   for(const r of (topY?[1,0]:[0,1])){gl.uniform1f(loc.uAlpha,isLoser(r)?e.fade:1);gl.drawElements(gl.TRIANGLES,nIdx,gl.UNSIGNED_SHORT,r*nIdx*2)}}}   /* the leader last, on top (r: 0 YES, 1 NO) */
+  for(const pass of [0,1]){gl.uniform1f(loc.uPassV,pass);gl.uniform1f(loc.uPassF,pass);gl.drawElements(gl.TRIANGLES,nIdx,gl.UNSIGNED_SHORT,0)}}   /* 0: the spring outside the capsule; 1: inside it, magnified (the glass lens) */
  function frame(ts){if(!running)return;raf=requestAnimationFrame(frame);const now=ts/1000,dt=last?Math.min(.05,now-last):1/60;last=now;step(dt);draw()}
  /* ---- the version's life ---- */
- function prepare(){if(ready)return;ready=true;initGL();layout();seed(0);pS=p;topY=p>=.5;numbers();
+ function prepare(){if(ready)return;ready=true;initGL();layout();seed(0);pS=p;numbers();
   if(document.fonts&&document.fonts.load)document.fonts.load('400 100px Anton').then(()=>{if(!root.hidden){layout();if(!running)draw()}})}
- function intro(){if(reduced){root.classList.add('in');reveal=1.1;revealT=-1;return}root.classList.remove('in');reveal=-.05;revealT=0;void root.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>root.classList.add('in')))}   /* the ribbons are drawn in from their sides as the version comes in */
+ function intro(){if(reduced){root.classList.add('in');reveal=1.1;revealT=-1;return}root.classList.remove('in');reveal=-.05;revealT=0;void root.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>root.classList.add('in')))}   /* the spring uncoils in from the left as the version comes in */
  function show(on){root.hidden=!on;land.classList.toggle('lbg-ribbon',on);if(on){const was=ready;prepare();if(was)layout();intro();if(!running)draw()}else stop()}
  function start(){if(root.hidden)return;prepare();if(running)return;if(reduced||document.hidden||!document.body.classList.contains('is-landing')){draw();return}running=true;last=0;raf=requestAnimationFrame(frame)}
  function stop(){running=false;if(raf)cancelAnimationFrame(raf);raf=0}
- function commit(yes){if(!ready||root.hidden||phase==='close'||phase==='resolve')return;bet(yes,1500+Math.random()*2500,true);if(!running){pS=p;topY=pS>=.5;numbers();draw()}}
+ function commit(yes){if(!ready||root.hidden||phase==='close'||phase==='resolve')return;bet(yes,1500+Math.random()*2500,true);if(!running){pS=p;numbers();draw()}}
  root.addEventListener('click',e=>{const w=e.target.closest&&e.target.closest('.rb-w[data-rbside]');if(w)commit(w.dataset.rbside==='yes')});
  const setHov=v=>{hov=v;if(!running){lensK=v?1.32:1.06;draw()}};badge.addEventListener('pointerenter',()=>setHov(true));badge.addEventListener('pointerleave',()=>setHov(false));badge.addEventListener('focus',()=>setHov(true));badge.addEventListener('blur',()=>setHov(false));
  let rt=0;window.addEventListener('resize',()=>{if(!ready||root.hidden)return;clearTimeout(rt);rt=setTimeout(()=>{layout();if(!running)draw()},100)});
- window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,RS,capH,b2,footTop,LENS,R0,KU,KD,S,topY,MR:[...MR],RUN:[...RUN],JOLT:[...JOLT],reveal,running,gl:!!gl,glFail,texOk:{...texOk},
-  ext:RY?[0,1].map(r=>{let a=1e9,b=-1e9;for(let i=0;i<=S;i++){a=Math.min(a,RY[r][i]);b=Math.max(b,RY[r][i])}return[Math.round(a),Math.round(b)]}):null,tags:tags.map(t=>[t.el.style.transform,t.el.style.opacity])});   /* preview aid */
+ window.duqRibbonDbg=()=>({phase,mt,pt,p,pS,mk:mk[0],W,H,F,RS,capH,b2,footTop,LENS,AY,RM,NC,HWS,S,ROT,pul:PUL.length,reveal,running,gl:!!gl,glFail,texOk:{...texOk},
+  ext:Y?(()=>{let a=1e9,b=-1e9;for(let i=0;i<=S;i++){a=Math.min(a,Y[i]);b=Math.max(b,Y[i])}return[Math.round(a),Math.round(b)]})():null});   /* preview aid */
  return{root,show,start,stop,commit};
 }
 
